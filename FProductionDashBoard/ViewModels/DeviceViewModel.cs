@@ -13,37 +13,71 @@ namespace FProductionDashBoard
     public partial class DeviceInfo : ObservableObject
     { 
         [ObservableProperty]
-        private bool lightOn; 
+        private bool lightOn;
+
+        [ObservableProperty]
+        private int status;
+
+        public required string DeviceID { get; set; }
         public required string Name { get; set; }
-        public required string Description { get; set; }
+        public required string IP { get; set; }
+        public string Description { get; set; } = "";
 
     }
 
     public partial class DeviceCardViewModel : ObservableObject
     { 
         public DeviceInfo Info { get; }
+        private readonly LogViewModel _log;
 
         [ObservableProperty]
-        public int buttonClickCount = 0;
+        private int buttonClickCount = 0;
 
-        public ICommand ToggleLightCommand { get; } 
-        public ICommand ButtonClickCommand { get; }
+        public ICommand MaterialsChangeCommand { get; } 
+        public ICommand FirstInspectionCommand { get; }
+        public ICommand RoutineInspectionCommand { get; }
+        public ICommand OperationCommand { get; }
 
         // 新增一個事件，讓外部可以知道按鈕被點擊
         public event Action? OnButtonClicked;
 
-        public DeviceCardViewModel(DeviceInfo info) 
+        public DeviceCardViewModel(DeviceInfo info, LogViewModel log) 
         { 
-            Info = info; 
-            ToggleLightCommand = new RelayCommand(ToggleLight); 
-            ButtonClickCommand = new RelayCommand(OnButtonClick); 
+            Info = info;
+            _log = log;
+
+            MaterialsChangeCommand = new RelayCommand(MaterialsChange);
+            FirstInspectionCommand = new RelayCommand(FirstArticleInspection);
+            RoutineInspectionCommand = new RelayCommand(RoutineInspection);
+            OperationCommand = new RelayCommand(OperationChange);
         } 
-        private void ToggleLight() { Info.LightOn = !Info.LightOn; } 
-        private void OnButtonClick() 
+        private void MaterialsChange() 
         { 
             ButtonClickCount++;
             OnButtonClicked?.Invoke(); // 通知外部
+
+            _log.AddLog($"設備 {Info.Name} 物料已更換", LogLevel.Warning);
         } 
+        private void FirstArticleInspection() 
+        {
+            Info.LightOn = !Info.LightOn;
+
+            _log.AddLog($"設備 {Info.Name} 首件已確認", LogLevel.Warning);
+        } 
+        private void RoutineInspection()
+        {
+
+
+            _log.AddLog($"設備 {Info.Name} 例行巡檢已完成，巡檢時段:", LogLevel.Warning);
+        }
+        private void OperationChange()
+        {
+
+
+            _log.AddLog($"設備 {Info.Name} 設備調適狀態更新:", LogLevel.Warning);
+        }
+
+
     }
 
     public partial class AddDeviceViewModel : ObservableObject
@@ -66,7 +100,7 @@ namespace FProductionDashBoard
         } 
         private void Confirm() 
         { 
-            var info = new DeviceInfo { Name = Name, Description = Description, LightOn = LightOn }; 
+            var info = new DeviceInfo { DeviceID = "", IP = "", Name = Name, Description = Description, LightOn = LightOn }; 
             OnConfirm?.Invoke(info); 
         } 
         private void Cancel() 

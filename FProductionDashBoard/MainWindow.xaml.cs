@@ -19,7 +19,16 @@ namespace FProductionDashBoard
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+            var vm = new MainViewModel();
+            DataContext = vm;
+
+            vm.Log.Logs.CollectionChanged += (s, e) =>
+            {
+                if (LogListBox.Items.Count > 0)
+                {
+                    LogListBox.ScrollIntoView(LogListBox.Items[LogListBox.Items.Count - 1]);
+                }
+            };
         }
     }
 }

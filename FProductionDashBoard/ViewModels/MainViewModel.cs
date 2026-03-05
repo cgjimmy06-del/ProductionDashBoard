@@ -17,7 +17,9 @@ namespace FProductionDashBoard
     public partial class MainViewModel : ObservableObject
     {
         public ObservableCollection<DeviceCardViewModel> Devices { get; } = 
-            new ObservableCollection<DeviceCardViewModel>(); 
+            new ObservableCollection<DeviceCardViewModel>();
+        public LogViewModel Log { get; } = new LogViewModel();
+
         public ICommand AddDeviceCommand { get; }
 
         [ObservableProperty] 
@@ -34,12 +36,14 @@ namespace FProductionDashBoard
             var window = new SubWindow1 { DataContext = vm };
             vm.OnConfirm += (info) =>
             {
-                var device = new DeviceCardViewModel(info); // 訂閱設備的點擊事件
+                var device = new DeviceCardViewModel(info, Log); // 訂閱設備的點擊事件
                 device.OnButtonClicked += UpdateStats;
 
                 Devices.Add(device);
                 UpdateStats();
                 window.Close();
+
+                Log.AddLog($"已新增設備: {info.Name}", LogLevel.Info);
             }; 
             vm.OnCancel += () => window.Close(); 
             window.ShowDialog();

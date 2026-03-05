@@ -5,27 +5,80 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FProductionDashBoard"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" Icon="appIcon.ico">
 
     <Window.Resources>
         <ResourceDictionary Source="Themes/CardStyles.xaml"/>
     </Window.Resources>
-    
-    <StackPanel Margin="20">
-        <!-- 總計資訊 -->
-        <TextBlock Text="{Binding TotalDevices, StringFormat=設備總數: {0}}" 
-                   FontSize="16" Margin="0,0,0,10"/>
-        <TextBlock Text="{Binding TotalButtonClicks, StringFormat=按鈕總點擊次數: {0}}" 
-                   FontSize="16" Margin="0,0,0,20"/>
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- 上方資訊 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 按鈕 -->
+            <RowDefinition Height="*"/>
+            <!-- 清單 -->
+        </Grid.RowDefinitions>
+
+        <!--總計資訊-->
+        <StackPanel Grid.ColumnSpan="2" Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock Text="{Binding TotalDevices, StringFormat=設備總數: {0}}" 
+                   FontSize="16" Margin="0,0,0,5"/>
+            <TextBlock Text="{Binding TotalButtonClicks, StringFormat=按鈕總點擊次數: {0}}" 
+                   FontSize="16"/>
+        </StackPanel>
         <!-- 新增設備按鈕 -->
-        <Button Content="新增設備" Command="{Binding AddDeviceCommand}" Width="100" Margin="0,0,0,20"/>
-        <!-- 設備卡片清單 -->
-        <ItemsControl ItemsSource="{Binding Devices}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <local:DeviceCard Style="{StaticResource MainCardStyle}"/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </StackPanel>
+        <Button Content="新增設備" Command="{Binding AddDeviceCommand}" 
+                Width="100" Height="30" Grid.Row="1" Grid.Column="0"
+                HorizontalAlignment="Right" Margin="0,0,0,10"/>
+
+        <!-- 左邊：設備卡片清單 -->
+        <ScrollViewer Grid.Row="2" Grid.Column="0" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Devices}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <local:DeviceCard Style="{StaticResource MainCardStyle}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- 右邊：即時狀態窗 -->
+        <Border Grid.Row="2" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="10" Padding="5">
+            <ListBox x:Name="LogListBox" ItemsSource="{Binding Log.Logs}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <Run Text="{Binding Timestamp, StringFormat={}{0:HH:mm:ss}}"/>
+                            <Run Text=" - "/>
+                            <Run Text="{Binding Message}"/>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Level}" Value="Info">
+                                            <Setter Property="Foreground" Value="Black"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Level}" Value="Warning">
+                                            <Setter Property="Foreground" Value="Orange"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Level}" Value="Error">
+                                            <Setter Property="Foreground" Value="Red"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+
+    </Grid>
+
 </Window>

@@ -7,9 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x64</Platforms>
+	  <ApplicationIcon>appIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+	  <Resource Include="appIcon.ico" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
