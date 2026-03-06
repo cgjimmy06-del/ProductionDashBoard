@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,6 +21,7 @@ namespace FProductionDashBoard
         public MainWindow()
         {
             InitializeComponent();
+
             var vm = new MainViewModel();
             DataContext = vm;
 

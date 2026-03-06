@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FProductionDashBoard"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Icon="appIcon.ico">
+        Title="{Binding AppVersion, StringFormat=ProductionDashBoard v{0}}" 
+        Height="450" Width="800" Icon="appIcon.ico">
 
     <Window.Resources>
         <ResourceDictionary Source="Themes/CardStyles.xaml"/>

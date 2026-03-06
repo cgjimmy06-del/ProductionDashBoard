@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
@@ -16,6 +18,8 @@ namespace FProductionDashBoard
 {
     public partial class MainViewModel : ObservableObject
     {
+        public string AppVersion { get; }
+
         public ObservableCollection<DeviceCardViewModel> Devices { get; } = 
             new ObservableCollection<DeviceCardViewModel>();
         public LogViewModel Log { get; } = new LogViewModel();
@@ -27,7 +31,11 @@ namespace FProductionDashBoard
         [ObservableProperty] 
         private int totalButtonClicks;
         public MainViewModel() 
-        { 
+        {
+            // 讀取 FileVersion
+            AppVersion = FileVersionInfo.GetVersionInfo(
+                Assembly.GetExecutingAssembly().Location).FileVersion ?? "Unknown";
+
             AddDeviceCommand = new RelayCommand(AddDevice); 
         }
 
