@@ -16,9 +16,9 @@
             <TextBlock Text="{Binding ButtonClickCount, StringFormat=點擊次數: {0}}"/>
             <!-- 控制區 -->
             <StackPanel Orientation="Horizontal" >
-                <Button Content="設備按鈕" Command="{Binding ButtonClickCommand}" 
+                <Button Content="物耗更換" Command="{Binding MaterialsChangeCommand}" 
                         Background="#4CAF50" Foreground="White" Padding="5,2"/>
-                <Button Content="切換燈號" Command="{Binding ToggleLightCommand}" 
+                <Button Content="首件確認" Command="{Binding FirstInspectionCommand}" 
                         Background="#2196F3" Foreground="White" Padding="5,2"/>
             </StackPanel>
             <!-- 狀態顯示 -->
