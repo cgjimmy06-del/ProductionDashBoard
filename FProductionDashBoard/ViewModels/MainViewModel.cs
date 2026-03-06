@@ -30,6 +30,17 @@ namespace FProductionDashBoard
         { 
             AddDeviceCommand = new RelayCommand(AddDevice); 
         }
+
+        public void SaveDefault() // 可用在code-behind的closing
+        {
+            // 儲存參數
+            //Properties.Settings.Default.Save();
+
+            // 儲存集合
+            //DataStorageService.SaveDevices(Devices);
+        }
+
+
         private void AddDevice()
         {
             var vm = new AddDeviceViewModel();

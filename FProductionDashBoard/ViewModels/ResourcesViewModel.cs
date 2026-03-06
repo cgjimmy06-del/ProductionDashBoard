@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -15,6 +16,7 @@ using System.Windows.Threading;
 
 namespace FProductionDashBoard
 {
+    #region -- Log View Model --
     public class LogEntry
     {
         public string Message { get; set; } = string.Empty;
@@ -119,9 +121,37 @@ namespace FProductionDashBoard
             return "檔案不存在或已被壓縮備份。";
         }
     }
+    #endregion
+
+    #region -- Data Storage --
+    public static class DataStorageService
+    {
+
+        private static readonly string filePath = "devices.json";
+
+        public static void SaveDevices(ObservableCollection<DeviceInfo> devices)
+        {
+            var json = JsonSerializer.Serialize(devices);
+            File.WriteAllText(filePath, json);
+        }
+
+        public static ObservableCollection<DeviceInfo> LoadDevices()
+        {
+            if (!File.Exists(filePath))
+                return new ObservableCollection<DeviceInfo>();
+
+            var json = File.ReadAllText(filePath);
+            return JsonSerializer.Deserialize<ObservableCollection<DeviceInfo>>(json)
+                   ?? new ObservableCollection<DeviceInfo>();
+        }
 
 
+    }
 
+
+    #endregion
+
+    #region -- Converter --
     public class BoolToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -132,7 +162,6 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { throw new NotImplementedException(); }
     }
-
     public class StringNullOrEmptyToVisibilityConverter : IValueConverter 
     { 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) 
@@ -144,6 +173,7 @@ namespace FProductionDashBoard
         { throw new NotImplementedException(); } 
     }
 
+    #endregion
 
 
 }
