@@ -45,7 +45,8 @@ namespace FProductionDashBoard
         } 
         private void FirstArticleInspection() 
         {
-            Info.LightOn = !Info.LightOn;
+            Info.Status++;
+            if (Info.Status > 3) Info.Status = -1;
 
             _log.AddLog($"設備 {Info.Name} 首件已確認", LogLevel.Warning);
         } 
@@ -70,9 +71,8 @@ namespace FProductionDashBoard
         [ObservableProperty] 
         private string name = string.Empty; 
         [ObservableProperty] 
-        private string description = string.Empty; 
-        [ObservableProperty] 
-        private bool lightOn = false;
+        private string description = string.Empty;
+
         public IRelayCommand ConfirmCommand { get; }
         public IRelayCommand CancelCommand { get; }
 
@@ -85,7 +85,7 @@ namespace FProductionDashBoard
         } 
         private void Confirm() 
         { 
-            var info = new DeviceInfo { DeviceID = "", IP = "", Name = Name, Description = Description, LightOn = LightOn }; 
+            var info = new DeviceInfo { DeviceID = "", IP = "", Name = Name, Description = Description }; 
             OnConfirm?.Invoke(info); 
         } 
         private void Cancel() 

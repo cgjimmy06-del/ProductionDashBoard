@@ -22,8 +22,8 @@
                         Background="#2196F3" Foreground="White" Padding="5,2"/>
             </StackPanel>
             <!-- 狀態顯示 -->
-            <TextBlock Text="{Binding Info.LightOn, StringFormat=燈號狀態: {0}}" 
-                       FontSize="12" Foreground="{Binding Info.LightOn, Converter={StaticResource BoolToColorConverter}}" Margin="0,10,0,0"/>
+            <TextBlock Text="{Binding Info.Status, StringFormat=燈號狀態: {0}}" 
+                       FontSize="12" Foreground="{Binding Info.Status, Converter={StaticResource IntToColorConverter}}" Margin="0,10,0,0"/>
         </StackPanel>
     </Border>
 </UserControl>

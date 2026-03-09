@@ -18,15 +18,8 @@ namespace FProductionDashBoard.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-
-            modelBuilder.ApplyConfiguration(new DeviceInfoConfiguration());
-
-            // 設定關聯：Worker (1) ↔ Devices (多)
-            //modelBuilder.Entity<DeviceInfo>()
-            //    .HasOne(d => d.Worker)
-            //    .WithMany(w => w.Devices)
-            //    .HasForeignKey(d => d.WorkerID);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+            //modelBuilder.ApplyConfiguration(new DeviceInfoConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

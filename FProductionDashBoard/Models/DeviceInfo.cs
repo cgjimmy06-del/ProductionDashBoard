@@ -14,15 +14,12 @@ namespace FProductionDashBoard
     public partial class DeviceInfo : ObservableObject
     {
         [ObservableProperty]
-        private bool lightOn;
-
-        [ObservableProperty]
         private int status;
 
         public required string DeviceID { get; set; } // 主鍵
         public required string Name { get; set; }
         public required string IP { get; set; }
-        public string Description { get; set; } = "";
+        public string? Description { get; set; }
 
         //public int WorkerID { get; set; }       // 外鍵
         //public WorkerInfo? Worker { get; set; }      // 導覽屬性
@@ -40,13 +37,19 @@ namespace FProductionDashBoard
 
             // 忽略額外屬性
             builder.Ignore(d => d.Description);
-            builder.Ignore(d => d.LightOn);
             builder.Ignore(d => d.Status);
 
             // 關聯設定
             //builder.HasOne(d => d.Worker)
             //       .WithMany(w => w.Devices)
             //       .HasForeignKey(d => d.WorkerID);
+
+            // 設定關聯：Worker (1) ↔ Devices (多)
+            //modelBuilder.Entity<DeviceInfo>()
+            //    .HasOne(d => d.Worker)
+            //    .WithMany(w => w.Devices)
+            //    .HasForeignKey(d => d.WorkerID);
+
         }
     }
 

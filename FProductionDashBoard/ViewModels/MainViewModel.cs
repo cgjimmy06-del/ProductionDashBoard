@@ -57,39 +57,39 @@ namespace FProductionDashBoard
         }
 
 
-        private async void AddDevice()
+        private void AddDevice()
         {
-            try
-            {
-                Log.AddLog($"連線狀態: {_deviceRepo.CheckConnection().ToString()}");
-                Log.AddLog($"連線字串: {_deviceRepo.CurrectConnStr}");
-
-                var devs = await _deviceRepo.GetAllAsync();
-                foreach (var dev in devs) { Log.AddLog($"已新增設備: {dev.Name}", LogLevel.Info); }
-            }
-            catch (SqlException ex)
-            {
-                Debug.WriteLine($"SQL 錯誤: {ex.Message}");
-            }
-            catch (TaskCanceledException)
-            {
-                Debug.WriteLine("查詢已超時");
-            }
-            //var vm = new AddDeviceViewModel();
-            //var window = new SubWindow1 { DataContext = vm };
-            //vm.OnConfirm += (info) =>
+            //try
             //{
-            //    var device = new DeviceCardViewModel(info, Log); // 訂閱設備的點擊事件
-            //    device.OnButtonClicked += UpdateStats;
+            //    Log.AddLog($"連線狀態: {_deviceRepo.CheckConnection().ToString()}");
+            //    Log.AddLog($"連線字串: {_deviceRepo.CurrectConnStr}");
 
-            //    Devices.Add(device);
-            //    UpdateStats();
-            //    window.Close();
+            //    var devs = await _deviceRepo.GetAllAsync();
+            //    foreach (var dev in devs) { Log.AddLog($"已新增設備: {dev.Name}", LogLevel.Info); }
+            //}
+            //catch (SqlException ex)
+            //{
+            //    Debug.WriteLine($"SQL 錯誤: {ex.Message}");
+            //}
+            //catch (TaskCanceledException)
+            //{
+            //    Debug.WriteLine("查詢已超時");
+            //}
+            var vm = new AddDeviceViewModel();
+            var window = new SubWindow1 { DataContext = vm };
+            vm.OnConfirm += (info) =>
+            {
+                var device = new DeviceCardViewModel(info, Log); // 訂閱設備的點擊事件
+                device.OnButtonClicked += UpdateStats;
 
-            //    Log.AddLog($"已新增設備: {info.Name}", LogLevel.Info);
-            //};
-            //vm.OnCancel += () => window.Close();
-            //window.ShowDialog();
+                Devices.Add(device);
+                UpdateStats();
+                window.Close();
+
+                Log.AddLog($"已新增設備: {info.Name}", LogLevel.Info);
+            };
+            vm.OnCancel += () => window.Close();
+            window.ShowDialog();
         }
         private void UpdateStats() 
         { 

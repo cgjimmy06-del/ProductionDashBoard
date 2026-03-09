@@ -162,6 +162,34 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { throw new NotImplementedException(); }
     }
+    public class IntToColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            int status = (int)value;
+            switch (status)
+            {
+                case 0:
+                    return Brushes.Yellow;
+                case 1:
+                    return Brushes.Green;
+                case 2:
+                    return Brushes.Red;
+                case 3:
+                    return Brushes.Blue;
+                default:
+                    return Brushes.Gray; // 預設顏色
+            }
+
+            //string resourceKey = $"StatusColor{status}";
+            //if (Application.Current.Resources.Contains(resourceKey))
+            //{ return Application.Current.Resources[resourceKey] as Brush; }
+            //// 預設顏色
+            //return Brushes.Gray;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        { throw new NotImplementedException(); }
+    }
     public class StringNullOrEmptyToVisibilityConverter : IValueConverter 
     { 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) 

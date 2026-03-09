@@ -10,9 +10,9 @@ namespace FProductionDashBoard.Repositories
 {
     public class DeviceDto
     {
-        public string DeviceID { get; set; }
-        public string Name { get; set; }
-        public string IP { get; set; }
+        public string? DeviceID { get; set; }
+        public string? Name { get; set; }
+        public string? IP { get; set; }
     }
 
     public interface IDeviceRepository : IRepository<DeviceInfo>

@@ -5,6 +5,7 @@
     
     <Application.Resources>
         <local:BoolToColorConverter x:Key="BoolToColorConverter"/>
+        <local:IntToColorConverter x:Key="IntToColorConverter"/>
         <local:StringNullOrEmptyToVisibilityConverter x:Key="PlaceholderConverter"/>
     </Application.Resources>
 </Application>
