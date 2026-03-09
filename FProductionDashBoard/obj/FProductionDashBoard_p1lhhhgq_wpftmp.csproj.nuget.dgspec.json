@@ -54,10 +54,6 @@
               "target": "Package",
               "version": "[8.4.0, )"
             },
-            "Dapper": {
-              "target": "Package",
-              "version": "[2.1.72, )"
-            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.24, )"

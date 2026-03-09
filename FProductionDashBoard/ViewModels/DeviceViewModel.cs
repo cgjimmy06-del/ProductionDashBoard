@@ -10,21 +10,6 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace FProductionDashBoard
 {
-    public partial class DeviceInfo : ObservableObject
-    { 
-        [ObservableProperty]
-        private bool lightOn;
-
-        [ObservableProperty]
-        private int status;
-
-        public required string DeviceID { get; set; }
-        public required string Name { get; set; }
-        public required string IP { get; set; }
-        public string Description { get; set; } = "";
-
-    }
-
     public partial class DeviceCardViewModel : ObservableObject
     { 
         public DeviceInfo Info { get; }

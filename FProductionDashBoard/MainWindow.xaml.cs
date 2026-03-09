@@ -22,16 +22,10 @@ namespace FProductionDashBoard
         {
             InitializeComponent();
 
-            var vm = new MainViewModel();
-            DataContext = vm;
+            // 已在 App.xaml.cs透過DI注入
+            //var vm = new MainViewModel();
+            //DataContext = vm;
 
-            vm.Log.Logs.CollectionChanged += (s, e) =>
-            {
-                if (LogListBox.Items.Count > 0)
-                {
-                    LogListBox.ScrollIntoView(LogListBox.Items[LogListBox.Items.Count - 1]);
-                }
-            };
         }
     }
 }
