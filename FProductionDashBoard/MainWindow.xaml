@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FProductionDashBoard"
         mc:Ignorable="d"
+        Style="{StaticResource MaterialDesignWindow}"
         Title="{Binding AppVersion, StringFormat=ProductionDashBoard v{0}}" 
         Height="450" Width="800" Icon="appIcon.ico">
 
@@ -65,7 +66,7 @@
                                             <Setter Property="Foreground" Value="Black"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Level}" Value="Warning">
-                                            <Setter Property="Foreground" Value="Orange"/>
+                                            <Setter Property="Foreground" Value="DarkOrange"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Level}" Value="Error">
                                             <Setter Property="Foreground" Value="Red"/>

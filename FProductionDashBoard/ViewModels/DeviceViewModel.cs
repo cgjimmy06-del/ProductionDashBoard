@@ -41,26 +41,26 @@ namespace FProductionDashBoard
             ButtonClickCount++;
             OnButtonClicked?.Invoke(); // 通知外部
 
-            _log.AddLog($"設備 {Info.Name} 物料已更換", LogLevel.Warning);
+            _log.AddLog($"設備 {Info.Name} 物料已更換");
         } 
         private void FirstArticleInspection() 
         {
             Info.Status++;
-            if (Info.Status > 3) Info.Status = -1;
+            if (Info.Status > 2) Info.Status = -1;
 
-            _log.AddLog($"設備 {Info.Name} 首件已確認", LogLevel.Warning);
+            _log.AddLog($"設備 {Info.Name} 首件已確認");
         } 
         private void RoutineInspection()
         {
 
 
-            _log.AddLog($"設備 {Info.Name} 例行巡檢已完成，巡檢時段:", LogLevel.Warning);
+            _log.AddLog($"設備 {Info.Name} 例行巡檢已完成，巡檢時段:");
         }
         private void OperationChange()
         {
 
 
-            _log.AddLog($"設備 {Info.Name} 設備調適狀態更新:", LogLevel.Warning);
+            _log.AddLog($"設備 {Info.Name} 設備調適狀態更新:");
         }
 
 
@@ -69,7 +69,7 @@ namespace FProductionDashBoard
     public partial class AddDeviceViewModel : ObservableObject
     {
         [ObservableProperty] 
-        private string name = string.Empty; 
+        private string name = "Default"; 
         [ObservableProperty] 
         private string description = string.Empty;
 

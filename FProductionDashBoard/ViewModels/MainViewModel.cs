@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Repositories;
+using MaterialDesignColors;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -29,6 +31,9 @@ namespace FProductionDashBoard
 
         private readonly Repositories.IDeviceRepository _deviceRepo;
         public LogViewModel Log { get; } = new LogViewModel();
+        private readonly PaletteHelper _paletteHelper = new PaletteHelper();
+        private readonly Theme? _lightTheme;
+        private readonly Theme? _darkTheme;
 
         public ICommand AddDeviceCommand { get; }
 
@@ -42,9 +47,21 @@ namespace FProductionDashBoard
             AppVersion = FileVersionInfo.GetVersionInfo(
                 Assembly.GetExecutingAssembly().Location).FileVersion ?? "Unknown";
 
+            // DI注入 Repository
             _deviceRepo = deviceRepo;
 
-            AddDeviceCommand = new RelayCommand(() => AddDevice()); 
+            // 設定元件事件
+            AddDeviceCommand = new RelayCommand(() => AddDevice());
+
+            // 主題顏色設定
+            _lightTheme = Theme.Create(BaseTheme.Light,
+               SwatchHelper.Lookup[MaterialDesignColor.Indigo],
+               SwatchHelper.Lookup[MaterialDesignColor.Lime]);
+            //_lightTheme.SetBaseTheme(BaseTheme.Light); // 設定基本主題
+            //_lightTheme.SetPrimaryColor(SwatchHelper.Lookup[MaterialDesignColor.Red]); // 設定主色系
+            //_lightTheme.SetSecondaryColor(SwatchHelper.Lookup[MaterialDesignColor.Green]); // 設定次色系
+            _paletteHelper.SetTheme(_lightTheme);
+
         }
 
         public void SaveDefault() // 可用在code-behind的closing
@@ -79,8 +96,8 @@ namespace FProductionDashBoard
             var window = new SubWindow1 { DataContext = vm };
             vm.OnConfirm += (info) =>
             {
-                var device = new DeviceCardViewModel(info, Log); // 訂閱設備的點擊事件
-                device.OnButtonClicked += UpdateStats;
+                var device = new DeviceCardViewModel(info, Log);
+                device.OnButtonClicked += UpdateStats; // 訂閱設備的點擊事件
 
                 Devices.Add(device);
                 UpdateStats();

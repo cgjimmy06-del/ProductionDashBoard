@@ -4,10 +4,10 @@
     
     <!-- 主視窗用的簡單卡片 -->
     <Style TargetType="local:DeviceCard" x:Key="MainCardStyle">
-        <Setter Property="Width" Value="200"/>
-        <Setter Property="Height" Value="160"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="Height" Value="Auto"/>
+
     </Style>
 
-    
 
 </ResourceDictionary>
