@@ -9,17 +9,30 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FProductionDashBoard.Repositories
 {
-    public class AppDbContext : DbContext
+    public class InfoDbContext : DbContext
     {
         public DbSet<DeviceInfo> Devices { get; set; }
         public DbSet<WorkerInfo> Workers { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public InfoDbContext(DbContextOptions<InfoDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(InfoDbContext).Assembly);
             //modelBuilder.ApplyConfiguration(new DeviceInfoConfiguration());
+
+            base.OnModelCreating(modelBuilder);
+        }
+    }
+    public class DataDbContext : DbContext
+    {
+
+
+        public DataDbContext(DbContextOptions<DataDbContext> options) : base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataDbContext).Assembly);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FProductionDashBoard.Repositories
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<T, TContext> where T : class where TContext : DbContext
     {
         public string CurrectConnStr { get; set; }
 
@@ -20,14 +20,14 @@ namespace FProductionDashBoard.Repositories
         Task DeleteAsync(int id);
     }
 
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T, TContext> : IRepository<T, TContext> where T : class where TContext : DbContext
     {
-        private readonly AppDbContext _context;
+        private readonly TContext _context;
         private readonly DbSet<T> _dbSet;
 
         public string CurrectConnStr { get; set; } = "";
 
-        public Repository(AppDbContext context)
+        public Repository(TContext context)
         {
             _context = context;
             _dbSet = context.Set<T>();

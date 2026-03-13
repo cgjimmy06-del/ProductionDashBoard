@@ -15,7 +15,7 @@ namespace FProductionDashBoard.Repositories
         public string? IP { get; set; }
     }
 
-    public interface IDeviceRepository : IRepository<DeviceInfo>
+    public interface IDeviceRepository : IRepository<DeviceInfo, InfoDbContext>
     {
 
         public Task<IEnumerable<DeviceDto>> GetDevicesAllDapperAsync();

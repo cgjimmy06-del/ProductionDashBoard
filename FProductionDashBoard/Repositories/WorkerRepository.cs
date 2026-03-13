@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FProductionDashBoard.Repositories
 {
-    public class WorkerRepository : Repository<WorkerInfo>, IWorkerRepository
+    public class WorkerRepository : Repository<WorkerInfo, InfoDbContext>, IWorkerRepository
     {
-        private readonly AppDbContext _context;
+        private readonly InfoDbContext _context;
 
-        public WorkerRepository(AppDbContext context) : base(context)
+        public WorkerRepository(InfoDbContext context) : base(context)
         {
             _context = context;
         }

@@ -11,11 +11,11 @@ using static FProductionDashBoard.Repositories.IDeviceRepository;
 
 namespace FProductionDashBoard.Repositories
 {
-    public class DeviceRepository : Repository<DeviceInfo>, IDeviceRepository
+    public class DeviceRepository : Repository<DeviceInfo, InfoDbContext>, IDeviceRepository
     {
-        private readonly AppDbContext _context;
+        private readonly InfoDbContext _context;
 
-        public DeviceRepository(AppDbContext context) : base(context)
+        public DeviceRepository(InfoDbContext context) : base(context)
         {
             _context = context;
         }

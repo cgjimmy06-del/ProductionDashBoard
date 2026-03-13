@@ -25,16 +25,24 @@ namespace FProductionDashBoard
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            // 註冊 DbContext
-            services.AddDbContext<Repositories.AppDbContext > (options =>
-                options.UseSqlServer(config.GetConnectionString("FS_MESInfo") ?? "")); //, ServiceLifetime.Scoped
+            services.AddSingleton(config);
 
-            // 註冊 Repository
-            //services.AddScoped<IRepository<DeviceInfo>, Repository<DeviceInfo>>();
+            // 註冊 DbContext
+            services.AddDbContext<Repositories.InfoDbContext> (options =>
+                options.UseSqlServer(config.GetConnectionString("FS_MESInfo") ?? ""));
+            services.AddDbContext<Repositories.DataDbContext>(options =>
+                options.UseSqlServer(config.GetConnectionString("FS_MESData") ?? ""));
+
+            // 註冊 泛型 Repository / 專用 Repository
+            services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
             services.AddScoped<Repositories.IDeviceRepository, Repositories.DeviceRepository>();
-            //services.AddScoped<Repositories.IWorkerRepository, Repositories.WorkerRepository>();
+            services.AddScoped<Repositories.IWorkerRepository, Repositories.WorkerRepository>();
+
+            // 註冊 dataService
+            services.AddScoped<Repositories.SqlService>();
 
             // 註冊 ViewModel
+            services.AddScoped<LogViewModel>();
             services.AddScoped<MainViewModel>();
 
             // 註冊 MainWindow (MainWindow 的 InitializeComponent() 可能沒有正確執行，導致 XAML 裡的 UI 元件沒有完整載入) error1
