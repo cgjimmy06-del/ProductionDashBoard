@@ -10,21 +10,6 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace FProductionDashBoard
 {
-    public partial class DeviceInfo : ObservableObject
-    { 
-        [ObservableProperty]
-        private bool lightOn;
-
-        [ObservableProperty]
-        private int status;
-
-        public required string DeviceID { get; set; }
-        public required string Name { get; set; }
-        public required string IP { get; set; }
-        public string Description { get; set; } = "";
-
-    }
-
     public partial class DeviceCardViewModel : ObservableObject
     { 
         public DeviceInfo Info { get; }
@@ -56,25 +41,26 @@ namespace FProductionDashBoard
             ButtonClickCount++;
             OnButtonClicked?.Invoke(); // 通知外部
 
-            _log.AddLog($"設備 {Info.Name} 物料已更換", LogLevel.Warning);
+            _log.AddLog($"設備 {Info.Name} 物料已更換");
         } 
         private void FirstArticleInspection() 
         {
-            Info.LightOn = !Info.LightOn;
+            Info.Status++;
+            if (Info.Status > 2) Info.Status = -1;
 
-            _log.AddLog($"設備 {Info.Name} 首件已確認", LogLevel.Warning);
+            _log.AddLog($"設備 {Info.Name} 首件已確認");
         } 
         private void RoutineInspection()
         {
 
 
-            _log.AddLog($"設備 {Info.Name} 例行巡檢已完成，巡檢時段:", LogLevel.Warning);
+            _log.AddLog($"設備 {Info.Name} 例行巡檢已完成，巡檢時段:");
         }
         private void OperationChange()
         {
 
 
-            _log.AddLog($"設備 {Info.Name} 設備調適狀態更新:", LogLevel.Warning);
+            _log.AddLog($"設備 {Info.Name} 設備調適狀態更新:");
         }
 
 
@@ -83,11 +69,10 @@ namespace FProductionDashBoard
     public partial class AddDeviceViewModel : ObservableObject
     {
         [ObservableProperty] 
-        private string name = string.Empty; 
+        private string name = "Default"; 
         [ObservableProperty] 
-        private string description = string.Empty; 
-        [ObservableProperty] 
-        private bool lightOn = false;
+        private string description = string.Empty;
+
         public IRelayCommand ConfirmCommand { get; }
         public IRelayCommand CancelCommand { get; }
 
@@ -100,7 +85,7 @@ namespace FProductionDashBoard
         } 
         private void Confirm() 
         { 
-            var info = new DeviceInfo { DeviceID = "", IP = "", Name = Name, Description = Description, LightOn = LightOn }; 
+            var info = new DeviceInfo { DeviceID = "", IP = "", Name = Name, Description = Description }; 
             OnConfirm?.Invoke(info); 
         } 
         private void Cancel() 

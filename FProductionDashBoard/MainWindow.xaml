@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FProductionDashBoard"
         mc:Ignorable="d"
+        Style="{StaticResource MaterialDesignWindow}"
         Title="{Binding AppVersion, StringFormat=ProductionDashBoard v{0}}" 
         Height="450" Width="800" Icon="appIcon.ico">
 
@@ -51,7 +52,7 @@
 
         <!-- 右邊：即時狀態窗 -->
         <Border Grid.Row="2" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="10" Padding="5">
-            <ListBox x:Name="LogListBox" ItemsSource="{Binding Log.Logs}">
+            <ListBox x:Name="LogListBox" ItemsSource="{Binding _log.Logs}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -65,7 +66,7 @@
                                             <Setter Property="Foreground" Value="Black"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Level}" Value="Warning">
-                                            <Setter Property="Foreground" Value="Orange"/>
+                                            <Setter Property="Foreground" Value="DarkOrange"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Level}" Value="Error">
                                             <Setter Property="Foreground" Value="Red"/>

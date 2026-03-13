@@ -5,25 +5,136 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FProductionDashBoard"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    
-    <Border BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="5">
-        <StackPanel>
-            <!-- 標題區 -->
-            <TextBlock Text="{Binding Info.Name}" FontWeight="Bold"/>
-            <!-- 描述區 -->
-            <TextBlock Text="{Binding Info.Description}" FontStyle="Italic"/>
-            <TextBlock Text="{Binding ButtonClickCount, StringFormat=點擊次數: {0}}"/>
-            <!-- 控制區 -->
-            <StackPanel Orientation="Horizontal" >
-                <Button Content="物耗更換" Command="{Binding MaterialsChangeCommand}" 
-                        Background="#4CAF50" Foreground="White" Padding="5,2"/>
-                <Button Content="首件確認" Command="{Binding FirstInspectionCommand}" 
-                        Background="#2196F3" Foreground="White" Padding="5,2"/>
+             d:DesignHeight="200" d:DesignWidth="400" d:Background="White">
+
+    <!-- 卡片樣式綁在 Border -->
+    <UserControl.Resources>
+        <Style TargetType="Border" x:Key="CardBorderStyle">
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <!-- 陰影 -->
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black"
+                                      BlurRadius="12"
+                                      ShadowDepth="3"
+                                      Opacity="0.25"/>
+                </Setter.Value>
+            </Setter>
+            
+            <!-- 點擊動畫 -->
+            <Style.Resources>
+                <Storyboard x:Key="PressDownStoryboard">
+                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                     To="0.97" Duration="0:0:0.1"/>
+                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                     To="0.97" Duration="0:0:0.1"/>
+                </Storyboard>
+                <Storyboard x:Key="ReleaseStoryboard">
+                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                     To="1" Duration="0:0:0.1"/>
+                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                     To="1" Duration="0:0:0.1"/>
+                </Storyboard>
+            </Style.Resources>
+            
+            <Style.Triggers>
+                <!-- Hover 效果 -->
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="Black"
+                                              BlurRadius="15"
+                                              ShadowDepth="4"
+                                              Opacity="0.4"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <!-- 點擊 效果 -->
+                <EventTrigger RoutedEvent="PreviewMouseDown">
+                    <BeginStoryboard Storyboard="{StaticResource PressDownStoryboard}"/>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="PreviewMouseUp">
+                    <BeginStoryboard Storyboard="{StaticResource ReleaseStoryboard}"/>
+                </EventTrigger>
+
+            </Style.Triggers>
+
+        </Style>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource CardBorderStyle}"
+            Background="{DynamicResource MaterialDesignPaper}"
+            CornerRadius="12"
+            Padding="0"
+            BorderBrush="{DynamicResource PrimaryHueLightBrush}"
+            BorderThickness="1">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <!-- 左側狀態燈號 -->
+                <ColumnDefinition Width="15"/>
+                <!-- 主體內容 -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 狀態燈號 -->
+            <Border Grid.Column="0"
+                    Background="{Binding Info.Status, Converter={StaticResource IntToColorConverter}}"
+                    d:Background="Green"
+                    CornerRadius="3"/>
+
+            <!-- 主體內容 -->
+            <StackPanel Grid.Column="1" Margin="5,0,0,0" Orientation="Vertical">
+
+                <!-- 機台名稱 -->
+                <TextBlock Text="{Binding Info.Name}" d:Text="A1"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource PrimaryHueMidBrush}"
+                           FontSize="20"
+                           Cursor="Hand"
+                           TextDecorations="Underline"/>
+
+                <!-- 資訊列 -->
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <TextBlock Text="當前產品: 產品 X" d:Text="current production: default 123"
+                               Foreground="{DynamicResource SecondaryHueMidBrush}"/>
+                    <TextBlock Text="操作人員: 王小明"  d:Text="operator: yun"
+                               Foreground="{DynamicResource SecondaryHueMidBrush}"/>
+                    <!--<TextBlock Text="產量: 1200 件" 
+                               Foreground="{DynamicResource SecondaryHueMidBrush}"/>-->
+                </StackPanel>
+
+                <!-- 按鈕列 -->
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <Button Content="物耗" Command="{Binding MaterialsChangeCommand}" 
+                            Width="75" Margin="0, 5, 5, 5"/>
+                    <Button Content="首件" Command="{Binding FirstInspectionCommand}" 
+                            Width="75" Margin="5"/>
+
+                    <!-- 巡檢 -->
+                    <StackPanel Margin="5">
+                        <Button Content="巡檢" Command="{Binding RoutineInspectionCommand}" 
+                                Width="75" Margin="0"/>
+                        <!--<UniformGrid Rows="1" Columns="5" Margin="0,5,0,0">
+                            <Rectangle Fill="Green" Height="10" Margin="2"/>
+                            <Rectangle Fill="Green" Height="10" Margin="2"/>
+                            <Rectangle Fill="Yellow" Height="10" Margin="2"/>
+                            <Rectangle Fill="Gray" Height="10" Margin="2"/>
+                            <Rectangle Fill="Gray" Height="10" Margin="2"/>
+                        </UniformGrid>-->
+                    </StackPanel>
+
+                    <Button Content="調適" Command="{Binding OperationCommand}"
+                            Width="75" Margin="5"/>
+                </StackPanel>
+
             </StackPanel>
-            <!-- 狀態顯示 -->
-            <TextBlock Text="{Binding Info.LightOn, StringFormat=燈號狀態: {0}}" 
-                       FontSize="12" Foreground="{Binding Info.LightOn, Converter={StaticResource BoolToColorConverter}}" Margin="0,10,0,0"/>
-        </StackPanel>
+
+        </Grid>
     </Border>
 </UserControl>

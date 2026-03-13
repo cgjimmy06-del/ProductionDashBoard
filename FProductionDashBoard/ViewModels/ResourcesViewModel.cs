@@ -157,7 +157,27 @@ namespace FProductionDashBoard
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool isOn = (bool)value;
-            return isOn ? Brushes.Green : Brushes.Red;
+            return isOn ? Application.Current.Resources["SuccessColor"] : Application.Current.Resources["ErrorColor"];
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        { throw new NotImplementedException(); }
+    }
+    public class IntToColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            int status = (int)value;
+
+            // 從 App.xaml 資源取顏色
+            var resources = Application.Current.Resources;
+
+            return status switch
+            {
+                0 => (Brush)resources["SuccessColor"],
+                1 => (Brush)resources["WarningColor"],
+                2 => (Brush)resources["ErrorColor"],
+                _ => (Brush)resources["IdleColor"]
+            };
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { throw new NotImplementedException(); }
