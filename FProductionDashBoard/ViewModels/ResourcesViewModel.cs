@@ -29,7 +29,7 @@ namespace FProductionDashBoard
         Warning,
         Error
     }
-    public class LogViewModel : ObservableObject
+    public class LogService : ObservableObject
     {
         public ObservableCollection<LogEntry> Logs { get; } = new();
         public ObservableCollection<string> AvailableLogFiles { get; } = new();
@@ -42,7 +42,7 @@ namespace FProductionDashBoard
             return Path.Combine(_logDirectory, $"logs_{date}.txt");
         }
 
-        public LogViewModel()
+        public LogService()
         {
             if (!Directory.Exists(_logDirectory))
             { Directory.CreateDirectory(_logDirectory); }

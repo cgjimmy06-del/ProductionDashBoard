@@ -13,7 +13,7 @@ namespace FProductionDashBoard
     public partial class DeviceCardViewModel : ObservableObject
     { 
         public DeviceInfo Info { get; }
-        private readonly LogViewModel _log;
+        private readonly LogService _log;
 
         [ObservableProperty]
         private int buttonClickCount = 0;
@@ -26,7 +26,7 @@ namespace FProductionDashBoard
         // 新增一個事件，讓外部可以知道按鈕被點擊
         public event Action? OnButtonClicked;
 
-        public DeviceCardViewModel(DeviceInfo info, LogViewModel log) 
+        public DeviceCardViewModel(DeviceInfo info, LogService log) 
         { 
             Info = info;
             _log = log;

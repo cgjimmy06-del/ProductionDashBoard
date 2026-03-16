@@ -31,21 +31,23 @@ namespace FProductionDashBoard
 
         // 資源 DI注入
         private readonly SqlService _sqlService;
-        public LogViewModel _log { get; }
+        public LogService _log { get; }
+        public UserInfo _user { get; }
 
         private readonly PaletteHelper _paletteHelper = new PaletteHelper();
         private readonly Theme? _lightTheme;
-        private readonly Theme? _darkTheme;
+        //private readonly Theme? _darkTheme;
 
         public ICommand AddDeviceCommand { get; }
 
-        public MainViewModel(LogViewModel log, SqlService sqlservice) 
+        public MainViewModel(UserInfo user, LogService log, SqlService sqlservice) 
         {
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(
                 Assembly.GetExecutingAssembly().Location).FileVersion ?? "Unknown";
 
             // DI注入 Repository
+            _user = user;
             _log = log;
             _sqlService = sqlservice;
 

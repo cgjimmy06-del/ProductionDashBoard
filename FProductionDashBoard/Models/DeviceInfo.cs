@@ -13,13 +13,18 @@ namespace FProductionDashBoard
 {
     public partial class DeviceInfo : ObservableObject
     {
-        [ObservableProperty]
-        private int status;
-
         public required string DeviceID { get; set; } // 主鍵
         public required string Name { get; set; }
-        public required string IP { get; set; }
-        public string? Description { get; set; }
+        public string IP { get; set; } = "none";
+        public int Port { get; set; } = 0;
+        public string? Factory { get; set; }
+        public string? Building { get; set; }
+        public string? Floor { get; set; }
+
+
+        [ObservableProperty]
+        private int status;
+        public string? Description { get; set; } // 之後用來mapping做分類查詢 
 
         //public int WorkerID { get; set; }       // 外鍵
         //public WorkerInfo? Worker { get; set; }      // 導覽屬性
@@ -29,11 +34,15 @@ namespace FProductionDashBoard
     {
         public void Configure(EntityTypeBuilder<DeviceInfo> builder)
         {
-            builder.ToTable("MES_Device");
+            builder.ToTable("equipment");
             builder.HasKey(d => d.DeviceID);
-            builder.Property(d => d.DeviceID).HasColumnName("DeviceID");
-            builder.Property(d => d.Name).HasColumnName("Name");
-            builder.Property(d => d.IP).HasColumnName("IP");
+            builder.Property(d => d.DeviceID).HasColumnName("equipment_id");
+            builder.Property(d => d.Name).HasColumnName("name");
+            builder.Property(d => d.IP).HasColumnName("ip");
+            builder.Property(d => d.Port).HasColumnName("port");
+            builder.Property(d => d.Factory).HasColumnName("factory");
+            builder.Property(d => d.Building).HasColumnName("building");
+            builder.Property(d => d.Floor).HasColumnName("floor");
 
             // 忽略額外屬性
             builder.Ignore(d => d.Description);
