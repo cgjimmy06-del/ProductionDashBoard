@@ -20,7 +20,11 @@ namespace FProductionDashBoard
 
         public ObservableCollection<string> Servers { get; } =
         new ObservableCollection<string> { "FS", "GS", "VS" };
+        public ObservableCollection<string> Languages { get; } =
+        new ObservableCollection<string> { "Chinese", "English", "Vietnamese" };
 
+        [ObservableProperty]
+        private string selectedLanguage = "Chinese";
         [ObservableProperty]
         private string selectedServer = "FS";
         [ObservableProperty]
@@ -78,9 +82,6 @@ namespace FProductionDashBoard
                     OnLoginSuccess?.Invoke(SelectedServer, user);
                 }
                 else Errorinfo = "error: Check account or password!";
-
-
-
             });
         }
 

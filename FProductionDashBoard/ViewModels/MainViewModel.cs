@@ -19,6 +19,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace FProductionDashBoard
 {
@@ -34,11 +35,18 @@ namespace FProductionDashBoard
         public LogService _log { get; }
         public UserInfo _user { get; }
 
+        // 樣式主題
         private readonly PaletteHelper _paletteHelper = new PaletteHelper();
         private readonly Theme? _lightTheme;
         //private readonly Theme? _darkTheme;
 
+        // 介面邏輯
+        [ObservableProperty]
+        private bool isCollapsed = false; // 導覽列收合
+
+        // 註冊介面
         public ICommand AddDeviceCommand { get; }
+        public ICommand CollapseNavCommand { get; }
 
         public MainViewModel(UserInfo user, LogService log, SqlService sqlservice) 
         {
@@ -53,6 +61,7 @@ namespace FProductionDashBoard
 
             // 設定元件事件
             AddDeviceCommand = new RelayCommand(() => AddDevice());
+            CollapseNavCommand = new RelayCommand(() => { IsCollapsed = !IsCollapsed; });
 
             // 主題顏色設定
             _lightTheme = Theme.Create(BaseTheme.Light,
@@ -65,48 +74,38 @@ namespace FProductionDashBoard
 
         }
 
-        public void SaveDefault() // 可用在code-behind的closing
+        private void AddDevice()
         {
-            // 儲存參數
-            //Properties.Settings.Default.Save();
-
-            // 儲存集合
-            //DataStorageService.SaveDevices(Devices);
-        }
-
-
-        private async void AddDevice()
-        {
-            try
-            {
-                _log.AddLog($"連線狀態: {_sqlService.DeviceRepo.CheckConnection()}");
-
-                var devs = await _sqlService.DeviceRepo.GetAllAsync();
-                foreach (var dev in devs) { _log.AddLog($"已新增設備: {dev.Name}", LogLevel.Info); }
-            }
-            catch (SqlException ex)
-            {
-                Debug.WriteLine($"SQL 錯誤: {ex.Message}");
-            }
-            catch (TaskCanceledException)
-            {
-                Debug.WriteLine("查詢已超時");
-            }
-            //var vm = new AddDeviceViewModel();
-            //var window = new SubWindow1 { DataContext = vm };
-            //vm.OnConfirm += (info) =>
+            //try
             //{
-            //    var device = new DeviceCardViewModel(info, _log);
-            //    device.OnButtonClicked += UpdateStats; // 訂閱設備的點擊事件
+            //    _log.AddLog($"連線狀態: {_sqlService.DeviceRepo.CheckConnection()}");
 
-            //    Devices.Add(device);
-            //    UpdateStats();
-            //    window.Close();
+            //    var devs = await _sqlService.DeviceRepo.GetAllAsync();
+            //    foreach (var dev in devs) { _log.AddLog($"已新增設備: {dev.Name}", LogLevel.Info); }
+            //}
+            //catch (SqlException ex)
+            //{
+            //    Debug.WriteLine($"SQL 錯誤: {ex.Message}");
+            //}
+            //catch (TaskCanceledException)
+            //{
+            //    Debug.WriteLine("查詢已超時");
+            //}
+            var vm = new AddDeviceViewModel();
+            var window = new SubWindow1 { DataContext = vm };
+            vm.OnConfirm += (info) =>
+            {
+                var device = new DeviceCardViewModel(info, _log);
+                device.OnButtonClicked += UpdateStats; // 訂閱設備的點擊事件
 
-            //    _log.AddLog($"已新增設備: {info.Name}", LogLevel.Info);
-            //};
-            //vm.OnCancel += () => window.Close();
-            //window.ShowDialog();
+                Devices.Add(device);
+                UpdateStats();
+                window.Close();
+
+                _log.AddLog($"已新增設備: {info.Name}", LogLevel.Info);
+            };
+            vm.OnCancel += () => window.Close();
+            window.ShowDialog();
         }
         private void UpdateStats() 
         { 
@@ -114,6 +113,10 @@ namespace FProductionDashBoard
             // TotalButtonClicks = Devices.Sum(d => d.ButtonClickCount);
 
         }
+
+
+
+
     }
 
 

@@ -6,10 +6,16 @@
         xmlns:local="clr-namespace:FProductionDashBoard"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="{Binding AppVersion, StringFormat=PDB Login v{0}}" 
         Height="400" Width="300">
-    
+
     <StackPanel Margin="40, 10">
+        <TextBlock Text="Language：" Margin="5,5,5,0"/>
+        <ComboBox ItemsSource="{Binding Languages}"
+                  SelectedItem="{Binding SelectedLanguage}"
+                  Margin="5"/>
+        
         <TextBlock Text="Server：" Margin="5,5,5,0"/>
         <ComboBox ItemsSource="{Binding Servers}"
                   SelectedItem="{Binding SelectedServer}"
@@ -28,12 +34,12 @@
         <CheckBox Content="Remember me" Margin="5"
                   HorizontalAlignment="Center"
               IsChecked="{Binding RememberMe}" />
-        
+
         <Button Content="Login" Background="LightGray" Width="100"
                 Command="{Binding LoginCommand}"
                 CommandParameter="Normal"
                 IsDefault="true"/>
-        
+
         <Button Margin="5" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                 Command="{Binding LoginCommand}" 
                 CommandParameter="Visitor">
@@ -41,5 +47,5 @@
         </Button>
 
     </StackPanel>
-    
+
 </Window>

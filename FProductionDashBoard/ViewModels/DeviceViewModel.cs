@@ -15,9 +15,6 @@ namespace FProductionDashBoard
         public DeviceInfo Info { get; }
         private readonly LogService _log;
 
-        [ObservableProperty]
-        private int buttonClickCount = 0;
-
         public ICommand MaterialsChangeCommand { get; } 
         public ICommand FirstInspectionCommand { get; }
         public ICommand RoutineInspectionCommand { get; }
@@ -38,29 +35,28 @@ namespace FProductionDashBoard
         } 
         private void MaterialsChange() 
         { 
-            ButtonClickCount++;
             OnButtonClicked?.Invoke(); // 通知外部
 
-            _log.AddLog($"設備 {Info.Name} 物料已更換");
+            _log.AddLog($"設備 {Info.Name} 物料已更換", LogLevel.Error);
         } 
         private void FirstArticleInspection() 
         {
             Info.Status++;
             if (Info.Status > 2) Info.Status = -1;
 
-            _log.AddLog($"設備 {Info.Name} 首件已確認");
+            _log.AddLog($"設備 {Info.Name} 首件已確認", LogLevel.Warning);
         } 
         private void RoutineInspection()
         {
 
 
-            _log.AddLog($"設備 {Info.Name} 例行巡檢已完成，巡檢時段:");
+            _log.AddLog($"設備 {Info.Name} 例行巡檢已完成，巡檢時段:", LogLevel.Processing);
         }
         private void OperationChange()
         {
 
 
-            _log.AddLog($"設備 {Info.Name} 設備調適狀態更新:");
+            _log.AddLog($"設備 {Info.Name} 設備調適狀態更新:", LogLevel.Success);
         }
 
 

@@ -25,6 +25,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Slider.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TabControl.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml"/>
                 
                 <!-- 已改由 PaletteHelper 在程式碼裡設定顏色 -->
                 <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml"/>-->
@@ -49,6 +51,10 @@
             <SolidColorBrush x:Key="WarningColor" Color="Yellow"/>
             <SolidColorBrush x:Key="ErrorColor" Color="#ba1a1a"/>
             <SolidColorBrush x:Key="IdleColor" Color="#c4c6d0"/>
+
+            <SolidColorBrush x:Key="InfoColor" Color="black"/>
+            <SolidColorBrush x:Key="ProcessingColor" Color="Blue"/>
+            <SolidColorBrush x:Key="AlertColor" Color="#dbc66e"/>
 
             <!-- 全域套用元件設定 -->
             <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">

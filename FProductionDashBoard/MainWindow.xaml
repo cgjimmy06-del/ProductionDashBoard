@@ -4,83 +4,225 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FProductionDashBoard"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Style="{StaticResource MaterialDesignWindow}"
-        Title="{Binding AppVersion, StringFormat=ProductionDashBoard v{0}}" 
-        Height="450" Width="800" Icon="appIcon.ico">
+        Title="{Binding AppVersion, StringFormat=ProductionDashBoard -- V{0}}" 
+        Height="600" Width="1000" Icon="appIcon.ico"
+        d:Height="450" d:Width="800">
 
     <Window.Resources>
-        <ResourceDictionary Source="Themes/CardStyles.xaml"/>
+        <ResourceDictionary>
+            <!-- 外部資源 -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/CardStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <!-- 本地資源 -->
+            <Storyboard x:Key="CollapseNav">
+                <DoubleAnimation Storyboard.TargetProperty="Width"
+                             To="50" Duration="0:0:0.3" />
+            </Storyboard>
+            <Storyboard x:Key="ExpandNav">
+                <DoubleAnimation Storyboard.TargetProperty="Width"
+                             To="200" Duration="0:0:0.3" />
+            </Storyboard>
+        </ResourceDictionary>
     </Window.Resources>
 
-    <Grid Margin="20">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="2*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <!-- 上方資訊 -->
-            <RowDefinition Height="Auto"/>
-            <!-- 按鈕 -->
-            <RowDefinition Height="*"/>
-            <!-- 清單 -->
-        </Grid.RowDefinitions>
+    <DockPanel LastChildFill="True">
+        <!-- Menu 區域 -->
+        <Menu DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignPaper}">
+            <MenuItem Header="_檔案">
+                <MenuItem.Icon>
+                    <materialDesign:PackIcon Kind="File" Width="20" Height="20"/>
+                </MenuItem.Icon>
+                <MenuItem Header="開啟" InputGestureText="Ctrl+O"/>
+                <MenuItem Header="儲存" InputGestureText="Ctrl+S"/>
+                <Separator/>
+                <MenuItem Header="結束"/>
+            </MenuItem>
 
-        <!--總計資訊-->
-        <StackPanel Grid.ColumnSpan="2" Grid.Row="0" Margin="0,0,0,10">
-            <TextBlock Text="{Binding TotalDevices, StringFormat=設備總數: {0}}" 
+            <MenuItem Header="_編輯">
+                <MenuItem.Icon>
+                    <materialDesign:PackIcon Kind="Edit" Width="20" Height="20"/>
+                </MenuItem.Icon>
+                <MenuItem Header="剪下"/>
+                <MenuItem Header="複製"/>
+                <MenuItem Header="貼上"/>
+            </MenuItem>
+        </Menu>
+        
+        <!-- ToolBar 區域 -->
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button ToolTip="新增">
+                    <materialDesign:PackIcon Kind="Add" Width="20" Height="20"/>
+                </Button>
+                <Button ToolTip="開啟">
+                    <materialDesign:PackIcon Kind="FolderOpen" Width="20" Height="20"/>
+                </Button>
+                <Button ToolTip="儲存">
+                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
+                </Button>
+                <Separator/>
+                <Button ToolTip="剪下">
+                    <materialDesign:PackIcon Kind="ContentCut" Width="20" Height="20"/>
+                </Button>
+                <Button ToolTip="複製">
+                    <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20"/>
+                </Button>
+                <Button ToolTip="貼上">
+                    <materialDesign:PackIcon Kind="ContentPaste" Width="20" Height="20"/>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+
+        <!-- StatusBar 區域 -->
+        <StatusBar DockPanel.Dock="Bottom"
+                   Background="{DynamicResource MaterialDesignPaper}"
+                   Foreground="{DynamicResource MaterialDesignBody}">
+            <StatusBarItem HorizontalAlignment="Stretch">
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0"
+                    Orientation="Horizontal" Margin="4,0">
+                        <TextBlock Text="下載中... 45%"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1"
+                    Orientation="Horizontal" Margin="8,0">
+                        <ProgressBar Style="{StaticResource MaterialDesignLinearProgressBar}"
+                            Width="120" Value="45" Height="6"
+                             VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem Content="UTF-8"/>
+        </StatusBar>
+
+        <!-- 主區域(中) -->
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <!-- 導覽列 -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- 主內容 -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 導覽列 -->
+            <!-- !!!無法正常觸發收合!!! -->
+            <Border Grid.Column="0" Margin="0" Width="200">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsCollapsed}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Width"
+                                                 To="50" Duration="0:0:0.3"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsCollapsed}" Value="False">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Width"
+                                                 To="200" Duration="0:0:0.3"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                
+                <StackPanel Margin="0">
+                    
+                    <Button Content="☰"
+                    Command="{Binding CollapseNavCommand}"
+                    Width="40" Height="40" HorizontalAlignment="Left"/>
+
+                    <TextBlock Text="專案1:aaaa" 
                    FontSize="16" Margin="0,0,0,5"/>
-            <TextBlock Text="{Binding TotalButtonClicks, StringFormat=按鈕總點擊次數: {0}}" 
+                    <TextBlock Text="專案1:aaaa"
                    FontSize="16"/>
-        </StackPanel>
-        <!-- 新增設備按鈕 -->
-        <Button Content="新增設備" Command="{Binding AddDeviceCommand}" 
-                Width="100" Height="30" Grid.Row="1" Grid.Column="0"
-                HorizontalAlignment="Right" Margin="0,0,0,10"/>
+                    <Button Content="新增設備" Command="{Binding AddDeviceCommand}" 
+                            Width="100" Height="30"
+                            HorizontalAlignment="Right" Margin="0,0,0,10"/>
+                </StackPanel>
+            </Border>
+            
+            <!-- 儀錶板主顯示區 -->
+            <Grid Grid.Column="1" Margin="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="150" />
+                </Grid.RowDefinitions>
 
-        <!-- 左邊：設備卡片清單 -->
-        <ScrollViewer Grid.Row="2" Grid.Column="0" VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding Devices}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <local:DeviceCard Style="{StaticResource MainCardStyle}"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+                <!-- 主內容UI -->
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Devices}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <local:DeviceCard Style="{StaticResource MainCardStyle}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
 
-        <!-- 右邊：即時狀態窗 -->
-        <Border Grid.Row="2" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="10" Padding="5">
-            <ListBox x:Name="LogListBox" ItemsSource="{Binding _log.Logs}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock>
-                            <Run Text="{Binding Timestamp, StringFormat={}{0:HH:mm:ss}}"/>
-                            <Run Text=" - "/>
-                            <Run Text="{Binding Message}"/>
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Level}" Value="Info">
-                                            <Setter Property="Foreground" Value="Black"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Level}" Value="Warning">
-                                            <Setter Property="Foreground" Value="DarkOrange"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Level}" Value="Error">
-                                            <Setter Property="Foreground" Value="Red"/>
-                                            <Setter Property="FontWeight" Value="Bold"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Border>
+                <!-- GridSplitter -->
+                <GridSplitter Grid.Row="1"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Center"
+                          Height="5"
+                          ResizeDirection="Rows"
+                          ResizeBehavior="PreviousAndNext"
+                          Background="Gray"/>
 
-    </Grid>
+                <!-- 即時狀態窗 -->
+                <Border Grid.Row="2" BorderBrush="Gray" 
+                    BorderThickness="1" Margin="5" Padding="5">
+                    <ListBox x:Name="LogListBox" ItemsSource="{Binding _log.Logs}">
+                        <!-- 行高/內距/文字大小/行距 -->
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Height" Value="24" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="FontSize" Value="12" />
+                                <Setter Property="Margin" Value="0" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
 
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="5">
+                                    <!-- 時間StringFormat={}[{0:HH:mm:ss}] -->
+                                    <TextBlock Text="{Binding Timestamp, StringFormat='[{0:HH:mm:ss}]'}" 
+                                Foreground="{Binding Color}" Margin="0,0,5,0"/>
+                                    <!-- 圖示 (PackIconKind enum 綁定) -->
+                                    <materialDesign:PackIcon Kind="{Binding Icon}" 
+                                         Foreground="{Binding Color}" 
+                                         Width="15" Height="15" Margin="0,0,5,0"/>
+                                    <!-- 訊息 -->
+                                    <TextBlock Text="{Binding Message}" 
+                                Foreground="{Binding Color}" Margin="0,0,5,0"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+            </Grid>
+        </Grid>
+    </DockPanel>
 </Window>

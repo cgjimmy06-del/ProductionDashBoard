@@ -22,10 +22,6 @@ namespace FProductionDashBoard
         {
             InitializeComponent();
 
-            // 已在 App.xaml.cs透過DI注入
-            //var vm = new MainViewModel();
-            //DataContext = vm;
-
         }
     }
 }
