@@ -18,6 +18,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Themes/CardStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            
             <!-- 本地資源 -->
             <Storyboard x:Key="CollapseNav">
                 <DoubleAnimation Storyboard.TargetProperty="Width"
@@ -82,29 +83,31 @@
         <StatusBar DockPanel.Dock="Bottom"
                    Background="{DynamicResource MaterialDesignPaper}"
                    Foreground="{DynamicResource MaterialDesignBody}">
-            <StatusBarItem HorizontalAlignment="Stretch">
-                <Grid HorizontalAlignment="Stretch">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0"
-                    Orientation="Horizontal" Margin="4,0">
-                        <TextBlock Text="下載中... 45%"
-                               VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="1"
-                    Orientation="Horizontal" Margin="8,0">
-                        <ProgressBar Style="{StaticResource MaterialDesignLinearProgressBar}"
+            <StatusBarItem>
+                <ProgressBar Style="{StaticResource MaterialDesignLinearProgressBar}"
                             Width="120" Value="45" Height="6"
                              VerticalAlignment="Center"/>
-                    </StackPanel>
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="下載中... 45%"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" d:Text="welcome 使用者"
+                        Text="{Binding _user.Name, StringFormat=welcome {0}}" 
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Grid.Column="2" d:Text="xxxx/xx/xx xx:xx"
+                        Text="{Binding CurrentTime}"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
                 </Grid>
             </StatusBarItem>
-            <Separator/>
-            <StatusBarItem Content="UTF-8"/>
         </StatusBar>
 
         <!-- 主區域(中) -->
@@ -117,41 +120,14 @@
             </Grid.ColumnDefinitions>
 
             <!-- 導覽列 -->
-            <!-- !!!無法正常觸發收合!!! -->
-            <Border Grid.Column="0" Margin="0" Width="200">
-                <Border.Style>
-                    <Style TargetType="Border">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsCollapsed}" Value="True">
-                                <DataTrigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Width"
-                                                 To="50" Duration="0:0:0.3"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.EnterActions>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsCollapsed}" Value="False">
-                                <DataTrigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Width"
-                                                 To="200" Duration="0:0:0.3"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.EnterActions>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-                
+            <Border Grid.Column="0" Margin="0" d:Width="200"
+                    Width="{Binding IsCollapsed, Converter={StaticResource CollapseWidthConverter}}">
                 <StackPanel Margin="0">
-                    
+                    <!-- 收合按鈕 -->
                     <Button Content="☰"
                     Command="{Binding CollapseNavCommand}"
                     Width="40" Height="40" HorizontalAlignment="Left"/>
-
+                    <!-- 導覽內容 -->
                     <TextBlock Text="專案1:aaaa" 
                    FontSize="16" Margin="0,0,0,5"/>
                     <TextBlock Text="專案1:aaaa"
@@ -170,17 +146,21 @@
                     <RowDefinition Height="150" />
                 </Grid.RowDefinitions>
 
-                <!-- 主內容UI -->
-                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-                    <ItemsControl ItemsSource="{Binding Devices}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <local:DeviceCard Style="{StaticResource MainCardStyle}"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-
+                <!-- 主內容UI (預設2欄儀表板卡片) ScrollViewer/WrapPanel -->
+                <Border Grid.Row="0">
+                    <Grid>
+                        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding Devices}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <local:DeviceCard Style="{StaticResource MainCardStyle}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+                
                 <!-- GridSplitter -->
                 <GridSplitter Grid.Row="1"
                           HorizontalAlignment="Stretch"
@@ -189,7 +169,6 @@
                           ResizeDirection="Rows"
                           ResizeBehavior="PreviousAndNext"
                           Background="Gray"/>
-
                 <!-- 即時狀態窗 -->
                 <Border Grid.Row="2" BorderBrush="Gray" 
                     BorderThickness="1" Margin="5" Padding="5">

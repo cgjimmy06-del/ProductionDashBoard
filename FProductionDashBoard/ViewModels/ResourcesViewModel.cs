@@ -219,6 +219,20 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) 
         { throw new NotImplementedException(); } 
     }
+    public class CollapseWidthConverter : IValueConverter
+    {
+        public double CollapsedWidth { get; set; } = 50;
+        public double ExpandedWidth { get; set; } = 200;
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isCollapsed = (bool)value;
+            return isCollapsed ? CollapsedWidth : ExpandedWidth;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        { throw new NotImplementedException(); }
+    }
+
 
     #endregion
 

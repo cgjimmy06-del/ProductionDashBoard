@@ -15,6 +15,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\social-connections256.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SplashScreen Include="Resources\social-connections256.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </SplashScreen>
+  </ItemGroup>
+
+  <ItemGroup>
 	  <Resource Include="appIcon.ico" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Dapper" Version="2.1.72" />

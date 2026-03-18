@@ -22,15 +22,17 @@ namespace FProductionDashBoard
             base.OnStartup(e);
             ShutdownMode = ShutdownMode.OnExplicitShutdown; //「明確呼叫 Shutdown() 才結束」
 
-            // 登入畫面
-            var loginWindow = new LoginWindow();
-            if (loginWindow.ShowDialog() != true)
-            {
-                Shutdown();
-                return;
-            }
-            ShutdownMode = ShutdownMode.OnMainWindowClose; //「被設定為 MainWindow 之介面關閉則結束」
+            // 建立 SplashScreen，false 手動控制關閉
+            SplashScreen splash = new SplashScreen("Resources/social-connections256.png");
+            splash.Show(false);
 
+            // 登入畫面 + 取得資訊
+            var loginWindow = new LoginWindow();
+            splash.Close(TimeSpan.FromSeconds(0.5)); // login載入完成後關閉
+            if (loginWindow.ShowDialog() != true)
+            { Shutdown(); return; }
+
+            // 後續加入語言
             string selectedServer = loginWindow.SelectedServer;
             var user = loginWindow.User;
 
@@ -66,7 +68,8 @@ namespace FProductionDashBoard
 
             _serviceProvider = services.BuildServiceProvider();
 
-            // 取代在 App.xaml 中的 StartupUri = "MainWindow.xaml
+            // 取代在 App.xaml 中的 StartupUri
+            ShutdownMode = ShutdownMode.OnMainWindowClose; //「被設定為 MainWindow 之介面關閉則結束」
             var mainWindow = new MainWindow
             { DataContext = _serviceProvider.GetRequiredService<MainViewModel>() };
             MainWindow = mainWindow; // 設定 Application 的 MainWindow

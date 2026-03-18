@@ -20,6 +20,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace FProductionDashBoard
 {
@@ -43,6 +44,8 @@ namespace FProductionDashBoard
         // 介面邏輯
         [ObservableProperty]
         private bool isCollapsed = false; // 導覽列收合
+        [ObservableProperty]
+        private string currentTime = ""; // 系統時間
 
         // 註冊介面
         public ICommand AddDeviceCommand { get; }
@@ -53,6 +56,13 @@ namespace FProductionDashBoard
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(
                 Assembly.GetExecutingAssembly().Location).FileVersion ?? "Unknown";
+
+            // 建立 DispatcherTimer 每秒更新一次時間
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += (s, e) =>
+            { CurrentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm"); };
+            timer.Start();
 
             // DI注入 Repository
             _user = user;
