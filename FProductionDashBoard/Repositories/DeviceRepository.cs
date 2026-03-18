@@ -11,11 +11,11 @@ using static FProductionDashBoard.Repositories.IDeviceRepository;
 
 namespace FProductionDashBoard.Repositories
 {
-    public class DeviceRepository : Repository<DeviceInfo, InfoDbContext>, IDeviceRepository
+    public class DeviceRepository : Repository<DeviceInfo, MesDbContext>, IDeviceRepository
     {
-        private readonly InfoDbContext _context;
+        private readonly MesDbContext _context;
 
-        public DeviceRepository(InfoDbContext context) : base(context)
+        public DeviceRepository(MesDbContext context) : base(context)
         {
             _context = context;
         }
@@ -24,7 +24,7 @@ namespace FProductionDashBoard.Repositories
         {
             using (var connection = new SqlConnection(CurrectConnStr))
             {
-                string sql = @" SELECT * FROM [MESInformation].[dbo].[MES_Device]";
+                string sql = @" SELECT * FROM [dashboard_db].[dbo].[equipment]";
 
                 return await connection.QueryAsync<DeviceDto>(sql, commandTimeout: 5);
             }

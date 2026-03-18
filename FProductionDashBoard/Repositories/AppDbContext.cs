@@ -9,16 +9,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FProductionDashBoard.Repositories
 {
-    public class InfoDbContext : DbContext
+    public class MesDbContext : DbContext
     {
         public DbSet<DeviceInfo> Devices { get; set; }
-        public DbSet<WorkerInfo> Workers { get; set; }
+        public DbSet<UserInfo> Workers { get; set; }
 
-        public InfoDbContext(DbContextOptions<InfoDbContext> options) : base(options) { }
+        public MesDbContext(DbContextOptions<MesDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(InfoDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(MesDbContext).Assembly);
             //modelBuilder.ApplyConfiguration(new DeviceInfoConfiguration());
 
             base.OnModelCreating(modelBuilder);

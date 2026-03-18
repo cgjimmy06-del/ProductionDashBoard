@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using FProductionDashBoard.Properties;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,14 +24,19 @@ namespace FProductionDashBoard
         public string Message { get; set; } = string.Empty;
         public LogLevel Level { get; set; } = LogLevel.Info;
         public DateTime Timestamp { get; set; } = DateTime.Now;
+
+        public object Color { get; set; } = "Black";
+        public PackIconKind Icon { get; set; }
     }
     public enum LogLevel
     {
         Info,
         Warning,
-        Error
+        Error,
+        Success,
+        Processing
     }
-    public class LogViewModel : ObservableObject
+    public class LogService : ObservableObject
     {
         public ObservableCollection<LogEntry> Logs { get; } = new();
         public ObservableCollection<string> AvailableLogFiles { get; } = new();
@@ -41,8 +48,7 @@ namespace FProductionDashBoard
             string date = DateTime.Now.ToString("yyyy-MM-dd");
             return Path.Combine(_logDirectory, $"logs_{date}.txt");
         }
-
-        public LogViewModel()
+        public LogService()
         {
             if (!Directory.Exists(_logDirectory))
             { Directory.CreateDirectory(_logDirectory); }
@@ -53,11 +59,33 @@ namespace FProductionDashBoard
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
+                var resources = Application.Current.Resources;
+                var tocolor = level switch
+                {
+                    LogLevel.Success => (Brush)resources["SuccessColor"],
+                    LogLevel.Warning => (Brush)resources["AlertColor"],
+                    LogLevel.Error => (Brush)resources["ErrorColor"],
+                    LogLevel.Info => (Brush)resources["InfoColor"],
+                    LogLevel.Processing => (Brush)resources["ProcessingColor"],
+                    _ => (Brush)resources["IdleColor"]
+                };
+                var toicon = level switch
+                {
+                    LogLevel.Success => PackIconKind.CheckCircle,
+                    LogLevel.Warning => PackIconKind.AlertOutline,
+                    LogLevel.Error => PackIconKind.Error,
+                    LogLevel.Info => PackIconKind.Notebook,
+                    LogLevel.Processing => PackIconKind.ProgressClock,
+                    _ => PackIconKind.AlertOutline
+                };
+
                 var entry = new LogEntry
                 {
                     Message = message,
                     Level = level,
-                    Timestamp = DateTime.Now
+                    Timestamp = DateTime.Now,
+                    Color = tocolor,
+                    Icon = toicon
                 };
                 Logs.Add(entry);
 
@@ -170,7 +198,6 @@ namespace FProductionDashBoard
 
             // 從 App.xaml 資源取顏色
             var resources = Application.Current.Resources;
-
             return status switch
             {
                 0 => (Brush)resources["SuccessColor"],
@@ -192,6 +219,20 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) 
         { throw new NotImplementedException(); } 
     }
+    public class CollapseWidthConverter : IValueConverter
+    {
+        public double CollapsedWidth { get; set; } = 50;
+        public double ExpandedWidth { get; set; } = 200;
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isCollapsed = (bool)value;
+            return isCollapsed ? CollapsedWidth : ExpandedWidth;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        { throw new NotImplementedException(); }
+    }
+
 
     #endregion
 

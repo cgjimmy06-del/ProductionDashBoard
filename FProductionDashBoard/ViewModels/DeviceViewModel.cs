@@ -13,10 +13,7 @@ namespace FProductionDashBoard
     public partial class DeviceCardViewModel : ObservableObject
     { 
         public DeviceInfo Info { get; }
-        private readonly LogViewModel _log;
-
-        [ObservableProperty]
-        private int buttonClickCount = 0;
+        private readonly LogService _log;
 
         public ICommand MaterialsChangeCommand { get; } 
         public ICommand FirstInspectionCommand { get; }
@@ -26,7 +23,7 @@ namespace FProductionDashBoard
         // 新增一個事件，讓外部可以知道按鈕被點擊
         public event Action? OnButtonClicked;
 
-        public DeviceCardViewModel(DeviceInfo info, LogViewModel log) 
+        public DeviceCardViewModel(DeviceInfo info, LogService log) 
         { 
             Info = info;
             _log = log;
@@ -38,29 +35,28 @@ namespace FProductionDashBoard
         } 
         private void MaterialsChange() 
         { 
-            ButtonClickCount++;
             OnButtonClicked?.Invoke(); // 通知外部
 
-            _log.AddLog($"設備 {Info.Name} 物料已更換");
+            _log.AddLog($"設備 {Info.Name} 物料已更換", LogLevel.Error);
         } 
         private void FirstArticleInspection() 
         {
             Info.Status++;
             if (Info.Status > 2) Info.Status = -1;
 
-            _log.AddLog($"設備 {Info.Name} 首件已確認");
+            _log.AddLog($"設備 {Info.Name} 首件已確認", LogLevel.Warning);
         } 
         private void RoutineInspection()
         {
 
 
-            _log.AddLog($"設備 {Info.Name} 例行巡檢已完成，巡檢時段:");
+            _log.AddLog($"設備 {Info.Name} 例行巡檢已完成，巡檢時段:", LogLevel.Processing);
         }
         private void OperationChange()
         {
 
 
-            _log.AddLog($"設備 {Info.Name} 設備調適狀態更新:");
+            _log.AddLog($"設備 {Info.Name} 設備調適狀態更新:", LogLevel.Success);
         }
 
 

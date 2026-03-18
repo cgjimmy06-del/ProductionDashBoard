@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace FProductionDashBoard.Repositories
 {
-    public interface IWorkerRepository : IRepository<WorkerInfo, InfoDbContext>
+    public interface IUserRepository : IRepository<UserInfo, MesDbContext>
     {
 
 
