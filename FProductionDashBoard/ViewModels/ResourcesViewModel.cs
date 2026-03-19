@@ -4,6 +4,8 @@ using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -12,6 +14,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -179,7 +182,7 @@ namespace FProductionDashBoard
 
     #endregion
 
-    #region -- Converter --
+    #region -- Converter/Behavior --
     public class BoolToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -232,7 +235,48 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { throw new NotImplementedException(); }
     }
+    public static class ListBoxBehavior
+    {
+        public static readonly DependencyProperty AutoScrollToEndProperty =
+            DependencyProperty.RegisterAttached(
+                "AutoScrollToEnd",
+                typeof(bool),
+                typeof(ListBoxBehavior),
+                new PropertyMetadata(false, OnAutoScrollToEndChanged));
 
+        public static bool GetAutoScrollToEnd(DependencyObject obj)
+            => (bool)obj.GetValue(AutoScrollToEndProperty);
+        public static void SetAutoScrollToEnd(DependencyObject obj, bool value)
+            => obj.SetValue(AutoScrollToEndProperty, value);
+
+        private static void OnAutoScrollToEndChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is ListBox listBox && (bool)e.NewValue)
+            {
+                // 確保在 Loaded / DataContextChanged 時重新檢查 ItemsSource
+                listBox.Loaded += (s, ev) => TryAttach(listBox);
+                listBox.DataContextChanged += (s, ev) => TryAttach(listBox);
+            }
+        }
+        private static void TryAttach(ListBox listBox)
+        {
+            if (listBox.ItemsSource is INotifyCollectionChanged collection)
+            {
+                collection.CollectionChanged += (s, args) =>
+                {
+                    if (args.Action == NotifyCollectionChangedAction.Add)
+                    {
+                        var lastItem = listBox.Items[listBox.Items.Count - 1];
+                        listBox.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            listBox.ScrollIntoView(lastItem);
+                            listBox.SelectedIndex = listBox.Items.Count - 1; // 可選擇是否需要反白
+                        }));
+                    }
+                };
+            }
+        }
+    }
 
     #endregion
 

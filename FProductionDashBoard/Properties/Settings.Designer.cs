@@ -58,5 +58,17 @@ namespace FProductionDashBoard.Properties {
                 this["RememberMe"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CultureCode {
+            get {
+                return ((string)(this["CultureCode"]));
+            }
+            set {
+                this["CultureCode"] = value;
+            }
+        }
     }
 }

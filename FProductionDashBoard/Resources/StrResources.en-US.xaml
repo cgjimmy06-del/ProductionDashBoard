@@ -1,0 +1,18 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    
+    <!--#region login window -->
+    <sys:String x:Key="LanguageText">Language</sys:String>
+    <sys:String x:Key="ServerText">Server</sys:String>
+    <sys:String x:Key="AccountText">Account (Staff Number)</sys:String>
+    <sys:String x:Key="PasswordText">Password</sys:String>
+    <sys:String x:Key="RequiredText">Required</sys:String>
+    <sys:String x:Key="RememberMeCheck">Remember Me</sys:String>
+    <sys:String x:Key="LoginButton">Log In</sys:String>
+    <sys:String x:Key="VisitorButton">Visitor</sys:String>
+
+    <!--#endregion-->
+    
+    
+</ResourceDictionary>
