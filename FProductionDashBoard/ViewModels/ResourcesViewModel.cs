@@ -4,6 +4,8 @@ using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -12,6 +14,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -62,12 +65,12 @@ namespace FProductionDashBoard
                 var resources = Application.Current.Resources;
                 var tocolor = level switch
                 {
-                    LogLevel.Success => (Brush)resources["SuccessColor"],
-                    LogLevel.Warning => (Brush)resources["AlertColor"],
-                    LogLevel.Error => (Brush)resources["ErrorColor"],
-                    LogLevel.Info => (Brush)resources["InfoColor"],
-                    LogLevel.Processing => (Brush)resources["ProcessingColor"],
-                    _ => (Brush)resources["IdleColor"]
+                    LogLevel.Success => (Brush)resources["SuccessBrush"],
+                    LogLevel.Warning => (Brush)resources["AlertBrush"],
+                    LogLevel.Error => (Brush)resources["ErrorBrush"],
+                    LogLevel.Info => (Brush)resources["InfoBrush"],
+                    LogLevel.Processing => (Brush)resources["ProcessingBrush"],
+                    _ => (Brush)resources["IdleBrush"]
                 };
                 var toicon = level switch
                 {
@@ -179,13 +182,13 @@ namespace FProductionDashBoard
 
     #endregion
 
-    #region -- Converter --
+    #region -- Converter/Behavior --
     public class BoolToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool isOn = (bool)value;
-            return isOn ? Application.Current.Resources["SuccessColor"] : Application.Current.Resources["ErrorColor"];
+            return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["ErrorBrush"];
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { throw new NotImplementedException(); }
@@ -200,10 +203,10 @@ namespace FProductionDashBoard
             var resources = Application.Current.Resources;
             return status switch
             {
-                0 => (Brush)resources["SuccessColor"],
-                1 => (Brush)resources["WarningColor"],
-                2 => (Brush)resources["ErrorColor"],
-                _ => (Brush)resources["IdleColor"]
+                0 => (Brush)resources["SuccessBrush"],
+                1 => (Brush)resources["WarningBrush"],
+                2 => (Brush)resources["ErrorBrush"],
+                _ => (Brush)resources["IdleBrush"]
             };
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -232,7 +235,48 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { throw new NotImplementedException(); }
     }
+    public static class ListBoxBehavior
+    {
+        public static readonly DependencyProperty AutoScrollToEndProperty =
+            DependencyProperty.RegisterAttached(
+                "AutoScrollToEnd",
+                typeof(bool),
+                typeof(ListBoxBehavior),
+                new PropertyMetadata(false, OnAutoScrollToEndChanged));
 
+        public static bool GetAutoScrollToEnd(DependencyObject obj)
+            => (bool)obj.GetValue(AutoScrollToEndProperty);
+        public static void SetAutoScrollToEnd(DependencyObject obj, bool value)
+            => obj.SetValue(AutoScrollToEndProperty, value);
+
+        private static void OnAutoScrollToEndChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is ListBox listBox && (bool)e.NewValue)
+            {
+                // 確保在 Loaded / DataContextChanged 時重新檢查 ItemsSource
+                listBox.Loaded += (s, ev) => TryAttach(listBox);
+                listBox.DataContextChanged += (s, ev) => TryAttach(listBox);
+            }
+        }
+        private static void TryAttach(ListBox listBox)
+        {
+            if (listBox.ItemsSource is INotifyCollectionChanged collection)
+            {
+                collection.CollectionChanged += (s, args) =>
+                {
+                    if (args.Action == NotifyCollectionChangedAction.Add)
+                    {
+                        var lastItem = listBox.Items[listBox.Items.Count - 1];
+                        listBox.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            listBox.ScrollIntoView(lastItem);
+                            listBox.SelectedIndex = listBox.Items.Count - 1; // 可選擇是否需要反白
+                        }));
+                    }
+                };
+            }
+        }
+    }
 
     #endregion
 

@@ -27,12 +27,8 @@ namespace FProductionDashBoard
             InitializeComponent();
 
             var vm = new LoginViewModel();
-            if (Properties.Settings.Default.RememberMe)
-            {
-                vm.UserId = Properties.Settings.Default.Account;
-                vm.SelectedServer = Properties.Settings.Default.Server;
-                vm.RememberMe = true;
-            }
+            vm.loadDefault(); //載入預設
+            // 登入成功後事件
             vm.OnLoginSuccess = (server, user) =>
             {
                 SelectedServer = server;

@@ -1,0 +1,28 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--#region 基礎色 -->
+    <Color x:Key="SuccessColor">Green</Color>
+    <Color x:Key="WarningColor">Yellow</Color>
+    <Color x:Key="ErrorColor">#ba1a1a</Color>
+    <Color x:Key="IdleColor">#c4c6d0</Color>
+
+    <Color x:Key="InfoColor">black</Color>
+    <Color x:Key="ProcessingColor">Blue</Color>
+    <Color x:Key="AlertColor">#dbc66e</Color>
+    <!--#endregion-->
+    
+    <!--#region 合成筆刷 -->
+    <!-- 機台狀態 -->
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
+    <SolidColorBrush x:Key="IdleBrush" Color="{StaticResource IdleColor}"/>
+    <!-- 狀態視窗資訊 -->
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}"/>
+    <SolidColorBrush x:Key="ProcessingBrush" Color="{StaticResource ProcessingColor}"/>
+    <SolidColorBrush x:Key="AlertBrush" Color="{StaticResource AlertColor}"/>
+    <!--#endregion-->
+    
+
+</ResourceDictionary>

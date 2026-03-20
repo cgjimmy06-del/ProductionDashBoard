@@ -44,9 +44,13 @@ namespace FProductionDashBoard.Repositories
             using var conn = new SqlConnection(connStr);
 
             try {
-                conn.Open();
-                return true;
-            } catch { return false; }
+                conn.Open(); return true;
+            } catch (SqlException sqlex) {
+                Debug.WriteLine($"SQL error: {sqlex.Message}"); return false; throw;
+            } catch (TaskCanceledException) {
+                Debug.WriteLine("Task Canceled"); return false; throw;
+            } catch(Exception normalex) { 
+                Debug.WriteLine($"error: {normalex.Message}"); return false; throw; }
         }
 
         public static UserInfo? validateUser(string serverKey, string userid, string password)
@@ -57,10 +61,10 @@ namespace FProductionDashBoard.Repositories
                 .Build();
 
             var connStr = config.GetConnectionString($"{serverKey}_MESDashboard");
-            using var conn = new SqlConnection(connStr);
+            var sqlStr = "SELECT user_id, name, permission FROM employee WHERE user_id=@Userid AND password=@Password";
             
-            var sql = "SELECT user_id, name, permission FROM employee WHERE user_id=@Userid AND password=@Password";
-            return conn.QueryFirstOrDefault<UserInfo>(sql, new { Userid = userid, Password = password });
+            using var conn = new SqlConnection(connStr);
+            return conn.QueryFirstOrDefault<UserInfo>(sqlStr, new { Userid = userid, Password = password });
         }
     }
 

@@ -23,7 +23,7 @@ namespace FProductionDashBoard
             ShutdownMode = ShutdownMode.OnExplicitShutdown; //「明確呼叫 Shutdown() 才結束」
 
             // 建立 SplashScreen，false 手動控制關閉
-            SplashScreen splash = new SplashScreen("Resources/social-connections256.png");
+            SplashScreen splash = new SplashScreen((string)Application.Current.Resources["LoginLogoPath"]);
             splash.Show(false);
 
             // 登入畫面 + 取得資訊

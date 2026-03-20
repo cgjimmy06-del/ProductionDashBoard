@@ -8,11 +8,7 @@
         <ResourceDictionary>
             <!-- 套件匯入 -->
             <ResourceDictionary.MergedDictionaries>
-                <!-- Material Design 主題 (Light / Dark 可切換) -->
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml"/> 
-
-                <!-- 常用控制項樣式 -->
+                <!--#region Material Design 套件資源 -->
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Window.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml"/>
@@ -27,38 +23,30 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TabControl.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PasswordBox.xaml"/>
                 
                 <!-- 已改由 PaletteHelper 在程式碼裡設定顏色 -->
                 <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml"/>-->
                 <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml"/>-->
-                
-                <!-- 自訂主題樣式及設定 -->
+                <!--#endregion-->
+
+                <!-- 自訂樣式/設定資源 -->
+                <ResourceDictionary Source="/Themes/Typography.xaml"/>
+                <ResourceDictionary Source="/Themes/Spacing.xaml"/>
+                <ResourceDictionary Source="/Themes/Theme.Light.xaml"/>
                 <!--<ResourceDictionary Source="/Themes/CardStyles.xaml"/>-->
+
+                <!-- 語言資源 (預設預言) -->
+                <ResourceDictionary Source="/Resources/StrResources.zh-TW.xaml"/>
 
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- 自訂 Converter -->
+            <!--#region 自訂 Converter -->
             <local:BoolToColorConverter x:Key="BoolToColorConverter"/>
             <local:IntToColorConverter x:Key="IntToColorConverter"/>
             <local:StringNullOrEmptyToVisibilityConverter x:Key="PlaceholderConverter"/>
             <local:CollapseWidthConverter x:Key="CollapseWidthConverter"/>
-
-            <!-- 狀態顏色資源，引用 MaterialDesign 主題色 -->
-            <SolidColorBrush x:Key="SuccessColor" Color="Green"/>
-            <SolidColorBrush x:Key="RunningColor" Color="Green"/>
-            <SolidColorBrush x:Key="WarningColor" Color="Yellow"/>
-            <SolidColorBrush x:Key="ErrorColor" Color="#ba1a1a"/>
-            <SolidColorBrush x:Key="IdleColor" Color="#c4c6d0"/>
-
-            <SolidColorBrush x:Key="InfoColor" Color="black"/>
-            <SolidColorBrush x:Key="ProcessingColor" Color="Blue"/>
-            <SolidColorBrush x:Key="AlertColor" Color="#dbc66e"/>
-
-            <!-- 全域套用元件設定 -->
-            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
-                <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
-            </Style>
-
+            
         </ResourceDictionary>
         
     </Application.Resources>

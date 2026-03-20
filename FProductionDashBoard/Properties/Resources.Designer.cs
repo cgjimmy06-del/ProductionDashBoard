@@ -59,5 +59,32 @@ namespace FProductionDashBoard.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   查詢類似 Invalid account or password! 的當地語系化字串。
+        /// </summary>
+        internal static string LogInAccountError {
+            get {
+                return ResourceManager.GetString("LogInAccountError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Please check the connection! 的當地語系化字串。
+        /// </summary>
+        internal static string LogInConnectionError {
+            get {
+                return ResourceManager.GetString("LogInConnectionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Please fill out completely! 的當地語系化字串。
+        /// </summary>
+        internal static string LogInFillOutError {
+            get {
+                return ResourceManager.GetString("LogInFillOutError", resourceCulture);
+            }
+        }
     }
 }
