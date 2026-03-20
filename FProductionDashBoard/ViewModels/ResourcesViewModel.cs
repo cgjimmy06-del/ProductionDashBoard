@@ -65,12 +65,12 @@ namespace FProductionDashBoard
                 var resources = Application.Current.Resources;
                 var tocolor = level switch
                 {
-                    LogLevel.Success => (Brush)resources["SuccessColor"],
-                    LogLevel.Warning => (Brush)resources["AlertColor"],
-                    LogLevel.Error => (Brush)resources["ErrorColor"],
-                    LogLevel.Info => (Brush)resources["InfoColor"],
-                    LogLevel.Processing => (Brush)resources["ProcessingColor"],
-                    _ => (Brush)resources["IdleColor"]
+                    LogLevel.Success => (Brush)resources["SuccessBrush"],
+                    LogLevel.Warning => (Brush)resources["AlertBrush"],
+                    LogLevel.Error => (Brush)resources["ErrorBrush"],
+                    LogLevel.Info => (Brush)resources["InfoBrush"],
+                    LogLevel.Processing => (Brush)resources["ProcessingBrush"],
+                    _ => (Brush)resources["IdleBrush"]
                 };
                 var toicon = level switch
                 {
@@ -188,7 +188,7 @@ namespace FProductionDashBoard
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool isOn = (bool)value;
-            return isOn ? Application.Current.Resources["SuccessColor"] : Application.Current.Resources["ErrorColor"];
+            return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["ErrorBrush"];
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { throw new NotImplementedException(); }
@@ -203,10 +203,10 @@ namespace FProductionDashBoard
             var resources = Application.Current.Resources;
             return status switch
             {
-                0 => (Brush)resources["SuccessColor"],
-                1 => (Brush)resources["WarningColor"],
-                2 => (Brush)resources["ErrorColor"],
-                _ => (Brush)resources["IdleColor"]
+                0 => (Brush)resources["SuccessBrush"],
+                1 => (Brush)resources["WarningBrush"],
+                2 => (Brush)resources["ErrorBrush"],
+                _ => (Brush)resources["IdleBrush"]
             };
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

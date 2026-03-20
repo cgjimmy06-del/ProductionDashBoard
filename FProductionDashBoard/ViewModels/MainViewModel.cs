@@ -36,11 +36,6 @@ namespace FProductionDashBoard
         public LogService _log { get; }
         public UserInfo _user { get; }
 
-        // 樣式主題
-        private readonly PaletteHelper _paletteHelper = new PaletteHelper();
-        private readonly Theme? _lightTheme;
-        //private readonly Theme? _darkTheme;
-
         // 介面邏輯
         [ObservableProperty]
         private bool isCollapsed = false; // 導覽列收合
@@ -72,16 +67,6 @@ namespace FProductionDashBoard
             // 設定元件事件
             AddDeviceCommand = new RelayCommand(() => AddDevice());
             CollapseNavCommand = new RelayCommand(() => { IsCollapsed = !IsCollapsed; });
-
-            // 主題顏色設定
-            _lightTheme = Theme.Create(BaseTheme.Light,
-               SwatchHelper.Lookup[MaterialDesignColor.Indigo],
-               SwatchHelper.Lookup[MaterialDesignColor.Lime]);
-            //_lightTheme.SetBaseTheme(BaseTheme.Light); // 設定基本主題
-            //_lightTheme.SetPrimaryColor(SwatchHelper.Lookup[MaterialDesignColor.Red]); // 設定主色系
-            //_lightTheme.SetSecondaryColor(SwatchHelper.Lookup[MaterialDesignColor.Green]); // 設定次色系
-            _paletteHelper.SetTheme(_lightTheme);
-
         }
 
         private void AddDevice()

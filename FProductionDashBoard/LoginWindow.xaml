@@ -44,16 +44,16 @@
                      materialDesign:HintAssist.IsFloating="False"
                      materialDesign:PasswordBoxAssist.Password="{Binding Password, Mode=TwoWay}"/>
         <TextBlock Text="{Binding Errorinfo}" d:Text="Error" Margin="5,0,0,15"
-                   Foreground="{DynamicResource ErrorColor}"/>
+                   Foreground="{DynamicResource ErrorBrush}"/>
 
         <CheckBox Content="{DynamicResource RememberMeCheck}" Margin="5"
                   HorizontalAlignment="Center"
               IsChecked="{Binding RememberMe}" />
 
-        <Button Content="{DynamicResource LoginButton}" Background="LightGray" Width="100"
+        <Button Content="{DynamicResource LoginButton}" 
+                Background="LightGray" Foreground="Black" Width="100"
                 Command="{Binding LoginCommand}"
-                CommandParameter="Normal"
-                IsDefault="true"/>
+                CommandParameter="Normal" IsDefault="true"/>
 
         <Button Margin="5" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                 Command="{Binding LoginCommand}" 
