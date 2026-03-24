@@ -21,7 +21,6 @@ namespace FProductionDashBoard
         public string? Building { get; set; }
         public string? Floor { get; set; }
 
-
         [ObservableProperty]
         private int status;
         public string? Description { get; set; } // 之後用來mapping做分類查詢 

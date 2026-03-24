@@ -13,6 +13,9 @@
     <!--#endregion-->
     
     <!--#region 合成筆刷 -->
+    <!-- 主題色(主色/次色) -->
+    
+    
     <!-- 機台狀態 -->
     <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
     <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
@@ -22,6 +25,8 @@
     <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}"/>
     <SolidColorBrush x:Key="ProcessingBrush" Color="{StaticResource ProcessingColor}"/>
     <SolidColorBrush x:Key="AlertBrush" Color="{StaticResource AlertColor}"/>
+    <!-- 按鈕操作狀態 -->
+    
     <!--#endregion-->
     
 
