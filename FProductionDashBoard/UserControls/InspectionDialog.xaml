@@ -18,12 +18,12 @@
 
         <StackPanel Margin="20, 5">
             <!-- 第一層 -->
-            <RadioButton Content="無異常"
+            <RadioButton Content="{DynamicResource NormalRadioButton}"
                      GroupName="Level1" Name="RadioBtnSuccess"
                      IsChecked="{Binding InspectionCheck, Mode=TwoWay, 
                 Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Success}"
                      Style="{StaticResource MaterialDesignRadioButton}"/>
-            <RadioButton Content="異常回報"
+            <RadioButton Content="{DynamicResource IssueRadioButton}"
                      GroupName="Level1" Name="RadioBtnFailure"
                          IsChecked="{Binding InspectionCheck, Mode=TwoWay, 
                 Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Failure}"

@@ -114,19 +114,19 @@
 
                 <!-- 按鈕列 -->
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <Button Content="物耗" Width="75" Margin="0, 5, 5, 5"
+                    <Button Content="{DynamicResource MetarialChangeButton}" Width="75" Margin="0, 5, 5, 5"
                             Command="{Binding MaterialsChangeCommand}"/>
 
-                    <Button Content="首件" Width="75" Margin="5"
+                    <Button Content="{DynamicResource FirstInspectionButton}" Width="75" Margin="5"
                             Command="{Binding FirstInspectionCommand}"
                             Background="{Binding InspectionStatuses.FirstInspectionStatus, 
                                     Converter={StaticResource BoolToColorConverter}}"
                             Foreground="White"/>
 
-                    <Button Content="巡檢" Width="75" Margin="5"
+                    <Button Content="{DynamicResource RoutineInspectionButton}" Width="75" Margin="5"
                                 Command="{Binding RoutineInspectionCommand}"/>
 
-                    <Button Content="調試" Width="75" Margin="5"
+                    <Button Content="{DynamicResource OperationButton}" Width="75" Margin="5"
                             Command="{Binding OperationCommand}"/>
                 </StackPanel>
 

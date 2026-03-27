@@ -25,10 +25,10 @@
 
         <!-- 確認/取消 -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="確認" Margin="50, 15"
+            <Button Content="{DynamicResource ConfirmButton}" Margin="50, 15"
                     Command="{Binding ConfirmCommand}">
             </Button>
-            <Button Content="取消" Margin="50, 15"
+            <Button Content="{DynamicResource CancelButton}" Margin="50, 15"
                     Command="{Binding CancelCommand}"/>
         </StackPanel>
     </Grid>

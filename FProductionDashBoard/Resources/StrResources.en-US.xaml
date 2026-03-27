@@ -11,8 +11,20 @@
     <sys:String x:Key="RememberMeCheck">Remember Me</sys:String>
     <sys:String x:Key="LoginButton">Log In</sys:String>
     <sys:String x:Key="VisitorButton">Visitor</sys:String>
-
     <!--#endregion-->
-    
-    
+    <!--#region dialog window -->
+    <sys:String x:Key="ConfirmButton">Confirm</sys:String>
+    <sys:String x:Key="CancelButton">Cancel</sys:String>
+    <!--#endregion-->
+    <!--#region inspection dialog -->
+    <sys:String x:Key="NormalRadioButton">Pass</sys:String>
+    <sys:String x:Key="IssueRadioButton">Report Issue</sys:String>
+    <!--#endregion-->
+    <!--#region device card -->
+    <sys:String x:Key="MetarialChangeButton">Metarial</sys:String>
+    <sys:String x:Key="FirstInspectionButton">First Ins.</sys:String>
+    <sys:String x:Key="RoutineInspectionButton">Routine Ins.</sys:String>
+    <sys:String x:Key="OperationButton">Operation</sys:String>
+    <!--#endregion-->
+
 </ResourceDictionary>

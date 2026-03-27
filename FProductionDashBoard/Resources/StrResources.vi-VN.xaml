@@ -11,7 +11,20 @@
     <sys:String x:Key="RememberMeCheck">Ghi nhớ</sys:String>
     <sys:String x:Key="LoginButton">Đăng nhập</sys:String>
     <sys:String x:Key="VisitorButton">Khách</sys:String>
-
+    <!--#endregion-->
+    <!--#region dialog window -->
+    <sys:String x:Key="ConfirmButton">Xác nhận</sys:String>
+    <sys:String x:Key="CancelButton">Hủy</sys:String>
+    <!--#endregion-->
+    <!--#region inspection dialog -->
+    <sys:String x:Key="NormalRadioButton">Bình thường</sys:String>
+    <sys:String x:Key="IssueRadioButton">Báo lỗi</sys:String>
+    <!--#endregion-->
+    <!--#region device card -->
+    <sys:String x:Key="MetarialChangeButton">Vật liệu</sys:String>
+    <sys:String x:Key="FirstInspectionButton">Kiểm tra đầu</sys:String>
+    <sys:String x:Key="RoutineInspectionButton">Tuần tra</sys:String>
+    <sys:String x:Key="OperationButton">Điều chỉnh</sys:String>
     <!--#endregion-->
 
 
