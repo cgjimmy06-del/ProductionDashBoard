@@ -1,13 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Properties;
+using FProductionDashBoard.UserControls;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -29,7 +33,7 @@ namespace FProductionDashBoard
 
     public partial class InspectionService : ObservableObject
     {
-        private readonly DeviceInfo _deviceInfo;
+        private readonly DeviceCardViewModel currentDevice;
 
         [ObservableProperty]
         private bool routineCycleEnable = false; // 是否開啟巡檢功能
@@ -37,16 +41,16 @@ namespace FProductionDashBoard
         private int startTime = 10; // 開始巡檢時間
         private int routineTimes = 5; // 總時段
         private int intervalTime = 1; // 巡檢間隔
-        private int CurrentRoutine = 0; // 第幾個時段
+        public int CurrentRoutine = 0; // 第幾個時段
 
         public event Action<string, LogLevel>? OnLogEvent;
 
         [ObservableProperty]
         private bool firstInspectionStatus = false; // 首件狀態
         public ObservableCollection<int> RoutineStatus { get; } = new ObservableCollection<int>(); // 各時段狀態
-        public InspectionService(DeviceInfo deviceInfo, int startTime, int routineTimes, int intervalTime)
+        public InspectionService(DeviceCardViewModel deviceInfo, int startTime, int routineTimes, int intervalTime)
         {
-            this._deviceInfo = deviceInfo;
+            currentDevice = deviceInfo;
             setTimesStartTime(startTime, routineTimes, intervalTime);
         }
 
@@ -62,35 +66,42 @@ namespace FProductionDashBoard
             for (int i = 0; i < this.routineTimes; i++)
                 RoutineStatus.Add((int)InspectionStatus.Idle);
         }
-        // 首件更新
+        // 首件更新 (未加入SQL)
         public void updateFirstInspection(bool status, string description = "")
         {
-            if (FirstInspectionStatus == status) return; // 狀態已更新則不執行
-
             if (status)
             {
-                // SQL
+                if (FirstInspectionStatus) return;
 
-                OnLogEvent?.Invoke($"{_deviceInfo.Name}-完成首件!", LogLevel.Success);
+                // SQL 機台 人員 產品 有無異常 描述 日 時 完整時間
+                OnLogEvent?.Invoke($"{currentDevice.Info.Name}-完成首件!", LogLevel.Success);
             }
             else
-                OnLogEvent?.Invoke($"{_deviceInfo.Name}-產品更新，重新執行首件!", LogLevel.Warning);
-
+            {
+                if (FirstInspectionStatus)
+                    OnLogEvent?.Invoke($"{currentDevice.Info.Name}-產品更新，重新執行首件!", LogLevel.Warning);
+                else
+                {
+                    // SQL 機台 人員 產品 有無異常 描述 日 時 完整時間
+                    OnLogEvent?.Invoke($"{currentDevice.Info.Name}-首件異常，請依流程通報!", LogLevel.Success);
+                }
+            }
             FirstInspectionStatus = status;
         }
-        //巡檢更新
+        //巡檢更新 (未加入SQL)
         public void updateRoutineStatus(int currentStatus, string description = "")
         {
             if (!RoutineCycleEnable) return;
             if (RoutineStatus[CurrentRoutine] != (int)InspectionStatus.Current) return; // 狀態已更新則不執行
 
-            // SQL 0則OK；2則NG且須加上描述
+            // SQL 機台 人員 時段 有無異常 描述 日 時 完整時間
+            // 0則OK；2則NG且須加上描述
 
             RoutineStatus[CurrentRoutine] = currentStatus;
 
             string okngresult = currentStatus == (int)InspectionStatus.Done ? "OK" : "NG";
             LogLevel levelresult = currentStatus == (int)InspectionStatus.Done ? LogLevel.Success : LogLevel.Error;
-            OnLogEvent?.Invoke($"{_deviceInfo.Name}-{startTime + CurrentRoutine * intervalTime}點巡檢完成-" +
+            OnLogEvent?.Invoke($"{currentDevice.Info.Name}-{startTime + CurrentRoutine * intervalTime}點巡檢完成-" +
                 $"檢驗結果:{okngresult}-{description}", levelresult);
         }
         // 巡檢區段檢查 (by time)
@@ -104,7 +115,7 @@ namespace FProductionDashBoard
             {
                 for (int i = 0; i < this.routineTimes; i++)
                     RoutineStatus[i] = (int)InspectionStatus.Idle;
-                OnLogEvent?.Invoke($"{_deviceInfo.Name}-巡檢提示燈號更新!", LogLevel.Processing);
+                OnLogEvent?.Invoke($"{currentDevice.Info.Name}-巡檢提示燈號更新!", LogLevel.Processing);
             }
 
             if (currenthour < startTime) return; // 未到巡檢時段
@@ -113,7 +124,7 @@ namespace FProductionDashBoard
             if (currenthour == startTime && RoutineStatus[0] == (int)InspectionStatus.Idle) // 開啟第一區巡檢
             {
                 RoutineStatus[0] = (int)InspectionStatus.Current;
-                OnLogEvent?.Invoke($"{_deviceInfo.Name}-開始巡檢!", LogLevel.Processing);
+                OnLogEvent?.Invoke($"{currentDevice.Info.Name}-開始巡檢!", LogLevel.Processing);
             }
             if (currenthour - (startTime + CurrentRoutine * intervalTime) >= intervalTime) // 經過下一區則 1. 是否未巡檢 2. 移至下一區
             {
@@ -121,11 +132,11 @@ namespace FProductionDashBoard
 
                 CurrentRoutine++;
                 if (CurrentRoutine >= routineTimes) // 已完成巡檢
-                { 
+                {
                     CurrentRoutine = 0;
-                    OnLogEvent?.Invoke($"{_deviceInfo.Name}-巡檢時段結束", LogLevel.Success);
-                    return; 
-                } 
+                    OnLogEvent?.Invoke($"{currentDevice.Info.Name}-巡檢時段結束", LogLevel.Success);
+                    return;
+                }
                 RoutineStatus[CurrentRoutine] = (int)InspectionStatus.Current;
             }
         }
@@ -138,7 +149,7 @@ namespace FProductionDashBoard
         private readonly LogService _log;
 
         [ObservableProperty]
-        private UserInfo? currentUser;
+        private UserInfo currentUser = new() { ID = "none", Name = "none" };
         [ObservableProperty]
         private ProductInfo currentProduct = new() { ModelCode = "Unknown", TypeCode = "123" };
 
@@ -147,49 +158,67 @@ namespace FProductionDashBoard
         private int currentAction = (int)UserAction.Producing;
 
         // 介面邏輯
-        public ICommand MaterialsChangeCommand { get; } 
+        public ICommand MaterialsChangeCommand { get; }
         public ICommand FirstInspectionCommand { get; }
         public ICommand RoutineInspectionCommand { get; }
         public ICommand OperationCommand { get; }
 
-        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log) 
-        { 
+        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log)
+        {
             Info = info;
             _log = log;
             CurrentUser = currentuser;
 
-            InspectionStatuses = new InspectionService(Info, 9, 4, 2);
+            InspectionStatuses = new InspectionService(this, 9, 4, 2);
             InspectionStatuses.OnLogEvent += _log.AddLog;
 
             MaterialsChangeCommand = new RelayCommand(MaterialsChange);
             FirstInspectionCommand = new RelayCommand(FirstArticleInspection);
             RoutineInspectionCommand = new RelayCommand(RoutineInspection);
             OperationCommand = new RelayCommand(OperationChange);
-            
+
             // 巡檢用計時
             checkTimer = new DispatcherTimer();
             checkTimer.Interval = TimeSpan.FromSeconds(1);
             checkTimer.Tick += (s, e) => { InspectionStatuses.checkRoutineTime(); };
             checkTimer.Start();
-        } 
-        private void MaterialsChange() 
+        }
+        private void MaterialsChange()
         {
             Info.Status++;
             if (Info.Status > 2) Info.Status = -1;
 
             _log.AddLog($"設備 {Info.Name} 物料已更換", LogLevel.Success);
-        } 
-        private void FirstArticleInspection() 
+        }
+        private void FirstArticleInspection()
         {
-            InspectionStatuses.updateFirstInspection(true);
-        } 
+            var vm = new InspectionDialogViewModel("首件", this);
+            var uc = new InspectionDialog { DataContext = vm };
+            var window = new DialogWindow(uc, vm);
+            window.ShowDialog();
+
+            if (vm.IsConfirmed)
+            {
+                var result = vm.Result ?? new() { IsNormal = false };
+                InspectionStatuses.updateFirstInspection(result.IsNormal, result.Description);
+            }
+        }
         private void RoutineInspection()
         {
-            InspectionStatuses.updateRoutineStatus((int)InspectionStatus.Done, "巡檢完成");
+            var vm = new InspectionDialogViewModel("巡檢", this);
+            var uc = new InspectionDialog { DataContext = vm };
+            var window = new DialogWindow(uc, vm);
+            window.ShowDialog();
+
+            if (vm.IsConfirmed)
+            {
+                var result = vm.Result ?? new InspectionResult() { IsNormal = false };
+                int statusresult = result.IsNormal ? 0 : 2;
+                InspectionStatuses.updateRoutineStatus(statusresult, result.Description);
+            }
         }
         private void OperationChange()
         {
-
 
             _log.AddLog($"設備 {Info.Name} 設備調適狀態更新:", LogLevel.Processing);
         }
@@ -199,30 +228,30 @@ namespace FProductionDashBoard
 
     public partial class AddDeviceViewModel : ObservableObject
     {
-        [ObservableProperty] 
-        private string name = "Default"; 
-        [ObservableProperty] 
+        [ObservableProperty]
+        private string name = "Default";
+        [ObservableProperty]
         private string description = string.Empty;
 
         public IRelayCommand ConfirmCommand { get; }
         public IRelayCommand CancelCommand { get; }
 
-        public event Action<DeviceInfo>? OnConfirm; 
-        public event Action? OnCancel; 
-        public AddDeviceViewModel() 
+        public event Action<DeviceInfo>? OnConfirm;
+        public event Action? OnCancel;
+        public AddDeviceViewModel()
         {
-            ConfirmCommand = new RelayCommand(Confirm); 
+            ConfirmCommand = new RelayCommand(Confirm);
             CancelCommand = new RelayCommand(Cancel);
-        } 
-        private void Confirm() 
-        { 
-            var info = new DeviceInfo { DeviceID = "", IP = "", Name = Name, Description = Description }; 
-            OnConfirm?.Invoke(info); 
-        } 
-        private void Cancel() 
-        { 
-            OnCancel?.Invoke(); 
-        } 
+        }
+        private void Confirm()
+        {
+            var info = new DeviceInfo { DeviceID = "", IP = "", Name = Name, Description = Description };
+            OnConfirm?.Invoke(info);
+        }
+        private void Cancel()
+        {
+            OnCancel?.Invoke();
+        }
 
     }
 

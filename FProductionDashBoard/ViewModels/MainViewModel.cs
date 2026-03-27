@@ -70,8 +70,8 @@ namespace FProductionDashBoard
             _sqlService = sqlservice;
 
             // 設定元件事件
-            AddDeviceCommand = new RelayCommand(() => AddDevice());
             CollapseNavCommand = new RelayCommand(() => { IsCollapsed = !IsCollapsed; });
+            AddDeviceCommand = new RelayCommand(() => AddDevice());
         }
 
         private void AddDevice()

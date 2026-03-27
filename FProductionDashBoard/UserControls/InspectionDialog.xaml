@@ -1,0 +1,86 @@
+﻿<UserControl x:Class="FProductionDashBoard.UserControls.InspectionDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:localcontrols="clr-namespace:FProductionDashBoard.UserControls"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" Height="Auto" Width="450"
+             d:DesignHeight="400" d:DesignWidth="400" d:Background="White">
+
+    <StackPanel Margin="20">
+        <TextBlock FontSize="16" Margin="0,0,0,10" d:Text="檢驗資訊"
+                   Text="{Binding InspectionMode, StringFormat=檢驗資訊: {0}}"/>
+        <TextBlock Margin="0,0,0,10" d:Text="機台"
+            Text="{Binding CurrentDevice, StringFormat=機台: {0}}"/>
+        <TextBlock Margin="0,0,0,10" d:Text="操作人員"
+            Text="{Binding CurrentUser, StringFormat=操作人員: {0}}" />
+        <TextBlock Margin="0,0,0,10" d:Text="產品"
+            Text="{Binding CurrentProduct}" />
+
+        <StackPanel Margin="20, 5">
+            <!-- 第一層 -->
+            <RadioButton Content="無異常"
+                     GroupName="Level1" Name="RadioBtnSuccess"
+                     IsChecked="{Binding InspectionCheck, Mode=TwoWay, 
+                Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Success}"
+                     Style="{StaticResource MaterialDesignRadioButton}"/>
+            <RadioButton Content="異常回報"
+                     GroupName="Level1" Name="RadioBtnFailure"
+                         IsChecked="{Binding InspectionCheck, Mode=TwoWay, 
+                Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Failure}"
+                     Style="{StaticResource MaterialDesignRadioButton}"/>
+
+            <!-- 第二層 (只有 B 選取時才可用) -->
+            <StackPanel Margin="30,0,0,0">
+                <!--<TextBlock Text="第二層選項 (僅 B 可選)" Margin="0,0,0,10"/>-->
+                <ComboBox Name="ComboBoxFailureReason" HorizontalAlignment="Left"
+                      Width="200" SelectedIndex="0"
+                      IsEnabled="{Binding IsChecked, ElementName=RadioBtnFailure}"
+                      Style="{StaticResource MaterialDesignComboBox}"
+                          ItemsSource="{Binding ErrorString}"
+                          SelectedValue="{Binding SelectionDescription, Mode=TwoWay}">
+                    <!--<ComboBoxItem Content="B1 錯誤1"/>
+                    <ComboBoxItem Content="B2 錯誤2"/>
+                    <ComboBoxItem Content="B3 錯誤3"/>
+                    <ComboBoxItem Content="B4 其他"/>-->
+                </ComboBox>
+
+                <!-- B4 其他: TextBox -->
+                <TextBox Width="200" Padding="2" Margin="0,5" HorizontalAlignment="Left"
+                         Text="{Binding OtherDescription}"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Visibility="{Binding IsOtherSelected, 
+                    Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <!--<TextBox.Style>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedItem.Content, 
+                                    ElementName=ComboBoxFailureReason}" 
+                                             Value="{Binding OtherDescriptionForType}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>-->
+                </TextBox>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- 確認/取消 -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="確認" Margin="50, 15"
+                    Command="{Binding ConfirmCommand}">
+                <!--<Button.CommandParameter>
+                    <local:InspectionResult 
+                        ItemCode="{Binding Text, ElementName=ItemCodeBox}"
+                        InspectorName="{Binding Text, ElementName=InspectorBox}"
+                        Notes="{Binding Text, ElementName=NotesBox}"/>
+                </Button.CommandParameter>-->
+            </Button>
+            <Button Content="取消" Margin="50, 15"
+                    Command="{Binding CancelCommand}"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

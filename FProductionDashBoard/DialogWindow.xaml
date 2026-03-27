@@ -1,0 +1,15 @@
+﻿<Window x:Class="FProductionDashBoard.DialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FProductionDashBoard"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        Title="DialogWindow" SizeToContent="WidthAndHeight"
+        d:DesignHeight="500" d:DesignWidth="500">
+    <Grid>
+        <!-- 預留一個 ContentControl 來載入不同的 UserControl -->
+        <ContentControl x:Name="DialogContent"/>
+    </Grid>
+</Window>

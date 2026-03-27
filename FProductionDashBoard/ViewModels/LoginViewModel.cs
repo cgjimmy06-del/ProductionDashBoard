@@ -78,7 +78,7 @@ namespace FProductionDashBoard
                 { }
                 else if (param == "Visitor") // 訪客登入 (後續刷卡擴充)
                 {
-                    UserId = "F0000000";
+                    UserId = "visitor";
                     Password = "0000";
                 }
                 logInEvent(param);

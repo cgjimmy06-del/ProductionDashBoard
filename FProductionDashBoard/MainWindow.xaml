@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FProductionDashBoard"
+        xmlns:localcontrols="clr-namespace:FProductionDashBoard.UserControls"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
@@ -153,7 +154,7 @@
                             <ItemsControl ItemsSource="{Binding Devices}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <local:DeviceCard Style="{StaticResource MainCardStyle}"/>
+                                        <localcontrols:DeviceCard Style="{StaticResource MainCardStyle}"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
