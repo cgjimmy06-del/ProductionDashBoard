@@ -174,7 +174,7 @@
                 <Border Grid.Row="2" BorderBrush="Gray" 
                     BorderThickness="1" Margin="5" Padding="5">
                     <ListBox x:Name="LogListBox" ItemsSource="{Binding _log.Logs}"
-                             local:ListBoxBehavior.AutoScrollToEnd="{Binding autoScrollEnabled}">
+                             local:ListBoxBehavior.AutoScrollToEnd="{Binding AutoScrollEnabled}">
                         <!-- 行高/內距/文字大小/行距 -->
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
@@ -184,7 +184,6 @@
                                 <Setter Property="Margin" Value="0" />
                             </Style>
                         </ListBox.ItemContainerStyle>
-
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Margin="5">

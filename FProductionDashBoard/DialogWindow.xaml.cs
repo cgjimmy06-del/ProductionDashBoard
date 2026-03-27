@@ -20,13 +20,14 @@ namespace FProductionDashBoard
     /// </summary>
     public partial class DialogWindow : Window
     {
-        public DialogWindow(UserControl content, object viewmodel)
+        public DialogWindow(object viewmodel, UserControl? content = null)
         {
             InitializeComponent();
             Owner = Application.Current.MainWindow;
-            DialogContent.Content = content;
-            DataContext = viewmodel;
 
+            DialogContent.Content = content;
+
+            DataContext = viewmodel;
             if (DataContext is ICloseable closeable) 
             { closeable.RequestClose += () => this.Close(); }
         }

@@ -8,9 +8,7 @@
              mc:Ignorable="d" Height="Auto" Width="450"
              d:DesignHeight="400" d:DesignWidth="400" d:Background="White">
 
-    <StackPanel Margin="20">
-        <TextBlock FontSize="16" Margin="0,0,0,10" d:Text="檢驗資訊"
-                   Text="{Binding InspectionMode, StringFormat=檢驗資訊: {0}}"/>
+    <StackPanel Margin="20, 5">
         <TextBlock Margin="0,0,0,10" d:Text="機台"
             Text="{Binding CurrentDevice, StringFormat=機台: {0}}"/>
         <TextBlock Margin="0,0,0,10" d:Text="操作人員"
@@ -52,35 +50,8 @@
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Visibility="{Binding IsOtherSelected, 
                     Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <!--<TextBox.Style>
-                        <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
-                            <Setter Property="Visibility" Value="Hidden"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedItem.Content, 
-                                    ElementName=ComboBoxFailureReason}" 
-                                             Value="{Binding OtherDescriptionForType}">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBox.Style>-->
                 </TextBox>
             </StackPanel>
-        </StackPanel>
-
-        <!-- 確認/取消 -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="確認" Margin="50, 15"
-                    Command="{Binding ConfirmCommand}">
-                <!--<Button.CommandParameter>
-                    <local:InspectionResult 
-                        ItemCode="{Binding Text, ElementName=ItemCodeBox}"
-                        InspectorName="{Binding Text, ElementName=InspectorBox}"
-                        Notes="{Binding Text, ElementName=NotesBox}"/>
-                </Button.CommandParameter>-->
-            </Button>
-            <Button Content="取消" Margin="50, 15"
-                    Command="{Binding CancelCommand}"/>
         </StackPanel>
     </StackPanel>
 </UserControl>

@@ -15,8 +15,11 @@ namespace FProductionDashBoard
     {
         event Action RequestClose;
     }
-    public class DialogBaseViewModel<TResult> : ObservableObject, ICloseable
+    public partial class DialogBaseViewModel<TResult> : ObservableObject, ICloseable
     {
+        [ObservableProperty]
+        public string? dialogInfoString;
+
         public bool IsConfirmed { get; protected set; }
 
         public ICommand ConfirmCommand { get; protected set; }
@@ -28,8 +31,10 @@ namespace FProductionDashBoard
         
         public TResult? Result { get; protected set; }
 
-        public DialogBaseViewModel()
+        public DialogBaseViewModel(string dialogstring)
         {
+            DialogInfoString = dialogstring;
+
             ConfirmCommand = new RelayCommand(() => OnConfirm());
             CancelCommand = new RelayCommand(() => OnCancel());
         }
