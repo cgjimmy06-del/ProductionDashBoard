@@ -15,20 +15,24 @@
             <!-- 主體內容 -->
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" FontSize="16" Margin="10" HorizontalAlignment="Center"
-                   d:Text="視窗訊息"
-                   Text="{Binding DialogInfoString}"/>
+                   d:Text="視窗訊息" Text="{Binding DialogInfoString}"/>
         
         <!-- 預留一個 ContentControl 來載入不同的 UserControl -->
         <ContentControl Grid.Row="1" x:Name="DialogContent"/>
 
+        <!-- 錯誤訊息 -->
+        <TextBlock Grid.Row="2" Margin="2" HorizontalAlignment="Center"
+                   d:Text="視窗訊息" Text="{Binding DialogErrorString}"
+                   Foreground="Red"/>
         <!-- 確認/取消 -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="{DynamicResource ConfirmButton}" Margin="50, 15"
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="{DynamicResource ConfirmButton}" Margin="50, 10"
                     Command="{Binding ConfirmCommand}">
             </Button>
-            <Button Content="{DynamicResource CancelButton}" Margin="50, 15"
+            <Button Content="{DynamicResource CancelButton}" Margin="50, 10"
                     Command="{Binding CancelCommand}"/>
         </StackPanel>
     </Grid>

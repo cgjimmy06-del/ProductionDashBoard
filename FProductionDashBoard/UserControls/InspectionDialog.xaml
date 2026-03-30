@@ -31,12 +31,11 @@
 
             <!-- 第二層 (只有 B 選取時才可用) -->
             <StackPanel Margin="30,0,0,0">
-                <!--<TextBlock Text="第二層選項 (僅 B 可選)" Margin="0,0,0,10"/>-->
                 <ComboBox Name="ComboBoxFailureReason" HorizontalAlignment="Left"
                       Width="200" SelectedIndex="0"
                       IsEnabled="{Binding IsChecked, ElementName=RadioBtnFailure}"
                       Style="{StaticResource MaterialDesignComboBox}"
-                          ItemsSource="{Binding ErrorString}"
+                          ItemsSource="{Binding ErrorStrings}"
                           SelectedValue="{Binding SelectionDescription, Mode=TwoWay}">
                     <!--<ComboBoxItem Content="B1 錯誤1"/>
                     <ComboBoxItem Content="B2 錯誤2"/>

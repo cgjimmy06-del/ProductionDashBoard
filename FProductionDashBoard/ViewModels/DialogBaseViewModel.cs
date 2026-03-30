@@ -19,6 +19,8 @@ namespace FProductionDashBoard
     {
         [ObservableProperty]
         public string? dialogInfoString;
+        [ObservableProperty]
+        public string? dialogErrorString;
 
         public bool IsConfirmed { get; protected set; }
 

@@ -67,9 +67,17 @@ namespace FProductionDashBoard
         }
         private void MaterialsChange()
         {
-            
+            var vm = new MaterialDialogViewModel("物料更換", this);
+            var uc = new MaterialsDialog { DataContext = vm };
+            var window = new DialogWindow(vm, uc);
+            window.ShowDialog();
 
-            _log.AddLog($"設備 {Info.Name} 物料已更換", LogLevel.Success);
+            if (vm.IsConfirmed)
+            {
+                var result = vm.Result ?? new MaterialResult() { Selections = Array.Empty<MaterialInfo>() };
+                // SQL
+                _log.AddLog($"設備 {Info.Name} 物料更換數量: {result.Selections.Length}", LogLevel.Success);
+            }
         }
         private void FirstArticleInspection()
         {
@@ -81,7 +89,7 @@ namespace FProductionDashBoard
             if (vm.IsConfirmed)
             {
                 var result = vm.Result ?? new() { IsNormal = false };
-                InspectionStatuses.updateFirstInspection(result.IsNormal, result.Description);
+                InspectionStatuses.updateFirstInspection(result.IsNormal, result.Description); // SQL
             }
         }
         private void RoutineInspection()
@@ -95,7 +103,7 @@ namespace FProductionDashBoard
             {
                 var result = vm.Result ?? new InspectionResult() { IsNormal = false };
                 int statusresult = result.IsNormal ? 0 : 2;
-                InspectionStatuses.updateRoutineStatus(statusresult, result.Description);
+                InspectionStatuses.updateRoutineStatus(statusresult, result.Description); // SQL
             }
         }
         private void OperationChange()

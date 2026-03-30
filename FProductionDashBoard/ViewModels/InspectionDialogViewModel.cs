@@ -30,12 +30,12 @@ namespace FProductionDashBoard
     public partial class InspectionDialogViewModel : DialogBaseViewModel<InspectionResult>
     {
         [ObservableProperty]
-        public string? currentDevice;
+        private string? currentDevice;
         [ObservableProperty]
-        public string? currentProduct;
+        private string? currentProduct;
         [ObservableProperty]
-        public string? currentUser;
-        public ObservableCollection<string> ErrorString { get; } =
+        private string? currentUser;
+        public ObservableCollection<string> ErrorStrings { get; } =
         new ObservableCollection<string> { "error1", "error2", "error3", "other" };
         [ObservableProperty]
         private InspectionRadioCheck inspectionCheck = InspectionRadioCheck.Success;
@@ -43,7 +43,7 @@ namespace FProductionDashBoard
         private string selectionDescription;
         [ObservableProperty]
         private string otherDescription = "";
-        public bool IsOtherSelected => SelectionDescription == ErrorString.LastOrDefault();
+        public bool IsOtherSelected => SelectionDescription == ErrorStrings.LastOrDefault();
         partial void OnSelectionDescriptionChanged(string value)
         { OnPropertyChanged(nameof(IsOtherSelected)); }
 
@@ -57,7 +57,7 @@ namespace FProductionDashBoard
             else
                 CurrentProduct = $"時段: {getinfo.InspectionStatuses.CurrentRoutine + 1}";
 
-            selectionDescription = ErrorString.FirstOrDefault() ?? "";
+            selectionDescription = ErrorStrings.FirstOrDefault() ?? "";
 
             ConfirmCommand = new RelayCommand(() => OnConfirm());
             CancelCommand = new RelayCommand(() => OnCancel());
