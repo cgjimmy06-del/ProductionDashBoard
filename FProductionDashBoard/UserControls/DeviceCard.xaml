@@ -1,9 +1,10 @@
-﻿<UserControl x:Class="FProductionDashBoard.DeviceCard"
+﻿<UserControl x:Class="FProductionDashBoard.UserControls.DeviceCard"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:FProductionDashBoard"
+             xmlns:localcontrols="clr-namespace:FProductionDashBoard.UserControls"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="400" d:Background="White">
 
@@ -25,7 +26,7 @@
                                       Opacity="0.25"/>
                 </Setter.Value>
             </Setter>
-            
+
             <!-- 點擊動畫 -->
             <Style.Resources>
                 <Storyboard x:Key="PressDownStoryboard">
@@ -41,7 +42,7 @@
                                      To="1" Duration="0:0:0.1"/>
                 </Storyboard>
             </Style.Resources>
-            
+
             <Style.Triggers>
                 <!-- Hover 效果 -->
                 <Trigger Property="IsMouseOver" Value="True">
@@ -95,15 +96,17 @@
                 <TextBlock Text="{Binding Info.Name}" d:Text="A1"
                            FontWeight="Bold"
                            Foreground="{DynamicResource PrimaryHueMidBrush}"
-                           FontSize="20"
+                           FontSize="30"
                            Cursor="Hand"
                            TextDecorations="Underline"/>
 
                 <!-- 資訊列 -->
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <TextBlock Text="當前產品: 產品 X" d:Text="current production: default 123"
+                    <TextBlock d:Text="current production: default 123"
+                               Text="{Binding CurrentProduct.Name, StringFormat=當前產品: {0}}" 
                                Foreground="{DynamicResource SecondaryHueMidBrush}"/>
-                    <TextBlock Text="操作人員: 王小明"  d:Text="operator: yun"
+                    <TextBlock d:Text="operator: yun"
+                               Text="{Binding CurrentUser.Name, StringFormat=當前操作員: {0}}"  
                                Foreground="{DynamicResource SecondaryHueMidBrush}"/>
                     <!--<TextBlock Text="產量: 1200 件" 
                                Foreground="{DynamicResource SecondaryHueMidBrush}"/>-->
@@ -111,27 +114,37 @@
 
                 <!-- 按鈕列 -->
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <Button Content="物耗" Command="{Binding MaterialsChangeCommand}" 
-                            Width="75" Margin="0, 5, 5, 5"/>
-                    <Button Content="首件" Command="{Binding FirstInspectionCommand}" 
-                            Width="75" Margin="5"/>
+                    <Button Content="{DynamicResource MetarialChangeButton}" Width="75" Margin="0, 5, 5, 5"
+                            Command="{Binding MaterialsChangeCommand}"/>
 
-                    <!-- 巡檢 -->
-                    <StackPanel Margin="5">
-                        <Button Content="巡檢" Command="{Binding RoutineInspectionCommand}" 
-                                Width="75" Margin="0"/>
-                        <!--<UniformGrid Rows="1" Columns="5" Margin="0,5,0,0">
-                            <Rectangle Fill="Green" Height="10" Margin="2"/>
-                            <Rectangle Fill="Green" Height="10" Margin="2"/>
-                            <Rectangle Fill="Yellow" Height="10" Margin="2"/>
-                            <Rectangle Fill="Gray" Height="10" Margin="2"/>
-                            <Rectangle Fill="Gray" Height="10" Margin="2"/>
-                        </UniformGrid>-->
-                    </StackPanel>
+                    <Button Content="{DynamicResource FirstInspectionButton}" Width="75" Margin="5"
+                            Command="{Binding FirstInspectionCommand}"
+                            Background="{Binding InspectionStatuses.FirstInspectionStatus, 
+                                    Converter={StaticResource BoolToColorConverter}}"
+                            Foreground="White"/>
 
-                    <Button Content="調適" Command="{Binding OperationCommand}"
-                            Width="75" Margin="5"/>
+                    <Button Content="{DynamicResource RoutineInspectionButton}" Width="75" Margin="5"
+                                Command="{Binding RoutineInspectionCommand}"/>
+
+                    <Button Content="{DynamicResource OperationButton}" Width="75" Margin="5"
+                            Command="{Binding OperationCommand}"/>
                 </StackPanel>
+
+                <!-- 巡檢燈 -->
+                <ItemsControl ItemsSource="{Binding InspectionStatuses.RoutineStatus}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1" Margin="10,5,10,0"
+                                         Columns="{Binding InspectionStatuses.RoutineStatus.Count}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Rectangle Height="10" Margin="5"
+                       Fill="{Binding Converter={StaticResource IntToColorConverter}}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
             </StackPanel>
 

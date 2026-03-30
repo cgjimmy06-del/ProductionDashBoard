@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace FProductionDashBoard.UserControls
 {
     /// <summary>
-    /// DeviceCard.xaml 的互動邏輯
+    /// MaterialsDialog.xaml 的互動邏輯
     /// </summary>
-    public partial class DeviceCard : UserControl
+    public partial class MaterialsDialog : UserControl
     {
-        public DeviceCard()
+        public MaterialsDialog()
         {
             InitializeComponent();
         }

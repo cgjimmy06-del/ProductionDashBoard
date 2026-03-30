@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="FProductionDashBoard.UserControls.MaterialsDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FProductionDashBoard.UserControls"
+             mc:Ignorable="d" Height="Auto" Width="450"
+             d:DesignHeight="400" d:DesignWidth="400" d:Background="White">
+    <Grid>
+        <StackPanel>
+            <!-- 主按鈕區 -->
+            <StackPanel Orientation="Horizontal">
+                <Button Margin="10" Content="模式切換"
+                Command="{Binding ToggleModeCommand}"
+                Style="{StaticResource MaterialDesignRaisedButton}" />
+                <Button Margin="10" Content="清除選擇"
+                Command="{Binding ClearSelectionCommand}"
+                Style="{StaticResource MaterialDesignRaisedButton}" />
+            </StackPanel>
+            
+            <!-- 物料按鈕生成區 -->
+            <ItemsControl ItemsSource="{Binding Materials}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="5" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Margin="5" Height="50" Padding="2"
+                    Command="{Binding DataContext.MaterialButtonClickCommand, 
+                        RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    CommandParameter="{Binding}">
+                            <Button.Content>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding SelectedCount}"  HorizontalAlignment="Center"
+                                           Visibility="{Binding DataContext.IsCountMode, 
+                                        RelativeSource={RelativeSource AncestorType=UserControl}, 
+                                        Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                </StackPanel>
+                            </Button.Content>
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Background" Value="LightGreen"/>
+                                            <Setter Property="Foreground" Value="Indigo"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

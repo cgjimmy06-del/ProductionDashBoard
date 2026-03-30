@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FProductionDashBoard"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
         Title="SubWindow1" Height="250" Width="400"
         Loaded="Window_Loaded">
     <StackPanel Margin="20">

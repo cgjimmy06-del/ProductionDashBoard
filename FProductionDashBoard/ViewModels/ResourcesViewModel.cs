@@ -222,6 +222,20 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) 
         { throw new NotImplementedException(); } 
     }
+    public class BooleanToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool b)
+                return b ? Visibility.Visible : Visibility.Collapsed;
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (value is Visibility v) && v == Visibility.Visible;
+        }
+    }
     public class CollapseWidthConverter : IValueConverter
     {
         public double CollapsedWidth { get; set; } = 50;
@@ -234,6 +248,18 @@ namespace FProductionDashBoard
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { throw new NotImplementedException(); }
+    }
+    public class EnumToBooleanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value != null && value.Equals(Enum.Parse(value.GetType(), parameter.ToString() ?? ""));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)value ? Enum.Parse(targetType, parameter.ToString() ?? "") : Binding.DoNothing;
+        }
     }
     public static class ListBoxBehavior
     {

@@ -11,7 +11,20 @@
     <sys:String x:Key="RememberMeCheck">記住我</sys:String>
     <sys:String x:Key="LoginButton">登入</sys:String>
     <sys:String x:Key="VisitorButton">訪客</sys:String>
-    
+    <!--#endregion-->
+    <!--#region dialog window -->
+    <sys:String x:Key="ConfirmButton">確認</sys:String>
+    <sys:String x:Key="CancelButton">取消</sys:String>
+    <!--#endregion-->
+    <!--#region inspection dialog -->
+    <sys:String x:Key="NormalRadioButton">正常</sys:String>
+    <sys:String x:Key="IssueRadioButton">異常回報</sys:String>
+    <!--#endregion-->
+    <!--#region device card -->
+    <sys:String x:Key="MetarialChangeButton">物料</sys:String>
+    <sys:String x:Key="FirstInspectionButton">首件</sys:String>
+    <sys:String x:Key="RoutineInspectionButton">巡檢</sys:String>
+    <sys:String x:Key="OperationButton">調試</sys:String>
     <!--#endregion-->
     
     
