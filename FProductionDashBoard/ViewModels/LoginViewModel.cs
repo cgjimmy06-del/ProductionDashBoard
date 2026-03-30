@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.ViewModels
 {
     public class LanguageOption
     {
@@ -60,7 +60,7 @@ namespace FProductionDashBoard
         public ICommand LoginCommand { get; }
         public ICommand LanguageChangeCommand { get; }
         public ICommand ThemeChangeCommand { get; }
-        public Action<string, UserInfo>? OnLoginSuccess { get; set; }
+        public Action<string, Models.UserInfo>? OnLoginSuccess { get; set; }
 
         public LoginViewModel()
         {

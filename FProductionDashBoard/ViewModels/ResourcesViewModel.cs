@@ -160,20 +160,20 @@ namespace FProductionDashBoard
 
         private static readonly string filePath = "devices.json";
 
-        public static void SaveDevices(ObservableCollection<DeviceInfo> devices)
+        public static void SaveDevices(ObservableCollection<Models.DeviceInfo> devices)
         {
             var json = JsonSerializer.Serialize(devices);
             File.WriteAllText(filePath, json);
         }
 
-        public static ObservableCollection<DeviceInfo> LoadDevices()
+        public static ObservableCollection<Models.DeviceInfo> LoadDevices()
         {
             if (!File.Exists(filePath))
-                return new ObservableCollection<DeviceInfo>();
+                return new ObservableCollection<Models.DeviceInfo>();
 
             var json = File.ReadAllText(filePath);
-            return JsonSerializer.Deserialize<ObservableCollection<DeviceInfo>>(json)
-                   ?? new ObservableCollection<DeviceInfo>();
+            return JsonSerializer.Deserialize<ObservableCollection<Models.DeviceInfo>>(json)
+                   ?? new ObservableCollection<Models.DeviceInfo>();
         }
 
 

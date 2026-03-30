@@ -1,5 +1,4 @@
-﻿using FProductionDashBoard.Repositories;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
@@ -49,7 +48,7 @@ namespace FProductionDashBoard
                 options.UseSqlServer(config.GetConnectionString($"{selectedServer}_MESData") ?? ""));
 
             // 註冊 泛型 Repository / 專用 Repository
-            services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+            services.AddScoped(typeof(Repositories.IRepository<,>), typeof(Repositories.Repository<,>));
             services.AddScoped<Repositories.IDeviceRepository, Repositories.DeviceRepository>();
             services.AddScoped<Repositories.IUserRepository, Repositories.UserRepository>();
 
@@ -58,10 +57,10 @@ namespace FProductionDashBoard
             services.AddScoped<LogService>();
 
             // 註冊 資訊
-            services.AddSingleton(user ?? new UserInfo(){ ID = "", Name = "" });
+            services.AddSingleton(user ?? new Models.UserInfo(){ ID = "", Name = "" });
 
             // 註冊 ViewModel
-            services.AddScoped<MainViewModel>();
+            services.AddScoped<ViewModels.MainViewModel>();
 
             // 註冊 MainWindow 的 InitializeComponent()可能沒有正確執行，致 XAML 裡的 UI 元件沒有完整載入
             // services.AddScoped<MainWindow>();
@@ -71,7 +70,7 @@ namespace FProductionDashBoard
             // 取代在 App.xaml 中的 StartupUri
             ShutdownMode = ShutdownMode.OnMainWindowClose; //「被設定為 MainWindow 之介面關閉則結束」
             var mainWindow = new MainWindow
-            { DataContext = _serviceProvider.GetRequiredService<MainViewModel>() };
+            { DataContext = _serviceProvider.GetRequiredService<ViewModels.MainViewModel>() };
             MainWindow = mainWindow; // 設定 Application 的 MainWindow
             mainWindow.Show();
         }

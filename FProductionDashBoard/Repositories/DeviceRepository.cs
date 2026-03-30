@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static FProductionDashBoard.Repositories.IDeviceRepository;
+using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.Repositories
 {

@@ -9,11 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.ViewModels
 {
     public class MaterialResult
     {
-        public required MaterialInfo[] Selections;
+        public required Models.MaterialInfo[] Selections;
     }
     internal partial class MaterialDialogViewModel : DialogBaseViewModel<MaterialResult>
     {
@@ -22,22 +22,22 @@ namespace FProductionDashBoard
         [ObservableProperty]
         private bool isCountMode = false; // 選擇模式或計數模式
         
-        public ObservableCollection<MaterialInfo> Materials { get; } = new () {
-            new MaterialInfo { Code = "AB001", Name = "A16" }, 
-            new MaterialInfo { Code = "AB002", Name = "305EA" },
-            new MaterialInfo { Code = "AB003", Name = "307EA" },
-            new MaterialInfo { Code = "AB004", Name = "PZ533" },
-            new MaterialInfo { Code = "AB005", Name = "PZ220" },
-            new MaterialInfo { Code = "AB006", Name = "340" },
-            new MaterialInfo { Code = "AB007", Name = "KAX" },
-            new MaterialInfo { Code = "AB008", Name = "180#" },
-            new MaterialInfo { Code = "AB009", Name = "60#" },
-            new MaterialInfo { Code = "AB0010", Name = "#100" },
-            new MaterialInfo { Code = "AB0011", Name = "PX220" },
-            new MaterialInfo { Code = "AB0012", Name = "JA539 400" },
-            new MaterialInfo { Code = "AB0013", Name = "JA539 180" }
+        public ObservableCollection<Models.MaterialInfo> Materials { get; } = new () {
+            new Models.MaterialInfo { Code = "AB001", Name = "A16" }, 
+            new Models.MaterialInfo { Code = "AB002", Name = "305EA" },
+            new Models.MaterialInfo { Code = "AB003", Name = "307EA" },
+            new Models.MaterialInfo { Code = "AB004", Name = "PZ533" },
+            new Models.MaterialInfo { Code = "AB005", Name = "PZ220" },
+            new Models.MaterialInfo { Code = "AB006", Name = "340" },
+            new Models.MaterialInfo { Code = "AB007", Name = "KAX" },
+            new Models.MaterialInfo { Code = "AB008", Name = "180#" },
+            new Models.MaterialInfo { Code = "AB009", Name = "60#" },
+            new Models.MaterialInfo { Code = "AB0010", Name = "#100" },
+            new Models.MaterialInfo { Code = "AB0011", Name = "PX220" },
+            new Models.MaterialInfo { Code = "AB0012", Name = "JA539 400" },
+            new Models.MaterialInfo { Code = "AB0013", Name = "JA539 180" }
         };
-        public IEnumerable<MaterialInfo> SelectedMaterials => Materials.Where(m => m.IsSelected);
+        public IEnumerable<Models.MaterialInfo> SelectedMaterials => Materials.Where(m => m.IsSelected);
 
         public MaterialDialogViewModel(string dialogstring, DeviceCardViewModel getinfo) : base(dialogstring)
         {
@@ -48,7 +48,7 @@ namespace FProductionDashBoard
         }
 
         [RelayCommand]
-        private void MaterialButtonClick(MaterialInfo selectedmaterial)
+        private void MaterialButtonClick(Models.MaterialInfo selectedmaterial)
         {
             if (!IsCountMode)
             {

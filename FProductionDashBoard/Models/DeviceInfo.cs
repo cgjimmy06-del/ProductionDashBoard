@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using static Dapper.SqlMapper;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.Models
 {
     public partial class DeviceInfo : ObservableObject
     {
