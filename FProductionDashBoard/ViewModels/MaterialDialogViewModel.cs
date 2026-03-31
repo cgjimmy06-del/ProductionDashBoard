@@ -61,7 +61,6 @@ namespace FProductionDashBoard.ViewModels
                 selectedmaterial.SelectedCount++;
             }
             DialogErrorString = "";
-            System.Diagnostics.Debug.WriteLine($"Button clicked: {selectedmaterial.Code}-{selectedmaterial.SelectedCount}");
             //OnPropertyChanged(nameof(SelectedMaterials));
         }
 
@@ -75,7 +74,7 @@ namespace FProductionDashBoard.ViewModels
         protected override void OnConfirm()
         {
             if (!SelectedMaterials.Any())
-            { DialogErrorString = "請選擇物料!"; return; }
+            { DialogErrorString = Properties.Resources.MaterialNonSelectionError; return; }
 
             Result = new MaterialResult() { Selections = SelectedMaterials.ToArray() };
 

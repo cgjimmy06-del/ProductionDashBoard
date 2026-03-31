@@ -9,10 +9,11 @@
              d:DesignHeight="400" d:DesignWidth="400" d:Background="White">
 
     <StackPanel Margin="20, 5">
+        <!-- 當前操作資訊 -->
         <TextBlock Margin="0,0,0,10" d:Text="機台"
-            Text="{Binding CurrentDevice, StringFormat=機台: {0}}"/>
+            Text="{Binding CurrentDevice}"/>
         <TextBlock Margin="0,0,0,10" d:Text="操作人員"
-            Text="{Binding CurrentUser, StringFormat=操作人員: {0}}" />
+            Text="{Binding CurrentUser}" />
         <TextBlock Margin="0,0,0,10" d:Text="產品"
             Text="{Binding CurrentProduct}" />
 

@@ -8,12 +8,16 @@
              d:DesignHeight="400" d:DesignWidth="400" d:Background="White">
     <Grid>
         <StackPanel>
+            <!-- 當前操作資訊 -->
+            <TextBlock Margin="0,0,0,10" d:Text="機台"
+            Text="{Binding CurrentDevice, StringFormat=機台: {0}}"/>
+            
             <!-- 主按鈕區 -->
             <StackPanel Orientation="Horizontal">
-                <Button Margin="10" Content="模式切換"
+                <Button Margin="10" Content="{DynamicResource ModeChangeButton}"
                 Command="{Binding ToggleModeCommand}"
                 Style="{StaticResource MaterialDesignRaisedButton}" />
-                <Button Margin="10" Content="清除選擇"
+                <Button Margin="10" Content="{DynamicResource ClearSelectionButton}"
                 Command="{Binding ClearSelectionCommand}"
                 Style="{StaticResource MaterialDesignRaisedButton}" />
             </StackPanel>

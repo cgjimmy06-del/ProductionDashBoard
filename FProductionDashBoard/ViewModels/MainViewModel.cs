@@ -46,6 +46,10 @@ namespace FProductionDashBoard.ViewModels
         private string currentTime = ""; // 系統時間
         [ObservableProperty]
         private bool autoScrollEnabled = true; // 訊息視窗是否滾動
+        [ObservableProperty]
+        private int progressValue = 0; // 進度數值
+        [ObservableProperty]
+        private string progressString = Properties.Resources.MainProgressIdle; // 進度訊息
 
         // 註冊介面
         public ICommand AddDeviceCommand { get; }

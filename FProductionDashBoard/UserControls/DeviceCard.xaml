@@ -100,13 +100,14 @@
                            Cursor="Hand"
                            TextDecorations="Underline"/>
 
-                <!-- 資訊列 -->
+                <!-- 資訊列 --> <!-- language -->
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <TextBlock d:Text="current production: default 123"
-                               Text="{Binding CurrentProduct.Name, StringFormat=當前產品: {0}}" 
+                    <TextBlock d:Text="default 123"
+                               Text="{Binding CurrentProduct.Name, StringFormat=: {0}}" 
                                Foreground="{DynamicResource SecondaryHueMidBrush}"/>
-                    <TextBlock d:Text="operator: yun"
-                               Text="{Binding CurrentUser.Name, StringFormat=當前操作員: {0}}"  
+                    
+                    <TextBlock d:Text="yun"
+                               Text="{Binding CurrentUser.Name, StringFormat=: {0}}"  
                                Foreground="{DynamicResource SecondaryHueMidBrush}"/>
                     <!--<TextBlock Text="產量: 1200 件" 
                                Foreground="{DynamicResource SecondaryHueMidBrush}"/>-->

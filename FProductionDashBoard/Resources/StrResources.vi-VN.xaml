@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <!--#region login window -->
+    <!--#region login window 登入視窗 -->
     <sys:String x:Key="LanguageText">Ngôn ngữ</sys:String>
     <sys:String x:Key="ServerText">Máy chủ</sys:String>
     <sys:String x:Key="AccountText">Tài khoản (Mã nhân viên)</sys:String>
@@ -12,19 +12,23 @@
     <sys:String x:Key="LoginButton">Đăng nhập</sys:String>
     <sys:String x:Key="VisitorButton">Khách</sys:String>
     <!--#endregion-->
-    <!--#region dialog window -->
-    <sys:String x:Key="ConfirmButton">Xác nhận</sys:String>
-    <sys:String x:Key="CancelButton">Hủy</sys:String>
-    <!--#endregion-->
-    <!--#region inspection dialog -->
-    <sys:String x:Key="NormalRadioButton">Bình thường</sys:String>
-    <sys:String x:Key="IssueRadioButton">Báo lỗi</sys:String>
-    <!--#endregion-->
-    <!--#region device card -->
+    <!--#region device card 設備卡片 -->
     <sys:String x:Key="MetarialChangeButton">Vật liệu</sys:String>
     <sys:String x:Key="FirstInspectionButton">Kiểm tra đầu</sys:String>
     <sys:String x:Key="RoutineInspectionButton">Tuần tra</sys:String>
     <sys:String x:Key="OperationButton">Điều chỉnh</sys:String>
+    <!--#endregion-->
+    <!--#region dialog window 彈出視窗 -->
+    <sys:String x:Key="ConfirmButton">Xác nhận</sys:String>
+    <sys:String x:Key="CancelButton">Hủy</sys:String>
+    <!--#endregion-->
+    <!--#region inspection dialog 檢驗視窗 -->
+    <sys:String x:Key="NormalRadioButton">Bình thường</sys:String>
+    <sys:String x:Key="IssueRadioButton">Báo lỗi</sys:String>
+    <!--#endregion-->
+    <!--#region material change dialog 物料視窗 -->
+    <sys:String x:Key="ModeChangeButton">Chế độ</sys:String>
+    <sys:String x:Key="ClearSelectionButton">Xóa</sys:String>
     <!--#endregion-->
 
 

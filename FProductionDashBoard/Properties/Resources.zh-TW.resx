@@ -117,6 +117,60 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ComStrDevice" xml:space="preserve">
+    <value>設備</value>
+  </data>
+  <data name="ComStrErrorTitle" xml:space="preserve">
+    <value>錯誤</value>
+  </data>
+  <data name="ComStrProduct" xml:space="preserve">
+    <value>產品</value>
+  </data>
+  <data name="ComStrTimeSlot" xml:space="preserve">
+    <value>時段</value>
+  </data>
+  <data name="ComStrUser" xml:space="preserve">
+    <value>人員</value>
+  </data>
+  <data name="ComStrWarningTitle" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="DeviceFirstInsDialog" xml:space="preserve">
+    <value>本次首件檢驗結果</value>
+  </data>
+  <data name="DeviceMaterialDialog" xml:space="preserve">
+    <value>選擇已更換之物料</value>
+  </data>
+  <data name="DeviceOperationDialog" xml:space="preserve">
+    <value>當前作業</value>
+  </data>
+  <data name="DeviceRoutineInsDialog" xml:space="preserve">
+    <value>本次巡檢結果</value>
+  </data>
+  <data name="InsFirstAbnormal" xml:space="preserve">
+    <value>首件異常，請依流程通報!</value>
+  </data>
+  <data name="InsFirstProductUpdate" xml:space="preserve">
+    <value>產品更新，請重新做首件!</value>
+  </data>
+  <data name="InsFirstSuccess" xml:space="preserve">
+    <value>首件完成!</value>
+  </data>
+  <data name="InsRoutineEnd" xml:space="preserve">
+    <value>巡檢結束!</value>
+  </data>
+  <data name="InsRoutineOverdue" xml:space="preserve">
+    <value>巡檢逾時!</value>
+  </data>
+  <data name="InsRoutineStart" xml:space="preserve">
+    <value>巡檢開始!</value>
+  </data>
+  <data name="InsRoutineSuccess" xml:space="preserve">
+    <value>巡檢完成!</value>
+  </data>
+  <data name="InsRoutineUpdateLight" xml:space="preserve">
+    <value>巡檢提示燈號更新!</value>
+  </data>
   <data name="LogInAccountError" xml:space="preserve">
     <value>無效的帳號或密碼!</value>
   </data>
@@ -125,5 +179,20 @@
   </data>
   <data name="LogInFillOutError" xml:space="preserve">
     <value>請填寫完整!</value>
+  </data>
+  <data name="MainProgressDetecting" xml:space="preserve">
+    <value>偵測中...</value>
+  </data>
+  <data name="MainProgressIdle" xml:space="preserve">
+    <value>閒置中...</value>
+  </data>
+  <data name="MainProgressProcessing" xml:space="preserve">
+    <value>進行中...</value>
+  </data>
+  <data name="MainProgressSuccess" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+  <data name="MaterialNonSelectionError" xml:space="preserve">
+    <value>請至少選擇一項</value>
   </data>
 </root>
