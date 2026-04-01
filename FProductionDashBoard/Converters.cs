@@ -68,7 +68,7 @@ namespace FProductionDashBoard
     }
     public class CollapseWidthConverter : IValueConverter
     {
-        public double CollapsedWidth { get; set; } = 50;
+        public double CollapsedWidth { get; set; } = 40;
         public double ExpandedWidth { get; set; } = 200;
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

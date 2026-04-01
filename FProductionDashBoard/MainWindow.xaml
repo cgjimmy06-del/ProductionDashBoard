@@ -125,18 +125,25 @@
             <Border Grid.Column="0" Margin="0" d:Width="200"
                     Width="{Binding IsCollapsedNav, Converter={StaticResource CollapseWidthConverter}}">
                 <StackPanel Margin="0">
-                    <!-- 收合按鈕 -->
-                    <Button Content="☰"
-                    Command="{Binding CollapseNavCommand}"
-                    Width="40" Height="40" HorizontalAlignment="Left"/>
+                    <!-- 收合按鈕"☰" -->
+                    <RadioButton Style="{StaticResource NavButtonStyle}"
+                            Command="{Binding CollapseNavCommand}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon Kind="Home" Margin="0,0,5,0"
+                                                     Width="30" Height="30"/>
+                            <TextBlock Text="首頁" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton>
                     <!-- 導覽內容 -->
-                    <TextBlock Text="專案1:aaaa" 
-                   FontSize="16" Margin="0,0,0,5"/>
-                    <TextBlock Text="專案1:aaaa"
-                   FontSize="16"/>
-                    <Button Content="新增設備" Command="{Binding AddDeviceCommand}" 
-                            Width="100" Height="30"
-                            HorizontalAlignment="Right" Margin="0,0,0,10"/>
+                    <RadioButton Style="{StaticResource NavButtonStyle}"
+                            Command="{Binding AddDeviceCommand}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon Kind="Home" Margin="0,0,5,0"
+                                                     Width="30" Height="30"/>
+                            <TextBlock Text="新增設備" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton>
+                    
                 </StackPanel>
             </Border>
 
@@ -219,7 +226,7 @@
                             <Button Width="20" Height="20" Padding="0" Margin="2"
                                     HorizontalAlignment="Center"
                                     Content="E" Command="{Binding ErrorModeCommand}"/>
-                            
+
                         </StackPanel>
                     </Grid>
                 </Border>

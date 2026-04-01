@@ -7,13 +7,94 @@
     <!-- 如 button、textbox、textblock 等 -->
     
     <!-- 全域樣式 -->
+    <!--#region 動畫樣式 -->
+    <!-- 縮放 -->
+    <Storyboard x:Key="PressDownStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                         To="0.97" Duration="0:0:0.1"/>
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                         To="0.97" Duration="0:0:0.1"/>
+    </Storyboard>
+    <Storyboard x:Key="ReleaseStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                         To="1" Duration="0:0:0.1"/>
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                         To="1" Duration="0:0:0.1"/>
+    </Storyboard>
+    <!-- 透明度 -->
+    <Storyboard x:Key="FadeInStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                     To="1" Duration="0:0:0.2"/>
+    </Storyboard>
+    <Storyboard x:Key="FadeOutStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                     To="0.7" Duration="0:0:0.2"/>
+    </Storyboard>
+    <!-- 顏色 (Hover狀態) -->
+    <Storyboard x:Key="HoverColorStoryboard">
+        <ColorAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                    To="LightBlue" Duration="0:0:0.2"/>
+    </Storyboard>
+    <!-- 位移 (滑動) -->
+    <Storyboard x:Key="PressMoveStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
+                     To="2" Duration="0:0:0.1"/>
+    </Storyboard>
+    <Storyboard x:Key="ReleaseMoveStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
+                     To="0" Duration="0:0:0.1"/>
+    </Storyboard>
+    <!-- 旋轉 -->
+    <Storyboard x:Key="RotateIconStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(RotateTransform.Angle)"
+                     To="360" Duration="0:0:0.5" RepeatBehavior="1x"/>
+    </Storyboard>
+    <!-- 組合動畫 -->
+    <Storyboard x:Key="HoverCombinedStoryboard">
+        <!--<BeginStoryboard Storyboard="{StaticResource PressDownStoryboard}"/>
+        <BeginStoryboard Storyboard="{StaticResource FadeInStoryboard}"/>
+        <BeginStoryboard Storyboard="{StaticResource HoverColorStoryboard}"/>-->
+    </Storyboard>
+    
+    <!--#endregion-->
+    
     <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
     </Style>
 
     <!-- 具名樣式 -->
-    <Style x:Key="SquareButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+    <Style x:Key="NavButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Padding" Value="5,0"/>
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="0"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryHueMidBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueDarkBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Style.Triggers>
+            <!-- 滑鼠移入 -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryHueDarkBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueLightBrush}"/>
+            </Trigger>
+            <!-- 按下 -->
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryHueLightBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueLightBrush}"/>
+            </Trigger>
+            <!-- 選中狀態 -->
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryHueLightBrush}"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueLightBrush}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
+    
+    
+    
+    
 
 </ResourceDictionary>

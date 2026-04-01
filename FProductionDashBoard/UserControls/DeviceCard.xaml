@@ -26,23 +26,6 @@
                                       Opacity="0.25"/>
                 </Setter.Value>
             </Setter>
-
-            <!-- 點擊動畫 -->
-            <Style.Resources>
-                <Storyboard x:Key="PressDownStoryboard">
-                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                     To="0.97" Duration="0:0:0.1"/>
-                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                     To="0.97" Duration="0:0:0.1"/>
-                </Storyboard>
-                <Storyboard x:Key="ReleaseStoryboard">
-                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                     To="1" Duration="0:0:0.1"/>
-                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                     To="1" Duration="0:0:0.1"/>
-                </Storyboard>
-            </Style.Resources>
-
             <Style.Triggers>
                 <!-- Hover 效果 -->
                 <Trigger Property="IsMouseOver" Value="True">
@@ -64,7 +47,6 @@
                 </EventTrigger>
 
             </Style.Triggers>
-
         </Style>
     </UserControl.Resources>
 
