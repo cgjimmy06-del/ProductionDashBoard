@@ -54,6 +54,7 @@ namespace FProductionDashBoard.ViewModels
 
             InspectionStatuses = new InspectionService(this, 9, 4, 2);
             InspectionStatuses.OnLogEvent += _log.AddLog;
+            InspectionStatuses.OnErrorLogEvent += _log.AddErrorLog;
 
             MaterialsChangeCommand = new RelayCommand(MaterialsChange);
             FirstInspectionCommand = new RelayCommand(FirstArticleInspection);

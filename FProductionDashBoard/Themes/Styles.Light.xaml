@@ -2,8 +2,18 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
+    <!-- 此xaml為各種元件設計樣式 -->
+    <!-- 用於所有主要元件之預設及具名樣式 -->
+    <!-- 如 button、textbox、textblock 等 -->
+    
+    <!-- 全域樣式 -->
     <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
+    </Style>
+
+    <!-- 具名樣式 -->
+    <Style x:Key="SquareButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="0"/>
     </Style>
 
 </ResourceDictionary>

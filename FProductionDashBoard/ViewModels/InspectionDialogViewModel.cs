@@ -96,6 +96,7 @@ namespace FProductionDashBoard.ViewModels
         public int CurrentRoutine = 0; // 第幾個時段
 
         public event Action<string, LogLevel>? OnLogEvent;
+        public event Action<string>? OnErrorLogEvent;
 
         [ObservableProperty]
         private bool firstInspectionStatus = false; // 首件狀態

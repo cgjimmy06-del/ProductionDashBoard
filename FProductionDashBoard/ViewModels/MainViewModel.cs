@@ -41,7 +41,7 @@ namespace FProductionDashBoard.ViewModels
 
         // 介面邏輯
         [ObservableProperty]
-        private bool isCollapsed = false; // 導覽列收合
+        private bool isCollapsedNav = false; // 導覽列收合
         [ObservableProperty]
         private string currentTime = ""; // 系統時間
         [ObservableProperty]
@@ -50,10 +50,14 @@ namespace FProductionDashBoard.ViewModels
         private int progressValue = 0; // 進度數值
         [ObservableProperty]
         private string progressString = Properties.Resources.MainProgressIdle; // 進度訊息
-
+        [ObservableProperty]
+        private bool isErrorMode;
+        public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
         // 註冊介面
         public ICommand AddDeviceCommand { get; }
         public ICommand CollapseNavCommand { get; }
+        public ICommand AutoScrollCommand { get; }
+        public ICommand ErrorModeCommand { get; }
 
         public MainViewModel(UserInfo user, LogService log, SqlService sqlservice) 
         {
@@ -74,9 +78,16 @@ namespace FProductionDashBoard.ViewModels
             _log = log;
             _sqlService = sqlservice;
 
-            // 設定元件事件
-            CollapseNavCommand = new RelayCommand(() => { IsCollapsed = !IsCollapsed; });
+            // 設定元件事件 (導覽)
+            CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
             AddDeviceCommand = new RelayCommand(() => AddDevice());
+
+            // 設定元件事件 (訊息視窗)
+            AutoScrollCommand = new RelayCommand(() => { AutoScrollEnabled = !AutoScrollEnabled; });
+            ErrorModeCommand = new RelayCommand(() => { IsErrorMode = !IsErrorMode; });
+            PropertyChanged += (s, e) => {
+                if (e.PropertyName == nameof(IsErrorMode)) OnPropertyChanged(nameof(CurrentLogs)); };
+
         }
 
         private void AddDevice()

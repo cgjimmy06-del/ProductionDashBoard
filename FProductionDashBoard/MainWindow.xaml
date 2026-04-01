@@ -123,7 +123,7 @@
 
             <!-- 導覽列 -->
             <Border Grid.Column="0" Margin="0" d:Width="200"
-                    Width="{Binding IsCollapsed, Converter={StaticResource CollapseWidthConverter}}">
+                    Width="{Binding IsCollapsedNav, Converter={StaticResource CollapseWidthConverter}}">
                 <StackPanel Margin="0">
                     <!-- 收合按鈕 -->
                     <Button Content="☰"
@@ -182,7 +182,7 @@
                         </Grid.ColumnDefinitions>
                         <!-- 即時狀態窗 -->
                         <ListBox Grid.Column="0"
-                            x:Name="LogListBox" ItemsSource="{Binding _log.Logs}"
+                            x:Name="LogListBox" ItemsSource="{Binding CurrentLogs}"
                              local:ListBoxBehavior.AutoScrollToEnd="{Binding AutoScrollEnabled}">
                             <!-- 行高/內距/文字大小/行距 -->
                             <ListBox.ItemContainerStyle>
@@ -213,7 +213,12 @@
                         </ListBox>
                         <!-- 狀態窗操作介面 -->
                         <StackPanel Grid.Column="1" Margin="2">
-                            
+                            <Button Width="20" Height="20" Padding="0" Margin="2"
+                                    HorizontalAlignment="Center"
+                                    Content="☰" Command="{Binding AutoScrollCommand}"/>
+                            <Button Width="20" Height="20" Padding="0" Margin="2"
+                                    HorizontalAlignment="Center"
+                                    Content="E" Command="{Binding ErrorModeCommand}"/>
                             
                         </StackPanel>
                     </Grid>
