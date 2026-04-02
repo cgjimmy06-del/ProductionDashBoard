@@ -28,7 +28,7 @@ namespace FProductionDashBoard
             DialogContent.Content = content;
 
             DataContext = viewmodel;
-            if (DataContext is ICloseable closeable) 
+            if (DataContext is ViewModels.ICloseable closeable) 
             { closeable.RequestClose += () => this.Close(); }
         }
     }

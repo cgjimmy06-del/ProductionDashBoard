@@ -14,8 +14,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using FProductionDashBoard.Models;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.ViewModels
 {
     public enum UserAction
     {
@@ -53,6 +54,7 @@ namespace FProductionDashBoard
 
             InspectionStatuses = new InspectionService(this, 9, 4, 2);
             InspectionStatuses.OnLogEvent += _log.AddLog;
+            InspectionStatuses.OnErrorLogEvent += _log.AddErrorLog;
 
             MaterialsChangeCommand = new RelayCommand(MaterialsChange);
             FirstInspectionCommand = new RelayCommand(FirstArticleInspection);
@@ -67,7 +69,7 @@ namespace FProductionDashBoard
         }
         private void MaterialsChange()
         {
-            var vm = new MaterialDialogViewModel("物料更換", this);
+            var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this);
             var uc = new MaterialsDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -76,12 +78,13 @@ namespace FProductionDashBoard
             {
                 var result = vm.Result ?? new MaterialResult() { Selections = Array.Empty<MaterialInfo>() };
                 // SQL
-                _log.AddLog($"設備 {Info.Name} 物料更換數量: {result.Selections.Length}", LogLevel.Success);
+                _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - Category: {result.Selections.Length} -> " +
+                    $"Sum: {result.Selections.Sum(d => d.SelectedCount)}", LogLevel.Success);
             }
         }
         private void FirstArticleInspection()
         {
-            var vm = new InspectionDialogViewModel("首件", this);
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, this);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -94,7 +97,7 @@ namespace FProductionDashBoard
         }
         private void RoutineInspection()
         {
-            var vm = new InspectionDialogViewModel("巡檢", this);
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, this);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -108,7 +111,7 @@ namespace FProductionDashBoard
         }
         private void OperationChange()
         {
-            //var vm = new DialogBaseViewModel<string>("調試");
+            //var vm = new DialogBaseViewModel<string>(Properties.Resources.DeviceOperationDialog);
             //var window = new DialogWindow(vm);
             //window.ShowDialog();
 
@@ -120,7 +123,6 @@ namespace FProductionDashBoard
             if (Info.Status > 2) Info.Status = -1;
             _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Processing);
         }
-
 
     }
 

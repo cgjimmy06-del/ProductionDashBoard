@@ -1,0 +1,71 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--#region 基礎色 -->
+    <!-- 主色系 -->
+    <Color x:Key="PrimaryColor">#9FA8DA</Color> <!-- Indigo 200 -->
+    <Color x:Key="PrimaryDarkColor">#7986CB</Color> <!-- Indigo 400 -->
+    <Color x:Key="PrimaryLightColor">#C5CAE9</Color> <!-- Indigo 100 -->
+    <Color x:Key="PrimaryBackgroundColor">#383838</Color>
+    <!-- 輔色系 -->
+    <Color x:Key="SecondaryColor">#FFB74D</Color> <!-- Deep Orange 300 -->
+    <Color x:Key="SecondaryLightColor">#FFE0B2</Color> <!-- Deep Orange 100 -->
+    <!-- 背景/邊框/文字 -->
+    <Color x:Key="BackgroundColor">#303030</Color>
+    <Color x:Key="BorderColor">#424242</Color>
+    <Color x:Key="TextLightColor">#FFFFFF</Color>
+    <Color x:Key="TextDarkColor">#212121</Color>
+    <!-- 選取狀態 -->
+    <Color x:Key="SelectedColor">#5C6BC0</Color>
+    <!-- 狀態燈顏色 -->
+    <Color x:Key="SuccessColor">#43A047</Color>
+    <Color x:Key="WarningColor">#FBC02D</Color>
+    <Color x:Key="ErrorColor">#E53935</Color>
+    <Color x:Key="IdleColor">#BDBDBD</Color>
+    <!-- 訊息顏色 -->
+    <Color x:Key="InfoColor">#FFFFFF</Color>
+    <Color x:Key="ProcessingColor">Lightblue</Color>
+    <Color x:Key="AlertColor">#FBC02D</Color>
+    <!-- 按鈕操作補充色 -->
+    <Color x:Key="ButtonPrimaryColor">#81CFEE</Color>
+    <Color x:Key="ButtonSecondaryDarkColor">#0288D1</Color>
+    <Color x:Key="ButtonSecondaryLightColor">#B3E5FC</Color>
+    <Color x:Key="ButtonWarningColor">#F57C00</Color>
+    <Color x:Key="ButtonErrorColor">#D32F2F</Color>
+    
+    <!--#endregion-->
+
+    <!--#region 合成筆刷 -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDarkColor}" />
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLightColor}" />
+    <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{StaticResource PrimaryBackgroundColor}" />
+
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}" />
+    <SolidColorBrush x:Key="SecondaryLightBrush" Color="{StaticResource SecondaryLightColor}" />
+
+    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+    <SolidColorBrush x:Key="TextLightBrush" Color="{StaticResource TextLightColor}" />
+    <SolidColorBrush x:Key="TextDarkBrush" Color="{StaticResource TextDarkColor}" />
+
+    <SolidColorBrush x:Key="SelectedBrush" Color="{StaticResource SelectedColor}" />
+
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
+    <SolidColorBrush x:Key="IdleBrush" Color="{StaticResource IdleColor}"/>
+
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}"/>
+    <SolidColorBrush x:Key="ProcessingBrush" Color="{StaticResource ProcessingColor}"/>
+    <SolidColorBrush x:Key="AlertBrush" Color="{StaticResource AlertColor}"/>
+
+    <SolidColorBrush x:Key="ButtonPrimaryBrush" Color="{StaticResource ButtonPrimaryColor}" />
+    <SolidColorBrush x:Key="ButtonSecondaryDarkBrush" Color="{StaticResource ButtonSecondaryDarkColor}" />
+    <SolidColorBrush x:Key="ButtonSecondaryLightBrush" Color="{StaticResource ButtonSecondaryLightColor}" />
+    <SolidColorBrush x:Key="ButtonWarningBrush" Color="{StaticResource ButtonWarningColor}" />
+    <SolidColorBrush x:Key="ButtonErrorBrush" Color="{StaticResource ButtonErrorColor}" />
+    
+    <!--#endregion-->
+    
+</ResourceDictionary>

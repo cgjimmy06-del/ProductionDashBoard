@@ -117,6 +117,78 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ComStrDevice" xml:space="preserve">
+    <value>Device</value>
+    <comment>共用字串: 設備</comment>
+  </data>
+  <data name="ComStrErrorTitle" xml:space="preserve">
+    <value>Error</value>
+    <comment>共用字串: 錯誤訊息抬頭</comment>
+  </data>
+  <data name="ComStrProduct" xml:space="preserve">
+    <value>Product</value>
+    <comment>共用字串: 產品</comment>
+  </data>
+  <data name="ComStrTimeSlot" xml:space="preserve">
+    <value>Time Slot</value>
+    <comment>共用字串: 時段</comment>
+  </data>
+  <data name="ComStrUser" xml:space="preserve">
+    <value>User</value>
+    <comment>共用字串: 人員</comment>
+  </data>
+  <data name="ComStrWarningTitle" xml:space="preserve">
+    <value>Warning</value>
+    <comment>共用字串: 警告訊息抬頭</comment>
+  </data>
+  <data name="DeviceFirstInsDialog" xml:space="preserve">
+    <value>Result For Current First Inspection</value>
+    <comment>設備卡片: 首件視窗</comment>
+  </data>
+  <data name="DeviceMaterialDialog" xml:space="preserve">
+    <value>Select Chenged Materials</value>
+    <comment>設備卡片: 物料視窗</comment>
+  </data>
+  <data name="DeviceOperationDialog" xml:space="preserve">
+    <value>Current Operation</value>
+    <comment>設備卡片: 調試視窗</comment>
+  </data>
+  <data name="DeviceRoutineInsDialog" xml:space="preserve">
+    <value>Result For Current Routine Inspection</value>
+    <comment>設備卡片: 巡檢視窗</comment>
+  </data>
+  <data name="InsFirstAbnormal" xml:space="preserve">
+    <value>First Inspection Abnormal, please report according to procedure!</value>
+    <comment>品質檢驗: 首件-檢驗異常</comment>
+  </data>
+  <data name="InsFirstProductUpdate" xml:space="preserve">
+    <value>Product updated, please do first inspection!</value>
+    <comment>品質檢驗: 首件-產品更新</comment>
+  </data>
+  <data name="InsFirstSuccess" xml:space="preserve">
+    <value>First inspection is finished!</value>
+    <comment>品質檢驗: 首件-完成</comment>
+  </data>
+  <data name="InsRoutineEnd" xml:space="preserve">
+    <value>Routine inspection ended!</value>
+    <comment>品質檢驗: 巡檢-結束</comment>
+  </data>
+  <data name="InsRoutineOverdue" xml:space="preserve">
+    <value>Routine inspection overdue!</value>
+    <comment>品質檢驗: 巡檢-逾時</comment>
+  </data>
+  <data name="InsRoutineStart" xml:space="preserve">
+    <value>Routine inspection started!</value>
+    <comment>品質檢驗: 巡檢-開始</comment>
+  </data>
+  <data name="InsRoutineSuccess" xml:space="preserve">
+    <value>Routine inspection is finished!</value>
+    <comment>品質檢驗: 巡檢-完成</comment>
+  </data>
+  <data name="InsRoutineUpdateLight" xml:space="preserve">
+    <value>Routine lights are updated!</value>
+    <comment>品質檢驗: 巡檢-燈號更新</comment>
+  </data>
   <data name="LogInAccountError" xml:space="preserve">
     <value>Invalid account or password!</value>
     <comment>登入視窗: 錯誤訊息</comment>
@@ -128,5 +200,25 @@
   <data name="LogInFillOutError" xml:space="preserve">
     <value>Please fill out completely!</value>
     <comment>登入視窗: 錯誤訊息</comment>
+  </data>
+  <data name="MainProgressDetecting" xml:space="preserve">
+    <value>Detecting...</value>
+    <comment>主視窗: 進度條訊息</comment>
+  </data>
+  <data name="MainProgressIdle" xml:space="preserve">
+    <value>System is idle...</value>
+    <comment>主視窗: 進度條訊息</comment>
+  </data>
+  <data name="MainProgressProcessing" xml:space="preserve">
+    <value>Processing...</value>
+    <comment>主視窗: 進度條訊息</comment>
+  </data>
+  <data name="MainProgressSuccess" xml:space="preserve">
+    <value>Finished</value>
+    <comment>主視窗: 進度條訊息</comment>
+  </data>
+  <data name="MaterialNonSelectionError" xml:space="preserve">
+    <value>Please select at least one item</value>
+    <comment>物料子視窗: 錯誤訊息(dialog error string)</comment>
   </data>
 </root>

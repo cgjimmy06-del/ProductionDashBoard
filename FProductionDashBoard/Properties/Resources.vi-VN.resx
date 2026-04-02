@@ -117,6 +117,60 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ComStrDevice" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="ComStrErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ComStrProduct" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="ComStrTimeSlot" xml:space="preserve">
+    <value>Time Slot</value>
+  </data>
+  <data name="ComStrUser" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="ComStrWarningTitle" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="DeviceFirstInsDialog" xml:space="preserve">
+    <value>Result For Current First Inspection</value>
+  </data>
+  <data name="DeviceMaterialDialog" xml:space="preserve">
+    <value>Select Chenged Materials</value>
+  </data>
+  <data name="DeviceOperationDialog" xml:space="preserve">
+    <value>Current Operation</value>
+  </data>
+  <data name="DeviceRoutineInsDialog" xml:space="preserve">
+    <value>Result For Current Routine Inspection</value>
+  </data>
+  <data name="InsFirstAbnormal" xml:space="preserve">
+    <value>First Inspection Abnormal, please report according to procedure!</value>
+  </data>
+  <data name="InsFirstProductUpdate" xml:space="preserve">
+    <value>Product updated, please do first inspection!</value>
+  </data>
+  <data name="InsFirstSuccess" xml:space="preserve">
+    <value>First inspection is finished!</value>
+  </data>
+  <data name="InsRoutineEnd" xml:space="preserve">
+    <value>Routine inspection ended!</value>
+  </data>
+  <data name="InsRoutineOverdue" xml:space="preserve">
+    <value>Routine inspection overdue!</value>
+  </data>
+  <data name="InsRoutineStart" xml:space="preserve">
+    <value>Routine inspection started!</value>
+  </data>
+  <data name="InsRoutineSuccess" xml:space="preserve">
+    <value>Routine inspection is finished!</value>
+  </data>
+  <data name="InsRoutineUpdateLight" xml:space="preserve">
+    <value>Routine lights are updated!</value>
+  </data>
   <data name="LogInAccountError" xml:space="preserve">
     <value>Invalid account or password!</value>
   </data>
@@ -125,5 +179,20 @@
   </data>
   <data name="LogInFillOutError" xml:space="preserve">
     <value>Please fill out completely!</value>
+  </data>
+  <data name="MainProgressDetecting" xml:space="preserve">
+    <value>Detecting...</value>
+  </data>
+  <data name="MainProgressIdle" xml:space="preserve">
+    <value>System is idle...</value>
+  </data>
+  <data name="MainProgressProcessing" xml:space="preserve">
+    <value>Processing...</value>
+  </data>
+  <data name="MainProgressSuccess" xml:space="preserve">
+    <value>Finished</value>
+  </data>
+  <data name="MaterialNonSelectionError" xml:space="preserve">
+    <value>Please select at least one item</value>
   </data>
 </root>

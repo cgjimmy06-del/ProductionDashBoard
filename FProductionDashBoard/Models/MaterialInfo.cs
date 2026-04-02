@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.Models
 {
     public partial class MaterialInfo : ObservableObject
     {

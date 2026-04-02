@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.ViewModels
 {
     public enum InspectionRadioCheck
     {
@@ -46,23 +46,23 @@ namespace FProductionDashBoard
         public bool IsOtherSelected => SelectionDescription == ErrorStrings.LastOrDefault();
         partial void OnSelectionDescriptionChanged(string value)
         { OnPropertyChanged(nameof(IsOtherSelected)); }
-
         public InspectionDialogViewModel(string dialogstring, DeviceCardViewModel getinfo) : base(dialogstring)
         {
-            CurrentDevice = getinfo.Info.Name;
-            CurrentUser = getinfo.CurrentUser.Name;
+            CurrentDevice = $"{Properties.Resources.ComStrDevice}: {getinfo.Info.Name}";
+            CurrentUser = $"{Properties.Resources.ComStrUser}: {getinfo.CurrentUser.Name}";
 
-            if (DialogInfoString == "首件")
-                CurrentProduct = $"產品: {getinfo.CurrentProduct.Name}";
+            if (DialogInfoString == Properties.Resources.DeviceFirstInsDialog)
+                CurrentProduct = $"{Properties.Resources.ComStrProduct}: {getinfo.CurrentProduct.Name}";
             else
-                CurrentProduct = $"時段: {getinfo.InspectionStatuses.CurrentRoutine + 1}";
+                CurrentProduct = $"{Properties.Resources.ComStrTimeSlot}: " +
+                    $"{getinfo.InspectionStatuses.StartTime + 
+                    getinfo.InspectionStatuses.CurrentRoutine * getinfo.InspectionStatuses.intervalTime}";
 
             selectionDescription = ErrorStrings.FirstOrDefault() ?? "";
 
             ConfirmCommand = new RelayCommand(() => OnConfirm());
             CancelCommand = new RelayCommand(() => OnCancel());
         }
-
         protected override void OnConfirm()
         {
             if (InspectionCheck is InspectionRadioCheck.Success)
@@ -90,12 +90,13 @@ namespace FProductionDashBoard
         [ObservableProperty]
         private bool routineCycleEnable = false; // 是否開啟巡檢功能
 
-        private int startTime = 10; // 開始巡檢時間
-        private int routineTimes = 5; // 總時段
-        private int intervalTime = 1; // 巡檢間隔
+        public int StartTime = 10; // 開始巡檢時間
+        public int routineTimes = 5; // 總時段
+        public int intervalTime = 1; // 巡檢間隔
         public int CurrentRoutine = 0; // 第幾個時段
 
         public event Action<string, LogLevel>? OnLogEvent;
+        public event Action<string>? OnErrorLogEvent;
 
         [ObservableProperty]
         private bool firstInspectionStatus = false; // 首件狀態
@@ -108,11 +109,11 @@ namespace FProductionDashBoard
 
         public void setTimesStartTime(int startTime, int routineTimes, int intervalTime) // 設定起始時間/次數/間隔
         {
-            this.startTime = startTime;
+            this.StartTime = startTime;
             this.routineTimes = routineTimes;
             this.intervalTime = intervalTime;
-            if (DateTime.Now.Hour > this.startTime && DateTime.Now.Hour < this.startTime + this.routineTimes)
-                CurrentRoutine = DateTime.Now.Hour - this.startTime - 1;
+            if (DateTime.Now.Hour > this.StartTime && DateTime.Now.Hour < this.StartTime + this.routineTimes)
+                CurrentRoutine = DateTime.Now.Hour - this.StartTime - 1;
 
             RoutineStatus.Clear();
             for (int i = 0; i < this.routineTimes; i++)
@@ -126,16 +127,16 @@ namespace FProductionDashBoard
                 if (FirstInspectionStatus) return;
 
                 // SQL 機台 人員 產品 有無異常 描述 日 時 完整時間
-                OnLogEvent?.Invoke($"{currentDevice.Info.Name}-完成首件!", LogLevel.Success);
+                OnLogEvent?.Invoke($"{currentDevice.Info.Name}-{Properties.Resources.InsFirstSuccess}", LogLevel.Success);
             }
             else
             {
                 if (FirstInspectionStatus)
-                    OnLogEvent?.Invoke($"{currentDevice.Info.Name}-產品更新，重新執行首件!", LogLevel.Warning);
+                    OnLogEvent?.Invoke($"{currentDevice.Info.Name}-{Properties.Resources.InsFirstProductUpdate}", LogLevel.Warning);
                 else
                 {
                     // SQL 機台 人員 產品 有無異常 描述 日 時 完整時間
-                    OnLogEvent?.Invoke($"{currentDevice.Info.Name}-首件異常，請依流程通報!", LogLevel.Success);
+                    OnLogEvent?.Invoke($"{currentDevice.Info.Name}-{Properties.Resources.InsFirstAbnormal}", LogLevel.Error);
                 }
             }
             FirstInspectionStatus = status;
@@ -153,8 +154,8 @@ namespace FProductionDashBoard
 
             string okngresult = currentStatus == (int)InspectionStatus.Done ? "OK" : "NG";
             LogLevel levelresult = currentStatus == (int)InspectionStatus.Done ? LogLevel.Success : LogLevel.Error;
-            OnLogEvent?.Invoke($"{currentDevice.Info.Name}-{startTime + CurrentRoutine * intervalTime}點巡檢完成-" +
-                $"檢驗結果:{okngresult}-{description}", levelresult);
+            OnLogEvent?.Invoke($"{currentDevice.Info.Name}-[{StartTime + CurrentRoutine * intervalTime}:00]" +
+                $"{Properties.Resources.InsRoutineSuccess}:{okngresult}-{description}", levelresult);
         }
         // 巡檢區段檢查 (by time)
         public void checkRoutineTime()
@@ -163,30 +164,30 @@ namespace FProductionDashBoard
             int currenthour = DateTime.Now.Hour; //(int)((float)DateTime.Now.Second / 3);//
 
             // 巡檢提示燈號更新 (需小於開始時間)
-            if (currenthour == startTime && RoutineStatus[routineTimes - 1] != (int)InspectionStatus.Idle)
+            if (currenthour == StartTime && RoutineStatus[routineTimes - 1] != (int)InspectionStatus.Idle)
             {
                 for (int i = 0; i < this.routineTimes; i++)
                     RoutineStatus[i] = (int)InspectionStatus.Idle;
-                OnLogEvent?.Invoke($"{currentDevice.Info.Name}-巡檢提示燈號更新!", LogLevel.Processing);
+                OnLogEvent?.Invoke($"{currentDevice.Info.Name}-{Properties.Resources.InsRoutineUpdateLight}", LogLevel.Processing);
             }
 
-            if (currenthour < startTime) return; // 未到巡檢時段
-            if (currenthour >= startTime + routineTimes * intervalTime && CurrentRoutine == 0) return; // 超過巡檢時段
+            if (currenthour < StartTime) return; // 未到巡檢時段
+            if (currenthour >= StartTime + routineTimes * intervalTime && CurrentRoutine == 0) return; // 超過巡檢時段
 
-            if (currenthour == startTime && RoutineStatus[0] == (int)InspectionStatus.Idle) // 開啟第一區巡檢
+            if (currenthour == StartTime && RoutineStatus[0] == (int)InspectionStatus.Idle) // 開啟第一區巡檢
             {
                 RoutineStatus[0] = (int)InspectionStatus.Current;
-                OnLogEvent?.Invoke($"{currentDevice.Info.Name}-開始巡檢!", LogLevel.Processing);
+                OnLogEvent?.Invoke($"{currentDevice.Info.Name}-{Properties.Resources.InsRoutineStart}", LogLevel.Processing);
             }
-            if (currenthour - (startTime + CurrentRoutine * intervalTime) >= intervalTime) // 經過下一區則 1. 是否未巡檢 2. 移至下一區
+            if (currenthour - (StartTime + CurrentRoutine * intervalTime) >= intervalTime) // 經過下一區則 1. 是否未巡檢 2. 移至下一區
             {
-                updateRoutineStatus((int)InspectionStatus.Fault, "逾時未巡檢");
+                updateRoutineStatus((int)InspectionStatus.Fault, Properties.Resources.InsRoutineOverdue);
 
                 CurrentRoutine++;
                 if (CurrentRoutine >= routineTimes) // 已完成巡檢
                 {
                     CurrentRoutine = 0;
-                    OnLogEvent?.Invoke($"{currentDevice.Info.Name}-巡檢時段結束", LogLevel.Success);
+                    OnLogEvent?.Invoke($"{currentDevice.Info.Name}-{Properties.Resources.InsRoutineEnd}", LogLevel.Success);
                     return;
                 }
                 RoutineStatus[CurrentRoutine] = (int)InspectionStatus.Current;

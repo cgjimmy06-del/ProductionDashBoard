@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
     
-    <!--#region login window -->
+    <!--#region login window 登入視窗 -->
     <sys:String x:Key="LanguageText">語言</sys:String>
     <sys:String x:Key="ServerText">伺服器</sys:String>
     <sys:String x:Key="AccountText">帳號 (職號)</sys:String>
@@ -12,19 +12,23 @@
     <sys:String x:Key="LoginButton">登入</sys:String>
     <sys:String x:Key="VisitorButton">訪客</sys:String>
     <!--#endregion-->
-    <!--#region dialog window -->
-    <sys:String x:Key="ConfirmButton">確認</sys:String>
-    <sys:String x:Key="CancelButton">取消</sys:String>
-    <!--#endregion-->
-    <!--#region inspection dialog -->
-    <sys:String x:Key="NormalRadioButton">正常</sys:String>
-    <sys:String x:Key="IssueRadioButton">異常回報</sys:String>
-    <!--#endregion-->
-    <!--#region device card -->
+    <!--#region device card 設備卡片 -->
     <sys:String x:Key="MetarialChangeButton">物料</sys:String>
     <sys:String x:Key="FirstInspectionButton">首件</sys:String>
     <sys:String x:Key="RoutineInspectionButton">巡檢</sys:String>
     <sys:String x:Key="OperationButton">調試</sys:String>
+    <!--#endregion-->
+    <!--#region dialog window 彈出視窗 -->
+    <sys:String x:Key="ConfirmButton">確認</sys:String>
+    <sys:String x:Key="CancelButton">取消</sys:String>
+    <!--#endregion-->
+    <!--#region inspection dialog 檢驗視窗 -->
+    <sys:String x:Key="NormalRadioButton">正常</sys:String>
+    <sys:String x:Key="IssueRadioButton">異常回報</sys:String>
+    <!--#endregion-->
+    <!--#region material change dialog 物料視窗 -->
+    <sys:String x:Key="ModeChangeButton">模式切換</sys:String>
+    <sys:String x:Key="ClearSelectionButton">清除</sys:String>
     <!--#endregion-->
     
     

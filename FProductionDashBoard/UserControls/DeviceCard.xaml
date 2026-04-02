@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:localcontrols="clr-namespace:FProductionDashBoard.UserControls"
+             xmlns:localuc="clr-namespace:FProductionDashBoard.UserControls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             mc:Ignorable="d" 
-             d:DesignHeight="200" d:DesignWidth="400" d:Background="White">
+             mc:Ignorable="d"
+             d:DesignHeight="200" d:DesignWidth="600" d:Background="White">
 
     <!-- 卡片樣式綁在 Border -->
     <UserControl.Resources>
@@ -26,23 +26,6 @@
                                       Opacity="0.25"/>
                 </Setter.Value>
             </Setter>
-
-            <!-- 點擊動畫 -->
-            <Style.Resources>
-                <Storyboard x:Key="PressDownStoryboard">
-                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                     To="0.97" Duration="0:0:0.1"/>
-                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                     To="0.97" Duration="0:0:0.1"/>
-                </Storyboard>
-                <Storyboard x:Key="ReleaseStoryboard">
-                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                     To="1" Duration="0:0:0.1"/>
-                    <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                     To="1" Duration="0:0:0.1"/>
-                </Storyboard>
-            </Style.Resources>
-
             <Style.Triggers>
                 <!-- Hover 效果 -->
                 <Trigger Property="IsMouseOver" Value="True">
@@ -64,7 +47,6 @@
                 </EventTrigger>
 
             </Style.Triggers>
-
         </Style>
     </UserControl.Resources>
 
@@ -94,39 +76,43 @@
 
                 <!-- 機台名稱 -->
                 <TextBlock Text="{Binding Info.Name}" d:Text="A1"
-                           FontWeight="Bold"
-                           Foreground="{DynamicResource PrimaryHueMidBrush}"
-                           FontSize="30"
-                           Cursor="Hand"
+                           FontWeight="Bold" FontSize="30" Cursor="Hand"
                            TextDecorations="Underline"/>
 
-                <!-- 資訊列 -->
+                <!-- 資訊列 --> <!-- language -->
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <TextBlock d:Text="current production: default 123"
-                               Text="{Binding CurrentProduct.Name, StringFormat=當前產品: {0}}" 
-                               Foreground="{DynamicResource SecondaryHueMidBrush}"/>
-                    <TextBlock d:Text="operator: yun"
-                               Text="{Binding CurrentUser.Name, StringFormat=當前操作員: {0}}"  
-                               Foreground="{DynamicResource SecondaryHueMidBrush}"/>
+                    <TextBlock d:Text="default 123"
+                               Text="{Binding CurrentProduct.Name, StringFormat=: {0}}"/>
+                    
+                    <TextBlock d:Text="yun"
+                               Text="{Binding CurrentUser.Name, StringFormat=: {0}}"/>
                     <!--<TextBlock Text="產量: 1200 件" 
                                Foreground="{DynamicResource SecondaryHueMidBrush}"/>-->
                 </StackPanel>
 
                 <!-- 按鈕列 -->
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <Button Content="{DynamicResource MetarialChangeButton}" Width="75" Margin="0, 5, 5, 5"
+                    <Button Margin="0, 5, 5, 5"
+                            Style="{DynamicResource DeviceMainButtonStyle}"
+                            Content="{DynamicResource MetarialChangeButton}"
                             Command="{Binding MaterialsChangeCommand}"/>
 
-                    <Button Content="{DynamicResource FirstInspectionButton}" Width="75" Margin="5"
+                    <Button Margin="5"
+                            Style="{DynamicResource DeviceMainButtonStyle}"
+                            Content="{DynamicResource FirstInspectionButton}"
                             Command="{Binding FirstInspectionCommand}"
                             Background="{Binding InspectionStatuses.FirstInspectionStatus, 
                                     Converter={StaticResource BoolToColorConverter}}"
                             Foreground="White"/>
 
-                    <Button Content="{DynamicResource RoutineInspectionButton}" Width="75" Margin="5"
-                                Command="{Binding RoutineInspectionCommand}"/>
+                    <Button Margin="5"
+                            Style="{DynamicResource DeviceMainButtonStyle}"
+                            Content="{DynamicResource RoutineInspectionButton}" 
+                            Command="{Binding RoutineInspectionCommand}"/>
 
-                    <Button Content="{DynamicResource OperationButton}" Width="75" Margin="5"
+                    <Button Margin="5"
+                            Style="{DynamicResource DeviceMainButtonStyle}"
+                            Content="{DynamicResource OperationButton}" 
                             Command="{Binding OperationCommand}"/>
                 </StackPanel>
 

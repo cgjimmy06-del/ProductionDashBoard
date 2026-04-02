@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.Models
 {
     public enum Roles
     {

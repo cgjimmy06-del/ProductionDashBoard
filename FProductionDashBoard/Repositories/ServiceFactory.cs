@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using System.Diagnostics;
+using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.Repositories
 {

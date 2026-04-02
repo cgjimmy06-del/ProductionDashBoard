@@ -3,21 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:FProductionDashBoard.UserControls"
-             mc:Ignorable="d" Height="Auto" Width="450"
+             xmlns:localuc="clr-namespace:FProductionDashBoard.UserControls"
+             mc:Ignorable="d" Height="Auto" Width="Auto"
              d:DesignHeight="400" d:DesignWidth="400" d:Background="White">
     <Grid>
         <StackPanel>
+            <!-- 當前操作資訊 -->
+            <TextBlock Margin="10" FontSize="16" d:Text="機台"
+                       Text="{Binding CurrentDevice}"/>
+
             <!-- 主按鈕區 -->
             <StackPanel Orientation="Horizontal">
-                <Button Margin="10" Content="模式切換"
-                Command="{Binding ToggleModeCommand}"
-                Style="{StaticResource MaterialDesignRaisedButton}" />
-                <Button Margin="10" Content="清除選擇"
-                Command="{Binding ClearSelectionCommand}"
-                Style="{StaticResource MaterialDesignRaisedButton}" />
+                <Button Margin="10" Padding="5" Width="75"
+                        Style="{StaticResource FunctionButtonStyle}"
+                        Content="{DynamicResource ModeChangeButton}"
+                        Command="{Binding ToggleModeCommand}"/>
+                <Button Margin="10" Padding="5" Width="75"
+                        Style="{StaticResource FunctionButtonStyle}"
+                        Content="{DynamicResource ClearSelectionButton}"
+                        Command="{Binding ClearSelectionCommand}" />
             </StackPanel>
-            
+
             <!-- 物料按鈕生成區 -->
             <ItemsControl ItemsSource="{Binding Materials}">
                 <ItemsControl.ItemsPanel>
@@ -27,29 +33,24 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Margin="5" Height="50" Padding="2"
-                    Command="{Binding DataContext.MaterialButtonClickCommand, 
-                        RelativeSource={RelativeSource AncestorType=UserControl}}"
-                    CommandParameter="{Binding}">
+                        <Button Style="{StaticResource MaterialSelectionButtonStyle}" Width="100"
+                                Command="{Binding DataContext.MaterialButtonClickCommand, 
+                                RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}">
                             <Button.Content>
                                 <StackPanel>
                                     <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" />
-                                    <TextBlock Text="{Binding SelectedCount}"  HorizontalAlignment="Center"
-                                           Visibility="{Binding DataContext.IsCountMode, 
+                                    <TextBlock Text="{Binding SelectedCount}" HorizontalAlignment="Center"
+                                        Visibility="{Binding DataContext.IsCountMode, 
                                         RelativeSource={RelativeSource AncestorType=UserControl}, 
                                         Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </StackPanel>
                             </Button.Content>
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                            <Setter Property="Background" Value="LightGreen"/>
-                                            <Setter Property="Foreground" Value="Indigo"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
+                            <!--<Button.Style>
+                                <Style TargetType="Button" 
+                                       BasedOn="{StaticResource MaterialSelectionButtonStyle}">
                                 </Style>
-                            </Button.Style>
+                            </Button.Style>-->
                         </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
