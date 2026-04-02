@@ -23,7 +23,7 @@
     <Color x:Key="ErrorColor">#E53935</Color>
     <Color x:Key="IdleColor">#BDBDBD</Color>
     <!-- 訊息顏色 -->
-    <Color x:Key="InfoColor">black</Color>
+    <Color x:Key="InfoColor">#212121</Color>
     <Color x:Key="ProcessingColor">Blue</Color>
     <Color x:Key="AlertColor">#FBC02D</Color>
     <!-- 按鈕操作補充色 -->

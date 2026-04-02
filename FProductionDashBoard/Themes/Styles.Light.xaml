@@ -57,9 +57,19 @@
     </Storyboard>
     
     <!--#endregion-->
-    
+
     <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
+    </Style>
+    <Style TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignOutlinedComboBox}">
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="Height" Value="30"/>
+    </Style>
+    <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Padding" Value="0"/>
     </Style>
 
     <!-- 具名樣式 -->
@@ -96,7 +106,6 @@
     <Style x:Key="FunctionButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="0"/>
-        <Setter Property="Margin" Value="2"/>
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="5"/>
         <Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>

@@ -23,12 +23,12 @@
     <Color x:Key="ErrorColor">#E53935</Color>
     <Color x:Key="IdleColor">#BDBDBD</Color>
     <!-- 訊息顏色 -->
-    <Color x:Key="InfoColor">black</Color>
-    <Color x:Key="ProcessingColor">Blue</Color>
+    <Color x:Key="InfoColor">#FFFFFF</Color>
+    <Color x:Key="ProcessingColor">Lightblue</Color>
     <Color x:Key="AlertColor">#FBC02D</Color>
     <!-- 按鈕操作補充色 -->
-    <Color x:Key="ButtonPrimaryColor">#0288D1</Color>
-    <Color x:Key="ButtonSecondaryDarkColor">#81CFEE</Color>
+    <Color x:Key="ButtonPrimaryColor">#81CFEE</Color>
+    <Color x:Key="ButtonSecondaryDarkColor">#0288D1</Color>
     <Color x:Key="ButtonSecondaryLightColor">#B3E5FC</Color>
     <Color x:Key="ButtonWarningColor">#F57C00</Color>
     <Color x:Key="ButtonErrorColor">#D32F2F</Color>

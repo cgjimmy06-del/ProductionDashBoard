@@ -189,9 +189,10 @@
                             <ColumnDefinition Width="25"/>
                         </Grid.ColumnDefinitions>
                         <!-- 即時狀態窗 -->
-                        <ListBox Grid.Column="0"
-                            x:Name="LogListBox" ItemsSource="{Binding CurrentLogs}"
-                             local:ListBoxBehavior.AutoScrollToEnd="{Binding AutoScrollEnabled}">
+                        <ListBox Grid.Column="0" x:Name="LogListBox" 
+                                 Background="{DynamicResource BackgroundBrush}"
+                                 ItemsSource="{Binding CurrentLogs}"
+                                 local:ListBoxBehavior.AutoScrollToEnd="{Binding AutoScrollEnabled}">
                             <!-- 行高/內距/文字大小/行距 -->
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem">
@@ -221,10 +222,12 @@
                         </ListBox>
                         <!-- 狀態窗操作介面 -->
                         <StackPanel Grid.Column="1" Margin="2">
-                            <Button Width="20" Height="20" HorizontalAlignment="Center"
+                            <Button Width="20" Height="20" Margin="1"
+                                    HorizontalAlignment="Center"
                                     Style="{StaticResource FunctionButtonStyle}"
                                     Content="☰" Command="{Binding AutoScrollCommand}"/>
-                            <Button Width="20" Height="20" HorizontalAlignment="Center"
+                            <Button Width="20" Height="20" Margin="1"
+                                    HorizontalAlignment="Center"
                                     Style="{StaticResource FunctionButtonStyle}"
                                     Content="E" Command="{Binding ErrorModeCommand}"/>
 
