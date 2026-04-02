@@ -123,6 +123,7 @@
 
             <!-- 導覽列 -->
             <Border Grid.Column="0" Margin="0" d:Width="200"
+                    Background="{DynamicResource PrimaryBackgroundBrush}"
                     Width="{Binding IsCollapsedNav, Converter={StaticResource CollapseWidthConverter}}">
                 <StackPanel Margin="0">
                     <!-- 收合按鈕"☰" -->
@@ -220,11 +221,11 @@
                         </ListBox>
                         <!-- 狀態窗操作介面 -->
                         <StackPanel Grid.Column="1" Margin="2">
-                            <Button Width="20" Height="20" Padding="0" Margin="2"
-                                    HorizontalAlignment="Center"
+                            <Button Width="20" Height="20" HorizontalAlignment="Center"
+                                    Style="{StaticResource FunctionButtonStyle}"
                                     Content="☰" Command="{Binding AutoScrollCommand}"/>
-                            <Button Width="20" Height="20" Padding="0" Margin="2"
-                                    HorizontalAlignment="Center"
+                            <Button Width="20" Height="20" HorizontalAlignment="Center"
+                                    Style="{StaticResource FunctionButtonStyle}"
                                     Content="E" Command="{Binding ErrorModeCommand}"/>
 
                         </StackPanel>

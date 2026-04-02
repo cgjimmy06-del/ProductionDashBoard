@@ -41,7 +41,7 @@ namespace FProductionDashBoard.ViewModels
 
         public MaterialDialogViewModel(string dialogstring, DeviceCardViewModel getinfo) : base(dialogstring)
         {
-            CurrentDevice = getinfo.Info.Name;
+            CurrentDevice = $"{Properties.Resources.ComStrDevice}: {getinfo.Info.Name}";
 
             ConfirmCommand = new RelayCommand(() => OnConfirm());
             CancelCommand = new RelayCommand(() => OnCancel());

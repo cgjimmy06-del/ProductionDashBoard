@@ -29,10 +29,12 @@
                    Foreground="Red"/>
         <!-- 確認/取消 -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="{DynamicResource ConfirmButton}" Margin="50, 10"
+            <Button Margin="40, 10" Style="{DynamicResource ConfirmButtonStyle}"
+                    Content="{DynamicResource ConfirmButton}" 
                     Command="{Binding ConfirmCommand}">
             </Button>
-            <Button Content="{DynamicResource CancelButton}" Margin="50, 10"
+            <Button Margin="40, 10" Style="{DynamicResource ConfirmButtonStyle}"
+                    Content="{DynamicResource CancelButton}" 
                     Command="{Binding CancelCommand}"/>
         </StackPanel>
     </Grid>

@@ -46,16 +46,16 @@
         <TextBlock Text="{Binding Errorinfo}" d:Text="Error" Margin="5,0,0,15"
                    Foreground="{DynamicResource ErrorBrush}"/>
 
-        <CheckBox Content="{DynamicResource RememberMeCheck}" Margin="5"
+        <CheckBox Content="{DynamicResource RememberMeCheck}" Margin="5,0"
                   HorizontalAlignment="Center"
               IsChecked="{Binding RememberMe}" />
 
-        <Button Content="{DynamicResource LoginButton}" 
-                Background="LightGray" Foreground="Black" Width="100"
+        <Button Style="{DynamicResource ConfirmButtonStyle}"
+                Content="{DynamicResource LoginButton}"
                 Command="{Binding LoginCommand}"
                 CommandParameter="Normal" IsDefault="true"/>
 
-        <Button Margin="5" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+        <Button Margin="0,2" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                 Command="{Binding LoginCommand}" 
                 CommandParameter="Visitor">
             <TextBlock Text="{DynamicResource VisitorButton}" TextDecorations="Underline" Foreground="Blue"/>

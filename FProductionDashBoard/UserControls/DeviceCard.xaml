@@ -6,7 +6,7 @@
              xmlns:localuc="clr-namespace:FProductionDashBoard.UserControls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="200" d:DesignWidth="400" d:Background="White">
+             d:DesignHeight="200" d:DesignWidth="600" d:Background="White">
 
     <!-- 卡片樣式綁在 Border -->
     <UserControl.Resources>
@@ -97,19 +97,27 @@
 
                 <!-- 按鈕列 -->
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <Button Content="{DynamicResource MetarialChangeButton}" Width="75" Margin="0, 5, 5, 5"
+                    <Button Margin="0, 5, 5, 5"
+                            Style="{DynamicResource DeviceMainButtonStyle}"
+                            Content="{DynamicResource MetarialChangeButton}"
                             Command="{Binding MaterialsChangeCommand}"/>
 
-                    <Button Content="{DynamicResource FirstInspectionButton}" Width="75" Margin="5"
+                    <Button Margin="5"
+                            Style="{DynamicResource DeviceMainButtonStyle}"
+                            Content="{DynamicResource FirstInspectionButton}"
                             Command="{Binding FirstInspectionCommand}"
                             Background="{Binding InspectionStatuses.FirstInspectionStatus, 
                                     Converter={StaticResource BoolToColorConverter}}"
                             Foreground="White"/>
 
-                    <Button Content="{DynamicResource RoutineInspectionButton}" Width="75" Margin="5"
-                                Command="{Binding RoutineInspectionCommand}"/>
+                    <Button Margin="5"
+                            Style="{DynamicResource DeviceMainButtonStyle}"
+                            Content="{DynamicResource RoutineInspectionButton}" 
+                            Command="{Binding RoutineInspectionCommand}"/>
 
-                    <Button Content="{DynamicResource OperationButton}" Width="75" Margin="5"
+                    <Button Margin="5"
+                            Style="{DynamicResource DeviceMainButtonStyle}"
+                            Content="{DynamicResource OperationButton}" 
                             Command="{Binding OperationCommand}"/>
                 </StackPanel>
 
