@@ -20,13 +20,13 @@ namespace FProductionDashBoard
     public partial class LoginWindow : Window
     {
         public string SelectedServer { get; set; } = "FS";
-        public UserInfo? User { get; set; }
+        public Models.UserInfo? User { get; set; }
 
         public LoginWindow()
         {
             InitializeComponent();
 
-            var vm = new LoginViewModel();
+            var vm = new ViewModels.LoginViewModel();
             vm.loadDefault(); //載入預設
             // 登入成功後事件
             vm.OnLoginSuccess = (server, user) =>

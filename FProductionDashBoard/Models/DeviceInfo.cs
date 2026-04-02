@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using static Dapper.SqlMapper;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.Models
 {
     public partial class DeviceInfo : ObservableObject
     {
@@ -20,7 +20,6 @@ namespace FProductionDashBoard
         public string? Factory { get; set; }
         public string? Building { get; set; }
         public string? Floor { get; set; }
-
 
         [ObservableProperty]
         private int status;

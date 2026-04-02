@@ -61,6 +61,168 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Device 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrDevice {
+            get {
+                return ResourceManager.GetString("ComStrDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Error 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrErrorTitle {
+            get {
+                return ResourceManager.GetString("ComStrErrorTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Product 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrProduct {
+            get {
+                return ResourceManager.GetString("ComStrProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Time Slot 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrTimeSlot {
+            get {
+                return ResourceManager.GetString("ComStrTimeSlot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 User 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrUser {
+            get {
+                return ResourceManager.GetString("ComStrUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Warning 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrWarningTitle {
+            get {
+                return ResourceManager.GetString("ComStrWarningTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Result For Current First Inspection 的當地語系化字串。
+        /// </summary>
+        internal static string DeviceFirstInsDialog {
+            get {
+                return ResourceManager.GetString("DeviceFirstInsDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Select Chenged Materials 的當地語系化字串。
+        /// </summary>
+        internal static string DeviceMaterialDialog {
+            get {
+                return ResourceManager.GetString("DeviceMaterialDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Current Operation 的當地語系化字串。
+        /// </summary>
+        internal static string DeviceOperationDialog {
+            get {
+                return ResourceManager.GetString("DeviceOperationDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Result For Current Routine Inspection 的當地語系化字串。
+        /// </summary>
+        internal static string DeviceRoutineInsDialog {
+            get {
+                return ResourceManager.GetString("DeviceRoutineInsDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 First Inspection Abnormal, please report according to procedure! 的當地語系化字串。
+        /// </summary>
+        internal static string InsFirstAbnormal {
+            get {
+                return ResourceManager.GetString("InsFirstAbnormal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Product updated, please do first inspection! 的當地語系化字串。
+        /// </summary>
+        internal static string InsFirstProductUpdate {
+            get {
+                return ResourceManager.GetString("InsFirstProductUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 First inspection is finished! 的當地語系化字串。
+        /// </summary>
+        internal static string InsFirstSuccess {
+            get {
+                return ResourceManager.GetString("InsFirstSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Routine inspection ended! 的當地語系化字串。
+        /// </summary>
+        internal static string InsRoutineEnd {
+            get {
+                return ResourceManager.GetString("InsRoutineEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Routine inspection overdue! 的當地語系化字串。
+        /// </summary>
+        internal static string InsRoutineOverdue {
+            get {
+                return ResourceManager.GetString("InsRoutineOverdue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Routine inspection started! 的當地語系化字串。
+        /// </summary>
+        internal static string InsRoutineStart {
+            get {
+                return ResourceManager.GetString("InsRoutineStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Routine inspection is finished! 的當地語系化字串。
+        /// </summary>
+        internal static string InsRoutineSuccess {
+            get {
+                return ResourceManager.GetString("InsRoutineSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Routine lights are updated! 的當地語系化字串。
+        /// </summary>
+        internal static string InsRoutineUpdateLight {
+            get {
+                return ResourceManager.GetString("InsRoutineUpdateLight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Invalid account or password! 的當地語系化字串。
         /// </summary>
         internal static string LogInAccountError {
@@ -84,6 +246,51 @@ namespace FProductionDashBoard.Properties {
         internal static string LogInFillOutError {
             get {
                 return ResourceManager.GetString("LogInFillOutError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Detecting... 的當地語系化字串。
+        /// </summary>
+        internal static string MainProgressDetecting {
+            get {
+                return ResourceManager.GetString("MainProgressDetecting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 System is idle... 的當地語系化字串。
+        /// </summary>
+        internal static string MainProgressIdle {
+            get {
+                return ResourceManager.GetString("MainProgressIdle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Processing... 的當地語系化字串。
+        /// </summary>
+        internal static string MainProgressProcessing {
+            get {
+                return ResourceManager.GetString("MainProgressProcessing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Finished 的當地語系化字串。
+        /// </summary>
+        internal static string MainProgressSuccess {
+            get {
+                return ResourceManager.GetString("MainProgressSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Please select at least one item 的當地語系化字串。
+        /// </summary>
+        internal static string MaterialNonSelectionError {
+            get {
+                return ResourceManager.GetString("MaterialNonSelectionError", resourceCulture);
             }
         }
     }

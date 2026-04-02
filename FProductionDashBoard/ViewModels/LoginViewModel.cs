@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.ViewModels
 {
     public class LanguageOption
     {
@@ -42,11 +42,11 @@ namespace FProductionDashBoard
             new LanguageOption { DisplayName = "Tiếng Việt", CultureCode = "vi-VN" }};
 
         [ObservableProperty]
-        private string selectedTheme = "Light";
-        [ObservableProperty]
         private string selectedLanguage = "zh-TW";
         [ObservableProperty]
         private string selectedServer = "FS";
+        [ObservableProperty]
+        private bool isDarkMode = false;
         [ObservableProperty]
         private string userId = "";
         [ObservableProperty]
@@ -60,7 +60,7 @@ namespace FProductionDashBoard
         public ICommand LoginCommand { get; }
         public ICommand LanguageChangeCommand { get; }
         public ICommand ThemeChangeCommand { get; }
-        public Action<string, UserInfo>? OnLoginSuccess { get; set; }
+        public Action<string, Models.UserInfo>? OnLoginSuccess { get; set; }
 
         public LoginViewModel()
         {
@@ -78,7 +78,7 @@ namespace FProductionDashBoard
                 { }
                 else if (param == "Visitor") // 訪客登入 (後續刷卡擴充)
                 {
-                    UserId = "F0000000";
+                    UserId = "visitor";
                     Password = "0000";
                 }
                 logInEvent(param);
@@ -113,7 +113,7 @@ namespace FProductionDashBoard
         private void saveDefault() // 儲存預設
         {
             Properties.Settings.Default.RememberMe = RememberMe;
-            Properties.Settings.Default.Theme = SelectedTheme;
+            Properties.Settings.Default.IsDarkMode = IsDarkMode;
             Properties.Settings.Default.CultureCode = SelectedLanguage;
             Properties.Settings.Default.Server = SelectedServer;
 
@@ -136,9 +136,8 @@ namespace FProductionDashBoard
             UserId = Properties.Settings.Default.Account;
             Password = Properties.Settings.Default.Password;
 
-            if (SelectedTheme != Properties.Settings.Default.Theme &&
-                Properties.Settings.Default.Theme != string.Empty)
-            { SelectedTheme = Properties.Settings.Default.Theme; themeChange(); }
+            if (IsDarkMode != Properties.Settings.Default.IsDarkMode)
+            { IsDarkMode = Properties.Settings.Default.IsDarkMode; themeChange(); }
 
             if (SelectedLanguage != Properties.Settings.Default.CultureCode && 
                 Properties.Settings.Default.CultureCode != string.Empty)
@@ -165,10 +164,11 @@ namespace FProductionDashBoard
         }
         private void themeChange() // 主題切換
         {
+            var themeName = IsDarkMode ? "Dark" : "Light";
+
             // 切換 ResourceDictionary 主題
             var dictTheme = new ResourceDictionary();
-
-            dictTheme.Source = new Uri($"Themes/Theme.{SelectedTheme}.xaml", UriKind.Relative);
+            dictTheme.Source = new Uri($"Themes/Theme.{themeName}.xaml", UriKind.Relative);
 
             var oldDictTheme = Application.Current.Resources.MergedDictionaries
                 .FirstOrDefault(d => d.Source != null && d.Source.OriginalString.Contains("Themes/Theme"));
@@ -180,7 +180,7 @@ namespace FProductionDashBoard
             } else Application.Current.Resources.MergedDictionaries.Add(dictTheme);
 
             //// 切換 Material Design 主題
-            if (SelectedTheme == "Dark") _paletteHelper.SetTheme(_darkTheme);
+            if (IsDarkMode) _paletteHelper.SetTheme(_darkTheme);
             else _paletteHelper.SetTheme(_lightTheme);
         }
     }

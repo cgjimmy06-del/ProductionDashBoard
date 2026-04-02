@@ -46,6 +46,9 @@
             <local:IntToColorConverter x:Key="IntToColorConverter"/>
             <local:StringNullOrEmptyToVisibilityConverter x:Key="PlaceholderConverter"/>
             <local:CollapseWidthConverter x:Key="CollapseWidthConverter"/>
+            <local:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+            <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <!--#endregion-->
             
         </ResourceDictionary>
         

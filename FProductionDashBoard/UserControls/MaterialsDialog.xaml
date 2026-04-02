@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="FProductionDashBoard.UserControls.MaterialsDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:localuc="clr-namespace:FProductionDashBoard.UserControls"
+             mc:Ignorable="d" Height="Auto" Width="Auto"
+             d:DesignHeight="400" d:DesignWidth="400" d:Background="White">
+    <Grid>
+        <StackPanel>
+            <!-- 當前操作資訊 -->
+            <TextBlock Margin="10" FontSize="16" d:Text="機台"
+                       Text="{Binding CurrentDevice}"/>
+
+            <!-- 主按鈕區 -->
+            <StackPanel Orientation="Horizontal">
+                <Button Margin="10" Padding="5" Width="75"
+                        Style="{StaticResource FunctionButtonStyle}"
+                        Content="{DynamicResource ModeChangeButton}"
+                        Command="{Binding ToggleModeCommand}"/>
+                <Button Margin="10" Padding="5" Width="75"
+                        Style="{StaticResource FunctionButtonStyle}"
+                        Content="{DynamicResource ClearSelectionButton}"
+                        Command="{Binding ClearSelectionCommand}" />
+            </StackPanel>
+
+            <!-- 物料按鈕生成區 -->
+            <ItemsControl ItemsSource="{Binding Materials}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="5" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Style="{StaticResource MaterialSelectionButtonStyle}" Width="100"
+                                Command="{Binding DataContext.MaterialButtonClickCommand, 
+                                RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}">
+                            <Button.Content>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding SelectedCount}" HorizontalAlignment="Center"
+                                        Visibility="{Binding DataContext.IsCountMode, 
+                                        RelativeSource={RelativeSource AncestorType=UserControl}, 
+                                        Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                </StackPanel>
+                            </Button.Content>
+                            <!--<Button.Style>
+                                <Style TargetType="Button" 
+                                       BasedOn="{StaticResource MaterialSelectionButtonStyle}">
+                                </Style>
+                            </Button.Style>-->
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

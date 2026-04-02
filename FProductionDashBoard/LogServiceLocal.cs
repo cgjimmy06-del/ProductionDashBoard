@@ -42,15 +42,14 @@ namespace FProductionDashBoard
     public class LogService : ObservableObject
     {
         public ObservableCollection<LogEntry> Logs { get; } = new();
+        public ObservableCollection<LogEntry> ErrorLogs { get; } = new();
         public ObservableCollection<string> AvailableLogFiles { get; } = new();
 
-        private readonly int _daysToKeep = 7;
-        private readonly string _logDirectory = "Logs";
-        private string GetLogFilePath()
-        {
-            string date = DateTime.Now.ToString("yyyy-MM-dd");
-            return Path.Combine(_logDirectory, $"logs_{date}.txt");
-        }
+        private readonly int _daysToKeep = 3;
+        private readonly string _logDirectory = "Logs"; // log路徑
+        private readonly string _logFileName = "logs"; // log檔名 (接日期)
+        private readonly string _errorLogFileName = "errorlogs"; // log檔名 (接日期)
+
         public LogService()
         {
             if (!Directory.Exists(_logDirectory))
@@ -90,25 +89,53 @@ namespace FProductionDashBoard
                     Color = tocolor,
                     Icon = toicon
                 };
+
                 Logs.Add(entry);
-
                 // 同步到檔案
-                //AppendLogToFile(entry);
-
+                //AppendLogToFile(entry, _logFileName);
                 // 每次新增時檢查是否需要清理
                 //CleanupOldLogs();
+
             }, DispatcherPriority.Background);
         }
-
-        private void AppendLogToFile(LogEntry entry)
+        public void AddErrorLog(string message)
         {
-            string filePath = GetLogFilePath();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var resources = Application.Current.Resources;
+                var entry = new LogEntry
+                {
+                    Message = message,
+                    Level = LogLevel.Error,
+                    Timestamp = DateTime.Now,
+                    Color = (Brush)resources["InfoBrush"],
+                    Icon = PackIconKind.Error
+                };
+
+                ErrorLogs.Add(entry);
+                // 同步到檔案
+                //AppendLogToFile(entry, _errorLogFileName);
+                // 每次新增時檢查是否需要清理
+                //CleanupOldLogs();
+
+            }, DispatcherPriority.Background);
+        }
+        private string GetLogFilePathWithDate(string logtitle)
+        {
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
+            return Path.Combine(_logDirectory, $"{logtitle}_{date}.txt");
+        }
+        private void AppendLogToFile(LogEntry entry, string filetitle)
+        {
+            string filePath = GetLogFilePathWithDate(filetitle);
             var line = $"{entry.Timestamp:yyyy-MM-dd HH:mm:ss} [{entry.Level}] {entry.Message}";
             File.AppendAllText(filePath, line + Environment.NewLine);
         }
+
+        // 同時清除與更新logs與errorlogs
         private void CleanupOldLogs()
         {
-            var files = Directory.GetFiles(_logDirectory, "logs_*.txt")
+            var files = Directory.GetFiles(_logDirectory, "*logs_*.txt")
                                  .Select(f => new FileInfo(f))
                                  .OrderByDescending(f => f.CreationTime)
                                  .ToList();
@@ -137,7 +164,7 @@ namespace FProductionDashBoard
         public void RefreshAvailableLogFiles()
         {
             AvailableLogFiles.Clear();
-            foreach (var file in Directory.GetFiles(_logDirectory, "logs_*.txt"))
+            foreach (var file in Directory.GetFiles(_logDirectory, "*logs_*.txt"))
             {
                 AvailableLogFiles.Add(Path.GetFileName(file));
             }
@@ -160,20 +187,20 @@ namespace FProductionDashBoard
 
         private static readonly string filePath = "devices.json";
 
-        public static void SaveDevices(ObservableCollection<DeviceInfo> devices)
+        public static void SaveDevices(ObservableCollection<Models.DeviceInfo> devices)
         {
             var json = JsonSerializer.Serialize(devices);
             File.WriteAllText(filePath, json);
         }
 
-        public static ObservableCollection<DeviceInfo> LoadDevices()
+        public static ObservableCollection<Models.DeviceInfo> LoadDevices()
         {
             if (!File.Exists(filePath))
-                return new ObservableCollection<DeviceInfo>();
+                return new ObservableCollection<Models.DeviceInfo>();
 
             var json = File.ReadAllText(filePath);
-            return JsonSerializer.Deserialize<ObservableCollection<DeviceInfo>>(json)
-                   ?? new ObservableCollection<DeviceInfo>();
+            return JsonSerializer.Deserialize<ObservableCollection<Models.DeviceInfo>>(json)
+                   ?? new ObservableCollection<Models.DeviceInfo>();
         }
 
 
@@ -181,104 +208,4 @@ namespace FProductionDashBoard
 
 
     #endregion
-
-    #region -- Converter/Behavior --
-    public class BoolToColorConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            bool isOn = (bool)value;
-            return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["ErrorBrush"];
-        }
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        { throw new NotImplementedException(); }
-    }
-    public class IntToColorConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            int status = (int)value;
-
-            // 從 App.xaml 資源取顏色
-            var resources = Application.Current.Resources;
-            return status switch
-            {
-                0 => (Brush)resources["SuccessBrush"],
-                1 => (Brush)resources["WarningBrush"],
-                2 => (Brush)resources["ErrorBrush"],
-                _ => (Brush)resources["IdleBrush"]
-            };
-        }
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        { throw new NotImplementedException(); }
-    }
-    public class StringNullOrEmptyToVisibilityConverter : IValueConverter 
-    { 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) 
-        { 
-            var str = value as string; 
-            return string.IsNullOrEmpty(str) ? Visibility.Visible : Visibility.Collapsed; 
-        } 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) 
-        { throw new NotImplementedException(); } 
-    }
-    public class CollapseWidthConverter : IValueConverter
-    {
-        public double CollapsedWidth { get; set; } = 50;
-        public double ExpandedWidth { get; set; } = 200;
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            bool isCollapsed = (bool)value;
-            return isCollapsed ? CollapsedWidth : ExpandedWidth;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        { throw new NotImplementedException(); }
-    }
-    public static class ListBoxBehavior
-    {
-        public static readonly DependencyProperty AutoScrollToEndProperty =
-            DependencyProperty.RegisterAttached(
-                "AutoScrollToEnd",
-                typeof(bool),
-                typeof(ListBoxBehavior),
-                new PropertyMetadata(false, OnAutoScrollToEndChanged));
-
-        public static bool GetAutoScrollToEnd(DependencyObject obj)
-            => (bool)obj.GetValue(AutoScrollToEndProperty);
-        public static void SetAutoScrollToEnd(DependencyObject obj, bool value)
-            => obj.SetValue(AutoScrollToEndProperty, value);
-
-        private static void OnAutoScrollToEndChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is ListBox listBox && (bool)e.NewValue)
-            {
-                // 確保在 Loaded / DataContextChanged 時重新檢查 ItemsSource
-                listBox.Loaded += (s, ev) => TryAttach(listBox);
-                listBox.DataContextChanged += (s, ev) => TryAttach(listBox);
-            }
-        }
-        private static void TryAttach(ListBox listBox)
-        {
-            if (listBox.ItemsSource is INotifyCollectionChanged collection)
-            {
-                collection.CollectionChanged += (s, args) =>
-                {
-                    if (args.Action == NotifyCollectionChangedAction.Add)
-                    {
-                        var lastItem = listBox.Items[listBox.Items.Count - 1];
-                        listBox.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            listBox.ScrollIntoView(lastItem);
-                            listBox.SelectedIndex = listBox.Items.Count - 1; // 可選擇是否需要反白
-                        }));
-                    }
-                };
-            }
-        }
-    }
-
-    #endregion
-
-
 }

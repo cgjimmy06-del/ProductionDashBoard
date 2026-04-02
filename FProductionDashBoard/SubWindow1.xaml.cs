@@ -23,6 +23,7 @@ namespace FProductionDashBoard
         public SubWindow1()
         {
             InitializeComponent();
+            Owner = Application.Current.MainWindow;
             Opacity = 0; // 初始透明度設為 0
         }
 

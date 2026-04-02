@@ -1,9 +1,12 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:FProductionDashBoard">
-    
+                    xmlns:localcontrols="clr-namespace:FProductionDashBoard.UserControls">
+
+    <!-- 此xaml為UserControl卡片設計樣式 -->
+    <!-- 用於 動態生成複數卡片時產生之具名樣式設計 -->
+
     <!-- 主視窗用的簡單卡片 -->
-    <Style TargetType="local:DeviceCard" x:Key="MainCardStyle">
+    <Style TargetType="localcontrols:DeviceCard" x:Key="MainCardStyle">
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="Height" Value="Auto"/>
 

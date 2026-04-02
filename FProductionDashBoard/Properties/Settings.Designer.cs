@@ -73,13 +73,13 @@ namespace FProductionDashBoard.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Theme {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsDarkMode {
             get {
-                return ((string)(this["Theme"]));
+                return ((bool)(this["IsDarkMode"]));
             }
             set {
-                this["Theme"] = value;
+                this["IsDarkMode"] = value;
             }
         }
         

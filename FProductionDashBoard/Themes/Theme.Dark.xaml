@@ -3,7 +3,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml"/>
 
-        <ResourceDictionary Source="Colors.Light.xaml"/>
+        <ResourceDictionary Source="Colors.Dark.xaml"/>
         <ResourceDictionary Source="Styles.Light.xaml"/>
         <ResourceDictionary Source="Icons.Light.xaml"/>
         <ResourceDictionary Source="Images.Light.xaml"/>

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.UserControls
 {
     /// <summary>
     /// DeviceCard.xaml 的互動邏輯

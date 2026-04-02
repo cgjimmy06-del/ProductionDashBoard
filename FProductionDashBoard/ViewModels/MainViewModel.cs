@@ -21,12 +21,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using FProductionDashBoard.Models;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
         public string AppVersion { get; }
+        public DispatcherTimer DefaultTimer;
 
         public ObservableCollection<DeviceCardViewModel> Devices { get; } = 
             new ObservableCollection<DeviceCardViewModel>();
@@ -34,17 +36,28 @@ namespace FProductionDashBoard
         // 資源 DI注入
         private readonly SqlService _sqlService;
         public LogService _log { get; }
-        public UserInfo _user { get; }
+        public UserInfo SystemUser { get; }
+        public UserInfo CurrentUser { get; }
 
         // 介面邏輯
         [ObservableProperty]
-        private bool isCollapsed = false; // 導覽列收合
+        private bool isCollapsedNav = false; // 導覽列收合
         [ObservableProperty]
         private string currentTime = ""; // 系統時間
-
+        [ObservableProperty]
+        private bool autoScrollEnabled = true; // 訊息視窗是否滾動
+        [ObservableProperty]
+        private int progressValue = 0; // 進度數值
+        [ObservableProperty]
+        private string progressString = Properties.Resources.MainProgressIdle; // 進度訊息
+        [ObservableProperty]
+        private bool isErrorMode;
+        public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
         // 註冊介面
         public ICommand AddDeviceCommand { get; }
         public ICommand CollapseNavCommand { get; }
+        public ICommand AutoScrollCommand { get; }
+        public ICommand ErrorModeCommand { get; }
 
         public MainViewModel(UserInfo user, LogService log, SqlService sqlservice) 
         {
@@ -53,24 +66,51 @@ namespace FProductionDashBoard
                 Assembly.GetExecutingAssembly().Location).FileVersion ?? "Unknown";
 
             // 建立 DispatcherTimer 每秒更新一次時間
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += (s, e) =>
+            DefaultTimer = new DispatcherTimer();
+            DefaultTimer.Interval = TimeSpan.FromSeconds(1);
+            DefaultTimer.Tick += (s, e) =>
             { CurrentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm"); };
-            timer.Start();
+            DefaultTimer.Start();
 
             // DI注入 Repository
-            _user = user;
+            SystemUser = user;
+            CurrentUser = user;
             _log = log;
             _sqlService = sqlservice;
 
-            // 設定元件事件
+            // 設定元件事件 (導覽)
+            CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
             AddDeviceCommand = new RelayCommand(() => AddDevice());
-            CollapseNavCommand = new RelayCommand(() => { IsCollapsed = !IsCollapsed; });
+
+            // 設定元件事件 (訊息視窗)
+            AutoScrollCommand = new RelayCommand(() => { AutoScrollEnabled = !AutoScrollEnabled; });
+            ErrorModeCommand = new RelayCommand(() => { IsErrorMode = !IsErrorMode; });
+            PropertyChanged += (s, e) => {
+                if (e.PropertyName == nameof(IsErrorMode)) OnPropertyChanged(nameof(CurrentLogs)); };
+
         }
 
         private void AddDevice()
         {
+            var vm = new AddDeviceViewModel();
+            var window = new SubWindow1 { DataContext = vm };
+            vm.OnConfirm += (info) =>
+            {
+                var device = new DeviceCardViewModel(info, CurrentUser, _log);
+
+                Devices.Add(device);
+                window.Close();
+
+                _log.AddLog($"已新增設備: {info.Name}", LogLevel.Info);
+            };
+            vm.OnCancel += () => window.Close();
+            window.ShowDialog();
+        }
+        private void UpdateStats() 
+        {
+            // TotalDevices = Devices.Count; 
+            // TotalButtonClicks = Devices.Sum(d => d.ButtonClickCount);
+
             //try
             //{
             //    _log.AddLog($"連線狀態: {_sqlService.DeviceRepo.CheckConnection()}");
@@ -86,27 +126,6 @@ namespace FProductionDashBoard
             //{
             //    Debug.WriteLine("查詢已超時");
             //}
-            var vm = new AddDeviceViewModel();
-            var window = new SubWindow1 { DataContext = vm };
-            vm.OnConfirm += (info) =>
-            {
-                var device = new DeviceCardViewModel(info, _log);
-                device.OnButtonClicked += UpdateStats; // 訂閱設備的點擊事件
-
-                Devices.Add(device);
-                UpdateStats();
-                window.Close();
-
-                _log.AddLog($"已新增設備: {info.Name}", LogLevel.Info);
-            };
-            vm.OnCancel += () => window.Close();
-            window.ShowDialog();
-        }
-        private void UpdateStats() 
-        { 
-            // TotalDevices = Devices.Count; 
-            // TotalButtonClicks = Devices.Sum(d => d.ButtonClickCount);
-
         }
 
 
