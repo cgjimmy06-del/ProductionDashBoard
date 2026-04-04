@@ -96,7 +96,8 @@ namespace FProductionDashBoard.ViewModels
         }
         private async void AddDeviceCard()
         {
-            var vm = new DCManageDialogViewModel("設備卡片管理", _log, _sqlService, Devices.ToList()); // 待翻譯
+            var vm = new DCManageDialogViewModel(Properties.Resources.DeviceCardManageDialog, 
+                                                    _log, _sqlService, Devices.ToList()); // 待翻譯
             await vm.InitAsync();
             var uc = new DCardManageDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
@@ -109,7 +110,7 @@ namespace FProductionDashBoard.ViewModels
                 {
                     var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log);
                     Devices.Add(idevice);
-                    _log.AddLog($"已新增: {iselection.Name}", LogLevel.Info);
+                    _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
                 }
             }
         }

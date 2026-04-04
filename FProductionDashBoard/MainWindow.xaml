@@ -173,12 +173,14 @@
                                 <StackPanel Orientation="Horizontal" Margin="2"
                                                 HorizontalAlignment="Center">
                                     <Button Height="40" Width="80" Margin="5,0"
-                                        Command="{Binding DCardManageCommand}" >
+                                            Command="{Binding DCardManageCommand}"
+                                            ToolTip="{DynamicResource AddDeviceButtonTooltip}">
                                         <materialDesign:PackIcon Kind="ShapeRectangleAdd"
                                                      Width="30" Height="30"/>
                                     </Button>
                                     <Button Height="40" Width="80" Margin="5,0" Padding="0"
-                                        Command="{Binding DCardManageCommand}" >
+                                            Command="{Binding DCardManageCommand}"
+                                            ToolTip="{DynamicResource FastUploadButtonTooltip}">
                                         <StackPanel Orientation="Horizontal">
                                             <materialDesign:PackIcon Kind="LightningBolt"
                                                      Width="20" Height="20" VerticalAlignment="Top"/>
@@ -187,7 +189,8 @@
                                         </StackPanel>
                                     </Button>
                                     <Button Height="40" Width="80" Margin="5,0" Padding="0"
-                                        Command="{Binding DCardManageCommand}" >
+                                            Command="{Binding DCardManageCommand}"
+                                            ToolTip="{DynamicResource FastDownloadButtonTooltip}">
                                         <StackPanel Orientation="Horizontal">
                                             <materialDesign:PackIcon Kind="LightningBolt"
                                                      Width="20" Height="20" VerticalAlignment="Top"/>
@@ -219,7 +222,7 @@
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                         <!-- 即時狀態窗 -->
-                        <ListBox Grid.Column="0" x:Name="LogListBox" 
+                        <ListBox Grid.Column="0" x:Name="LogListBox"
                                  Background="{DynamicResource BackgroundBrush}"
                                  ItemsSource="{Binding CurrentLogs}"
                                  local:ListBoxBehavior.AutoScrollToEnd="{Binding AutoScrollEnabled}">
@@ -237,15 +240,16 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="5">
                                         <!-- 時間StringFormat={}[{0:HH:mm:ss}] -->
-                                        <TextBlock Text="{Binding Timestamp, StringFormat='[{0:HH:mm:ss}]'}" 
-                                Foreground="{Binding Color}" Margin="0,0,5,0"/>
+                                        <TextBlock Margin="0,0,5,0" Foreground="{Binding Color}"
+                                            Text="{Binding Timestamp, StringFormat='[{0:HH:mm:ss}]'}"/>
                                         <!-- 圖示 (PackIconKind enum 綁定) -->
                                         <materialDesign:PackIcon Kind="{Binding Icon}" 
                                          Foreground="{Binding Color}" 
                                          Width="15" Height="15" Margin="0,0,5,0"/>
                                         <!-- 訊息 -->
-                                        <TextBlock Text="{Binding Message}" 
-                                Foreground="{Binding Color}" Margin="0,0,5,0"/>
+                                        <TextBlock Margin="0,0,5,0" Foreground="{Binding Color}"
+                                                   Style="{StaticResource EllipsisTextBlock}"
+                                                   Text="{Binding Message}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -255,14 +259,16 @@
                             <Button Width="25" Height="25" Margin="1"
                                     HorizontalAlignment="Center"
                                     Style="{StaticResource FunctionButtonStyle}"
-                                    Command="{Binding AutoScrollCommand}">
+                                    Command="{Binding AutoScrollCommand}"
+                                    ToolTip="{DynamicResource PinButtonTooltip}">
                                 <materialDesign:PackIcon Kind="Pin"
                                                      Width="20" Height="20"/>
                             </Button>
                             <Button Width="25" Height="25" Margin="1"
                                     HorizontalAlignment="Center"
                                     Style="{StaticResource FunctionButtonStyle}"
-                                    Command="{Binding ErrorModeCommand}">
+                                    Command="{Binding ErrorModeCommand}"
+                                    ToolTip="{DynamicResource ErrorLogButtonTooltip}">
                                 <materialDesign:PackIcon Kind="AlertOutline"
                                                      Width="20" Height="20"/>
                             </Button>

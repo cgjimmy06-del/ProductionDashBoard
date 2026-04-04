@@ -70,7 +70,8 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                _log.AddLog($"連線狀態: {_sqlService.DeviceRepo.CheckConnection()}");
+                if (!_sqlService.DeviceRepo.CheckConnection())
+                    DialogErrorString = Properties.Resources.LogInConnectionError;
 
                 devicesList = (await _sqlService.DeviceRepo.GetAllAsync()).ToList();
                 ApplyFilter();
@@ -136,14 +137,14 @@ namespace FProductionDashBoard.ViewModels
 
             FilteredDevices = new ObservableCollection<DeviceInfo>(query.ToList());
         }
+        // 上下載設備清單 (可供外部快速上下載按鈕)
+
 
         protected override void OnConfirm()
         {
             if (!SelectedDevices.Any())
-            {
-                _log.AddLog($"請選擇設備", LogLevel.Warning);
-                return;
-            }
+            { DialogErrorString = Properties.Resources.AddDeviceNonSelectionError; return; }
+
             Result = new DeviceCardsResult() { Selections = SelectedDevices.ToList() };
 
             base.OnConfirm();

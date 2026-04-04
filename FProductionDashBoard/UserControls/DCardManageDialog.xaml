@@ -49,23 +49,28 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="設備ID" Width="100" Binding="{Binding DeviceID}"
+                    <DataGridTextColumn Header="{DynamicResource DeivceIdDataGridHeader}" 
+                                        Width="100" Binding="{Binding DeviceID}"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="名稱" Width="100" Binding="{Binding Name}"
+                    <DataGridTextColumn Header="{DynamicResource NameDataGridHeader}" 
+                                        Width="100" Binding="{Binding Name}"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="IP" Width="100" Binding="{Binding IP}"
+                    <DataGridTextColumn Header="{DynamicResource IpDataGridHeader}" 
+                                        Width="100" Binding="{Binding IP}"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                 </DataGrid.Columns>
             </DataGrid>
             <!-- 增減操作 -->
             <StackPanel VerticalAlignment="Center">
                 <Button Margin="5" Height="40" Width="40" Padding="2"
-                        Command="{Binding AddToSelectedCommand}" >
+                        Command="{Binding AddToSelectedCommand}" 
+                        ToolTip="{DynamicResource AddToSelectedButtonTooltip}">
                         <materialDesign:PackIcon Kind="ChevronDoubleRight"
                                                  Width="30" Height="30"/>
                 </Button>
                 <Button Margin="5" Height="40" Width="40" Padding="2"
-                        Command="{Binding RemoveFromSelectedCommand}" >
+                        Command="{Binding RemoveFromSelectedCommand}"
+                        ToolTip="{DynamicResource RemoveSelectedButtonTooltip}">
                         <materialDesign:PackIcon Kind="ChevronDoubleLeft"
                                                  Width="30" Height="30"/>
                 </Button>
@@ -90,17 +95,20 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="載入設備" Width="100" Binding="{Binding Name}"
+                    <DataGridTextColumn Header="{DynamicResource LoadedDataGridHeader}" 
+                                        Width="100" Binding="{Binding Name}"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                 </DataGrid.Columns>
             </DataGrid>
             <!-- 上下載操作 (未加入事件) -->
             <StackPanel VerticalAlignment="Center">
-                <Button Margin="5" Height="40" Width="40" Padding="2">
+                <Button Margin="5" Height="40" Width="40" Padding="2"
+                        ToolTip="{DynamicResource UploadButtonTooltip}">
                     <materialDesign:PackIcon Kind="FileUpload"
                                              Width="30" Height="30"/>
                 </Button>
-                <Button Margin="5" Height="40" Width="40" Padding="2">
+                <Button Margin="5" Height="40" Width="40" Padding="2"
+                        ToolTip="{DynamicResource DownloadButtonTooltip}">
                     <materialDesign:PackIcon Kind="FileDownload"
                                              Width="30" Height="30"/>
                 </Button>

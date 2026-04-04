@@ -117,6 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddDeviceNonSelectionError" xml:space="preserve">
+    <value>Please loaded at least one device!</value>
+    <comment>新增設備視窗: 錯誤訊息(dialog error string)</comment>
+  </data>
+  <data name="ComStrAdded" xml:space="preserve">
+    <value>Added</value>
+    <comment>共用字串: 已新增</comment>
+  </data>
   <data name="ComStrDevice" xml:space="preserve">
     <value>Device</value>
     <comment>共用字串: 設備</comment>
@@ -129,6 +137,10 @@
     <value>Product</value>
     <comment>共用字串: 產品</comment>
   </data>
+  <data name="ComStrRemoved" xml:space="preserve">
+    <value>Removed</value>
+    <comment>共用字串: 已移除</comment>
+  </data>
   <data name="ComStrTimeSlot" xml:space="preserve">
     <value>Time Slot</value>
     <comment>共用字串: 時段</comment>
@@ -140,6 +152,10 @@
   <data name="ComStrWarningTitle" xml:space="preserve">
     <value>Warning</value>
     <comment>共用字串: 警告訊息抬頭</comment>
+  </data>
+  <data name="DeviceCardManageDialog" xml:space="preserve">
+    <value>Device Card Management</value>
+    <comment>主視窗: 新增設備視窗</comment>
   </data>
   <data name="DeviceFirstInsDialog" xml:space="preserve">
     <value>Result For Current First Inspection</value>
@@ -218,7 +234,7 @@
     <comment>主視窗: 進度條訊息</comment>
   </data>
   <data name="MaterialNonSelectionError" xml:space="preserve">
-    <value>Please select at least one item</value>
-    <comment>物料子視窗: 錯誤訊息(dialog error string)</comment>
+    <value>Please select at least one item!</value>
+    <comment>物料視窗: 錯誤訊息(dialog error string)</comment>
   </data>
 </root>

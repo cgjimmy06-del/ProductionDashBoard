@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddDeviceNonSelectionError" xml:space="preserve">
+    <value>請至少載入一項設備!</value>
+  </data>
+  <data name="ComStrAdded" xml:space="preserve">
+    <value>已新增</value>
+  </data>
   <data name="ComStrDevice" xml:space="preserve">
     <value>設備</value>
   </data>
@@ -126,6 +132,9 @@
   <data name="ComStrProduct" xml:space="preserve">
     <value>產品</value>
   </data>
+  <data name="ComStrRemoved" xml:space="preserve">
+    <value>已移除</value>
+  </data>
   <data name="ComStrTimeSlot" xml:space="preserve">
     <value>時段</value>
   </data>
@@ -134,6 +143,9 @@
   </data>
   <data name="ComStrWarningTitle" xml:space="preserve">
     <value>警告</value>
+  </data>
+  <data name="DeviceCardManageDialog" xml:space="preserve">
+    <value>設備卡片管理</value>
   </data>
   <data name="DeviceFirstInsDialog" xml:space="preserve">
     <value>本次首件檢驗結果</value>
@@ -193,6 +205,6 @@
     <value>已完成</value>
   </data>
   <data name="MaterialNonSelectionError" xml:space="preserve">
-    <value>請至少選擇一項</value>
+    <value>請至少選擇一項!</value>
   </data>
 </root>

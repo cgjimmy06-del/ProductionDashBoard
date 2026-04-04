@@ -223,5 +223,10 @@
             </DataTrigger>
         </Style.Triggers>
     </Style>
+    <Style x:Key="EllipsisTextBlock" TargetType="TextBlock">
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+        <Setter Property="TextTrimming" Value="WordEllipsis"/>
+        <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+    </Style>
     
 </ResourceDictionary>
