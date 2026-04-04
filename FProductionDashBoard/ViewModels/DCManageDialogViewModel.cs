@@ -1,0 +1,154 @@
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using FProductionDashBoard.Models;
+using FProductionDashBoard.Repositories;
+using Microsoft.Data.SqlClient;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
+namespace FProductionDashBoard.ViewModels
+{
+    public class DeviceCardsResult
+    {
+        public required List<Models.DeviceInfo> Selections;
+    }
+
+    public partial class DCManageDialogViewModel : DialogBaseViewModel<DeviceCardsResult>
+    {
+        private readonly SqlService _sqlService;
+        private readonly LogService _log;
+
+        private List<DeviceInfo> devicesList = new(); // 設備清單 (資料表來源)
+        private List<DeviceCardViewModel> existedDevicesList = new(); // 介面已存在設備清單
+
+        [ObservableProperty]
+        private string? deviceId; // 設備編號
+        [ObservableProperty]
+        private string? name; // 設備名稱
+        [ObservableProperty]
+        private string? ip; // 設備IP
+        [ObservableProperty]
+        private ObservableCollection<DeviceInfo> filteredDevices = new(); // 篩選結果
+        [ObservableProperty]
+        private ObservableCollection<DeviceInfo> selectedDevices = new(); // 選擇結果
+        [ObservableProperty]
+        private ObservableCollection<DeviceInfo> selectedFromFiltered = new(); // 篩選多選
+        [ObservableProperty]
+        private ObservableCollection<DeviceInfo> selectedFromSelected = new(); // 選擇多選
+
+        private System.Timers.Timer debounceTimer;
+
+        public ICommand AddToSelectedCommand { get; }
+        public ICommand RemoveFromSelectedCommand { get; }
+        public DCManageDialogViewModel(string dialogstring, LogService log, SqlService sqlservice, 
+            List<DeviceCardViewModel> existedDevicesList) : base(dialogstring)
+        {
+            _log = log;
+            _sqlService = sqlservice;
+            this.existedDevicesList = existedDevicesList;
+
+            // 初始化 debounce timer
+            debounceTimer = new System.Timers.Timer(500); // 300ms 延遲
+            debounceTimer.AutoReset = false; // 只觸發一次
+            debounceTimer.Elapsed += (s, e) => ApplyFilter();
+
+            AddToSelectedCommand = new RelayCommand(() => AddToSelected());
+            RemoveFromSelectedCommand = new RelayCommand(() => RemoveFromSelected());
+
+            ConfirmCommand = new RelayCommand(() => OnConfirm());
+            CancelCommand = new RelayCommand(() => OnCancel());
+            this.existedDevicesList = existedDevicesList;
+        }
+        public async Task InitAsync()
+        {
+            try
+            {
+                _log.AddLog($"連線狀態: {_sqlService.DeviceRepo.CheckConnection()}");
+
+                devicesList = (await _sqlService.DeviceRepo.GetAllAsync()).ToList();
+                ApplyFilter();
+            }
+            catch (SqlException sqlex)
+            {
+                Debug.WriteLine($"SqlException: {sqlex.Message}");
+            }
+            catch (TaskCanceledException taskex)
+            {
+                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception: {ex.Message}");
+            }
+        }
+        partial void OnDeviceIdChanged(string? value)
+        { debounceTimer.Stop(); debounceTimer.Start(); }
+        partial void OnNameChanged(string? value)
+        { debounceTimer.Stop(); debounceTimer.Start(); }
+        partial void OnIpChanged(string? value)
+        { debounceTimer.Stop(); debounceTimer.Start(); }
+        // 增減機台事件
+        public void AddToSelected()
+        {
+            foreach (var device in SelectedFromFiltered.ToList())
+                if (!SelectedDevices.Contains(device))
+                    SelectedDevices.Add(device);
+            ApplyFilter();
+        }
+        public void RemoveFromSelected()
+        {
+            foreach (var device in SelectedFromSelected.ToList())
+                SelectedDevices.Remove(device);
+            ApplyFilter();
+        }
+        // 篩選器集合
+        public void ApplyFilter()
+        {
+            var query = devicesList.AsEnumerable();
+
+            if (existedDevicesList.Any())
+            {
+                var existedIds = existedDevicesList.Select(s => s.Info.DeviceID).ToHashSet();
+                query = query.Where(d => !existedIds.Contains(d.DeviceID));
+            }
+
+            if (!string.IsNullOrEmpty(DeviceId))
+                query = query.Where(d => d.DeviceID.Contains(DeviceId));
+
+            if (!string.IsNullOrEmpty(Name)) // minPrice.HasValue d.Name >= minPrice.Value
+                query = query.Where(d => d.Name.Contains(Name));
+
+            if (!string.IsNullOrEmpty(Ip))
+                query = query.Where(d => d.IP.Contains(Ip));
+
+            if (SelectedDevices.Any())
+            {
+                var selectedIds = SelectedDevices.Select(s => s.DeviceID).ToHashSet();
+                query = query.Where(d => !selectedIds.Contains(d.DeviceID));
+            }
+
+            FilteredDevices = new ObservableCollection<DeviceInfo>(query.ToList());
+        }
+
+        protected override void OnConfirm()
+        {
+            if (!SelectedDevices.Any())
+            {
+                _log.AddLog($"請選擇設備", LogLevel.Warning);
+                return;
+            }
+            Result = new DeviceCardsResult() { Selections = SelectedDevices.ToList() };
+
+            base.OnConfirm();
+        }
+
+    }
+
+}

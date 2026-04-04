@@ -33,11 +33,8 @@
                   SelectedItem="{Binding SelectedServer, Mode=TwoWay}"/>
         <!-- 帳號區 -->
         <TextBlock Text="{DynamicResource AccountText}" Margin="5,5,5,0"/>
-        <TextBox Text="{Binding UserId}" Margin="5" Padding="4"
-                 BorderBrush="Black"
-                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                 materialDesign:HintAssist.Hint="{DynamicResource RequiredText}"
-                 materialDesign:HintAssist.IsFloating="False"/>
+        <TextBox Text="{Binding UserId}"
+                 materialDesign:HintAssist.Hint="{DynamicResource RequiredText}"/>
         <!-- 密碼區 -->
         <TextBlock Text="{DynamicResource PasswordText}" Margin="5,5,5,0"/>
         <PasswordBox x:Name="PasswordBox" Margin="5,5,5,0" Padding="4"

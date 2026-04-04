@@ -18,7 +18,6 @@
         <ResourceDictionary>
             <!-- 外部資源 -->
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Themes/CardStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- 本地資源 -->
@@ -136,15 +135,14 @@
                         </StackPanel>
                     </RadioButton>
                     <!-- 導覽內容 -->
-                    <RadioButton Style="{StaticResource NavButtonStyle}"
-                            Command="{Binding AddDeviceCommand}">
+                    <RadioButton Style="{StaticResource NavButtonStyle}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                             <materialDesign:PackIcon Kind="Home" Margin="0,0,5,0"
                                                      Width="30" Height="30"/>
-                            <TextBlock Text="新增設備" VerticalAlignment="Center"/>
+                            <TextBlock Text="項目1" VerticalAlignment="Center"/>
                         </StackPanel>
                     </RadioButton>
-                    
+
                 </StackPanel>
             </Border>
 
@@ -157,10 +155,11 @@
                 </Grid.RowDefinitions>
 
                 <!-- 主內容UI (預設2欄儀表板卡片) ScrollViewer/WrapPanel -->
-                <Border Grid.Row="0">
-                    <Grid>
-                        <!-- 設備卡片操作管理區 -->
-                        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                <Grid Grid.Row="0">
+                    <!-- 設備卡片管理區 (可能之後要做成user control) -->
+                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <!-- 設備卡片陣列 -->
                             <ItemsControl ItemsSource="{Binding Devices}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -168,9 +167,40 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                        </ScrollViewer>
-                    </Grid>
-                </Border>
+                            <!-- 卡片操作區 (上下載未加入事件) -->
+                            <Border Margin="2" Padding="2" Height="50"
+                                        BorderBrush="Gray" BorderThickness="0">
+                                <StackPanel Orientation="Horizontal" Margin="2"
+                                                HorizontalAlignment="Center">
+                                    <Button Height="40" Width="80" Margin="5,0"
+                                        Command="{Binding DCardManageCommand}" >
+                                        <materialDesign:PackIcon Kind="ShapeRectangleAdd"
+                                                     Width="30" Height="30"/>
+                                    </Button>
+                                    <Button Height="40" Width="80" Margin="5,0" Padding="0"
+                                        Command="{Binding DCardManageCommand}" >
+                                        <StackPanel Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="LightningBolt"
+                                                     Width="20" Height="20" VerticalAlignment="Top"/>
+                                            <materialDesign:PackIcon Kind="FileUpload"
+                                                     Width="30" Height="30"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Height="40" Width="80" Margin="5,0" Padding="0"
+                                        Command="{Binding DCardManageCommand}" >
+                                        <StackPanel Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="LightningBolt"
+                                                     Width="20" Height="20" VerticalAlignment="Top"/>
+                                            <materialDesign:PackIcon Kind="FileDownload"
+                                                     Width="30" Height="30"/>
+                                        </StackPanel>
+                                    </Button>
+
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
 
                 <!-- GridSplitter -->
                 <GridSplitter Grid.Row="1"
@@ -186,7 +216,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="25"/>
+                            <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
                         <!-- 即時狀態窗 -->
                         <ListBox Grid.Column="0" x:Name="LogListBox" 
@@ -221,16 +251,21 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
                         <!-- 狀態窗操作介面 -->
-                        <StackPanel Grid.Column="1" Margin="2">
-                            <Button Width="20" Height="20" Margin="1"
+                        <StackPanel Grid.Column="1" Margin="2" HorizontalAlignment="Center">
+                            <Button Width="25" Height="25" Margin="1"
                                     HorizontalAlignment="Center"
                                     Style="{StaticResource FunctionButtonStyle}"
-                                    Content="☰" Command="{Binding AutoScrollCommand}"/>
-                            <Button Width="20" Height="20" Margin="1"
+                                    Command="{Binding AutoScrollCommand}">
+                                <materialDesign:PackIcon Kind="Pin"
+                                                     Width="20" Height="20"/>
+                            </Button>
+                            <Button Width="25" Height="25" Margin="1"
                                     HorizontalAlignment="Center"
                                     Style="{StaticResource FunctionButtonStyle}"
-                                    Content="E" Command="{Binding ErrorModeCommand}"/>
-
+                                    Command="{Binding ErrorModeCommand}">
+                                <materialDesign:PackIcon Kind="AlertOutline"
+                                                     Width="20" Height="20"/>
+                            </Button>
                         </StackPanel>
                     </Grid>
                 </Border>

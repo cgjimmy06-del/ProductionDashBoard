@@ -31,10 +31,10 @@
                 <!--#endregion-->
 
                 <!-- 自訂樣式/設定資源 -->
+                <ResourceDictionary Source="/Themes/CardStyles.xaml"/>
                 <ResourceDictionary Source="/Themes/Typography.xaml"/>
                 <ResourceDictionary Source="/Themes/Spacing.xaml"/>
                 <ResourceDictionary Source="/Themes/Theme.Light.xaml"/>
-                <!--<ResourceDictionary Source="/Themes/CardStyles.xaml"/>-->
 
                 <!-- 語言資源 (預設預言) -->
                 <ResourceDictionary Source="/Resources/StrResources.zh-TW.xaml"/>

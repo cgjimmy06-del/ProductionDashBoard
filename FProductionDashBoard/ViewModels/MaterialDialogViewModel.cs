@@ -13,7 +13,7 @@ namespace FProductionDashBoard.ViewModels
 {
     public class MaterialResult
     {
-        public required Models.MaterialInfo[] Selections;
+        public required List<Models.MaterialInfo> Selections;
     }
     internal partial class MaterialDialogViewModel : DialogBaseViewModel<MaterialResult>
     {
@@ -76,10 +76,9 @@ namespace FProductionDashBoard.ViewModels
             if (!SelectedMaterials.Any())
             { DialogErrorString = Properties.Resources.MaterialNonSelectionError; return; }
 
-            Result = new MaterialResult() { Selections = SelectedMaterials.ToArray() };
+            Result = new MaterialResult() { Selections = SelectedMaterials.ToList() };
 
-            IsConfirmed = true;
-            OnRequestClose();
+            base.OnConfirm();
         }
     }
 }

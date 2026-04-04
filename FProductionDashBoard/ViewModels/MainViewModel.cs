@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
+using FProductionDashBoard.UserControls;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Data.SqlClient;
@@ -21,7 +23,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -53,11 +54,14 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private bool isErrorMode;
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
-        // 註冊介面
-        public ICommand AddDeviceCommand { get; }
+        
+        // 導覽列
         public ICommand CollapseNavCommand { get; }
+        // 訊息窗
         public ICommand AutoScrollCommand { get; }
         public ICommand ErrorModeCommand { get; }
+        // 卡片區
+        public ICommand DCardManageCommand { get; }
 
         public MainViewModel(UserInfo user, LogService log, SqlService sqlservice) 
         {
@@ -78,54 +82,58 @@ namespace FProductionDashBoard.ViewModels
             _log = log;
             _sqlService = sqlservice;
 
-            // 設定元件事件 (導覽)
+            // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
-            AddDeviceCommand = new RelayCommand(() => AddDevice());
-
+            
             // 設定元件事件 (訊息視窗)
             AutoScrollCommand = new RelayCommand(() => { AutoScrollEnabled = !AutoScrollEnabled; });
             ErrorModeCommand = new RelayCommand(() => { IsErrorMode = !IsErrorMode; });
             PropertyChanged += (s, e) => {
                 if (e.PropertyName == nameof(IsErrorMode)) OnPropertyChanged(nameof(CurrentLogs)); };
 
+            // 設定元件事件 (設備卡片區)
+            DCardManageCommand = new RelayCommand(() => AddDeviceCard());
         }
-
-        private void AddDevice()
+        private async void AddDeviceCard()
         {
-            var vm = new AddDeviceViewModel();
-            var window = new SubWindow1 { DataContext = vm };
-            vm.OnConfirm += (info) =>
-            {
-                var device = new DeviceCardViewModel(info, CurrentUser, _log);
-
-                Devices.Add(device);
-                window.Close();
-
-                _log.AddLog($"已新增設備: {info.Name}", LogLevel.Info);
-            };
-            vm.OnCancel += () => window.Close();
+            var vm = new DCManageDialogViewModel("設備卡片管理", _log, _sqlService, Devices.ToList()); // 待翻譯
+            await vm.InitAsync();
+            var uc = new DCardManageDialog { DataContext = vm };
+            var window = new DialogWindow(vm, uc);
             window.ShowDialog();
+
+            if (vm.IsConfirmed)
+            {
+                var result = vm.Result ?? new DeviceCardsResult { Selections = new List<DeviceInfo>() };
+                foreach (var iselection in result.Selections)
+                {
+                    var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log);
+                    Devices.Add(idevice);
+                    _log.AddLog($"已新增: {iselection.Name}", LogLevel.Info);
+                }
+            }
         }
-        private void UpdateStats() 
+        private async void SqlTestFunc() 
         {
-            // TotalDevices = Devices.Count; 
-            // TotalButtonClicks = Devices.Sum(d => d.ButtonClickCount);
+            try
+            {
+                _log.AddLog($"連線狀態: {_sqlService.DeviceRepo.CheckConnection()}");
 
-            //try
-            //{
-            //    _log.AddLog($"連線狀態: {_sqlService.DeviceRepo.CheckConnection()}");
-
-            //    var devs = await _sqlService.DeviceRepo.GetAllAsync();
-            //    foreach (var dev in devs) { _log.AddLog($"已新增設備: {dev.Name}", LogLevel.Info); }
-            //}
-            //catch (SqlException ex)
-            //{
-            //    Debug.WriteLine($"SQL 錯誤: {ex.Message}");
-            //}
-            //catch (TaskCanceledException)
-            //{
-            //    Debug.WriteLine("查詢已超時");
-            //}
+                var devs = await _sqlService.DeviceRepo.GetAllAsync();
+                foreach (var dev in devs) { _log.AddLog($"已新增設備: {dev.Name}", LogLevel.Info); }
+            }
+            catch (SqlException sqlex)
+            {
+                Debug.WriteLine($"SqlException: {sqlex.Message}");
+            }
+            catch (TaskCanceledException taskex)
+            {
+                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
+            }
+            catch (Exception ex) 
+            {
+                Debug.WriteLine($"Exception: {ex.Message}");
+            }
         }
 
 

@@ -190,4 +190,35 @@ namespace FProductionDashBoard
             }
         }
     }
+    public static class DataGridSelectedItemsBehavior
+    {
+        public static readonly DependencyProperty SelectedItemsProperty =
+            DependencyProperty.RegisterAttached(
+                "SelectedItems",
+                typeof(IList),
+                typeof(DataGridSelectedItemsBehavior),
+                new PropertyMetadata(null, OnSelectedItemsChanged));
+
+        public static void SetSelectedItems(DependencyObject element, IList value)
+            => element.SetValue(SelectedItemsProperty, value);
+
+        public static IList GetSelectedItems(DependencyObject element)
+            => (IList)element.GetValue(SelectedItemsProperty);
+
+        private static void OnSelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is DataGrid grid)
+            {
+                grid.SelectionChanged += (s, args) =>
+                {
+                    var list = GetSelectedItems(grid);
+                    list?.Clear();
+                    foreach (var item in grid.SelectedItems)
+                    {
+                        list?.Add(item);
+                    }
+                };
+            }
+        }
+    }
 }

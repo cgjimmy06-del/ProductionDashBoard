@@ -47,8 +47,8 @@ namespace FProductionDashBoard
 
         private readonly int _daysToKeep = 3;
         private readonly string _logDirectory = "Logs"; // log路徑
-        private readonly string _logFileName = "logs"; // log檔名 (接日期)
-        private readonly string _errorLogFileName = "errorlogs"; // log檔名 (接日期)
+        //private readonly string _logFileName = "logs"; // log檔名 (接日期)
+        //private readonly string _errorLogFileName = "errorlogs"; // log檔名 (接日期)
 
         public LogService()
         {
