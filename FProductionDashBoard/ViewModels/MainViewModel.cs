@@ -134,10 +134,10 @@ namespace FProductionDashBoard.ViewModels
         // 設備卡片區
         private async void AddDeviceCard()
         {
-            var vm = new DCManageDialogViewModel(Properties.Resources.DeviceCardManageDialog, 
+            var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, 
                                                     _log, _sqlService, Devices.ToList());
             await vm.InitAsync();
-            var uc = new DCardManageDialog { DataContext = vm };
+            var uc = new AddDeviceDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
 

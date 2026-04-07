@@ -11,7 +11,7 @@
     <Compile Update="SubWindow1.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="UserControls\DCardManageDialog.xaml.cs">
+    <Compile Update="UserControls\AddDeviceDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="UserControls\InspectionDialog.xaml.cs">
