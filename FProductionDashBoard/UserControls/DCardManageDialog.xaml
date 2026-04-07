@@ -103,11 +103,13 @@
             <!-- 上下載操作 (未加入事件) -->
             <StackPanel VerticalAlignment="Center">
                 <Button Margin="5" Height="40" Width="40" Padding="2"
+                        Command="{Binding UploadDeivcesCommand}"
                         ToolTip="{DynamicResource UploadButtonTooltip}">
                     <materialDesign:PackIcon Kind="FileUpload"
                                              Width="30" Height="30"/>
                 </Button>
                 <Button Margin="5" Height="40" Width="40" Padding="2"
+                        Command="{Binding DownloadDeivcesCommand}"
                         ToolTip="{DynamicResource DownloadButtonTooltip}">
                     <materialDesign:PackIcon Kind="FileDownload"
                                              Width="30" Height="30"/>

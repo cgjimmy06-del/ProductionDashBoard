@@ -27,6 +27,7 @@ namespace FProductionDashBoard.ViewModels
 
         private List<DeviceInfo> devicesList = new(); // 設備清單 (資料表來源)
         private List<DeviceCardViewModel> existedDevicesList = new(); // 介面已存在設備清單
+        private string defaultDevicesFile = "defaultdevices.json"; // 設備編號
 
         [ObservableProperty]
         private string? deviceId; // 設備編號
@@ -39,14 +40,17 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private ObservableCollection<DeviceInfo> selectedDevices = new(); // 選擇結果
         [ObservableProperty]
-        private ObservableCollection<DeviceInfo> selectedFromFiltered = new(); // 篩選多選
+        private ObservableCollection<DeviceInfo> selectedFromFiltered = new(); // 篩選多選 (反色項目)
         [ObservableProperty]
-        private ObservableCollection<DeviceInfo> selectedFromSelected = new(); // 選擇多選
+        private ObservableCollection<DeviceInfo> selectedFromSelected = new(); // 選擇多選 (反色項目)
 
         private System.Timers.Timer debounceTimer;
 
         public ICommand AddToSelectedCommand { get; }
         public ICommand RemoveFromSelectedCommand { get; }
+        public ICommand DownloadDeivcesCommand { get; }
+        public ICommand UploadDeivcesCommand { get; }
+
         public DCManageDialogViewModel(string dialogstring, LogService log, SqlService sqlservice, 
             List<DeviceCardViewModel> existedDevicesList) : base(dialogstring)
         {
@@ -61,10 +65,11 @@ namespace FProductionDashBoard.ViewModels
 
             AddToSelectedCommand = new RelayCommand(() => AddToSelected());
             RemoveFromSelectedCommand = new RelayCommand(() => RemoveFromSelected());
+            DownloadDeivcesCommand = new RelayCommand(() => DownloadDevices());
+            UploadDeivcesCommand = new RelayCommand(() => UploadDevices());
 
             ConfirmCommand = new RelayCommand(() => OnConfirm());
             CancelCommand = new RelayCommand(() => OnCancel());
-            this.existedDevicesList = existedDevicesList;
         }
         public async Task InitAsync()
         {
@@ -95,20 +100,6 @@ namespace FProductionDashBoard.ViewModels
         { debounceTimer.Stop(); debounceTimer.Start(); }
         partial void OnIpChanged(string? value)
         { debounceTimer.Stop(); debounceTimer.Start(); }
-        // 增減機台事件
-        public void AddToSelected()
-        {
-            foreach (var device in SelectedFromFiltered.ToList())
-                if (!SelectedDevices.Contains(device))
-                    SelectedDevices.Add(device);
-            ApplyFilter();
-        }
-        public void RemoveFromSelected()
-        {
-            foreach (var device in SelectedFromSelected.ToList())
-                SelectedDevices.Remove(device);
-            ApplyFilter();
-        }
         // 篩選器集合
         public void ApplyFilter()
         {
@@ -137,8 +128,31 @@ namespace FProductionDashBoard.ViewModels
 
             FilteredDevices = new ObservableCollection<DeviceInfo>(query.ToList());
         }
+        // 增減機台事件
+        public void AddToSelected()
+        {
+            foreach (var device in SelectedFromFiltered.ToList())
+                if (!SelectedDevices.Contains(device))
+                    SelectedDevices.Add(device);
+            ApplyFilter();
+        }
+        public void RemoveFromSelected()
+        {
+            foreach (var device in SelectedFromSelected.ToList())
+                SelectedDevices.Remove(device);
+            ApplyFilter();
+        }
         // 上下載設備清單 (可供外部快速上下載按鈕)
-
+        public void DownloadDevices()
+        {
+            DataStorageService.Save(SelectedDevices, defaultDevicesFile);
+            DialogErrorString = Properties.Resources.ComStrDownloaded;
+        }
+        public void UploadDevices()
+        {
+            SelectedDevices = DataStorageService.Load<ObservableCollection<DeviceInfo>>(defaultDevicesFile);
+            ApplyFilter();
+        }
 
         protected override void OnConfirm()
         {

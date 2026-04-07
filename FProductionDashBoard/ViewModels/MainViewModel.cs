@@ -64,6 +64,8 @@ namespace FProductionDashBoard.ViewModels
         public ICommand SaveLogsCommand { get; }
         // 卡片區
         public ICommand DCardManageCommand { get; }
+        public ICommand FastDownloadDevicesCommand { get; }
+        public ICommand FastUploadDevicesCommand { get; }
 
         public MainViewModel(UserInfo user, LogService log, SqlService sqlservice) 
         {
@@ -92,6 +94,8 @@ namespace FProductionDashBoard.ViewModels
 
             // 設定元件事件 (設備卡片區)
             DCardManageCommand = new RelayCommand(() => AddDeviceCard());
+            FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
+            FastUploadDevicesCommand = new RelayCommand(() => FastUploadDevices());
         }
         partial void OnIsErrorModeChanged(bool value)
         {
@@ -127,10 +131,11 @@ namespace FProductionDashBoard.ViewModels
                 _log.AddErrorLog($"SaveLogsCommand Ex: {ex.ToString()}");
             }
         }
+        // 設備卡片區
         private async void AddDeviceCard()
         {
             var vm = new DCManageDialogViewModel(Properties.Resources.DeviceCardManageDialog, 
-                                                    _log, _sqlService, Devices.ToList()); // 待翻譯
+                                                    _log, _sqlService, Devices.ToList());
             await vm.InitAsync();
             var uc = new DCardManageDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
@@ -147,6 +152,22 @@ namespace FProductionDashBoard.ViewModels
                 }
             }
         }
+        private void FastDownloadDevices() // 可能須重購 (檔案名稱/view model來源)
+        {
+            DataStorageService.Save(Devices.Select(s => s.Info), "defaultdevices.json");
+            _log.AddLog($"{Properties.Resources.ComStrDownloaded}: defaultdevices.json", LogLevel.Info);
+        }
+        private void FastUploadDevices() // 可能須重購 (檔案名稱/view model來源)
+        {
+            var result = DataStorageService.Load<List<DeviceInfo>>("defaultdevices.json");
+            foreach (var iselection in result)
+            {
+                var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log);
+                Devices.Add(idevice);
+                _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
+            }
+        }
+
         private async void SqlTestFunc() 
         {
             try

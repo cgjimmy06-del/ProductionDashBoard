@@ -167,7 +167,7 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                            <!-- 卡片操作區 (上下載未加入事件) -->
+                            <!-- 卡片操作區 -->
                             <Border Margin="2" Padding="2" Height="50"
                                         BorderBrush="Gray" BorderThickness="0">
                                 <StackPanel Orientation="Horizontal" Margin="2"
@@ -179,7 +179,7 @@
                                                      Width="30" Height="30"/>
                                     </Button>
                                     <Button Height="40" Width="80" Margin="5,0" Padding="0"
-                                            Command="{Binding DCardManageCommand}"
+                                            Command="{Binding FastUploadDevicesCommand}"
                                             ToolTip="{DynamicResource FastUploadButtonTooltip}">
                                         <StackPanel Orientation="Horizontal">
                                             <materialDesign:PackIcon Kind="LightningBolt"
@@ -189,7 +189,7 @@
                                         </StackPanel>
                                     </Button>
                                     <Button Height="40" Width="80" Margin="5,0" Padding="0"
-                                            Command="{Binding DCardManageCommand}"
+                                            Command="{Binding FastDownloadDevicesCommand}"
                                             ToolTip="{DynamicResource FastDownloadButtonTooltip}">
                                         <StackPanel Orientation="Horizontal">
                                             <materialDesign:PackIcon Kind="LightningBolt"
@@ -221,7 +221,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
-                        <!-- 即時狀態窗 -->
+                        <!-- 訊息視窗 -->
                         <ListBox Grid.Column="0" x:Name="LogListBox"
                                  Background="{DynamicResource BackgroundBrush}"
                                  ItemsSource="{Binding CurrentLogs}"
@@ -262,7 +262,7 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                        <!-- 狀態窗操作介面 -->
+                        <!-- 訊息視窗操作介面 -->
                         <StackPanel Grid.Column="1" Margin="2" HorizontalAlignment="Center">
                             <ToggleButton Width="25" Height="25" Margin="1"
                                     HorizontalAlignment="Center"
