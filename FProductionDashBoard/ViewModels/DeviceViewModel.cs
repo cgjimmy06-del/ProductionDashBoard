@@ -54,7 +54,7 @@ namespace FProductionDashBoard.ViewModels
 
             InspectionStatuses = new InspectionService(this, 9, 4, 2);
             InspectionStatuses.OnLogEvent += _log.AddLog;
-            InspectionStatuses.OnErrorLogEvent += _log.AddErrorLog;
+            //InspectionStatuses.OnErrorLogEvent += _log.AddErrorLog;
 
             MaterialsChangeCommand = new RelayCommand(MaterialsChange);
             FirstInspectionCommand = new RelayCommand(FirstArticleInspection);
@@ -76,9 +76,9 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                var result = vm.Result ?? new MaterialResult() { Selections = Array.Empty<MaterialInfo>() };
+                var result = vm.Result ?? new MaterialResult() { Selections = new List<MaterialInfo>() };
                 // SQL
-                _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - Category: {result.Selections.Length} -> " +
+                _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - Category: {result.Selections.Count} -> " +
                     $"Sum: {result.Selections.Sum(d => d.SelectedCount)}", LogLevel.Success);
             }
         }
@@ -122,38 +122,12 @@ namespace FProductionDashBoard.ViewModels
             Info.Status++;
             if (Info.Status > 2) Info.Status = -1;
             _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Processing);
+            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Info);
+            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Warning);
+            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Error);
+            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Success);
+            _log.AddErrorLog($"設備 {Info.Name} 設備調試狀態更新:");
         }
 
     }
-
-    public partial class AddDeviceViewModel : ObservableObject
-    {
-        [ObservableProperty]
-        private string name = "Default";
-        [ObservableProperty]
-        private string description = string.Empty;
-
-        public IRelayCommand ConfirmCommand { get; }
-        public IRelayCommand CancelCommand { get; }
-
-        public event Action<DeviceInfo>? OnConfirm;
-        public event Action? OnCancel;
-        public AddDeviceViewModel()
-        {
-            ConfirmCommand = new RelayCommand(Confirm);
-            CancelCommand = new RelayCommand(Cancel);
-        }
-        private void Confirm()
-        {
-            var info = new DeviceInfo { DeviceID = "", IP = "", Name = Name, Description = Description };
-            OnConfirm?.Invoke(info);
-        }
-        private void Cancel()
-        {
-            OnCancel?.Invoke();
-        }
-
-    }
-
-
 }

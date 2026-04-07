@@ -117,8 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddDeviceNonSelectionError" xml:space="preserve">
+    <value>Please loaded at least one device!</value>
+  </data>
+  <data name="ComStrAdded" xml:space="preserve">
+    <value>Added</value>
+  </data>
   <data name="ComStrDevice" xml:space="preserve">
     <value>Device</value>
+  </data>
+  <data name="ComStrDownloaded" xml:space="preserve">
+    <value>Downloaded</value>
   </data>
   <data name="ComStrErrorTitle" xml:space="preserve">
     <value>Error</value>
@@ -126,14 +135,23 @@
   <data name="ComStrProduct" xml:space="preserve">
     <value>Product</value>
   </data>
+  <data name="ComStrRemoved" xml:space="preserve">
+    <value>Removed</value>
+  </data>
   <data name="ComStrTimeSlot" xml:space="preserve">
     <value>Time Slot</value>
+  </data>
+  <data name="ComStrUploaded" xml:space="preserve">
+    <value>Uploaded</value>
   </data>
   <data name="ComStrUser" xml:space="preserve">
     <value>User</value>
   </data>
   <data name="ComStrWarningTitle" xml:space="preserve">
     <value>Warning</value>
+  </data>
+  <data name="DeviceCardManageDialog" xml:space="preserve">
+    <value>Device Card Management</value>
   </data>
   <data name="DeviceFirstInsDialog" xml:space="preserve">
     <value>Result For Current First Inspection</value>
@@ -189,10 +207,16 @@
   <data name="MainProgressProcessing" xml:space="preserve">
     <value>Processing...</value>
   </data>
+  <data name="MainProgressSaving" xml:space="preserve">
+    <value>Saving...</value>
+  </data>
+  <data name="MainProgressStopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
   <data name="MainProgressSuccess" xml:space="preserve">
     <value>Finished</value>
   </data>
   <data name="MaterialNonSelectionError" xml:space="preserve">
-    <value>Please select at least one item</value>
+    <value>Please select at least one item!</value>
   </data>
 </root>

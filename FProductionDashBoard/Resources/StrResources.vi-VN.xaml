@@ -12,6 +12,17 @@
     <sys:String x:Key="LoginButton">Đăng nhập</sys:String>
     <sys:String x:Key="VisitorButton">Khách</sys:String>
     <!--#endregion-->
+    <!--#region Main Window 主視窗 (含導覽列/訊息視窗) -->
+    <sys:String x:Key="PinButtonTooltip">Pin the messages to the last</sys:String>
+    <sys:String x:Key="ErrorLogButtonTooltip">Show error log</sys:String>
+    <sys:String x:Key="LargeFontButtonTooltip">Make the text bigger</sys:String>
+    <sys:String x:Key="LogSaveButtonTooltip">Save current logs and errorlogs</sys:String>
+    <!--#endregion-->
+    <!--#region device card block 設備卡片操作區 -->
+    <sys:String x:Key="AddDeviceButtonTooltip">Add new device card to the block</sys:String>
+    <sys:String x:Key="FastUploadButtonTooltip">Fast upload default list to device block</sys:String>
+    <sys:String x:Key="FastDownloadButtonTooltip">Fast download list to default file</sys:String>
+    <!--#endregion-->
     <!--#region device card 設備卡片 -->
     <sys:String x:Key="MetarialChangeButton">Vật liệu</sys:String>
     <sys:String x:Key="FirstInspectionButton">Kiểm tra đầu</sys:String>
@@ -29,6 +40,18 @@
     <!--#region material change dialog 物料視窗 -->
     <sys:String x:Key="ModeChangeButton">Chế độ</sys:String>
     <sys:String x:Key="ClearSelectionButton">Xóa</sys:String>
+    <!--#endregion-->
+    <!--#region common datagrid header 欄位抬頭共用字串 -->
+    <sys:String x:Key="DeivceIdDataGridHeader">Device ID</sys:String>
+    <sys:String x:Key="NameDataGridHeader">Name</sys:String>
+    <sys:String x:Key="IpDataGridHeader">IP</sys:String>
+    <sys:String x:Key="LoadedDataGridHeader">Loaded</sys:String>
+    <!--#endregion-->
+    <!--#region dcard manage dialog 設備卡片新增視窗 -->
+    <sys:String x:Key="AddToSelectedButtonTooltip">Move selected devices to loaded list</sys:String>
+    <sys:String x:Key="RemoveSelectedButtonTooltip">Remove Selected devices from loaded list</sys:String>
+    <sys:String x:Key="UploadButtonTooltip">Upload list to loaded</sys:String>
+    <sys:String x:Key="DownloadButtonTooltip">Download list to file</sys:String>
     <!--#endregion-->
 
 
