@@ -88,6 +88,15 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Downloaded 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrDownloaded {
+            get {
+                return ResourceManager.GetString("ComStrDownloaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Error 的當地語系化字串。
         /// </summary>
         internal static string ComStrErrorTitle {
@@ -120,6 +129,15 @@ namespace FProductionDashBoard.Properties {
         internal static string ComStrTimeSlot {
             get {
                 return ResourceManager.GetString("ComStrTimeSlot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Uploaded 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrUploaded {
+            get {
+                return ResourceManager.GetString("ComStrUploaded", resourceCulture);
             }
         }
         
@@ -309,6 +327,24 @@ namespace FProductionDashBoard.Properties {
         internal static string MainProgressProcessing {
             get {
                 return ResourceManager.GetString("MainProgressProcessing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Saving... 的當地語系化字串。
+        /// </summary>
+        internal static string MainProgressSaving {
+            get {
+                return ResourceManager.GetString("MainProgressSaving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Stopped 的當地語系化字串。
+        /// </summary>
+        internal static string MainProgressStopped {
+            get {
+                return ResourceManager.GetString("MainProgressStopped", resourceCulture);
             }
         }
         

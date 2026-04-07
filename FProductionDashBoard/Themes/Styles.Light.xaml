@@ -150,6 +150,33 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <Style x:Key="FunctionToggleButtonStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignFlatToggleButton}">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="5"/>
+        <!--<Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>-->
+        <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Style.Triggers>
+            <!-- 滑鼠移入 -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SecondaryLightBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+            </Trigger>
+            <!-- 按下 -->
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            </Trigger>
+            <!-- 選中狀態 -->
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
     <Style x:Key="ConfirmButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="Width" Value="100"/>

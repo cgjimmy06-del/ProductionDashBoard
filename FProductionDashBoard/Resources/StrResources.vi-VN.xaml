@@ -12,9 +12,11 @@
     <sys:String x:Key="LoginButton">Đăng nhập</sys:String>
     <sys:String x:Key="VisitorButton">Khách</sys:String>
     <!--#endregion-->
-    <!--#region Main Window 主視窗 -->
+    <!--#region Main Window 主視窗 (含導覽列/訊息視窗) -->
     <sys:String x:Key="PinButtonTooltip">Pin the messages to the last</sys:String>
     <sys:String x:Key="ErrorLogButtonTooltip">Show error log</sys:String>
+    <sys:String x:Key="LargeFontButtonTooltip">Make the text bigger</sys:String>
+    <sys:String x:Key="LogSaveButtonTooltip">Save current logs and errorlogs</sys:String>
     <!--#endregion-->
     <!--#region device card block 設備卡片操作區 -->
     <sys:String x:Key="AddDeviceButtonTooltip">Add new device card to the block</sys:String>

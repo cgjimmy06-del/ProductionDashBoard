@@ -122,6 +122,11 @@ namespace FProductionDashBoard.ViewModels
             Info.Status++;
             if (Info.Status > 2) Info.Status = -1;
             _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Processing);
+            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Info);
+            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Warning);
+            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Error);
+            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Success);
+            _log.AddErrorLog($"設備 {Info.Name} 設備調試狀態更新:");
         }
 
     }

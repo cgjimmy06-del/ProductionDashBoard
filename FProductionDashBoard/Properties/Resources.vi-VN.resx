@@ -126,6 +126,9 @@
   <data name="ComStrDevice" xml:space="preserve">
     <value>Device</value>
   </data>
+  <data name="ComStrDownloaded" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
   <data name="ComStrErrorTitle" xml:space="preserve">
     <value>Error</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="ComStrTimeSlot" xml:space="preserve">
     <value>Time Slot</value>
+  </data>
+  <data name="ComStrUploaded" xml:space="preserve">
+    <value>Uploaded</value>
   </data>
   <data name="ComStrUser" xml:space="preserve">
     <value>User</value>
@@ -200,6 +206,12 @@
   </data>
   <data name="MainProgressProcessing" xml:space="preserve">
     <value>Processing...</value>
+  </data>
+  <data name="MainProgressSaving" xml:space="preserve">
+    <value>Saving...</value>
+  </data>
+  <data name="MainProgressStopped" xml:space="preserve">
+    <value>Stopped</value>
   </data>
   <data name="MainProgressSuccess" xml:space="preserve">
     <value>Finished</value>

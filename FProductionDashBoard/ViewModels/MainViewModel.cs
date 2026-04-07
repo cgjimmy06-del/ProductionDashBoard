@@ -48,18 +48,20 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private bool autoScrollEnabled = true; // 訊息視窗是否滾動
         [ObservableProperty]
+        private bool isLargeFontMode = false; // 訊息視窗是否放大字型
+        [ObservableProperty]
+        private bool isErrorMode = false; // 訊息視窗是否切換至異常訊息
+        [ObservableProperty]
         private int progressValue = 0; // 進度數值
         [ObservableProperty]
         private string progressString = Properties.Resources.MainProgressIdle; // 進度訊息
-        [ObservableProperty]
-        private bool isErrorMode;
+        
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
         
         // 導覽列
         public ICommand CollapseNavCommand { get; }
         // 訊息窗
-        public ICommand AutoScrollCommand { get; }
-        public ICommand ErrorModeCommand { get; }
+        public ICommand SaveLogsCommand { get; }
         // 卡片區
         public ICommand DCardManageCommand { get; }
 
@@ -84,15 +86,46 @@ namespace FProductionDashBoard.ViewModels
 
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
-            
-            // 設定元件事件 (訊息視窗)
-            AutoScrollCommand = new RelayCommand(() => { AutoScrollEnabled = !AutoScrollEnabled; });
-            ErrorModeCommand = new RelayCommand(() => { IsErrorMode = !IsErrorMode; });
-            PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(IsErrorMode)) OnPropertyChanged(nameof(CurrentLogs)); };
+
+            //// 設定元件事件 (訊息視窗)
+            SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
 
             // 設定元件事件 (設備卡片區)
             DCardManageCommand = new RelayCommand(() => AddDeviceCard());
+        }
+        partial void OnIsErrorModeChanged(bool value)
+        {
+            if (value && _log.IsNewErrorLog) _log.IsNewErrorLog = false;
+
+            OnPropertyChanged(nameof(CurrentLogs));
+
+            // 取代此函式 (不需判斷PropertyName)
+            //PropertyChanged += (s, e) => {
+            //    if (e.PropertyName == nameof(IsErrorMode)) OnPropertyChanged(nameof(CurrentLogs)); };
+        }
+        private async Task SaveLogsAsync() // 用於儲存訊息時非同步追蹤 (尚未建立按鈕鎖定)
+        {
+            try
+            {
+                ProgressString = Properties.Resources.MainProgressSaving;
+
+                await _log.SaveAllLogsToFileAsync();
+
+                ProgressString = Properties.Resources.MainProgressSuccess;
+            }
+            catch (AggregateException ex)
+            {
+                ProgressString = Properties.Resources.MainProgressStopped;
+                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogsCommand");
+                _log.AddErrorLog($"SaveLogsCommand Aggre.Ex: {ex.ToString()}");
+            }
+            catch (Exception ex)
+            {
+                // 最外層保護，抓所有未預期的錯誤
+                ProgressString = Properties.Resources.MainProgressStopped;
+                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogsCommand");
+                _log.AddErrorLog($"SaveLogsCommand Ex: {ex.ToString()}");
+            }
         }
         private async void AddDeviceCard()
         {

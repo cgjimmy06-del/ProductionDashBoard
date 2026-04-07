@@ -126,6 +126,9 @@
   <data name="ComStrDevice" xml:space="preserve">
     <value>設備</value>
   </data>
+  <data name="ComStrDownloaded" xml:space="preserve">
+    <value>已儲存</value>
+  </data>
   <data name="ComStrErrorTitle" xml:space="preserve">
     <value>錯誤</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="ComStrTimeSlot" xml:space="preserve">
     <value>時段</value>
+  </data>
+  <data name="ComStrUploaded" xml:space="preserve">
+    <value>已載入</value>
   </data>
   <data name="ComStrUser" xml:space="preserve">
     <value>人員</value>
@@ -200,6 +206,12 @@
   </data>
   <data name="MainProgressProcessing" xml:space="preserve">
     <value>進行中...</value>
+  </data>
+  <data name="MainProgressSaving" xml:space="preserve">
+    <value>儲存中...</value>
+  </data>
+  <data name="MainProgressStopped" xml:space="preserve">
+    <value>已中斷</value>
   </data>
   <data name="MainProgressSuccess" xml:space="preserve">
     <value>已完成</value>
