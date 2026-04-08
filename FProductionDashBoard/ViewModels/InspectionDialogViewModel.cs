@@ -94,7 +94,7 @@ namespace FProductionDashBoard.ViewModels
         public int intervalTime = 1; // 巡檢間隔
         public int CurrentRoutine = 0; // 第幾個時段
 
-        public event Action<string, LogLevel>? OnLogEvent;
+        public event Action<string, LogLevel>? OnLogEvent; // 多此一舉，當練習用
         //public event Action<string>? OnErrorLogEvent;
 
         [ObservableProperty]

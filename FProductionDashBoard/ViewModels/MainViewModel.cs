@@ -31,8 +31,8 @@ namespace FProductionDashBoard.ViewModels
         public string AppVersion { get; }
         public DispatcherTimer DefaultTimer;
 
-        public ObservableCollection<DeviceCardViewModel> Devices { get; } = 
-            new ObservableCollection<DeviceCardViewModel>();
+        public ObservableCollection<object> Cards { get; set; } = new();
+        public DeviceCardContainerViewModel Card1 { get; }
 
         // 資源 DI注入
         private readonly SqlService _sqlService;
@@ -62,10 +62,6 @@ namespace FProductionDashBoard.ViewModels
         public ICommand CollapseNavCommand { get; }
         // 訊息窗
         public ICommand SaveLogsCommand { get; }
-        // 卡片區
-        public ICommand DCardManageCommand { get; }
-        public ICommand FastDownloadDevicesCommand { get; }
-        public ICommand FastUploadDevicesCommand { get; }
 
         public MainViewModel(UserInfo user, LogService log, SqlService sqlservice) 
         {
@@ -92,10 +88,9 @@ namespace FProductionDashBoard.ViewModels
             //// 設定元件事件 (訊息視窗)
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
 
-            // 設定元件事件 (設備卡片區)
-            DCardManageCommand = new RelayCommand(() => AddDeviceCard());
-            FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
-            FastUploadDevicesCommand = new RelayCommand(() => FastUploadDevices());
+            // 新增儀表卡片區
+            //Cards.Add(new DeviceCardContainerViewModel(_log, _sqlService, CurrentUser));
+            Card1 = new DeviceCardContainerViewModel(_log, _sqlService, CurrentUser);
         }
         partial void OnIsErrorModeChanged(bool value)
         {
@@ -131,44 +126,8 @@ namespace FProductionDashBoard.ViewModels
                 _log.AddErrorLog($"SaveLogsCommand Ex: {ex.ToString()}");
             }
         }
-        // 設備卡片區
-        private async void AddDeviceCard()
-        {
-            var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, 
-                                                    _log, _sqlService, Devices.ToList());
-            await vm.InitAsync();
-            var uc = new AddDeviceDialog { DataContext = vm };
-            var window = new DialogWindow(vm, uc);
-            window.ShowDialog();
 
-            if (vm.IsConfirmed)
-            {
-                var result = vm.Result ?? new DeviceCardsResult { Selections = new List<DeviceInfo>() };
-                foreach (var iselection in result.Selections)
-                {
-                    var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log);
-                    Devices.Add(idevice);
-                    _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
-                }
-            }
-        }
-        private void FastDownloadDevices() // 可能須重購 (檔案名稱/view model來源)
-        {
-            DataStorageService.Save(Devices.Select(s => s.Info), "defaultdevices.json");
-            _log.AddLog($"{Properties.Resources.ComStrDownloaded}: defaultdevices.json", LogLevel.Info);
-        }
-        private void FastUploadDevices() // 可能須重購 (檔案名稱/view model來源)
-        {
-            var result = DataStorageService.Load<List<DeviceInfo>>("defaultdevices.json");
-            foreach (var iselection in result)
-            {
-                var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log);
-                Devices.Add(idevice);
-                _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
-            }
-        }
-
-        private async void SqlTestFunc() 
+        private async void SqlTestFunc()
         {
             try
             {
@@ -185,13 +144,11 @@ namespace FProductionDashBoard.ViewModels
             {
                 Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Debug.WriteLine($"Exception: {ex.Message}");
             }
         }
-
-
 
 
     }
