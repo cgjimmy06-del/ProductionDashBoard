@@ -58,10 +58,13 @@ namespace FProductionDashBoard.ViewModels
         
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
         
+        // 菜單列
+        // 工具列
         // 導覽列
         public ICommand CollapseNavCommand { get; }
         // 訊息窗
         public ICommand SaveLogsCommand { get; }
+        // 主視覺視窗
 
         public MainViewModel(UserInfo user, LogService log, SqlService sqlservice) 
         {

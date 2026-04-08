@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using FProductionDashBoard.Models;
+using FProductionDashBoard.Repositories;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -30,6 +31,8 @@ namespace FProductionDashBoard.ViewModels
         private DispatcherTimer checkTimer;
         public DeviceInfo Info { get; }
         private readonly LogService _log;
+        private readonly SqlService _sqlService;
+        // 需 sql service
 
         [ObservableProperty]
         private UserInfo currentUser = new() { ID = "none", Name = "none" };
@@ -46,13 +49,14 @@ namespace FProductionDashBoard.ViewModels
         public ICommand RoutineInspectionCommand { get; }
         public ICommand OperationCommand { get; }
 
-        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log)
+        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log, SqlService sqlservice)
         {
             Info = info;
             _log = log;
+            _sqlService = sqlservice;
             CurrentUser = currentuser;
 
-            InspectionStatuses = new InspectionService(this, 9, 4, 2);
+            InspectionStatuses = new InspectionService(_sqlService, this, 9, 4, 2);
             InspectionStatuses.OnLogEvent += _log.AddLog;
             //InspectionStatuses.OnErrorLogEvent += _log.AddErrorLog;
 
@@ -69,6 +73,7 @@ namespace FProductionDashBoard.ViewModels
         }
         private void MaterialsChange()
         {
+            // 後續透過sql注入物料清單
             var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this);
             var uc = new MaterialsDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
@@ -113,12 +118,9 @@ namespace FProductionDashBoard.ViewModels
         {
             //var vm = new DialogBaseViewModel<string>(Properties.Resources.DeviceOperationDialog);
             //var window = new DialogWindow(vm);
-            //window.ShowDialog();
-
+            //window.ShowDialog(); 
             //if (vm.IsConfirmed)
-            //{
-            //    var result = vm.Result;
-            //}
+            //{ var result = vm.Result; }
             Info.Status++;
             if (Info.Status > 2) Info.Status = -1;
             _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Processing);
