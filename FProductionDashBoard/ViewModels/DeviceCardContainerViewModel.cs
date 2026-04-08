@@ -26,6 +26,8 @@ namespace FProductionDashBoard.ViewModels
         private readonly SqlService _sqlService;
         public UserInfo CurrentUser { get; }
 
+        public ICommand FirstArticleInsAllCommand { get; }
+        public ICommand RoutineInsAllCommand { get; }
         public ICommand AddDevicesCommand { get; }
         public ICommand FastDownloadDevicesCommand { get; }
         public ICommand FastUploadDevicesCommand { get; }
@@ -36,6 +38,9 @@ namespace FProductionDashBoard.ViewModels
             _log = log;
             _sqlService = sqlservice;
             CurrentUser = currentuser;
+
+            FirstArticleInsAllCommand = new RelayCommand(() => FirstArticleInsAll());
+            RoutineInsAllCommand = new RelayCommand(() => RoutineInsAll());
 
             AddDevicesCommand = new AsyncRelayCommand(() => AddDeviceCard());
             FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
@@ -63,6 +68,37 @@ namespace FProductionDashBoard.ViewModels
                 Debug.WriteLine($"Exception: {ex.Message}");
             }
         }
+
+        private void FirstArticleInsAll()
+        {
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0]);
+            var uc = new InspectionDialog { DataContext = vm };
+            var window = new DialogWindow(vm, uc);
+            window.ShowDialog();
+
+            if (vm.IsConfirmed)
+            {
+                var result = vm.Result ?? new() { IsNormal = false };
+                foreach (var idevice in Devices)
+                    idevice.InspectionStatuses.updateFirstInspection(result.IsNormal, result.Description);
+            }
+        }
+        private void RoutineInsAll()
+        {
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, Devices[0]);
+            var uc = new InspectionDialog { DataContext = vm };
+            var window = new DialogWindow(vm, uc);
+            window.ShowDialog();
+
+            if (vm.IsConfirmed)
+            {
+                var result = vm.Result ?? new InspectionResult() { IsNormal = false };
+                int statusresult = result.IsNormal ? 0 : 2;
+                foreach (var idevice in Devices)
+                    idevice.InspectionStatuses.updateRoutineStatus(statusresult, result.Description);
+            }
+        }
+
         private async Task AddDeviceCard()
         {
             await GetListsFromSqlAsync(); // 可評估是否外部呼叫
@@ -83,12 +119,12 @@ namespace FProductionDashBoard.ViewModels
                 }
             }
         }
-        private void FastDownloadDevices() // 不依賴 view model
+        private void FastDownloadDevices()
         {
             DataStorageService.Save(Devices.Select(s => s.Info), defaultDevicesFile);
             _log.AddLog($"{Properties.Resources.ComStrDownloaded}: {defaultDevicesFile}", LogLevel.Info);
         }
-        private void FastUploadDevices() // 不依賴 view model
+        private void FastUploadDevices()
         {
             var result = DataStorageService.Load<List<DeviceInfo>>(defaultDevicesFile).AsEnumerable();
             if (Devices.Any())

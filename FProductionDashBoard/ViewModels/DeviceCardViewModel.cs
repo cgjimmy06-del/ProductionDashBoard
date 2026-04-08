@@ -32,7 +32,6 @@ namespace FProductionDashBoard.ViewModels
         public DeviceInfo Info { get; }
         private readonly LogService _log;
         private readonly SqlService _sqlService;
-        // 需 sql service
 
         [ObservableProperty]
         private UserInfo currentUser = new() { ID = "none", Name = "none" };

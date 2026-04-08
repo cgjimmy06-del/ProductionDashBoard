@@ -9,9 +9,33 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500" d:Background="White">
-    <Border Margin="2">
-        <!-- 設備卡片管理區 (上列加上統一操作區) -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <Grid Margin="2">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 統一操作區 -->
+        <Border Grid.Row="0" Margin="2" Padding="2" Height="50"
+                                        BorderBrush="Gray" BorderThickness="0">
+            <StackPanel Orientation="Horizontal" Margin="2"
+                                                HorizontalAlignment="Center">
+                <Button Height="40" Width="80" Margin="5,0"
+                                            Command="{Binding FirstArticleInsAllCommand}"
+                                            ToolTip="{DynamicResource FirstInsAllButtonTooltip}">
+                    <materialDesign:PackIcon Kind="TagCheck"
+                                                     Width="30" Height="30"/>
+                </Button>
+                <Button Height="40" Width="80" Margin="5,0"
+                                            Command="{Binding RoutineInsAllCommand}"
+                                            ToolTip="{DynamicResource RoutineInsAllButtonTooltip}">
+                    <materialDesign:PackIcon Kind="ClockCheck"
+                                                     Width="30" Height="30"/>
+                </Button>
+            </StackPanel>
+        </Border>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <!-- 設備卡片陣列 -->
                 <ItemsControl ItemsSource="{Binding Devices}">
@@ -21,43 +45,41 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <!-- 卡片操作區 -->
-                <Border Margin="2" Padding="2" Height="50"
+                <!-- 卡片操作區在此可隨滾動 -->
+            </StackPanel>
+        </ScrollViewer>
+        <!-- 卡片操作區 -->
+        <Border Grid.Row="2" Margin="2" Padding="2" Height="50"
                                         BorderBrush="Gray" BorderThickness="0">
-                    <StackPanel Orientation="Horizontal" Margin="2"
+            <StackPanel Orientation="Horizontal" Margin="2"
                                                 HorizontalAlignment="Center">
-                        <Button Height="40" Width="80" Margin="5,0"
+                <Button Height="40" Width="80" Margin="5,0"
                                             Command="{Binding AddDevicesCommand}"
                                             ToolTip="{DynamicResource AddDeviceButtonTooltip}">
-                            <materialDesign:PackIcon Kind="ShapeRectangleAdd"
+                    <materialDesign:PackIcon Kind="ShapeRectangleAdd"
                                                      Width="30" Height="30"/>
-                        </Button>
-                        <Button Height="40" Width="80" Margin="5,0" Padding="0"
+                </Button>
+                <Button Height="40" Width="80" Margin="5,0" Padding="0"
                                             Command="{Binding FastUploadDevicesCommand}"
                                             ToolTip="{DynamicResource FastUploadButtonTooltip}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="LightningBolt"
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="LightningBolt"
                                                      Width="20" Height="20" VerticalAlignment="Top"/>
-                                <materialDesign:PackIcon Kind="FileUpload"
+                        <materialDesign:PackIcon Kind="FileUpload"
                                                      Width="30" Height="30"/>
-                            </StackPanel>
-                        </Button>
-                        <Button Height="40" Width="80" Margin="5,0" Padding="0"
+                    </StackPanel>
+                </Button>
+                <Button Height="40" Width="80" Margin="5,0" Padding="0"
                                             Command="{Binding FastDownloadDevicesCommand}"
                                             ToolTip="{DynamicResource FastDownloadButtonTooltip}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="LightningBolt"
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="LightningBolt"
                                                      Width="20" Height="20" VerticalAlignment="Top"/>
-                                <materialDesign:PackIcon Kind="FileDownload"
+                        <materialDesign:PackIcon Kind="FileDownload"
                                                      Width="30" Height="30"/>
-                            </StackPanel>
-                        </Button>
-
                     </StackPanel>
-                </Border>
-                
+                </Button>
             </StackPanel>
-            
-        </ScrollViewer>
-    </Border>
+        </Border>
+    </Grid>
 </UserControl>

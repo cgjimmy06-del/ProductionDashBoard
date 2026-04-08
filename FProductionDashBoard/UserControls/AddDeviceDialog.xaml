@@ -100,7 +100,7 @@
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <!-- 上下載操作 (未加入事件) -->
+            <!-- 上下載操作 -->
             <StackPanel VerticalAlignment="Center">
                 <Button Margin="5" Height="40" Width="40" Padding="2"
                         Command="{Binding UploadDeivcesCommand}"

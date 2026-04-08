@@ -20,7 +20,9 @@
     <sys:String x:Key="LargeFontButtonTooltip">放大字體</sys:String>
     <sys:String x:Key="LogSaveButtonTooltip">儲存當前訊息紀錄(含異常)</sys:String>
     <!--#endregion-->
-    <!--#region device card block 設備卡片操作區 -->
+    <!--#region device card container 設備卡片操作區 -->
+    <sys:String x:Key="FirstInsAllButtonTooltip">所有設備統一做首件</sys:String>
+    <sys:String x:Key="RoutineInsAllButtonTooltip">所有設備統一做巡檢</sys:String>
     <sys:String x:Key="AddDeviceButtonTooltip">新增設備卡片</sys:String>
     <sys:String x:Key="FastUploadButtonTooltip">快速上載設備卡片預設清單</sys:String>
     <sys:String x:Key="FastDownloadButtonTooltip">快速儲存設備卡片清單</sys:String>

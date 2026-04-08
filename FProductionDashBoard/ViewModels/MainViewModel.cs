@@ -26,7 +26,7 @@ using System.Windows.Threading;
 
 namespace FProductionDashBoard.ViewModels
 {
-    public enum NavMode { Operation, View }
+    public enum NavMode { Home, Operation, View }
     public partial class MainViewModel : ObservableObject
     {
         public string AppVersion { get; }
@@ -57,7 +57,9 @@ namespace FProductionDashBoard.ViewModels
         private int progressValue = 0; // 進度數值
         [ObservableProperty]
         private string progressString = Properties.Resources.MainProgressIdle; // 進度訊息
-        
+        [ObservableProperty]
+        private NavMode currentNavMode = NavMode.Home; // 當前導覽列模式
+
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
 
         // 菜單列
@@ -102,8 +104,12 @@ namespace FProductionDashBoard.ViewModels
         // 導覽列事件
         public void SwitchMode(NavMode mode)
         {
+            if (mode.Equals(CurrentNavMode)) return;
             switch (mode)
             {
+                case NavMode.Home:
+                    break;
+
                 case NavMode.Operation:
                     var newvm = new DeviceCardContainerViewModel(_log, _sqlService, CurrentUser);
                     Card1 = newvm;
@@ -116,7 +122,6 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
             }
-            
         }
 
         // 訊息窗事件
@@ -155,6 +160,7 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
+        // 測試
         private async void SqlTestFunc()
         {
             try
