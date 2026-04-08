@@ -18,6 +18,7 @@ namespace FProductionDashBoard.ViewModels
     public partial class DeviceCardContainerViewModel : ObservableObject
     {
         private string defaultDevicesFile = "defaultdevices.json"; // 預設設備檔案
+        private List<DeviceInfo> sqlDevicesList = new(); // 設備清單 (資料表來源)
         public ObservableCollection<DeviceCardViewModel> Devices { get; } =
             new ObservableCollection<DeviceCardViewModel>();
 
@@ -36,16 +37,37 @@ namespace FProductionDashBoard.ViewModels
             _sqlService = sqlservice;
             CurrentUser = currentuser;
 
-            AddDevicesCommand = new RelayCommand(() => AddDeviceCard());
+            AddDevicesCommand = new AsyncRelayCommand(() => AddDeviceCard());
             FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
             FastUploadDevicesCommand = new RelayCommand(() => FastUploadDevices());
-
         }
-        private async void AddDeviceCard()
+        public async Task GetListsFromSqlAsync()
         {
-            var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, 
-                                                    Devices.ToList(), defaultDevicesFile);
-            await vm.InitAsync(_sqlService); // try catch 提取至此 (待修正-查詢後注入清單(建構)，SQL統一在Container操作)
+            try
+            {
+                if (!_sqlService.DeviceRepo.CheckConnection())
+                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
+
+                sqlDevicesList = (await _sqlService.DeviceRepo.GetAllAsync()).ToList();
+            }
+            catch (SqlException sqlex)
+            {
+                Debug.WriteLine($"SqlException: {sqlex.Message}");
+            }
+            catch (TaskCanceledException taskex)
+            {
+                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception: {ex.Message}");
+            }
+        }
+        private async Task AddDeviceCard()
+        {
+            await GetListsFromSqlAsync(); // 可評估是否外部呼叫
+            var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile, 
+                                                    sqlDevicesList, Devices.ToList());
             var uc = new AddDeviceDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();

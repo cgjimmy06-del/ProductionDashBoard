@@ -26,13 +26,15 @@ using System.Windows.Threading;
 
 namespace FProductionDashBoard.ViewModels
 {
+    public enum NavMode { Operation, View }
     public partial class MainViewModel : ObservableObject
     {
         public string AppVersion { get; }
         public DispatcherTimer DefaultTimer;
 
         public ObservableCollection<object> Cards { get; set; } = new();
-        public DeviceCardContainerViewModel Card1 { get; }
+        [ObservableProperty]
+        public object? card1; // 須重構
 
         // 資源 DI注入
         private readonly SqlService _sqlService;
@@ -57,11 +59,12 @@ namespace FProductionDashBoard.ViewModels
         private string progressString = Properties.Resources.MainProgressIdle; // 進度訊息
         
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
-        
+
         // 菜單列
         // 工具列
         // 導覽列
         public ICommand CollapseNavCommand { get; }
+        public ICommand SwitchModeCommand { get; }
         // 訊息窗
         public ICommand SaveLogsCommand { get; }
         // 主視覺視窗
@@ -87,14 +90,36 @@ namespace FProductionDashBoard.ViewModels
 
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
+            SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode);
 
             //// 設定元件事件 (訊息視窗)
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
 
             // 新增儀表卡片區
             //Cards.Add(new DeviceCardContainerViewModel(_log, _sqlService, CurrentUser));
-            Card1 = new DeviceCardContainerViewModel(_log, _sqlService, CurrentUser);
+
         }
+        // 導覽列事件
+        public void SwitchMode(NavMode mode)
+        {
+            switch (mode)
+            {
+                case NavMode.Operation:
+                    var newvm = new DeviceCardContainerViewModel(_log, _sqlService, CurrentUser);
+                    Card1 = newvm;
+                    break;
+
+                case NavMode.View:
+                    break;
+
+                default:
+                    break;
+
+            }
+            
+        }
+
+        // 訊息窗事件
         partial void OnIsErrorModeChanged(bool value)
         {
             if (value && _log.IsNewErrorLog) _log.IsNewErrorLog = false;
@@ -153,8 +178,6 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
-
     }
-
 
 }

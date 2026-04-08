@@ -48,11 +48,12 @@ namespace FProductionDashBoard.ViewModels
         public ICommand DownloadDeivcesCommand { get; }
         public ICommand UploadDeivcesCommand { get; }
 
-        public AddDeivceDialogViewModel(string dialogstring, List<DeviceCardViewModel> existedDevicesList, 
-            string defaultsfile) : base(dialogstring)
+        public AddDeivceDialogViewModel(string dialogstring, string defaultsfile,
+            List<DeviceInfo> deviceslist, List<DeviceCardViewModel> existedDevicesList) : base(dialogstring)
         {
-            this.existedDevicesList = existedDevicesList;
             defaultDevicesFile = defaultsfile;
+            this.existedDevicesList = existedDevicesList;
+            this.devicesList = deviceslist;
 
             // 初始化 debounce timer
             debounceTimer = new System.Timers.Timer(500); // 500ms 延遲
@@ -66,29 +67,8 @@ namespace FProductionDashBoard.ViewModels
 
             ConfirmCommand = new RelayCommand(() => OnConfirm());
             CancelCommand = new RelayCommand(() => OnCancel());
-        }
-        public async Task InitAsync(SqlService sqlservice)
-        {
-            try
-            {
-                if (!sqlservice.DeviceRepo.CheckConnection())
-                    DialogErrorString = Properties.Resources.LogInConnectionError;
 
-                devicesList = (await sqlservice.DeviceRepo.GetAllAsync()).ToList();
-                ApplyFilter();
-            }
-            catch (SqlException sqlex)
-            {
-                Debug.WriteLine($"SqlException: {sqlex.Message}");
-            }
-            catch (TaskCanceledException taskex)
-            {
-                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception: {ex.Message}");
-            }
+            ApplyFilter();
         }
         partial void OnDeviceIdChanged(string? value)
         { debounceTimer.Stop(); debounceTimer.Start(); }
