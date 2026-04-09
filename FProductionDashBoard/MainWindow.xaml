@@ -11,8 +11,7 @@
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource MaterialDesignWindow}"
         Title="{Binding AppVersion, StringFormat=ProductionDashBoard -- V{0}}" 
-        Height="600" Width="1000" Icon="appIcon.ico"
-        d:Height="450" d:Width="800">
+        Height="600" Width="1000" Icon="appIcon.ico">
 
     <Window.Resources>
         <ResourceDictionary>

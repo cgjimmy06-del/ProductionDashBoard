@@ -100,6 +100,7 @@ namespace FProductionDashBoard.ViewModels
             if (!LoginService.checkConnection(SelectedServer))
             { Errorinfo = Properties.Resources.LogInConnectionError; return; }
 
+            // 之後password透過EncryptionService加密後儲存
             var user = LoginService.validateUser(SelectedServer, UserId, Password);
             if (user != null)
             {
