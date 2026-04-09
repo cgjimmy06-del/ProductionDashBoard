@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FProductionDashBoard.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -36,7 +37,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private string? currentUser;
         public ObservableCollection<string> ErrorStrings { get; } =
-        new ObservableCollection<string> { "error1", "error2", "error3", "other" };
+                        new ObservableCollection<string> { "error1", "error2", "error3", "other" }; // 後續來源於Ins. service (sql)
         [ObservableProperty]
         private InspectionRadioCheck inspectionCheck = InspectionRadioCheck.Success;
         [ObservableProperty]
@@ -84,6 +85,7 @@ namespace FProductionDashBoard.ViewModels
 
     public partial class InspectionService : ObservableObject
     {
+        private readonly SqlService _sql;
         private readonly DeviceCardViewModel currentDevice;
 
         [ObservableProperty]
@@ -94,14 +96,15 @@ namespace FProductionDashBoard.ViewModels
         public int intervalTime = 1; // 巡檢間隔
         public int CurrentRoutine = 0; // 第幾個時段
 
-        public event Action<string, LogLevel>? OnLogEvent;
+        public event Action<string, LogLevel>? OnLogEvent; // 多此一舉，當練習用
         //public event Action<string>? OnErrorLogEvent;
 
         [ObservableProperty]
         private bool firstInspectionStatus = false; // 首件狀態
         public ObservableCollection<int> RoutineStatus { get; } = new ObservableCollection<int>(); // 各時段狀態
-        public InspectionService(DeviceCardViewModel deviceInfo, int startTime, int routineTimes, int intervalTime)
+        public InspectionService(SqlService sqlservice, DeviceCardViewModel deviceInfo, int startTime, int routineTimes, int intervalTime)
         {
+            _sql = sqlservice;
             currentDevice = deviceInfo;
             setTimesStartTime(startTime, routineTimes, intervalTime);
         }
@@ -126,6 +129,7 @@ namespace FProductionDashBoard.ViewModels
                 if (FirstInspectionStatus) return;
 
                 // SQL 機台 人員 產品 有無異常 描述 日 時 完整時間
+                // _sql
                 OnLogEvent?.Invoke($"{currentDevice.Info.Name}-{Properties.Resources.InsFirstSuccess}", LogLevel.Success);
             }
             else
@@ -135,6 +139,7 @@ namespace FProductionDashBoard.ViewModels
                 else
                 {
                     // SQL 機台 人員 產品 有無異常 描述 日 時 完整時間
+                    // _sql
                     OnLogEvent?.Invoke($"{currentDevice.Info.Name}-{Properties.Resources.InsFirstAbnormal}", LogLevel.Error);
                 }
             }
@@ -148,6 +153,7 @@ namespace FProductionDashBoard.ViewModels
 
             // SQL 機台 人員 時段 有無異常 描述 日 時 完整時間
             // 0則OK；2則NG且須加上描述
+            // _sql
 
             RoutineStatus[CurrentRoutine] = currentStatus;
 

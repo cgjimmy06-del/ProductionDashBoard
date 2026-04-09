@@ -22,12 +22,9 @@ namespace FProductionDashBoard.ViewModels
 
     public partial class AddDeivceDialogViewModel : DialogBaseViewModel<DeviceCardsResult>
     {
-        private readonly SqlService _sqlService;
-        private readonly LogService _log;
-
         private List<DeviceInfo> devicesList = new(); // 設備清單 (資料表來源)
         private List<DeviceCardViewModel> existedDevicesList = new(); // 介面已存在設備清單
-        private string defaultDevicesFile = "defaultdevices.json"; // 設備編號
+        private string defaultDevicesFile; // 預設設備檔案
 
         [ObservableProperty]
         private string? deviceId; // 設備編號
@@ -51,15 +48,15 @@ namespace FProductionDashBoard.ViewModels
         public ICommand DownloadDeivcesCommand { get; }
         public ICommand UploadDeivcesCommand { get; }
 
-        public AddDeivceDialogViewModel(string dialogstring, LogService log, SqlService sqlservice, 
-            List<DeviceCardViewModel> existedDevicesList) : base(dialogstring)
+        public AddDeivceDialogViewModel(string dialogstring, string defaultsfile,
+            List<DeviceInfo> deviceslist, List<DeviceCardViewModel> existedDevicesList) : base(dialogstring)
         {
-            _log = log;
-            _sqlService = sqlservice;
+            defaultDevicesFile = defaultsfile;
             this.existedDevicesList = existedDevicesList;
+            this.devicesList = deviceslist;
 
             // 初始化 debounce timer
-            debounceTimer = new System.Timers.Timer(500); // 300ms 延遲
+            debounceTimer = new System.Timers.Timer(500); // 500ms 延遲
             debounceTimer.AutoReset = false; // 只觸發一次
             debounceTimer.Elapsed += (s, e) => ApplyFilter();
 
@@ -70,29 +67,8 @@ namespace FProductionDashBoard.ViewModels
 
             ConfirmCommand = new RelayCommand(() => OnConfirm());
             CancelCommand = new RelayCommand(() => OnCancel());
-        }
-        public async Task InitAsync()
-        {
-            try
-            {
-                if (!_sqlService.DeviceRepo.CheckConnection())
-                    DialogErrorString = Properties.Resources.LogInConnectionError;
 
-                devicesList = (await _sqlService.DeviceRepo.GetAllAsync()).ToList();
-                ApplyFilter();
-            }
-            catch (SqlException sqlex)
-            {
-                Debug.WriteLine($"SqlException: {sqlex.Message}");
-            }
-            catch (TaskCanceledException taskex)
-            {
-                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception: {ex.Message}");
-            }
+            ApplyFilter();
         }
         partial void OnDeviceIdChanged(string? value)
         { debounceTimer.Stop(); debounceTimer.Start(); }

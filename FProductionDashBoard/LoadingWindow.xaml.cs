@@ -18,9 +18,9 @@ namespace FProductionDashBoard
     /// <summary>
     /// Window1.xaml 的互動邏輯
     /// </summary>
-    public partial class SubWindow1 : Window
+    public partial class LoadingWindow : Window
     {
-        public SubWindow1()
+        public LoadingWindow()
         {
             InitializeComponent();
             Owner = Application.Current.MainWindow;

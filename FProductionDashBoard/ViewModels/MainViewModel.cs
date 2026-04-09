@@ -26,13 +26,15 @@ using System.Windows.Threading;
 
 namespace FProductionDashBoard.ViewModels
 {
+    public enum NavMode { Home, Operation, View }
     public partial class MainViewModel : ObservableObject
     {
         public string AppVersion { get; }
         public DispatcherTimer DefaultTimer;
 
-        public ObservableCollection<DeviceCardViewModel> Devices { get; } = 
-            new ObservableCollection<DeviceCardViewModel>();
+        public ObservableCollection<object> Cards { get; set; } = new();
+        [ObservableProperty]
+        public object? card1; // 須重構
 
         // 資源 DI注入
         private readonly SqlService _sqlService;
@@ -55,17 +57,19 @@ namespace FProductionDashBoard.ViewModels
         private int progressValue = 0; // 進度數值
         [ObservableProperty]
         private string progressString = Properties.Resources.MainProgressIdle; // 進度訊息
-        
+        [ObservableProperty]
+        private NavMode currentNavMode = NavMode.Home; // 當前導覽列模式
+
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
-        
+
+        // 菜單列
+        // 工具列
         // 導覽列
         public ICommand CollapseNavCommand { get; }
+        public ICommand SwitchModeCommand { get; }
         // 訊息窗
         public ICommand SaveLogsCommand { get; }
-        // 卡片區
-        public ICommand DCardManageCommand { get; }
-        public ICommand FastDownloadDevicesCommand { get; }
-        public ICommand FastUploadDevicesCommand { get; }
+        // 主視覺視窗
 
         public MainViewModel(UserInfo user, LogService log, SqlService sqlservice) 
         {
@@ -88,15 +92,39 @@ namespace FProductionDashBoard.ViewModels
 
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
+            SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode);
 
             //// 設定元件事件 (訊息視窗)
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
 
-            // 設定元件事件 (設備卡片區)
-            DCardManageCommand = new RelayCommand(() => AddDeviceCard());
-            FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
-            FastUploadDevicesCommand = new RelayCommand(() => FastUploadDevices());
+            // 新增儀表卡片區
+            //Cards.Add(new DeviceCardContainerViewModel(_log, _sqlService, CurrentUser));
+
         }
+        // 導覽列事件
+        public void SwitchMode(NavMode mode)
+        {
+            if (mode.Equals(CurrentNavMode)) return;
+            switch (mode)
+            {
+                case NavMode.Home:
+                    break;
+
+                case NavMode.Operation:
+                    var newvm = new DeviceCardContainerViewModel(_log, _sqlService, CurrentUser);
+                    Card1 = newvm;
+                    break;
+
+                case NavMode.View:
+                    break;
+
+                default:
+                    break;
+
+            }
+        }
+
+        // 訊息窗事件
         partial void OnIsErrorModeChanged(bool value)
         {
             if (value && _log.IsNewErrorLog) _log.IsNewErrorLog = false;
@@ -131,44 +159,9 @@ namespace FProductionDashBoard.ViewModels
                 _log.AddErrorLog($"SaveLogsCommand Ex: {ex.ToString()}");
             }
         }
-        // 設備卡片區
-        private async void AddDeviceCard()
-        {
-            var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, 
-                                                    _log, _sqlService, Devices.ToList());
-            await vm.InitAsync();
-            var uc = new AddDeviceDialog { DataContext = vm };
-            var window = new DialogWindow(vm, uc);
-            window.ShowDialog();
 
-            if (vm.IsConfirmed)
-            {
-                var result = vm.Result ?? new DeviceCardsResult { Selections = new List<DeviceInfo>() };
-                foreach (var iselection in result.Selections)
-                {
-                    var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log);
-                    Devices.Add(idevice);
-                    _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
-                }
-            }
-        }
-        private void FastDownloadDevices() // 可能須重購 (檔案名稱/view model來源)
-        {
-            DataStorageService.Save(Devices.Select(s => s.Info), "defaultdevices.json");
-            _log.AddLog($"{Properties.Resources.ComStrDownloaded}: defaultdevices.json", LogLevel.Info);
-        }
-        private void FastUploadDevices() // 可能須重購 (檔案名稱/view model來源)
-        {
-            var result = DataStorageService.Load<List<DeviceInfo>>("defaultdevices.json");
-            foreach (var iselection in result)
-            {
-                var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log);
-                Devices.Add(idevice);
-                _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
-            }
-        }
-
-        private async void SqlTestFunc() 
+        // 測試
+        private async void SqlTestFunc()
         {
             try
             {
@@ -185,16 +178,12 @@ namespace FProductionDashBoard.ViewModels
             {
                 Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Debug.WriteLine($"Exception: {ex.Message}");
             }
         }
 
-
-
-
     }
-
 
 }

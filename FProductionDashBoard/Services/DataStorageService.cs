@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace FProductionDashBoard
 {
-    public static class DataStorageService
+    public static class DataStorageService // 後續須統一處理 try catch 的logging
     {
+        // 存在使用者的AppData，後續可能需要
         //private static readonly string baseFolder = Path.Combine(
-        //    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        //    "FProductionDashBoard");
+        //    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FProductionDashBoard");
+
         private static readonly string baseFolder = "Settings";
 
         private static readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
@@ -122,7 +123,7 @@ namespace FProductionDashBoard
         }
     }
 
-    public static class EncryptionService
+    public static class EncryptionService // AES 加解密
     {
         // 建議金鑰與 IV 從安全來源讀取 (例如環境變數或 Windows Credential Manager)
         private static readonly byte[] aesKey = Encoding.UTF8.GetBytes("Your32ByteLengthSecureKeyHere1234567890"); // 32 bytes for AES-256
@@ -183,8 +184,9 @@ namespace FProductionDashBoard
             return sr.ReadToEnd();
         }
     }
-    public static class PasswordHasher
+    public static class PasswordHasher // 密碼雜湊
     {
+        // 需安裝Nuget套件: Microsoft.AspNetCore.Cryptography.KeyDerivation
         //public static string HashPassword(string password, byte[] salt)
         //{
         //    return Convert.ToBase64String(KeyDerivation.Pbkdf2(

@@ -13,12 +13,16 @@
     <sys:String x:Key="VisitorButton">Khách</sys:String>
     <!--#endregion-->
     <!--#region Main Window 主視窗 (含導覽列/訊息視窗) -->
+    <sys:String x:Key="HomeNavButton">Home</sys:String>
+    <sys:String x:Key="OperationNavButton">On-Site Operation</sys:String>
     <sys:String x:Key="PinButtonTooltip">Pin the messages to the last</sys:String>
     <sys:String x:Key="ErrorLogButtonTooltip">Show error log</sys:String>
     <sys:String x:Key="LargeFontButtonTooltip">Make the text bigger</sys:String>
     <sys:String x:Key="LogSaveButtonTooltip">Save current logs and errorlogs</sys:String>
     <!--#endregion-->
-    <!--#region device card block 設備卡片操作區 -->
+    <!--#region device card container 設備卡片操作區 -->
+    <sys:String x:Key="FirstInsAllButtonTooltip">Do first inspection for all devices</sys:String>
+    <sys:String x:Key="RoutineInsAllButtonTooltip">Do routine inspection for all devices</sys:String>
     <sys:String x:Key="AddDeviceButtonTooltip">Add new device card to the block</sys:String>
     <sys:String x:Key="FastUploadButtonTooltip">Fast upload default list to device block</sys:String>
     <sys:String x:Key="FastDownloadButtonTooltip">Fast download list to default file</sys:String>
