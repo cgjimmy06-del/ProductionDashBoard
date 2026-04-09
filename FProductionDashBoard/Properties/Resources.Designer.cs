@@ -61,11 +61,38 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Please loaded at least one device! 的當地語系化字串。
+        /// </summary>
+        internal static string AddDeviceNonSelectionError {
+            get {
+                return ResourceManager.GetString("AddDeviceNonSelectionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Added 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrAdded {
+            get {
+                return ResourceManager.GetString("ComStrAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Device 的當地語系化字串。
         /// </summary>
         internal static string ComStrDevice {
             get {
                 return ResourceManager.GetString("ComStrDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Downloaded 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrDownloaded {
+            get {
+                return ResourceManager.GetString("ComStrDownloaded", resourceCulture);
             }
         }
         
@@ -88,11 +115,29 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Removed 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrRemoved {
+            get {
+                return ResourceManager.GetString("ComStrRemoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Time Slot 的當地語系化字串。
         /// </summary>
         internal static string ComStrTimeSlot {
             get {
                 return ResourceManager.GetString("ComStrTimeSlot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Uploaded 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrUploaded {
+            get {
+                return ResourceManager.GetString("ComStrUploaded", resourceCulture);
             }
         }
         
@@ -111,6 +156,15 @@ namespace FProductionDashBoard.Properties {
         internal static string ComStrWarningTitle {
             get {
                 return ResourceManager.GetString("ComStrWarningTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Device Card Management 的當地語系化字串。
+        /// </summary>
+        internal static string DeviceCardManageDialog {
+            get {
+                return ResourceManager.GetString("DeviceCardManageDialog", resourceCulture);
             }
         }
         
@@ -277,6 +331,24 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Saving... 的當地語系化字串。
+        /// </summary>
+        internal static string MainProgressSaving {
+            get {
+                return ResourceManager.GetString("MainProgressSaving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Stopped 的當地語系化字串。
+        /// </summary>
+        internal static string MainProgressStopped {
+            get {
+                return ResourceManager.GetString("MainProgressStopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Finished 的當地語系化字串。
         /// </summary>
         internal static string MainProgressSuccess {
@@ -286,7 +358,7 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
-        ///   查詢類似 Please select at least one item 的當地語系化字串。
+        ///   查詢類似 Please select at least one item! 的當地語系化字串。
         /// </summary>
         internal static string MaterialNonSelectionError {
             get {

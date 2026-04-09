@@ -2,6 +2,7 @@
 using FProductionDashBoard.Properties;
 using MaterialDesignThemes.Wpf;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -39,13 +40,16 @@ namespace FProductionDashBoard
         Success,
         Processing
     }
-    public class LogService : ObservableObject
+    public partial class LogService : ObservableObject
     {
         public ObservableCollection<LogEntry> Logs { get; } = new();
         public ObservableCollection<LogEntry> ErrorLogs { get; } = new();
+        [ObservableProperty]
+        private bool isNewErrorLog = false; // 是否有新異常紀錄
         public ObservableCollection<string> AvailableLogFiles { get; } = new();
 
-        private readonly int _daysToKeep = 3;
+        public bool SaveToFile = false;
+        public int _daysToKeep = 3;
         private readonly string _logDirectory = "Logs"; // log路徑
         private readonly string _logFileName = "logs"; // log檔名 (接日期)
         private readonly string _errorLogFileName = "errorlogs"; // log檔名 (接日期)
@@ -56,10 +60,17 @@ namespace FProductionDashBoard
             { Directory.CreateDirectory(_logDirectory); }
             //CleanupOldLogs();
         }
-
+        public void RefreshAvailableLogFiles()
+        {
+            AvailableLogFiles.Clear();
+            foreach (var file in Directory.GetFiles(_logDirectory, "*logs_*.txt"))
+            {
+                AvailableLogFiles.Add(Path.GetFileName(file));
+            }
+        }
         public void AddLog(string message, LogLevel level = LogLevel.Info)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 var resources = Application.Current.Resources;
                 var tocolor = level switch
@@ -91,11 +102,14 @@ namespace FProductionDashBoard
                 };
 
                 Logs.Add(entry);
-                // 同步到檔案
-                //AppendLogToFile(entry, _logFileName);
-                // 每次新增時檢查是否需要清理
-                //CleanupOldLogs();
 
+                // 是否同步到檔案
+                if (SaveToFile)
+                {
+                    // _ = AppendLogToFileAsync(entry, _logFileName); // _ = 表示 fire-and-forget
+                    AppendLogToFile(entry, _logFileName);
+                    CleanupOldLogs(_logFileName);// 檢查清理 (daystokeep)
+                }
             }, DispatcherPriority.Background);
         }
         public void AddErrorLog(string message)
@@ -108,16 +122,19 @@ namespace FProductionDashBoard
                     Message = message,
                     Level = LogLevel.Error,
                     Timestamp = DateTime.Now,
-                    Color = (Brush)resources["InfoBrush"],
+                    Color = (Brush)resources["ErrorBrush"],
                     Icon = PackIconKind.Error
                 };
 
                 ErrorLogs.Add(entry);
-                // 同步到檔案
-                //AppendLogToFile(entry, _errorLogFileName);
-                // 每次新增時檢查是否需要清理
-                //CleanupOldLogs();
+                IsNewErrorLog = true;
 
+                // 是否同步到檔案
+                if (SaveToFile)
+                {
+                    AppendLogToFile(entry, _errorLogFileName);
+                    CleanupOldLogs(_errorLogFileName);
+                }
             }, DispatcherPriority.Background);
         }
         private string GetLogFilePathWithDate(string logtitle)
@@ -131,11 +148,9 @@ namespace FProductionDashBoard
             var line = $"{entry.Timestamp:yyyy-MM-dd HH:mm:ss} [{entry.Level}] {entry.Message}";
             File.AppendAllText(filePath, line + Environment.NewLine);
         }
-
-        // 同時清除與更新logs與errorlogs
-        private void CleanupOldLogs()
+        private void CleanupOldLogs(string filetitle)
         {
-            var files = Directory.GetFiles(_logDirectory, "*logs_*.txt")
+            var files = Directory.GetFiles(_logDirectory, "{filetitle}_*.txt")
                                  .Select(f => new FileInfo(f))
                                  .OrderByDescending(f => f.CreationTime)
                                  .ToList();
@@ -161,13 +176,24 @@ namespace FProductionDashBoard
                 }
             }
         }
-        public void RefreshAvailableLogFiles()
+        public async Task SaveAllLogsToFileAsync()
         {
-            AvailableLogFiles.Clear();
-            foreach (var file in Directory.GetFiles(_logDirectory, "*logs_*.txt"))
-            {
-                AvailableLogFiles.Add(Path.GetFileName(file));
-            }
+            string currenttime = DateTime.Now.ToString("yy-MM-dd_HHmm");
+            
+            var logFilePath = Path.Combine(_logDirectory, $"log_{currenttime}_t.txt");
+            var errorlogFilePath = Path.Combine(_logDirectory, $"elog_{currenttime}_t.txt");
+
+            // 把所有 Logs 轉成字串
+            var lines = Logs.Select(entry =>
+                $"{entry.Timestamp:yy-MM-dd HH:mm:ss} [{entry.Level}] {entry.Message}");
+            var errorlines = ErrorLogs.Select(entry =>
+                $"[{entry.Timestamp:yy-MM-dd HH:mm:ss}] {entry.Message}");
+
+            // 非同步寫入檔案（覆蓋舊檔）
+            var task1 = File.WriteAllLinesAsync(logFilePath, lines);
+            var task2 = File.WriteAllLinesAsync(errorlogFilePath, errorlines);
+
+            await Task.WhenAll(task1, task2);
         }
         public string LoadLogFile(string fileName)
         {
@@ -178,34 +204,30 @@ namespace FProductionDashBoard
             }
             return "檔案不存在或已被壓縮備份。";
         }
+        private void FlushLogs()
+        {
+            ConcurrentQueue<LogEntry> _logQueue = new(); // 全域
+            int _batchSize = 50; // 全域
+
+            var batch = new List<string>();
+
+            while (_logQueue.TryDequeue(out var entry))
+            {
+                batch.Add($"{entry.Timestamp:yyyy-MM-dd HH:mm:ss} [{entry.Level}] {entry.Message}");
+
+                if (batch.Count >= _batchSize)
+                {
+                    File.AppendAllLines(GetLogFilePathWithDate(_logFileName), batch);
+                    batch.Clear();
+                }
+            }
+
+            if (batch.Count > 0)
+            {
+                File.AppendAllLines(GetLogFilePathWithDate(_logFileName), batch);
+            }
+        }
     }
     #endregion
 
-    #region -- Data Storage --
-    public static class DataStorageService
-    {
-
-        private static readonly string filePath = "devices.json";
-
-        public static void SaveDevices(ObservableCollection<Models.DeviceInfo> devices)
-        {
-            var json = JsonSerializer.Serialize(devices);
-            File.WriteAllText(filePath, json);
-        }
-
-        public static ObservableCollection<Models.DeviceInfo> LoadDevices()
-        {
-            if (!File.Exists(filePath))
-                return new ObservableCollection<Models.DeviceInfo>();
-
-            var json = File.ReadAllText(filePath);
-            return JsonSerializer.Deserialize<ObservableCollection<Models.DeviceInfo>>(json)
-                   ?? new ObservableCollection<Models.DeviceInfo>();
-        }
-
-
-    }
-
-
-    #endregion
 }

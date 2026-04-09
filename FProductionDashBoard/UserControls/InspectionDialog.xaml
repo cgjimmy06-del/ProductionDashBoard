@@ -33,9 +33,9 @@
             <!-- 第二層 (只有 B 選取時才可用) -->
             <StackPanel Margin="30,0,0,0">
                 <ComboBox Name="ComboBoxFailureReason" HorizontalAlignment="Left"
-                      Width="200" SelectedIndex="0"
-                      IsEnabled="{Binding IsChecked, ElementName=RadioBtnFailure}"
-                      Style="{StaticResource MaterialDesignComboBox}"
+                          Width="200" SelectedIndex="0"
+                          IsEnabled="{Binding IsChecked, ElementName=RadioBtnFailure}"
+                          Style="{StaticResource MaterialDesignComboBox}"
                           ItemsSource="{Binding ErrorStrings}"
                           SelectedValue="{Binding SelectionDescription, Mode=TwoWay}">
                     <!--<ComboBoxItem Content="B1 錯誤1"/>
@@ -47,9 +47,10 @@
                 <!-- B4 其他: TextBox -->
                 <TextBox Width="200" Padding="2" Margin="0,5" HorizontalAlignment="Left"
                          Text="{Binding OtherDescription}"
+                         IsEnabled="{Binding IsChecked, ElementName=RadioBtnFailure}"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Visibility="{Binding IsOtherSelected, 
-                    Converter={StaticResource BooleanToVisibilityConverter}}">
+                         Converter={StaticResource BooleanToVisibilityConverter}}">
                 </TextBox>
             </StackPanel>
         </StackPanel>

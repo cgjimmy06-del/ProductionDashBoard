@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -18,10 +19,19 @@ namespace FProductionDashBoard
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool isOn = (bool)value;
+            if (parameter?.ToString() == "Invert")
+                isOn = !isOn;
             return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["ErrorBrush"];
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { throw new NotImplementedException(); }
+    }
+    public class BoolToAlertIconConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => (bool)value ? PackIconKind.AlertPlusOutline : PackIconKind.AlertOutline;
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => Binding.DoNothing;
     }
     public class IntToColorConverter : IValueConverter
     {
@@ -187,6 +197,37 @@ namespace FProductionDashBoard
                         yield return childOfChild;
                     }
                 }
+            }
+        }
+    }
+    public static class DataGridSelectedItemsBehavior
+    {
+        public static readonly DependencyProperty SelectedItemsProperty =
+            DependencyProperty.RegisterAttached(
+                "SelectedItems",
+                typeof(IList),
+                typeof(DataGridSelectedItemsBehavior),
+                new PropertyMetadata(null, OnSelectedItemsChanged));
+
+        public static void SetSelectedItems(DependencyObject element, IList value)
+            => element.SetValue(SelectedItemsProperty, value);
+
+        public static IList GetSelectedItems(DependencyObject element)
+            => (IList)element.GetValue(SelectedItemsProperty);
+
+        private static void OnSelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is DataGrid grid)
+            {
+                grid.SelectionChanged += (s, args) =>
+                {
+                    var list = GetSelectedItems(grid);
+                    list?.Clear();
+                    foreach (var item in grid.SelectedItems)
+                    {
+                        list?.Add(item);
+                    }
+                };
             }
         }
     }

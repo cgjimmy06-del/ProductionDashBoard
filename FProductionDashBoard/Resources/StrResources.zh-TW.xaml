@@ -12,6 +12,21 @@
     <sys:String x:Key="LoginButton">登入</sys:String>
     <sys:String x:Key="VisitorButton">訪客</sys:String>
     <!--#endregion-->
+    <!--#region Main Window 主視窗 (含導覽列/訊息視窗) -->
+    <sys:String x:Key="HomeNavButton">首頁</sys:String>
+    <sys:String x:Key="OperationNavButton">現場操作面板</sys:String>
+    <sys:String x:Key="PinButtonTooltip">釘選訊息至最新</sys:String>
+    <sys:String x:Key="ErrorLogButtonTooltip">切換至錯誤訊息視窗</sys:String>
+    <sys:String x:Key="LargeFontButtonTooltip">放大字體</sys:String>
+    <sys:String x:Key="LogSaveButtonTooltip">儲存當前訊息紀錄(含異常)</sys:String>
+    <!--#endregion-->
+    <!--#region device card container 設備卡片操作區 -->
+    <sys:String x:Key="FirstInsAllButtonTooltip">所有設備統一做首件</sys:String>
+    <sys:String x:Key="RoutineInsAllButtonTooltip">所有設備統一做巡檢</sys:String>
+    <sys:String x:Key="AddDeviceButtonTooltip">新增設備卡片</sys:String>
+    <sys:String x:Key="FastUploadButtonTooltip">快速上載設備卡片預設清單</sys:String>
+    <sys:String x:Key="FastDownloadButtonTooltip">快速儲存設備卡片清單</sys:String>
+    <!--#endregion-->
     <!--#region device card 設備卡片 -->
     <sys:String x:Key="MetarialChangeButton">物料</sys:String>
     <sys:String x:Key="FirstInspectionButton">首件</sys:String>
@@ -29,6 +44,18 @@
     <!--#region material change dialog 物料視窗 -->
     <sys:String x:Key="ModeChangeButton">模式切換</sys:String>
     <sys:String x:Key="ClearSelectionButton">清除</sys:String>
+    <!--#endregion-->
+    <!--#region common datagrid header 欄位抬頭共用字串 -->
+    <sys:String x:Key="DeivceIdDataGridHeader">設備ID</sys:String>
+    <sys:String x:Key="NameDataGridHeader">名稱</sys:String>
+    <sys:String x:Key="IpDataGridHeader">IP</sys:String>
+    <sys:String x:Key="LoadedDataGridHeader">已載入</sys:String>
+    <!--#endregion-->
+    <!--#region dcard manage dialog 設備卡片新增視窗 -->
+    <sys:String x:Key="AddToSelectedButtonTooltip">新增所選之設備至已載入清單</sys:String>
+    <sys:String x:Key="RemoveSelectedButtonTooltip">移除已載入清單中所選之設備</sys:String>
+    <sys:String x:Key="UploadButtonTooltip">上載清單至已載入</sys:String>
+    <sys:String x:Key="DownloadButtonTooltip">儲存清單到檔案</sys:String>
     <!--#endregion-->
     
     

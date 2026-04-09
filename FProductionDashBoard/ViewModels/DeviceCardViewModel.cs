@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using FProductionDashBoard.Models;
+using FProductionDashBoard.Repositories;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -30,6 +31,7 @@ namespace FProductionDashBoard.ViewModels
         private DispatcherTimer checkTimer;
         public DeviceInfo Info { get; }
         private readonly LogService _log;
+        private readonly SqlService _sqlService;
 
         [ObservableProperty]
         private UserInfo currentUser = new() { ID = "none", Name = "none" };
@@ -46,15 +48,16 @@ namespace FProductionDashBoard.ViewModels
         public ICommand RoutineInspectionCommand { get; }
         public ICommand OperationCommand { get; }
 
-        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log)
+        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log, SqlService sqlservice)
         {
             Info = info;
             _log = log;
+            _sqlService = sqlservice;
             CurrentUser = currentuser;
 
-            InspectionStatuses = new InspectionService(this, 9, 4, 2);
+            InspectionStatuses = new InspectionService(_sqlService, this, 9, 4, 2);
             InspectionStatuses.OnLogEvent += _log.AddLog;
-            InspectionStatuses.OnErrorLogEvent += _log.AddErrorLog;
+            //InspectionStatuses.OnErrorLogEvent += _log.AddErrorLog;
 
             MaterialsChangeCommand = new RelayCommand(MaterialsChange);
             FirstInspectionCommand = new RelayCommand(FirstArticleInspection);
@@ -69,6 +72,7 @@ namespace FProductionDashBoard.ViewModels
         }
         private void MaterialsChange()
         {
+            // 後續透過sql注入物料清單
             var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this);
             var uc = new MaterialsDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
@@ -76,9 +80,9 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                var result = vm.Result ?? new MaterialResult() { Selections = Array.Empty<MaterialInfo>() };
+                var result = vm.Result ?? new MaterialResult() { Selections = new List<MaterialInfo>() };
                 // SQL
-                _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - Category: {result.Selections.Length} -> " +
+                _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - Category: {result.Selections.Count} -> " +
                     $"Sum: {result.Selections.Sum(d => d.SelectedCount)}", LogLevel.Success);
             }
         }
@@ -113,47 +117,18 @@ namespace FProductionDashBoard.ViewModels
         {
             //var vm = new DialogBaseViewModel<string>(Properties.Resources.DeviceOperationDialog);
             //var window = new DialogWindow(vm);
-            //window.ShowDialog();
-
+            //window.ShowDialog(); 
             //if (vm.IsConfirmed)
-            //{
-            //    var result = vm.Result;
-            //}
+            //{ var result = vm.Result; }
             Info.Status++;
             if (Info.Status > 2) Info.Status = -1;
             _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Processing);
+            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Info);
+            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Warning);
+            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Error);
+            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Success);
+            _log.AddErrorLog($"設備 {Info.Name} 設備調試狀態更新:");
         }
 
     }
-
-    public partial class AddDeviceViewModel : ObservableObject
-    {
-        [ObservableProperty]
-        private string name = "Default";
-        [ObservableProperty]
-        private string description = string.Empty;
-
-        public IRelayCommand ConfirmCommand { get; }
-        public IRelayCommand CancelCommand { get; }
-
-        public event Action<DeviceInfo>? OnConfirm;
-        public event Action? OnCancel;
-        public AddDeviceViewModel()
-        {
-            ConfirmCommand = new RelayCommand(Confirm);
-            CancelCommand = new RelayCommand(Cancel);
-        }
-        private void Confirm()
-        {
-            var info = new DeviceInfo { DeviceID = "", IP = "", Name = Name, Description = Description };
-            OnConfirm?.Invoke(info);
-        }
-        private void Cancel()
-        {
-            OnCancel?.Invoke();
-        }
-
-    }
-
-
 }
