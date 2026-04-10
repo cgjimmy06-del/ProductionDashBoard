@@ -23,7 +23,7 @@ namespace FProductionDashBoard.ViewModels
             new ObservableCollection<DeviceCardViewModel>();
 
         private readonly LogService _log;
-        private readonly IDataService _sqlService;
+        private readonly IDataService _dataService;
         public UserInfo CurrentUser { get; }
 
         public ICommand FirstArticleInsAllCommand { get; }
@@ -33,10 +33,10 @@ namespace FProductionDashBoard.ViewModels
         public ICommand FastUploadDevicesCommand { get; }
 
 
-        public DeviceCardContainerViewModel(LogService log, IDataService sqlservice, UserInfo currentuser)
+        public DeviceCardContainerViewModel(LogService log, IDataService dataservice, UserInfo currentuser)
         {
             _log = log;
-            _sqlService = sqlservice;
+            _dataService = dataservice;
             CurrentUser = currentuser;
 
             FirstArticleInsAllCommand = new RelayCommand(() => FirstArticleInsAll());
@@ -50,10 +50,10 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                if (!_sqlService.EquipmentRep.CheckConnection()) // 待翻譯log 並加上errorlog
+                if (!_dataService.EquipmentRep.CheckConnection()) // 待翻譯log 並加上errorlog
                     _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
 
-                var equipmentList = (await _sqlService.EquipmentRep.GetAllAsync());
+                var equipmentList = (await _dataService.EquipmentRep.GetAllAsync());
 
                 if (sqlDevicesList.Any()) sqlDevicesList.Clear();
                 foreach (var eq in equipmentList)
@@ -122,7 +122,7 @@ namespace FProductionDashBoard.ViewModels
                 var result = vm.Result ?? new DeviceCardsResult { Selections = new List<DeviceInfo>() };
                 foreach (var iselection in result.Selections)
                 {
-                    var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _sqlService);
+                    var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService);
                     Devices.Add(idevice);
                     _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
                 }
@@ -143,7 +143,7 @@ namespace FProductionDashBoard.ViewModels
             }
             foreach (var iselection in result)
             {
-                var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _sqlService);
+                var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService);
                 Devices.Add(idevice);
                 _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
             }

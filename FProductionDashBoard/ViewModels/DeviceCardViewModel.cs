@@ -31,7 +31,7 @@ namespace FProductionDashBoard.ViewModels
         private DispatcherTimer checkTimer;
         public DeviceInfo Info { get; }
         private readonly LogService _log;
-        private readonly IDataService _sqlService;
+        private readonly IDataService _dataService;
 
         [ObservableProperty]
         private UserInfo currentUser = new() { ID = "none", Name = "none" };
@@ -48,11 +48,11 @@ namespace FProductionDashBoard.ViewModels
         public ICommand RoutineInspectionCommand { get; }
         public ICommand OperationCommand { get; }
 
-        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log, IDataService sqlservice)
+        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log, IDataService dataservice)
         {
             Info = info;
             _log = log;
-            _sqlService = sqlservice;
+            _dataService = dataservice;
             CurrentUser = currentuser;
 
             InspectionStatuses = new InspectionService(this, 9, 4, 2);
