@@ -8,7 +8,7 @@ using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.Repositories
 {
-    public interface IUserRepository : IRepository<UserInfo, MesDbContext>
+    public interface IEmployeeRepository : IRepository<Employee, MesDbContext>
     {
 
 

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FProductionDashBoard.Models
+namespace FProductionDashBoard.UiModels
 {
     public partial class MaterialInfo : ObservableObject
     {
-        public required string Code { get; set; } // 主鍵
+        public required string Code { get; set; }
         public required string Name { get; set; }
         public string Description { get; set; } = ""; // 顯示用
 

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FProductionDashBoard.Models
+namespace FProductionDashBoard.UiModels
 {
     public enum Roles
     {
@@ -20,7 +20,7 @@ namespace FProductionDashBoard.Models
 
     public partial class UserInfo : ObservableObject
     {
-        public required string ID { get; set; }   // 主鍵
+        public required string ID { get; set; }
         public required string Name { get; set; }
         public string Password { get; set; } = "0000";
         public string? Email { get; set; }
@@ -30,25 +30,5 @@ namespace FProductionDashBoard.Models
         [ObservableProperty]
         private int status;
         //public ICollection<DeviceInfo> Devices { get; set; } = new List<DeviceInfo>();
-    }
-
-    public class UserInfoConfiguration : IEntityTypeConfiguration<UserInfo>
-    {
-        public void Configure(EntityTypeBuilder<UserInfo> builder)
-        {
-            builder.ToTable("employee");
-            builder.HasKey(d => d.ID);
-            builder.Property(d => d.ID).HasColumnName("user_id");
-            builder.Property(d => d.Name).HasColumnName("name");
-            builder.Property(d => d.Password).HasColumnName("password");
-            builder.Property(d => d.Email).HasColumnName("email");
-            builder.Property(d => d.Role).HasColumnName("permission");
-            builder.Property(d => d.DepartmentId).HasColumnName("department_id");
-
-            // 忽略額外屬性
-            builder.Ignore(d => d.Status);
-
-
-        }
     }
 }

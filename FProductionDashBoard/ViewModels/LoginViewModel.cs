@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using FProductionDashBoard.UiModels;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -60,7 +61,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand LoginCommand { get; }
         public ICommand LanguageChangeCommand { get; }
         public ICommand ThemeChangeCommand { get; }
-        public Action<string, Models.UserInfo>? OnLoginSuccess { get; set; }
+        public Action<string, UserInfo>? OnLoginSuccess { get; set; }
 
         public LoginViewModel()
         {
@@ -107,7 +108,7 @@ namespace FProductionDashBoard.ViewModels
                 if (loginSource != "Normal") { UserId = ""; Password = ""; } // 避免記憶 非常規登入資訊
 
                 saveDefault();
-                OnLoginSuccess?.Invoke(SelectedServer, user);
+                OnLoginSuccess?.Invoke(SelectedServer, user); // 事件於LoginWindow的Code-behind
             }
             else { Errorinfo = Properties.Resources.LogInAccountError; }
         }

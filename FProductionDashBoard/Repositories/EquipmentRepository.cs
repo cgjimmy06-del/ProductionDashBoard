@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using FProductionDashBoard.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,18 +8,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static FProductionDashBoard.Repositories.IDeviceRepository;
-using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.Repositories
 {
-    public class DeviceRepository : Repository<DeviceInfo, MesDbContext>, IDeviceRepository
+    public class EquipmentRepository : Repository<Equipment, MesDbContext>, IEquipmentRepository
     {
-        private readonly MesDbContext _context;
-
-        public DeviceRepository(MesDbContext context) : base(context)
+        public EquipmentRepository(MesDbContext context) : base(context)
         {
-            _context = context;
         }
 
         public async Task<IEnumerable<DeviceDto>> GetDevicesAllDapperAsync()

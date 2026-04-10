@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FProductionDashBoard.Models;
+using FProductionDashBoard.UiModels;
 using FProductionDashBoard.Repositories;
 using FProductionDashBoard.UserControls;
 using Microsoft.Data.SqlClient;
@@ -50,10 +50,19 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                if (!_sqlService.DeviceRepo.CheckConnection())
+                if (!_sqlService.EquipmentRep.CheckConnection()) // 待翻譯log 並加上errorlog
                     _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
 
-                sqlDevicesList = (await _sqlService.DeviceRepo.GetAllAsync()).ToList();
+                var equipmentList = (await _sqlService.EquipmentRep.GetAllAsync());
+
+                if (sqlDevicesList.Any()) sqlDevicesList.Clear();
+                foreach (var eq in equipmentList)
+                    sqlDevicesList.Add(new DeviceInfo {
+                        Id = eq.Id, DeviceID = eq.EquipmentId, Name = eq.Name,
+                        IP = eq.Ip, Port = eq.Port,
+                        Factory = eq.Factory, Building = eq.Building, Floor = eq.Floor,
+                        Description = eq.Description
+                    });
             }
             catch (SqlException sqlex)
             {
@@ -103,7 +112,7 @@ namespace FProductionDashBoard.ViewModels
         {
             await GetListsFromSqlAsync(); // 可評估是否外部呼叫
             var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile, 
-                                                    sqlDevicesList, Devices.ToList());
+                                                    sqlDevicesList, [.. Devices]); // [.. X] = X.ToList()
             var uc = new AddDeviceDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();

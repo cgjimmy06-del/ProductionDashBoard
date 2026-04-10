@@ -1,11 +1,11 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using FProductionDashBoard.Models;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.Repositories
 {
@@ -16,7 +16,7 @@ namespace FProductionDashBoard.Repositories
         public string? IP { get; set; }
     }
 
-    public interface IDeviceRepository : IRepository<DeviceInfo, MesDbContext>
+    public interface IEquipmentRepository : IRepository<Equipment, MesDbContext>
     {
 
         public Task<IEnumerable<DeviceDto>> GetDevicesAllDapperAsync();

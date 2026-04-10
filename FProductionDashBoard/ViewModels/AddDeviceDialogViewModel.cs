@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FProductionDashBoard.Models;
+using FProductionDashBoard.UiModels;
 using FProductionDashBoard.Repositories;
 using Microsoft.Data.SqlClient;
 using System;
@@ -17,7 +17,7 @@ namespace FProductionDashBoard.ViewModels
 {
     public class DeviceCardsResult
     {
-        public required List<Models.DeviceInfo> Selections;
+        public required List<DeviceInfo> Selections;
     }
 
     public partial class AddDeivceDialogViewModel : DialogBaseViewModel<DeviceCardsResult>

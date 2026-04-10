@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FProductionDashBoard.Models;
-using FProductionDashBoard.Repositories;
-using FProductionDashBoard.UserControls;
+using FProductionDashBoard.UiModels;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Data.SqlClient;
@@ -26,7 +24,7 @@ using System.Windows.Threading;
 
 namespace FProductionDashBoard.ViewModels
 {
-    public enum NavMode { Home, Operation, View }
+    public enum NavMode { Home, Operation, Setting, View }
     public partial class MainViewModel : ObservableObject
     {
         public string AppVersion { get; }
@@ -105,6 +103,7 @@ namespace FProductionDashBoard.ViewModels
         public void SwitchMode(NavMode mode)
         {
             if (mode.Equals(CurrentNavMode)) return;
+            CurrentNavMode = mode;
             switch (mode)
             {
                 case NavMode.Home:
@@ -118,9 +117,11 @@ namespace FProductionDashBoard.ViewModels
                 case NavMode.View:
                     break;
 
-                default:
+                case NavMode.Setting:
                     break;
 
+                default:
+                    break;
             }
         }
 
@@ -165,9 +166,9 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                _log.AddLog($"連線狀態: {_sqlService.DeviceRepo.CheckConnection()}");
+                _log.AddLog($"連線狀態: {_sqlService.EquipmentRep.CheckConnection()}");
 
-                var devs = await _sqlService.DeviceRepo.GetAllAsync();
+                var devs = await _sqlService.EquipmentRep.GetAllAsync();
                 foreach (var dev in devs) { _log.AddLog($"已新增設備: {dev.Name}", LogLevel.Info); }
             }
             catch (SqlException sqlex)
