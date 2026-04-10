@@ -1,5 +1,4 @@
-﻿using FProductionDashBoard.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +6,8 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory; // 主要應用於 EF Core 應用程式的啟動配置或需要深入診斷 SQL 執行時的場景
+using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.Repositories
 {

@@ -59,7 +59,7 @@ namespace FProductionDashBoard.ViewModels
                 foreach (var eq in equipmentList)
                     sqlDevicesList.Add(new DeviceInfo {
                         Id = eq.Id, DeviceID = eq.EquipmentId, Name = eq.Name,
-                        IP = eq.Ip, Port = eq.Port,
+                        IP = eq.Ip, Port = eq.Port, Type = eq.TypeId,
                         Factory = eq.Factory, Building = eq.Building, Floor = eq.Floor,
                         Description = eq.Description
                     });

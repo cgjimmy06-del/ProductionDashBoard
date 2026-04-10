@@ -11,6 +11,13 @@ using static Dapper.SqlMapper;
 
 namespace FProductionDashBoard.UiModels
 {
+    public enum DeviceType
+    {
+        Robot = 0,
+        Plc = 1,
+        Amr = 2,
+        Meter = 3
+    }
     public partial class DeviceInfo : ObservableObject
     {
         public int Id { get; set; }
@@ -18,6 +25,7 @@ namespace FProductionDashBoard.UiModels
         public required string Name { get; set; }
         public string IP { get; set; } = "none";
         public int Port { get; set; } = 0;
+        public int? Type { get; set; }
         public string? Factory { get; set; }
         public string? Building { get; set; }
         public string? Floor { get; set; }

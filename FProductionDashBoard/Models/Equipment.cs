@@ -18,7 +18,7 @@ namespace FProductionDashBoard.Models
         public string? Factory { get; set; }
         public string? Building { get; set; }
         public string? Floor { get; set; }
-        public string? TypeId { get; set; }
+        public int? TypeId { get; set; }
         public string? DepartmentId { get; set; }
         public string? Description { get; set; }
         public DateTime CreateTime { get; set; }

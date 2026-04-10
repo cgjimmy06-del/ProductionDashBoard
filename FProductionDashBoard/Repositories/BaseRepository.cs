@@ -38,7 +38,6 @@ namespace FProductionDashBoard.Repositories
         { return _context.Database.CanConnect(); }
         public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
         public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
-
         public async Task AddAsync(T entity)
         {
             _dbSet.Add(entity);
