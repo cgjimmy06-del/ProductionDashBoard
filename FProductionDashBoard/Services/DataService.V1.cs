@@ -1,27 +1,18 @@
 ﻿using FProductionDashBoard.Repositories;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dapper;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.Services.V1
 {
-    public interface IDataService
-    {
-    }
-
-    public class SqlService : IDataService
+    public class DataService : IDataService
     {
         public IEquipmentRepository EquipmentRep { get; }
         public IEmployeeRepository EmployeeRep { get; }
 
-        public SqlService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep)
+        public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
@@ -74,5 +65,4 @@ namespace FProductionDashBoard
         //    }).ToList();
         //}
     }
-
 }

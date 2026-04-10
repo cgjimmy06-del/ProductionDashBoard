@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.UiModels;
-using FProductionDashBoard.Repositories;
+using FProductionDashBoard.Services;
 using FProductionDashBoard.UserControls;
 using Microsoft.Data.SqlClient;
 using System;
@@ -23,7 +23,7 @@ namespace FProductionDashBoard.ViewModels
             new ObservableCollection<DeviceCardViewModel>();
 
         private readonly LogService _log;
-        private readonly SqlService _sqlService;
+        private readonly IDataService _sqlService;
         public UserInfo CurrentUser { get; }
 
         public ICommand FirstArticleInsAllCommand { get; }
@@ -33,7 +33,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand FastUploadDevicesCommand { get; }
 
 
-        public DeviceCardContainerViewModel(LogService log, SqlService sqlservice, UserInfo currentuser)
+        public DeviceCardContainerViewModel(LogService log, IDataService sqlservice, UserInfo currentuser)
         {
             _log = log;
             _sqlService = sqlservice;
@@ -130,12 +130,12 @@ namespace FProductionDashBoard.ViewModels
         }
         private void FastDownloadDevices()
         {
-            DataStorageService.Save(Devices.Select(s => s.Info), defaultDevicesFile);
+            JsonDataService.Save(Devices.Select(s => s.Info), defaultDevicesFile);
             _log.AddLog($"{Properties.Resources.ComStrDownloaded}: {defaultDevicesFile}", LogLevel.Info);
         }
         private void FastUploadDevices()
         {
-            var result = DataStorageService.Load<List<DeviceInfo>>(defaultDevicesFile).AsEnumerable();
+            var result = JsonDataService.Load<List<DeviceInfo>>(defaultDevicesFile).AsEnumerable();
             if (Devices.Any())
             {
                 var existedIds = Devices.Select(s => s.Info.DeviceID).ToHashSet();

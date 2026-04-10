@@ -1,8 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.UiModels;
-using MaterialDesignColors;
-using MaterialDesignThemes.Wpf;
+using FProductionDashBoard.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -35,7 +34,7 @@ namespace FProductionDashBoard.ViewModels
         public object? card1; // 須重構
 
         // 資源 DI注入
-        private readonly SqlService _sqlService;
+        private readonly IDataService _sqlService;
         public LogService _log { get; }
         public UserInfo SystemUser { get; }
         public UserInfo CurrentUser { get; }
@@ -69,7 +68,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand SaveLogsCommand { get; }
         // 主視覺視窗
 
-        public MainViewModel(UserInfo user, LogService log, SqlService sqlservice) 
+        public MainViewModel(UserInfo user, LogService log, IDataService sqlservice) 
         {
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(

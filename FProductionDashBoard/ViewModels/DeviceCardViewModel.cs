@@ -15,7 +15,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using FProductionDashBoard.UiModels;
-using FProductionDashBoard.Repositories;
+using FProductionDashBoard.Services;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -31,7 +31,7 @@ namespace FProductionDashBoard.ViewModels
         private DispatcherTimer checkTimer;
         public DeviceInfo Info { get; }
         private readonly LogService _log;
-        private readonly SqlService _sqlService;
+        private readonly IDataService _sqlService;
 
         [ObservableProperty]
         private UserInfo currentUser = new() { ID = "none", Name = "none" };
@@ -48,14 +48,14 @@ namespace FProductionDashBoard.ViewModels
         public ICommand RoutineInspectionCommand { get; }
         public ICommand OperationCommand { get; }
 
-        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log, SqlService sqlservice)
+        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log, IDataService sqlservice)
         {
             Info = info;
             _log = log;
             _sqlService = sqlservice;
             CurrentUser = currentuser;
 
-            InspectionStatuses = new InspectionService(_sqlService, this, 9, 4, 2);
+            InspectionStatuses = new InspectionService(this, 9, 4, 2);
             InspectionStatuses.OnLogEvent += _log.AddLog;
             //InspectionStatuses.OnErrorLogEvent += _log.AddErrorLog;
 

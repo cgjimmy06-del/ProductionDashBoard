@@ -52,8 +52,8 @@ namespace FProductionDashBoard
             services.AddScoped<Repositories.IEmployeeRepository, Repositories.EmployeeRepository>();
 
             // 註冊 Service
-            services.AddScoped<SqlService>();
-            services.AddScoped<LogService>();
+            services.AddScoped<Services.IDataService, Services.V1.DataService>();
+            services.AddScoped<Services.LogService>();
 
             // 註冊 資訊
             services.AddSingleton(user);

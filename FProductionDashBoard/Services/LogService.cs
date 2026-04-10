@@ -20,7 +20,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace FProductionDashBoard
+namespace FProductionDashBoard.Services
 {
     #region -- Log View Model --
     public class LogEntry

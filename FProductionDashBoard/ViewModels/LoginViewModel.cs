@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FProductionDashBoard.Repositories;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
 using System;
@@ -16,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using FProductionDashBoard.UiModels;
+using FProductionDashBoard.Services;
 
 namespace FProductionDashBoard.ViewModels
 {

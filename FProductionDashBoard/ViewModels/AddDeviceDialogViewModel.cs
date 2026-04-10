@@ -121,12 +121,12 @@ namespace FProductionDashBoard.ViewModels
         // 上下載設備清單 (可供外部快速上下載按鈕)
         public void DownloadDevices()
         {
-            DataStorageService.Save(SelectedDevices, defaultDevicesFile);
+            Services.JsonDataService.Save(SelectedDevices, defaultDevicesFile);
             DialogErrorString = Properties.Resources.ComStrDownloaded;
         }
         public void UploadDevices()
         {
-            SelectedDevices = DataStorageService.Load<ObservableCollection<DeviceInfo>>(defaultDevicesFile);
+            SelectedDevices = Services.JsonDataService.Load<ObservableCollection<DeviceInfo>>(defaultDevicesFile);
             ApplyFilter();
         }
 
