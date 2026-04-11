@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FProductionDashBoard.Models;
+using FProductionDashBoard.UiModels;
 using FProductionDashBoard.Repositories;
 using Microsoft.Data.SqlClient;
 using System;
@@ -11,13 +11,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FProductionDashBoard.ViewModels
 {
     public class DeviceCardsResult
     {
-        public required List<Models.DeviceInfo> Selections;
+        public required List<DeviceInfo> Selections;
     }
 
     public partial class AddDeivceDialogViewModel : DialogBaseViewModel<DeviceCardsResult>
@@ -121,12 +120,12 @@ namespace FProductionDashBoard.ViewModels
         // 上下載設備清單 (可供外部快速上下載按鈕)
         public void DownloadDevices()
         {
-            DataStorageService.Save(SelectedDevices, defaultDevicesFile);
+            Services.JsonDataService.Save(SelectedDevices, defaultDevicesFile);
             DialogErrorString = Properties.Resources.ComStrDownloaded;
         }
         public void UploadDevices()
         {
-            SelectedDevices = DataStorageService.Load<ObservableCollection<DeviceInfo>>(defaultDevicesFile);
+            SelectedDevices = Services.JsonDataService.Load<ObservableCollection<DeviceInfo>>(defaultDevicesFile);
             ApplyFilter();
         }
 

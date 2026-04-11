@@ -9,13 +9,10 @@ using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.Repositories
 {
-    public class UserRepository : Repository<UserInfo, MesDbContext>, IUserRepository
+    public class EmployeeRepository : Repository<Employee, MesDbContext>, IEmployeeRepository
     {
-        private readonly MesDbContext _context;
-
-        public UserRepository(MesDbContext context) : base(context)
+        public EmployeeRepository(MesDbContext context) : base(context)
         {
-            _context = context;
         }
 
 

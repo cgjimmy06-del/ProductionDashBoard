@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FProductionDashBoard.Models
+namespace FProductionDashBoard.UiModels
 {
     public partial class ProductInfo : ObservableObject 
     {

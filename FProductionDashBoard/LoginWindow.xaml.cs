@@ -20,7 +20,7 @@ namespace FProductionDashBoard
     public partial class LoginWindow : Window
     {
         public string SelectedServer { get; set; } = "FS";
-        public Models.UserInfo? User { get; set; }
+        public UiModels.UserInfo User { get; set; } = new UiModels.UserInfo() { ID = "unknown", Name = "unknown" };
 
         public LoginWindow()
         {

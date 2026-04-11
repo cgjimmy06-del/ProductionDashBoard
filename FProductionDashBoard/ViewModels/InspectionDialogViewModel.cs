@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FProductionDashBoard.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FProductionDashBoard.Services;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -85,7 +85,6 @@ namespace FProductionDashBoard.ViewModels
 
     public partial class InspectionService : ObservableObject
     {
-        private readonly SqlService _sql;
         private readonly DeviceCardViewModel currentDevice;
 
         [ObservableProperty]
@@ -102,9 +101,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private bool firstInspectionStatus = false; // 首件狀態
         public ObservableCollection<int> RoutineStatus { get; } = new ObservableCollection<int>(); // 各時段狀態
-        public InspectionService(SqlService sqlservice, DeviceCardViewModel deviceInfo, int startTime, int routineTimes, int intervalTime)
+        public InspectionService(DeviceCardViewModel deviceInfo, int startTime, int routineTimes, int intervalTime)
         {
-            _sql = sqlservice;
             currentDevice = deviceInfo;
             setTimesStartTime(startTime, routineTimes, intervalTime);
         }

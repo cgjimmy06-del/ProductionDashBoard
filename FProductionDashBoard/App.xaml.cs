@@ -28,8 +28,7 @@ namespace FProductionDashBoard
             // 登入畫面 + 取得資訊
             var loginWindow = new LoginWindow();
             splash.Close(TimeSpan.FromSeconds(0.5)); // login載入完成後關閉
-            if (loginWindow.ShowDialog() != true)
-            { Shutdown(); return; }
+            if (loginWindow.ShowDialog() != true) { Shutdown(); return; }
 
             // 後續加入語言
             string selectedServer = loginWindow.SelectedServer;
@@ -49,15 +48,16 @@ namespace FProductionDashBoard
 
             // 註冊 泛型 Repository / 專用 Repository
             services.AddScoped(typeof(Repositories.IRepository<,>), typeof(Repositories.Repository<,>));
-            services.AddScoped<Repositories.IDeviceRepository, Repositories.DeviceRepository>();
-            services.AddScoped<Repositories.IUserRepository, Repositories.UserRepository>();
+            services.AddScoped<Repositories.IEquipmentRepository, Repositories.EquipmentRepository>();
+            services.AddScoped<Repositories.IEmployeeRepository, Repositories.EmployeeRepository>();
+            services.AddScoped<Repositories.IMaterialRepository, Repositories.MaterialRepository>();
 
             // 註冊 Service
-            services.AddScoped<Repositories.SqlService>();
-            services.AddScoped<LogService>();
+            services.AddScoped<Services.IDataService, Services.V1.DataService>();
+            services.AddScoped<Services.LogService>();
 
             // 註冊 資訊
-            services.AddSingleton(user ?? new Models.UserInfo(){ ID = "", Name = "" });
+            services.AddSingleton(user);
 
             // 註冊 ViewModel
             services.AddScoped<ViewModels.MainViewModel>();
