@@ -1,10 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FProductionDashBoard.Models;
-using FProductionDashBoard.Repositories;
-using FProductionDashBoard.UserControls;
-using MaterialDesignColors;
-using MaterialDesignThemes.Wpf;
+using FProductionDashBoard.UiModels;
+using FProductionDashBoard.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -26,7 +23,7 @@ using System.Windows.Threading;
 
 namespace FProductionDashBoard.ViewModels
 {
-    public enum NavMode { Home, Operation, View }
+    public enum NavMode { Home, Operation, Setting, View }
     public partial class MainViewModel : ObservableObject
     {
         public string AppVersion { get; }
@@ -37,7 +34,7 @@ namespace FProductionDashBoard.ViewModels
         public object? card1; // 須重構
 
         // 資源 DI注入
-        private readonly SqlService _sqlService;
+        private readonly IDataService _dataService;
         public LogService _log { get; }
         public UserInfo SystemUser { get; }
         public UserInfo CurrentUser { get; }
@@ -71,7 +68,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand SaveLogsCommand { get; }
         // 主視覺視窗
 
-        public MainViewModel(UserInfo user, LogService log, SqlService sqlservice) 
+        public MainViewModel(UserInfo user, LogService log, IDataService dataservice) 
         {
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(
@@ -88,7 +85,7 @@ namespace FProductionDashBoard.ViewModels
             SystemUser = user;
             CurrentUser = user;
             _log = log;
-            _sqlService = sqlservice;
+            _dataService = dataservice;
 
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
@@ -98,29 +95,32 @@ namespace FProductionDashBoard.ViewModels
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
 
             // 新增儀表卡片區
-            //Cards.Add(new DeviceCardContainerViewModel(_log, _sqlService, CurrentUser));
+            //Cards.Add(new DeviceCardContainerViewModel(_log, _dataService, CurrentUser));
 
         }
         // 導覽列事件
         public void SwitchMode(NavMode mode)
         {
             if (mode.Equals(CurrentNavMode)) return;
+            CurrentNavMode = mode;
             switch (mode)
             {
                 case NavMode.Home:
                     break;
 
                 case NavMode.Operation:
-                    var newvm = new DeviceCardContainerViewModel(_log, _sqlService, CurrentUser);
+                    var newvm = new DeviceCardContainerViewModel(_log, _dataService, CurrentUser);
                     Card1 = newvm;
                     break;
 
                 case NavMode.View:
                     break;
 
-                default:
+                case NavMode.Setting:
                     break;
 
+                default:
+                    break;
             }
         }
 
@@ -130,7 +130,6 @@ namespace FProductionDashBoard.ViewModels
             if (value && _log.IsNewErrorLog) _log.IsNewErrorLog = false;
 
             OnPropertyChanged(nameof(CurrentLogs));
-
             // 取代此函式 (不需判斷PropertyName)
             //PropertyChanged += (s, e) => {
             //    if (e.PropertyName == nameof(IsErrorMode)) OnPropertyChanged(nameof(CurrentLogs)); };
@@ -165,9 +164,9 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                _log.AddLog($"連線狀態: {_sqlService.DeviceRepo.CheckConnection()}");
+                _log.AddLog($"連線狀態: {_dataService.EquipmentRep.CheckConnection()}");
 
-                var devs = await _sqlService.DeviceRepo.GetAllAsync();
+                var devs = await _dataService.EquipmentRep.GetAllAsync();
                 foreach (var dev in devs) { _log.AddLog($"已新增設備: {dev.Name}", LogLevel.Info); }
             }
             catch (SqlException sqlex)

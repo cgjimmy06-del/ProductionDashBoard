@@ -39,7 +39,7 @@
                                 CommandParameter="{Binding}">
                             <Button.Content>
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding NameDisplay}" HorizontalAlignment="Center" />
                                     <TextBlock Text="{Binding SelectedCount}" HorizontalAlignment="Center"
                                         Visibility="{Binding DataContext.IsCountMode, 
                                         RelativeSource={RelativeSource AncestorType=UserControl}, 

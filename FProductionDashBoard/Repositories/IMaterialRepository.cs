@@ -1,16 +1,13 @@
-﻿using System;
+﻿using FProductionDashBoard.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.Repositories
 {
-    public interface IUserRepository : IRepository<UserInfo, MesDbContext>
+    public interface IMaterialRepository : IRepository<Material, MesDbContext>
     {
-
-
     }
 }

@@ -15,6 +15,8 @@
     <!--#region Main Window 主視窗 (含導覽列/訊息視窗) -->
     <sys:String x:Key="HomeNavButton">首頁</sys:String>
     <sys:String x:Key="OperationNavButton">現場操作面板</sys:String>
+    <sys:String x:Key="ViewNavButton">圖表</sys:String>
+    <sys:String x:Key="SettingNavButton">設定</sys:String>
     <sys:String x:Key="PinButtonTooltip">釘選訊息至最新</sys:String>
     <sys:String x:Key="ErrorLogButtonTooltip">切換至錯誤訊息視窗</sys:String>
     <sys:String x:Key="LargeFontButtonTooltip">放大字體</sys:String>
