@@ -32,7 +32,6 @@ namespace FProductionDashBoard.ViewModels
         public ICommand FastDownloadDevicesCommand { get; }
         public ICommand FastUploadDevicesCommand { get; }
 
-
         public DeviceCardContainerViewModel(LogService log, IDataService dataservice, UserInfo currentuser)
         {
             _log = log;
@@ -46,38 +45,7 @@ namespace FProductionDashBoard.ViewModels
             FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
             FastUploadDevicesCommand = new RelayCommand(() => FastUploadDevices());
         }
-        public async Task GetListsFromSqlAsync()
-        {
-            try
-            {
-                if (!_dataService.EquipmentRep.CheckConnection()) // 待翻譯log 並加上errorlog
-                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
-
-                var equipmentList = (await _dataService.EquipmentRep.GetAllAsync());
-
-                if (sqlDevicesList.Any()) sqlDevicesList.Clear();
-                foreach (var eq in equipmentList)
-                    sqlDevicesList.Add(new DeviceInfo {
-                        Id = eq.Id, DeviceID = eq.EquipmentId, Name = eq.Name,
-                        IP = eq.Ip, Port = eq.Port, Type = eq.TypeId,
-                        Factory = eq.Factory, Building = eq.Building, Floor = eq.Floor,
-                        Description = eq.Description
-                    });
-            }
-            catch (SqlException sqlex)
-            {
-                Debug.WriteLine($"SqlException: {sqlex.Message}");
-            }
-            catch (TaskCanceledException taskex)
-            {
-                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception: {ex.Message}");
-            }
-        }
-
+        
         private void FirstArticleInsAll()
         {
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0]);
@@ -108,9 +76,47 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
+        public async Task GetDevicesListFromSqlAsync() // 待翻譯log 並加上errorlog
+        {
+            try
+            {
+                if (!_dataService.EquipmentRep.CheckConnection())
+                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
+
+                var equipmentList = (await _dataService.EquipmentRep.GetAllAsync());
+
+                if (sqlDevicesList.Any()) sqlDevicesList.Clear();
+                foreach (var eq in equipmentList)
+                    sqlDevicesList.Add(new DeviceInfo
+                    {
+                        Id = eq.Id,
+                        DeviceID = eq.Code,
+                        Name = eq.Name,
+                        IP = eq.Ip,
+                        Port = eq.Port,
+                        TypeId = eq.TypeId,
+                        Factory = eq.Factory,
+                        Building = eq.Building,
+                        Floor = eq.Floor,
+                        Description = eq.Description
+                    });
+            }
+            catch (SqlException sqlex)
+            {
+                Debug.WriteLine($"SqlException: {sqlex.Message}");
+            }
+            catch (TaskCanceledException taskex)
+            {
+                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception: {ex.Message}");
+            }
+        }
         private async Task AddDeviceCard()
         {
-            await GetListsFromSqlAsync(); // 可評估是否外部呼叫
+            await GetDevicesListFromSqlAsync(); // 可評估是否外部呼叫
             var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile, 
                                                     sqlDevicesList, [.. Devices]); // [.. X] = X.ToList()
             var uc = new AddDeviceDialog { DataContext = vm };

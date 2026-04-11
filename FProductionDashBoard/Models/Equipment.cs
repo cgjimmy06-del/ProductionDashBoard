@@ -11,7 +11,7 @@ namespace FProductionDashBoard.Models
     public class Equipment
     {
         public int Id { get; set; } // 代理鍵 主鍵
-        public string EquipmentId { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Ip { get; set; } = string.Empty;
         public int Port { get; set; } = 0;
@@ -21,13 +21,12 @@ namespace FProductionDashBoard.Models
         public int? TypeId { get; set; }
         public string? DepartmentId { get; set; }
         public string? Description { get; set; }
-        public DateTime CreateTime { get; set; }
-        public DateTime UpdateTime { get; set; }
+        public DateTime CreateAt { get; set; }
+        public DateTime UpdateAt { get; set; }
 
         //public int WorkerID { get; set; }       // 外鍵
         //public WorkerInfo? Worker { get; set; }      // 導覽屬性
     }
-
     public class EquipmentConfiguration : IEntityTypeConfiguration<Equipment>
     {
         public void Configure(EntityTypeBuilder<Equipment> builder)
@@ -36,9 +35,9 @@ namespace FProductionDashBoard.Models
             // 主鍵
             builder.HasKey(e => e.Id);
             // 代理鍵 (資料庫已設定自動加一)
-            builder.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
+            builder.Property(e => e.Id).HasColumnName("equipment_id").ValueGeneratedOnAdd();
             // 只需定義欄位名稱，型態/長度由資料庫決定
-            builder.Property(e => e.EquipmentId).HasColumnName("equipment_id");
+            builder.Property(e => e.Code).HasColumnName("equipment_code");
             builder.Property(e => e.Name).HasColumnName("name");
             builder.Property(e => e.Ip).HasColumnName("ip");
             builder.Property(e => e.Port).HasColumnName("port");
@@ -48,8 +47,8 @@ namespace FProductionDashBoard.Models
             builder.Property(e => e.TypeId).HasColumnName("type_id");
             builder.Property(e => e.DepartmentId).HasColumnName("department_id");
             builder.Property(e => e.Description).HasColumnName("description");
-            builder.Property(e => e.CreateTime).HasColumnName("CreateTime");
-            builder.Property(e => e.UpdateTime).HasColumnName("UpdateTime");
+            builder.Property(e => e.CreateAt).HasColumnName("created_at");
+            builder.Property(e => e.UpdateAt).HasColumnName("updated_at");
 
             // 忽略 額外屬性
             //builder.Ignore(d => d.Status);

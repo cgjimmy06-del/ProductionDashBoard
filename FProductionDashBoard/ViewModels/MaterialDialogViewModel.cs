@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FProductionDashBoard.Models;
+using FProductionDashBoard.UiModels;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
@@ -8,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
-using FProductionDashBoard.UiModels;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -22,27 +23,15 @@ namespace FProductionDashBoard.ViewModels
         private string? currentDevice;
         [ObservableProperty]
         private bool isCountMode = false; // 選擇模式或計數模式
-        
-        public ObservableCollection<MaterialInfo> Materials { get; } = new () {
-            new MaterialInfo { Code = "AB001", Name = "A16" }, 
-            new MaterialInfo { Code = "AB002", Name = "305EA" },
-            new MaterialInfo { Code = "AB003", Name = "307EA" },
-            new MaterialInfo { Code = "AB004", Name = "PZ533" },
-            new MaterialInfo { Code = "AB005", Name = "PZ220" },
-            new MaterialInfo { Code = "AB006", Name = "340" },
-            new MaterialInfo { Code = "AB007", Name = "KAX" },
-            new MaterialInfo { Code = "AB008", Name = "180#" },
-            new MaterialInfo { Code = "AB009", Name = "60#" },
-            new MaterialInfo { Code = "AB0010", Name = "#100" },
-            new MaterialInfo { Code = "AB0011", Name = "PX220" },
-            new MaterialInfo { Code = "AB0012", Name = "JA539 400" },
-            new MaterialInfo { Code = "AB0013", Name = "JA539 180" }
-        };
+
+        public ObservableCollection<MaterialInfo> Materials { get; } = new();
         public IEnumerable<MaterialInfo> SelectedMaterials => Materials.Where(m => m.IsSelected);
 
-        public MaterialDialogViewModel(string dialogstring, DeviceCardViewModel getinfo) : base(dialogstring)
+        public MaterialDialogViewModel(string dialogstring, DeviceCardViewModel getinfo, 
+            List<MaterialInfo> sqlmateriallist) : base(dialogstring)
         {
             CurrentDevice = $"{Properties.Resources.ComStrDevice}: {getinfo.Info.Name}";
+            Materials = new ObservableCollection<MaterialInfo>(sqlmateriallist);
 
             ConfirmCommand = new RelayCommand(() => OnConfirm());
             CancelCommand = new RelayCommand(() => OnCancel());

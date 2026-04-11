@@ -15,6 +15,7 @@ namespace FProductionDashBoard.Repositories
     {
         public DbSet<Equipment> Equipments { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Material> Materials { get; set; }
 
         public MesDbContext(DbContextOptions<MesDbContext> options) : base(options) { }
 

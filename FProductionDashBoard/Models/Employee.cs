@@ -18,20 +18,18 @@ namespace FProductionDashBoard.Models
         public string? Email { get; set; }
         public int Permission { get; set; }
         public string? DepartmentId { get; set; }
-        public DateTime CreateTime { get; set; }
-        public DateTime UpdateTime { get; set; }
+        public DateTime CreateAt { get; set; }
+        public DateTime UpdateAt { get; set; }
     }
-
     public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
     {
         public void Configure(EntityTypeBuilder<Employee> builder)
         {
             builder.ToTable("employee");
-            // 主鍵
+
             builder.HasKey(e => e.Id);
-            // 代理鍵 (資料庫已設定自動加一)
-            builder.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
-            // 只需定義欄位名稱，型態/長度由資料庫決定
+            builder.Property(e => e.Id).HasColumnName("employee_id").ValueGeneratedOnAdd();
+
             builder.Property(e => e.UserId).HasColumnName("user_id");
             builder.Property(e => e.CardId).HasColumnName("card_id");
             builder.Property(e => e.Name).HasColumnName("name");
@@ -39,8 +37,8 @@ namespace FProductionDashBoard.Models
             builder.Property(e => e.Email).HasColumnName("email");
             builder.Property(e => e.Permission).HasColumnName("permission");
             builder.Property(e => e.DepartmentId).HasColumnName("department_id");
-            builder.Property(e => e.CreateTime).HasColumnName("createTime");
-            builder.Property(e => e.UpdateTime).HasColumnName("updateTime");
+            builder.Property(e => e.CreateAt).HasColumnName("create_at");
+            builder.Property(e => e.UpdateAt).HasColumnName("update_at");
         }
     }
 }

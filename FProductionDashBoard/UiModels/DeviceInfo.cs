@@ -25,7 +25,7 @@ namespace FProductionDashBoard.UiModels
         public required string Name { get; set; }
         public string IP { get; set; } = "none";
         public int Port { get; set; } = 0;
-        public int? Type { get; set; }
+        public int? TypeId { get; set; }
         public string? Factory { get; set; }
         public string? Building { get; set; }
         public string? Floor { get; set; }

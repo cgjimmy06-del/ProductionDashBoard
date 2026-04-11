@@ -130,7 +130,6 @@ namespace FProductionDashBoard.ViewModels
             if (value && _log.IsNewErrorLog) _log.IsNewErrorLog = false;
 
             OnPropertyChanged(nameof(CurrentLogs));
-
             // 取代此函式 (不需判斷PropertyName)
             //PropertyChanged += (s, e) => {
             //    if (e.PropertyName == nameof(IsErrorMode)) OnPropertyChanged(nameof(CurrentLogs)); };

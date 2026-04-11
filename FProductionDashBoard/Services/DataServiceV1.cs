@@ -11,11 +11,13 @@ namespace FProductionDashBoard.Services.V1
     {
         public IEquipmentRepository EquipmentRep { get; }
         public IEmployeeRepository EmployeeRep { get; }
+        public IMaterialRepository MaterialRep { get; }
 
-        public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep)
+        public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
+            MaterialRep = materialrep;
 
         }
 

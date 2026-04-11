@@ -13,7 +13,7 @@ using Dapper;
 
 namespace FProductionDashBoard.Services
 {
-    public static class JsonDataService // 後續須統一處理 try catch 的logging
+    public static class JsonDataService // 待翻譯 後續須統一處理 try catch 的logging
     {
         // 存在使用者的AppData，後續可能需要
         //private static readonly string baseFolder = Path.Combine(

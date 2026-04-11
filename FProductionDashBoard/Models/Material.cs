@@ -1,0 +1,47 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FProductionDashBoard.Models
+{
+    public class Material
+    {
+        public int MaterialId { get; set; } // 代理鍵 主鍵
+        public string MaterialCode { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string? Brand { get; set; }
+        public string? Specification { get; set; }
+        public int? TypeId { get; set; }
+        public string? Description { get; set; }
+        public int MinimumStock { get; set; } = 0;
+        public int QuantityInStock { get; set; } = 0;
+        public DateTime CreateAt { get; set; }
+        public DateTime UpdateAt { get; set; }
+    }
+    public class MaterialConfiguration : IEntityTypeConfiguration<Material>
+    {
+        public void Configure(EntityTypeBuilder<Material> builder)
+        {
+            builder.ToTable("material");
+
+            builder.HasKey(m => m.MaterialId);
+            builder.Property(m => m.MaterialId).HasColumnName("material_id").ValueGeneratedOnAdd();
+
+            builder.Property(m => m.MaterialCode).HasColumnName("material_code");
+            builder.Property(m => m.Name).HasColumnName("name");
+            builder.Property(m => m.Brand).HasColumnName("brand");
+            builder.Property(m => m.Specification).HasColumnName("specification");
+            builder.Property(m => m.TypeId).HasColumnName("type_id");
+            builder.Property(m => m.Description).HasColumnName("description");
+            builder.Property(m => m.MinimumStock).HasColumnName("minimum_stock");
+            builder.Property(m => m.QuantityInStock).HasColumnName("quantity_instock");
+            builder.Property(m => m.CreateAt).HasColumnName("create_at");
+            builder.Property(m => m.UpdateAt).HasColumnName("update_at");
+        }
+    }
+
+}
