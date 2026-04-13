@@ -138,7 +138,7 @@ namespace FProductionDashBoard.ViewModels
                 {
                     // SQL 機台 人員 產品 有無異常 描述 日 時 完整時間
                     // _sql
-                    OnLogEvent?.Invoke($"{currentDevice.Info.Name}-{Properties.Resources.InsFirstAbnormal}", LogLevel.Error);
+                    OnLogEvent?.Invoke($"{currentDevice.Info.Name}-{Properties.Resources.InsFirstAbnormal}: {description}", LogLevel.Error);
                 }
             }
             FirstInspectionStatus = status;

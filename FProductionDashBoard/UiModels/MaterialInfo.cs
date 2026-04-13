@@ -7,14 +7,6 @@ using System.Threading.Tasks;
 
 namespace FProductionDashBoard.UiModels
 {
-    public enum MaterialType
-    {
-        Belt = 0,
-        Fixture = 1,
-        Tooling = 2,
-        Gage = 3
-    }
-
     public partial class MaterialInfo : ObservableObject
     {
         public int Id { get; set; }

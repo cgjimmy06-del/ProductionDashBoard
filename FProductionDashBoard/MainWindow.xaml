@@ -82,6 +82,10 @@
                 <Button ToolTip="貼上">
                     <materialDesign:PackIcon Kind="ContentPaste" Width="20" Height="20"/>
                 </Button>
+                <Separator/>
+                <Button ToolTip="測試" Command="{Binding TestCommand}">
+                    <materialDesign:PackIcon Kind="AbTesting" Width="20" Height="20"/>
+                </Button>
             </ToolBar>
         </ToolBarTray>
 

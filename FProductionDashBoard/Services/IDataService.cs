@@ -13,6 +13,7 @@ namespace FProductionDashBoard.Services
 {
     public interface IDataService
     {
+        public Task Demo();
         public IEquipmentRepository EquipmentRep { get; }
         public IEmployeeRepository EmployeeRep { get; }
         public IMaterialRepository MaterialRep { get; }

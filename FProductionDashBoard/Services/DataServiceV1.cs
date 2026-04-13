@@ -1,6 +1,8 @@
 ﻿using FProductionDashBoard.Repositories;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,16 +14,28 @@ namespace FProductionDashBoard.Services.V1
         public IEquipmentRepository EquipmentRep { get; }
         public IEmployeeRepository EmployeeRep { get; }
         public IMaterialRepository MaterialRep { get; }
+        public IErrorListRepository ErrorListRep { get; }
 
-        public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep)
+        public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep, 
+            IErrorListRepository errorListRep)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
             MaterialRep = materialrep;
-
+            ErrorListRep = errorListRep;
         }
 
 
+        // 測試用
+        public async Task Demo()
+        {
+            var devs = await ErrorListRep.GetMessagesWithOtherAsync("zh-TW"); //zh-TW INSP0001
+            //foreach (var dev in devs) { Debug.WriteLine($"{dev.LanguageCode} - {dev.Message}"); }
+            //Debug.WriteLine($"{devs}");
+            foreach (var dev in devs) { Debug.WriteLine($"{dev.ErrorCode} - {dev.Message}"); }
+
+
+        }
         //// 插入
         //public async Task<int> AddEquipmentAsync(CreateEquipmentDto dto)
         //{

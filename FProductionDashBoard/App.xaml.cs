@@ -51,6 +51,7 @@ namespace FProductionDashBoard
             services.AddScoped<Repositories.IEquipmentRepository, Repositories.EquipmentRepository>();
             services.AddScoped<Repositories.IEmployeeRepository, Repositories.EmployeeRepository>();
             services.AddScoped<Repositories.IMaterialRepository, Repositories.MaterialRepository>();
+            services.AddScoped<Repositories.IErrorListRepository, Repositories.ErrorListRepository>();
 
             // 註冊 Service
             services.AddScoped<Services.IDataService, Services.V1.DataService>();

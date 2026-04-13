@@ -61,6 +61,7 @@ namespace FProductionDashBoard.ViewModels
 
         // 菜單列
         // 工具列
+        public ICommand TestCommand { get; }
         // 導覽列
         public ICommand CollapseNavCommand { get; }
         public ICommand SwitchModeCommand { get; }
@@ -91,7 +92,10 @@ namespace FProductionDashBoard.ViewModels
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
             SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode);
 
-            //// 設定元件事件 (訊息視窗)
+            //  設定元件事件 (工具列)
+            TestCommand = new AsyncRelayCommand(() => SqlTestFunc());
+
+            // 設定元件事件 (訊息視窗)
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
 
             // 新增儀表卡片區
@@ -160,14 +164,12 @@ namespace FProductionDashBoard.ViewModels
         }
 
         // 測試
-        private async void SqlTestFunc()
+        private async Task SqlTestFunc()
         {
             try
             {
-                _log.AddLog($"連線狀態: {_dataService.EquipmentRep.CheckConnection()}");
-
-                var devs = await _dataService.EquipmentRep.GetAllAsync();
-                foreach (var dev in devs) { _log.AddLog($"已新增設備: {dev.Name}", LogLevel.Info); }
+                Debug.WriteLine($"連線狀態: {_dataService.EquipmentRep.CheckConnection()}");
+                await _dataService.Demo();
             }
             catch (SqlException sqlex)
             {
