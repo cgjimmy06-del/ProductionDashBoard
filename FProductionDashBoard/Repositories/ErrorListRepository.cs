@@ -15,7 +15,6 @@ namespace FProductionDashBoard.Repositories
         {
         }
 
-        // 插入新錯誤
         public async Task AddErrorAsync(ErrorList newError, List<ErrorTranslation> errortranslations)
         {
             var existingError = await _context.ErrorLists
@@ -76,11 +75,11 @@ namespace FProductionDashBoard.Repositories
 
             // 更新訊息
             translation.Message = newMessage;
+            translation.UpdateAt = DateTime.Now;
 
             _context.ErrorTranslations.Update(translation);
             await _context.SaveChangesAsync();
         }
-
         public async Task DeleteTranslationAsync(string errorCode, string languageCode)
         {
             var error = await _context.ErrorLists

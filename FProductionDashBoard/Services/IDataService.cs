@@ -17,6 +17,7 @@ namespace FProductionDashBoard.Services
         public IEquipmentRepository EquipmentRep { get; }
         public IEmployeeRepository EmployeeRep { get; }
         public IMaterialRepository MaterialRep { get; }
+        public IErrorListRepository ErrorListRep { get; }
 
     }
 }

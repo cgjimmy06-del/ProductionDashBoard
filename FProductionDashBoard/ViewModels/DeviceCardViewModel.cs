@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FProductionDashBoard.Models;
 using FProductionDashBoard.Properties;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.UiModels;
@@ -34,8 +35,8 @@ namespace FProductionDashBoard.ViewModels
         private readonly LogService _log;
         private readonly IDataService _dataService;
 
-        private List<MaterialInfo> sqlMaterialsList = new(); // 物料清單 (資料表來源)
-        //private List<DeviceInfo> sqlErrorsList = new(); // 異常項目清單 (資料表來源)
+        public List<MaterialInfo> sqlMaterialsList = new(); // 物料清單 (資料表來源)
+        public List<ErrorInfo> sqlErrorsList = new(); // 異常項目清單 (資料表來源)
         //private List<DeviceInfo> sqlOrdersList = new(); // 排單點檢清單 (資料表來源)
         //private List<DeviceInfo> sqlEmployeesList = new(); // 人員清單 (資料表來源)
 
@@ -55,6 +56,9 @@ namespace FProductionDashBoard.ViewModels
         public ICommand RoutineInspectionCommand { get; }
         public ICommand OperationCommand { get; }
 
+#pragma warning disable CS8618 // 退出建構函式時，不可為 Null 的欄位必須包含非 Null 值。請考慮新增 'required' 修飾元，或將欄位宣告為可以為 Null。
+        public DeviceCardViewModel() { }
+#pragma warning restore CS8618 // 退出建構函式時，不可為 Null 的欄位必須包含非 Null 值。請考慮新增 'required' 修飾元，或將欄位宣告為可以為 Null。
         public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log, IDataService dataservice)
         {
             Info = info;
@@ -67,8 +71,8 @@ namespace FProductionDashBoard.ViewModels
             //InspectionStatuses.OnErrorLogEvent += _log.AddErrorLog;
 
             MaterialsChangeCommand = new AsyncRelayCommand(MaterialsChange);
-            FirstInspectionCommand = new RelayCommand(FirstArticleInspection);
-            RoutineInspectionCommand = new RelayCommand(RoutineInspection);
+            FirstInspectionCommand = new AsyncRelayCommand(FirstArticleInspection);
+            RoutineInspectionCommand = new AsyncRelayCommand(RoutineInspection);
             OperationCommand = new RelayCommand(OperationChange);
 
             // 巡檢用計時
@@ -94,9 +98,10 @@ namespace FProductionDashBoard.ViewModels
                     $"Sum: {result.Selections.Sum(d => d.SelectedCount)}", LogLevel.Success);
             }
         }
-        private void FirstArticleInspection()
+        private async Task FirstArticleInspection()
         {
-            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, this);
+            await GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, this, sqlErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -104,12 +109,13 @@ namespace FProductionDashBoard.ViewModels
             if (vm.IsConfirmed)
             {
                 var result = vm.Result ?? new() { IsNormal = false };
-                InspectionStatuses.updateFirstInspection(result.IsNormal, result.Description); // SQL
+                InspectionStatuses.updateFirstInspection(result.IsNormal, result.ErrorCode, result.Description); // SQL
             }
         }
-        private void RoutineInspection()
+        private async Task RoutineInspection()
         {
-            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, this);
+            await GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, this, sqlErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -118,7 +124,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 var result = vm.Result ?? new InspectionResult() { IsNormal = false };
                 int statusresult = result.IsNormal ? 0 : 2;
-                InspectionStatuses.updateRoutineStatus(statusresult, result.Description); // SQL
+                InspectionStatuses.updateRoutineStatus(statusresult, result.ErrorCode, result.Description); // SQL
             }
         }
         private void OperationChange()
@@ -137,8 +143,8 @@ namespace FProductionDashBoard.ViewModels
             _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Success);
             _log.AddErrorLog($"設備 {Info.Name} 設備調試狀態更新:");
         }
-        // sql 清單取得 (物料 品檢異常清單 排單 點檢清單 人員權限)
-        public async Task GetDevicesListFromSqlAsync() // 待翻譯log 並加上errorlog
+        // sql 清單取得 (物料 品檢異常清單 排單 點檢清單 人員權限) // 待翻譯log 並加上errorlog
+        public async Task GetDevicesListFromSqlAsync()
         {
             try
             {
@@ -148,18 +154,48 @@ namespace FProductionDashBoard.ViewModels
                 var materialList = (await _dataService.MaterialRep.GetAllAsync());
 
                 if (sqlMaterialsList.Any()) sqlMaterialsList.Clear();
-                foreach (var eq in materialList)
+                foreach (var ma in materialList)
                     sqlMaterialsList.Add(new MaterialInfo
                     {
-                        Id = eq.MaterialId,
-                        Code = eq.MaterialCode,
-                        Name = eq.Name,
-                        Brand = eq.Brand,
-                        Specification = eq.Specification,
-                        TypeId = eq.TypeId,
-                        Description = eq.Description,
-                        MinimumStock = eq.MinimumStock,
-                        QuantityInStock = eq.QuantityInStock
+                        Id = ma.MaterialId,
+                        Code = ma.MaterialCode,
+                        Name = ma.Name,
+                        Brand = ma.Brand,
+                        Specification = ma.Specification,
+                        TypeId = ma.TypeId,
+                        Description = ma.Description,
+                        MinimumStock = ma.MinimumStock,
+                        QuantityInStock = ma.QuantityInStock
+                    });
+            }
+            catch (SqlException sqlex)
+            {
+                Debug.WriteLine($"SqlException: {sqlex.Message}");
+            }
+            catch (TaskCanceledException taskex)
+            {
+                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception: {ex.Message}");
+            }
+        }
+        public async Task GetErrorsListFromSqlAsync(string languageCode)
+        {
+            try
+            {
+                if (!_dataService.MaterialRep.CheckConnection())
+                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
+
+                var errorList = (await _dataService.ErrorListRep.GetMessagesWithOtherAsync(languageCode));
+
+                if (sqlErrorsList.Any()) sqlErrorsList.Clear();
+                foreach (var er in errorList)
+                    sqlErrorsList.Add(new ErrorInfo
+                    {
+                        ErrorCode = er.ErrorCode,
+                        Message = er.Message
                     });
             }
             catch (SqlException sqlex)

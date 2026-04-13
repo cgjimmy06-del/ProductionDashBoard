@@ -38,17 +38,22 @@ namespace FProductionDashBoard.ViewModels
             _dataService = dataservice;
             CurrentUser = currentuser;
 
-            FirstArticleInsAllCommand = new RelayCommand(() => FirstArticleInsAll());
-            RoutineInsAllCommand = new RelayCommand(() => RoutineInsAll());
+            FirstArticleInsAllCommand = new AsyncRelayCommand(() => FirstArticleInsAll());
+            RoutineInsAllCommand = new AsyncRelayCommand(() => RoutineInsAll());
 
             AddDevicesCommand = new AsyncRelayCommand(() => AddDeviceCard());
             FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
             FastUploadDevicesCommand = new RelayCommand(() => FastUploadDevices());
         }
         
-        private void FirstArticleInsAll()
+        private async Task FirstArticleInsAll()
         {
-            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0]);
+            if (!Devices.Any()) return;
+
+            var anydevice = Devices.FirstOrDefault() ?? new();
+            await anydevice.GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0],
+                anydevice.sqlErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -57,12 +62,17 @@ namespace FProductionDashBoard.ViewModels
             {
                 var result = vm.Result ?? new() { IsNormal = false };
                 foreach (var idevice in Devices)
-                    idevice.InspectionStatuses.updateFirstInspection(result.IsNormal, result.Description);
+                    idevice.InspectionStatuses.updateFirstInspection(result.IsNormal, result.ErrorCode, result.Description);
             }
         }
-        private void RoutineInsAll()
+        private async Task RoutineInsAll()
         {
-            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, Devices[0]);
+            if (!Devices.Any()) return;
+
+            var anydevice = Devices.FirstOrDefault() ?? new();
+            await anydevice.GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0],
+                anydevice.sqlErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -72,7 +82,7 @@ namespace FProductionDashBoard.ViewModels
                 var result = vm.Result ?? new InspectionResult() { IsNormal = false };
                 int statusresult = result.IsNormal ? 0 : 2;
                 foreach (var idevice in Devices)
-                    idevice.InspectionStatuses.updateRoutineStatus(statusresult, result.Description);
+                    idevice.InspectionStatuses.updateRoutineStatus(statusresult, result.ErrorCode, result.Description);
             }
         }
 
