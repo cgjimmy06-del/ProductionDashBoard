@@ -88,7 +88,7 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                var result = vm.Result ?? new MaterialResult() { Selections = new List<MaterialInfo>() };
+                var result = vm.Result ?? new();
                 // SQL
                 _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - Category: {result.Selections.Count} -> " +
                     $"Sum: {result.Selections.Sum(d => d.SelectedCount)}", LogLevel.Success);
@@ -103,7 +103,7 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                var result = vm.Result ?? new() { IsNormal = false };
+                var result = vm.Result ?? new();
                 InspectionStatuses.updateFirstInspection(result.IsNormal, result.ErrorCode, result.Description); // SQL
             }
         }
@@ -116,7 +116,7 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                var result = vm.Result ?? new InspectionResult() { IsNormal = false };
+                var result = vm.Result ?? new();
                 int statusresult = result.IsNormal ? 0 : 2;
                 InspectionStatuses.updateRoutineStatus(statusresult, result.ErrorCode, result.Description); // SQL
             }

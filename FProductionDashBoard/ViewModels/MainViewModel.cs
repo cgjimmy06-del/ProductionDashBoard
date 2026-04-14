@@ -31,7 +31,6 @@ namespace FProductionDashBoard.ViewModels
         public List<UserInfo> EmployeesList = new(); // 人員清單
         //public List<DeviceInfo> OrdersList = new(); // 排單點檢清單
 
-
     }
     public enum NavMode { Home, Operation, Setting, View }
     public partial class MainViewModel : ObservableObject
@@ -122,7 +121,6 @@ namespace FProductionDashBoard.ViewModels
             var devicesTask = await GetDevicesListFromSqlAsync();
             var materialsTask = await GetMaterialsListFromSqlAsync();
             var errorsTask = await GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
-
             // await Task.WhenAll(devicesTask, materialsTask, errorsTask); .Result // 無法同時開啟dbcontext
 
             CommonLists = new ListsFormSql

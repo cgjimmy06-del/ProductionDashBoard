@@ -15,7 +15,7 @@ namespace FProductionDashBoard.ViewModels
 {
     public class MaterialResult
     {
-        public required List<MaterialInfo> Selections;
+        public List<MaterialInfo> Selections { get; set; } = new();
     }
     internal partial class MaterialDialogViewModel : DialogBaseViewModel<MaterialResult>
     {

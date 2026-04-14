@@ -93,7 +93,7 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                var result = vm.Result ?? new DeviceCardsResult { Selections = new List<DeviceInfo>() };
+                var result = vm.Result ?? new();
                 foreach (var iselection in result.Selections)
                 {
                     var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService, commonLists);

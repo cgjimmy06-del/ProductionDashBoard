@@ -19,7 +19,7 @@ namespace FProductionDashBoard.ViewModels
     }
     public class InspectionResult
     {
-        public required bool IsNormal { get; set; }
+        public bool IsNormal { get; set; } = false;
         public string? ErrorCode { get; set; }
         public string? Description { get; set; }
     }

@@ -30,9 +30,6 @@ namespace FProductionDashBoard.Services.V1
 
 
 
-
-
-
         // 測試用
         public async Task Demo()
         {
