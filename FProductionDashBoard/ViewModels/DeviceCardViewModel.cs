@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FProductionDashBoard.Models;
 using FProductionDashBoard.Properties;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.UiModels;
@@ -33,11 +34,7 @@ namespace FProductionDashBoard.ViewModels
         public DeviceInfo Info { get; }
         private readonly LogService _log;
         private readonly IDataService _dataService;
-
-        private List<MaterialInfo> sqlMaterialsList = new(); // 物料清單 (資料表來源)
-        //private List<DeviceInfo> sqlErrorsList = new(); // 異常項目清單 (資料表來源)
-        //private List<DeviceInfo> sqlOrdersList = new(); // 排單點檢清單 (資料表來源)
-        //private List<DeviceInfo> sqlEmployeesList = new(); // 人員清單 (資料表來源)
+        private readonly ListsFormSql commonLists;
 
         // 訊息顯示
         [ObservableProperty]
@@ -55,18 +52,22 @@ namespace FProductionDashBoard.ViewModels
         public ICommand RoutineInspectionCommand { get; }
         public ICommand OperationCommand { get; }
 
-        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log, IDataService dataservice)
+#pragma warning disable CS8618 // 退出建構函式時，不可為 Null 的欄位必須包含非 Null 值。請考慮新增 'required' 修飾元，或將欄位宣告為可以為 Null。
+        public DeviceCardViewModel() { }
+#pragma warning restore CS8618 // 退出建構函式時，不可為 Null 的欄位必須包含非 Null 值。請考慮新增 'required' 修飾元，或將欄位宣告為可以為 Null。
+        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log, IDataService dataservice, ListsFormSql getLists)
         {
             Info = info;
             _log = log;
             _dataService = dataservice;
             CurrentUser = currentuser;
+            commonLists = getLists;
 
             InspectionStatuses = new InspectionService(this, 9, 4, 2);
             InspectionStatuses.OnLogEvent += _log.AddLog;
             //InspectionStatuses.OnErrorLogEvent += _log.AddErrorLog;
 
-            MaterialsChangeCommand = new AsyncRelayCommand(MaterialsChange);
+            MaterialsChangeCommand = new RelayCommand(MaterialsChange);
             FirstInspectionCommand = new RelayCommand(FirstArticleInspection);
             RoutineInspectionCommand = new RelayCommand(RoutineInspection);
             OperationCommand = new RelayCommand(OperationChange);
@@ -78,10 +79,9 @@ namespace FProductionDashBoard.ViewModels
             checkTimer.Start();
         }
         // 操作員按鈕
-        private async Task MaterialsChange()
+        private void MaterialsChange()
         {
-            await GetDevicesListFromSqlAsync();
-            var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this, sqlMaterialsList);
+            var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this, commonLists.MaterialsList);
             var uc = new MaterialsDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -96,7 +96,7 @@ namespace FProductionDashBoard.ViewModels
         }
         private void FirstArticleInspection()
         {
-            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, this);
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, this, commonLists.ErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -104,12 +104,12 @@ namespace FProductionDashBoard.ViewModels
             if (vm.IsConfirmed)
             {
                 var result = vm.Result ?? new() { IsNormal = false };
-                InspectionStatuses.updateFirstInspection(result.IsNormal, result.Description); // SQL
+                InspectionStatuses.updateFirstInspection(result.IsNormal, result.ErrorCode, result.Description); // SQL
             }
         }
         private void RoutineInspection()
         {
-            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, this);
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, this, commonLists.ErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -118,7 +118,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 var result = vm.Result ?? new InspectionResult() { IsNormal = false };
                 int statusresult = result.IsNormal ? 0 : 2;
-                InspectionStatuses.updateRoutineStatus(statusresult, result.Description); // SQL
+                InspectionStatuses.updateRoutineStatus(statusresult, result.ErrorCode, result.Description); // SQL
             }
         }
         private void OperationChange()
@@ -137,44 +137,8 @@ namespace FProductionDashBoard.ViewModels
             _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Success);
             _log.AddErrorLog($"設備 {Info.Name} 設備調試狀態更新:");
         }
-        // sql 清單取得 (物料 品檢異常清單 排單 點檢清單 人員權限)
-        public async Task GetDevicesListFromSqlAsync() // 待翻譯log 並加上errorlog
-        {
-            try
-            {
-                if (!_dataService.MaterialRep.CheckConnection())
-                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
 
-                var materialList = (await _dataService.MaterialRep.GetAllAsync());
-
-                if (sqlMaterialsList.Any()) sqlMaterialsList.Clear();
-                foreach (var eq in materialList)
-                    sqlMaterialsList.Add(new MaterialInfo
-                    {
-                        Id = eq.MaterialId,
-                        Code = eq.MaterialCode,
-                        Name = eq.Name,
-                        Brand = eq.Brand,
-                        Specification = eq.Specification,
-                        TypeId = eq.TypeId,
-                        Description = eq.Description,
-                        MinimumStock = eq.MinimumStock,
-                        QuantityInStock = eq.QuantityInStock
-                    });
-            }
-            catch (SqlException sqlex)
-            {
-                Debug.WriteLine($"SqlException: {sqlex.Message}");
-            }
-            catch (TaskCanceledException taskex)
-            {
-                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception: {ex.Message}");
-            }
-        }
+        // sql操作 待翻譯log 並加上errorlog
 
     }
 }

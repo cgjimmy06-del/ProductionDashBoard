@@ -10,22 +10,21 @@ namespace FProductionDashBoard.Models
 {
     public class Equipment
     {
-        public int Id { get; set; } // 代理鍵 主鍵
-        public string Code { get; set; } = string.Empty;
+        public int Id { get; set; } // 代理PK
+        public string Code { get; set; } = string.Empty; // UNIQUE
         public string Name { get; set; } = string.Empty;
         public string Ip { get; set; } = string.Empty;
         public int Port { get; set; } = 0;
         public string? Factory { get; set; }
         public string? Building { get; set; }
         public string? Floor { get; set; }
-        public int? TypeId { get; set; }
+        public int? TypeId { get; set; } // FK
         public string? DepartmentId { get; set; }
         public string? Description { get; set; }
         public DateTime CreateAt { get; set; }
         public DateTime UpdateAt { get; set; }
 
-        //public int WorkerID { get; set; }       // 外鍵
-        //public WorkerInfo? Worker { get; set; }      // 導覽屬性
+        public EquipmentType? Type { get; set; } // 導覽屬性
     }
     public class EquipmentConfiguration : IEntityTypeConfiguration<Equipment>
     {
@@ -50,12 +49,13 @@ namespace FProductionDashBoard.Models
             builder.Property(e => e.CreateAt).HasColumnName("created_at");
             builder.Property(e => e.UpdateAt).HasColumnName("updated_at");
 
+            // 設定 關聯：Type (1) ↔ Equipments (多)
+            builder.HasOne(m => m.Type)
+                   .WithMany(t => t.Equipments)
+                   .HasForeignKey(m => m.TypeId);
+
             // 忽略 額外屬性
             //builder.Ignore(d => d.Status);
-            // 設定 關聯：Worker (1) ↔ Devices (多)
-            //builder.HasOne(d => d.Worker)
-            //       .WithMany(w => w.Devices)
-            //       .HasForeignKey(d => d.WorkerID);
             // 設定 索引
             //builder.HasIndex(e => e.EquipmentId).IsUnique();
             // 設定 Not Null

@@ -21,8 +21,8 @@ namespace FProductionDashBoard.Repositories
 
     public class Repository<T, TContext> : IRepository<T, TContext> where T : class where TContext : DbContext
     {
-        private readonly TContext _context;
-        private readonly DbSet<T> _dbSet;
+        protected readonly TContext _context;
+        protected readonly DbSet<T> _dbSet;
 
         public string CurrectConnStr { get; set; } = "";
 

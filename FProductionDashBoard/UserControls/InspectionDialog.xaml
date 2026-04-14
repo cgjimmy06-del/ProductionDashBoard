@@ -36,12 +36,10 @@
                           Width="200" SelectedIndex="0"
                           IsEnabled="{Binding IsChecked, ElementName=RadioBtnFailure}"
                           Style="{StaticResource MaterialDesignComboBox}"
-                          ItemsSource="{Binding ErrorStrings}"
-                          SelectedValue="{Binding SelectionDescription, Mode=TwoWay}">
-                    <!--<ComboBoxItem Content="B1 錯誤1"/>
-                    <ComboBoxItem Content="B2 錯誤2"/>
-                    <ComboBoxItem Content="B3 錯誤3"/>
-                    <ComboBoxItem Content="B4 其他"/>-->
+                          ItemsSource="{Binding ErrorCodes}"
+                          DisplayMemberPath="Message"
+                          SelectedValuePath="ErrorCode"
+                          SelectedValue="{Binding SelectionCode, Mode=TwoWay}">
                 </ComboBox>
 
                 <!-- B4 其他: TextBox -->
