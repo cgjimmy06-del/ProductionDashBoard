@@ -55,7 +55,8 @@ namespace FProductionDashBoard.ViewModels
                     $"{getinfo.InspectionStatuses.StartTime + 
                     getinfo.InspectionStatuses.CurrentRoutine * getinfo.InspectionStatuses.intervalTime}";
 
-            ErrorCodes = new ObservableCollection<ErrorInfo>(sqlerrorslist);
+            var categories = new List<string> { "INSP", "OTHER" };
+            ErrorCodes = new ObservableCollection<ErrorInfo>(sqlerrorslist.Where(e => categories.Contains(e.Category ?? "")));
             SelectionCode = (ErrorCodes.FirstOrDefault() ?? new()).ErrorCode;
 
             ConfirmCommand = new RelayCommand(() => OnConfirm());

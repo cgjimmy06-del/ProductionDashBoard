@@ -16,7 +16,7 @@ namespace FProductionDashBoard.Repositories
 
         public Task<string?> GetMessageAsync(string errorCode, string languageCode);
         public Task<List<(string ErrorCode, string Message)>> GetMessagesAsync(string languageCode);
-        public Task<List<(string ErrorCode, string Message)>> GetMessagesWithOtherAsync(string languageCode);
+        public Task<List<(string ErrorCode, string Message, string Category)>> GetMessagesWithOtherAsync(string languageCode);
         public Task<List<(string LanguageCode, string Message)>> GetTranslationsAsync(string errorCode);
         public Task<List<(string ErrorCode, List<(string LanguageCode, string Message)>)>> GetAllErrorsWithTranslationsAsync();
     }

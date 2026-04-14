@@ -20,8 +20,10 @@ namespace FProductionDashBoard.UiModels
 
     public partial class UserInfo : ObservableObject
     {
-        public required string ID { get; set; }
+        public int Id { get; set; }
+        public required string UserId { get; set; }
         public required string Name { get; set; }
+        public string? CardId { get; set; }
         public string Password { get; set; } = string.Empty;
         public string? Email { get; set; }
         public int Role { get; set; } = (int)Roles.Viewer;

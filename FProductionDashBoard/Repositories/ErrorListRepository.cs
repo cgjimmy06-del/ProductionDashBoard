@@ -142,17 +142,19 @@ namespace FProductionDashBoard.Repositories
             .Select(x => new ValueTuple<string, string>(x.ErrorCode, x.Translation!.Message ?? "Unknown!"))
             .ToListAsync();
         }
-        // 查詢所有錯誤訊息 (指定 語言，將OTHER排至最後)
-        public async Task<List<(string ErrorCode, string Message)>> GetMessagesWithOtherAsync(string languageCode)
+        // 查詢所有錯誤訊息 (指定 語言，將OTHER排至最後，使用者清單用)
+        public async Task<List<(string ErrorCode, string Message, string Category)>> GetMessagesWithOtherAsync(string languageCode)
         {
             var results = await _context.ErrorLists
                 .Select(e => new
                 {
                     e.ErrorCode,
-                    Translation = e.Translations.FirstOrDefault(t => t.LanguageCode == languageCode)
+                    Translation = e.Translations.FirstOrDefault(t => t.LanguageCode == languageCode),
+                    e.Category
                 })
                 .Where(x => x.Translation != null)
-                .Select(x => new ValueTuple<string, string>(x.ErrorCode, x.Translation!.Message ?? "Unknown!"))
+                .Select(x => new ValueTuple<string, string, string>(x.ErrorCode, 
+                    x.Translation!.Message ?? "Unknown!", x.Category ?? "Unknown!"))
                 .ToListAsync();
 
             // 排序：先把不是 OTHER 的排前面，OTHER 永遠在最後

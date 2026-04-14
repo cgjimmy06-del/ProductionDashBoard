@@ -233,7 +233,8 @@ namespace FProductionDashBoard.ViewModels
                     newlist.Add(new ErrorInfo
                     {
                         ErrorCode = er.ErrorCode,
-                        Message = er.Message
+                        Message = er.Message,
+                        Category = er.Category
                     });
                 return newlist;
             }

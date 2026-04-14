@@ -38,7 +38,7 @@ namespace FProductionDashBoard.ViewModels
 
         // 訊息顯示
         [ObservableProperty]
-        private UserInfo currentUser = new() { ID = "none", Name = "none" };
+        private UserInfo currentUser = new() { UserId = "none", Name = "none" };
         [ObservableProperty]
         private ProductInfo currentProduct = new() { ModelCode = "Unknown", TypeCode = "123" };
 
