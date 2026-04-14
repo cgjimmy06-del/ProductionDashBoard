@@ -15,70 +15,52 @@ namespace FProductionDashBoard.Services.V1
         public IEmployeeRepository EmployeeRep { get; }
         public IMaterialRepository MaterialRep { get; }
         public IErrorListRepository ErrorListRep { get; }
+        public IMaterialReplacementRepository MaterialReplacementRep { get; }
 
-        public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep, 
-            IErrorListRepository errorListRep)
+        public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep,
+            IErrorListRepository errorListRep, IMaterialReplacementRepository materialReplacementRep)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
             MaterialRep = materialrep;
             ErrorListRep = errorListRep;
+            MaterialReplacementRep = materialReplacementRep;
         }
+
+
+
+
+
 
 
         // 測試用
         public async Task Demo()
         {
+            // 查詢
             var devs = await ErrorListRep.GetMessagesWithOtherAsync("zh-TW"); //zh-TW INSP0001
             //foreach (var dev in devs) { Debug.WriteLine($"{dev.LanguageCode} - {dev.Message}"); }
             //Debug.WriteLine($"{devs}");
-            foreach (var dev in devs) { Debug.WriteLine($"{dev.ErrorCode} - {dev.Message}"); }
+            foreach (var (ErrorCode, Message, Category) in devs) { Debug.WriteLine($"{ErrorCode} - {Message}"); }
+
+            // 插入
+            //var replacementId = await MaterialReplacementRep.AddReplacementRecordAsync(
+            //                    equipmentId: 3,
+            //                    employeeId: 2,
+            //                    errorCode: "MTRP0001",
+            //                    details: new List<(int materialId, int quantity)>
+            //                    {
+            //                        (materialId: 1, quantity: 1),
+            //                        (materialId: 3, quantity: 1),
+            //                        (materialId: 4, quantity: 3),
+            //                    }
+            //                );
+            //Debug.WriteLine($"新增成功，ReplacementId = {replacementId}");
+            // 更新
+
+
+            // 刪除
 
 
         }
-        //// 插入
-        //public async Task<int> AddEquipmentAsync(CreateEquipmentDto dto)
-        //{
-        //    var entity = new Equipment
-        //    {
-        //        EquipmentId = dto.EquipmentId,
-        //        Name = dto.Name,
-        //        Ip = dto.Ip,
-        //        Port = dto.Port,
-        //        Factory = dto.Factory,
-        //        Building = dto.Building,
-        //        Floor = dto.Floor,
-        //        TypeId = dto.TypeId,
-        //        DepartmentId = dto.DepartmentId,
-        //        Description = dto.Description,
-        //        CreateTime = DateTime.Now,
-        //        UpdateTime = DateTime.Now
-        //    };
-
-        //    await _equipmentRepository.AddAsync(entity);
-        //    return entity.Id; // EF Core 自動產生代理鍵
-        //}
-
-        //// 查詢
-        //public async Task<List<EquipmentDto>> GetAllEquipmentsAsync()
-        //{
-        //    var entities = await _equipmentRepository.GetAllAsync();
-        //    return entities.Select(e => new EquipmentDto
-        //    {
-        //        Id = e.Id,
-        //        EquipmentId = e.EquipmentId,
-        //        Name = e.Name,
-        //        Ip = e.Ip,
-        //        Port = e.Port,
-        //        Factory = e.Factory,
-        //        Building = e.Building,
-        //        Floor = e.Floor,
-        //        TypeId = e.TypeId,
-        //        DepartmentId = e.DepartmentId,
-        //        Description = e.Description,
-        //        CreateTime = e.CreateTime,
-        //        UpdateTime = e.UpdateTime
-        //    }).ToList();
-        //}
     }
 }

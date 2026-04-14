@@ -10,7 +10,6 @@ namespace FProductionDashBoard.Repositories
 {
     public class ErrorListRepository : Repository<ErrorList, MesDbContext>, IErrorListRepository
     {
-
         public ErrorListRepository(MesDbContext context) : base(context)
         {
         }
@@ -130,19 +129,21 @@ namespace FProductionDashBoard.Repositories
                         .FirstOrDefaultAsync();
         }
         // 查詢所有錯誤訊息 (指定 語言)
-        public async Task<List<(string ErrorCode, string Message)>> GetMessagesAsync(string languageCode)
+        public async Task<List<(string ErrorCode, string Message, string Category)>> GetMessagesAsync(string languageCode)
         {
             return await _context.ErrorLists
                 .Select(e => new
                 {
                     e.ErrorCode,
-                    Translation = e.Translations.FirstOrDefault(t => t.LanguageCode == languageCode)
+                    Translation = e.Translations.FirstOrDefault(t => t.LanguageCode == languageCode),
+                    e.Category
                 })
             .Where(x => x.Translation != null)
-            .Select(x => new ValueTuple<string, string>(x.ErrorCode, x.Translation!.Message ?? "Unknown!"))
+            .Select(x => new ValueTuple<string, string, string>(x.ErrorCode, 
+                    x.Translation!.Message ?? "Unknown!", x.Category ?? "Unknown!"))
             .ToListAsync();
         }
-        // 查詢所有錯誤訊息 (指定 語言，將OTHER排至最後，使用者清單用)
+        // 查詢所有錯誤訊息 (指定 語言，將OTHER排至最後，使用者清單用) -- 評估放至service
         public async Task<List<(string ErrorCode, string Message, string Category)>> GetMessagesWithOtherAsync(string languageCode)
         {
             var results = await _context.ErrorLists

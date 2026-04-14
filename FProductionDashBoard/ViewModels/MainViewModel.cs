@@ -332,6 +332,10 @@ namespace FProductionDashBoard.ViewModels
             {
                 Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
             }
+            catch(AggregateException aggEx) 
+            {
+                Debug.WriteLine($"TaskCanceledException: {aggEx.Message}");
+            }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception: {ex.Message}");
