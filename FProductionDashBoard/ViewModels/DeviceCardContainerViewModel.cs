@@ -18,7 +18,7 @@ namespace FProductionDashBoard.ViewModels
     public partial class DeviceCardContainerViewModel : ObservableObject
     {
         private string defaultDevicesFile = "defaultdevices.json"; // 預設設備檔案
-        private List<DeviceInfo> sqlDevicesList = new(); // 設備清單 (資料表來源)
+        private readonly ListsFormSql commonLists;
         public ObservableCollection<DeviceCardViewModel> Devices { get; } =
             new ObservableCollection<DeviceCardViewModel>();
 
@@ -32,28 +32,27 @@ namespace FProductionDashBoard.ViewModels
         public ICommand FastDownloadDevicesCommand { get; }
         public ICommand FastUploadDevicesCommand { get; }
 
-        public DeviceCardContainerViewModel(LogService log, IDataService dataservice, UserInfo currentuser)
+        public DeviceCardContainerViewModel(LogService log, IDataService dataservice, UserInfo currentuser, ListsFormSql getlists)
         {
             _log = log;
             _dataService = dataservice;
             CurrentUser = currentuser;
+            commonLists = getlists;
 
-            FirstArticleInsAllCommand = new AsyncRelayCommand(() => FirstArticleInsAll());
-            RoutineInsAllCommand = new AsyncRelayCommand(() => RoutineInsAll());
+            FirstArticleInsAllCommand = new RelayCommand(() => FirstArticleInsAll());
+            RoutineInsAllCommand = new RelayCommand(() => RoutineInsAll());
 
-            AddDevicesCommand = new AsyncRelayCommand(() => AddDeviceCard());
+            AddDevicesCommand = new RelayCommand(() => AddDeviceCard());
             FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
             FastUploadDevicesCommand = new RelayCommand(() => FastUploadDevices());
         }
         
-        private async Task FirstArticleInsAll()
+        private void FirstArticleInsAll()
         {
             if (!Devices.Any()) return;
 
-            var anydevice = Devices.FirstOrDefault() ?? new();
-            await anydevice.GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0],
-                anydevice.sqlErrorsList);
+                commonLists.ErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -65,14 +64,12 @@ namespace FProductionDashBoard.ViewModels
                     idevice.InspectionStatuses.updateFirstInspection(result.IsNormal, result.ErrorCode, result.Description);
             }
         }
-        private async Task RoutineInsAll()
+        private void RoutineInsAll()
         {
             if (!Devices.Any()) return;
 
-            var anydevice = Devices.FirstOrDefault() ?? new();
-            await anydevice.GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0],
-                anydevice.sqlErrorsList);
+                commonLists.ErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -86,49 +83,10 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
-        public async Task GetDevicesListFromSqlAsync() // 待翻譯log 並加上errorlog
+        private void AddDeviceCard()
         {
-            try
-            {
-                if (!_dataService.EquipmentRep.CheckConnection())
-                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
-
-                var equipmentList = (await _dataService.EquipmentRep.GetAllAsync());
-
-                if (sqlDevicesList.Any()) sqlDevicesList.Clear();
-                foreach (var eq in equipmentList)
-                    sqlDevicesList.Add(new DeviceInfo
-                    {
-                        Id = eq.Id,
-                        DeviceID = eq.Code,
-                        Name = eq.Name,
-                        IP = eq.Ip,
-                        Port = eq.Port,
-                        TypeId = eq.TypeId,
-                        Factory = eq.Factory,
-                        Building = eq.Building,
-                        Floor = eq.Floor,
-                        Description = eq.Description
-                    });
-            }
-            catch (SqlException sqlex)
-            {
-                Debug.WriteLine($"SqlException: {sqlex.Message}");
-            }
-            catch (TaskCanceledException taskex)
-            {
-                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception: {ex.Message}");
-            }
-        }
-        private async Task AddDeviceCard()
-        {
-            await GetDevicesListFromSqlAsync(); // 可評估是否外部呼叫
-            var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile, 
-                                                    sqlDevicesList, [.. Devices]); // [.. X] = X.ToList()
+            var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile,
+                                                    commonLists.DevicesList, [.. Devices]); // [.. X] = X.ToList()
             var uc = new AddDeviceDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -138,7 +96,7 @@ namespace FProductionDashBoard.ViewModels
                 var result = vm.Result ?? new DeviceCardsResult { Selections = new List<DeviceInfo>() };
                 foreach (var iselection in result.Selections)
                 {
-                    var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService);
+                    var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService, commonLists);
                     Devices.Add(idevice);
                     _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
                 }
@@ -159,7 +117,7 @@ namespace FProductionDashBoard.ViewModels
             }
             foreach (var iselection in result)
             {
-                var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService);
+                var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService, commonLists);
                 Devices.Add(idevice);
                 _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
             }

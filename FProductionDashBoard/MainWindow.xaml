@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:FProductionDashBoard"
         xmlns:localuc="clr-namespace:FProductionDashBoard.UserControls"
         xmlns:localvm="clr-namespace:FProductionDashBoard.ViewModels"
@@ -12,7 +13,13 @@
         Style="{StaticResource MaterialDesignWindow}"
         Title="{Binding AppVersion, StringFormat=ProductionDashBoard -- V{0}}" 
         Height="600" Width="1000" Icon="appIcon.ico">
-
+    <!-- window載入事件 -->
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding InitializeCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <!-- 資源匯入 -->
     <Window.Resources>
         <ResourceDictionary>
             <!-- 外部資源 -->
