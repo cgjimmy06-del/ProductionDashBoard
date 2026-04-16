@@ -20,9 +20,20 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.ViewModels
 {
+    public class ListsFormSql
+    {
+        public List<DeviceInfo> DevicesList = new(); // 設備清單
+        public List<MaterialInfo> MaterialsList = new(); // 物料清單
+        public List<ErrorInfo> ErrorsList = new(); // 異常項目清單
+        public List<UserInfo> EmployeesList = new(); // 人員清單
+        public List<TimeSlotLookup> TimeSlotsList = new(); // 人員清單
+        //public List<DeviceInfo> OrdersList = new(); // 排單點檢清單
+
+    }
     public enum NavMode { Home, Operation, Setting, View }
     public partial class MainViewModel : ObservableObject
     {
@@ -33,17 +44,21 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         public object? card1; // 須重構
 
-        // 資源 DI注入
+        #region  -- DI注入資源 --
         private readonly IDataService _dataService;
         public LogService _log { get; }
         public UserInfo SystemUser { get; }
         public UserInfo CurrentUser { get; }
-
-        // 介面邏輯
+        #endregion
+        #region -- 介面邏輯 --
         [ObservableProperty]
-        private bool isCollapsedNav = false; // 導覽列收合
+        private int businessHour = 8; // 定義工作天的時
+        [ObservableProperty]
+        private int businessMinute = 0; // 定義工作天的分
         [ObservableProperty]
         private string currentTime = ""; // 系統時間
+        [ObservableProperty]
+        private bool isCollapsedNav = false; // 導覽列收合
         [ObservableProperty]
         private bool autoScrollEnabled = true; // 訊息視窗是否滾動
         [ObservableProperty]
@@ -56,11 +71,15 @@ namespace FProductionDashBoard.ViewModels
         private string progressString = Properties.Resources.MainProgressIdle; // 進度訊息
         [ObservableProperty]
         private NavMode currentNavMode = NavMode.Home; // 當前導覽列模式
+        #endregion
 
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
+        public ListsFormSql CommonLists = new();
 
+        public ICommand InitializeCommand { get; }
         // 菜單列
         // 工具列
+        public ICommand TestCommand { get; }
         // 導覽列
         public ICommand CollapseNavCommand { get; }
         public ICommand SwitchModeCommand { get; }
@@ -68,18 +87,11 @@ namespace FProductionDashBoard.ViewModels
         public ICommand SaveLogsCommand { get; }
         // 主視覺視窗
 
-        public MainViewModel(UserInfo user, LogService log, IDataService dataservice) 
+        public MainViewModel(UserInfo user, LogService log, IDataService dataservice)
         {
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(
                 Assembly.GetExecutingAssembly().Location).FileVersion ?? "Unknown";
-
-            // 建立 DispatcherTimer 每秒更新一次時間
-            DefaultTimer = new DispatcherTimer();
-            DefaultTimer.Interval = TimeSpan.FromSeconds(1);
-            DefaultTimer.Tick += (s, e) =>
-            { CurrentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm"); };
-            DefaultTimer.Start();
 
             // DI注入 Repository
             SystemUser = user;
@@ -87,17 +99,175 @@ namespace FProductionDashBoard.ViewModels
             _log = log;
             _dataService = dataservice;
 
+            // 建立 DispatcherTimer 每秒更新一次時間，並定義工作起始時間
+            _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
+
+            DefaultTimer = new DispatcherTimer();
+            DefaultTimer.Interval = TimeSpan.FromSeconds(1);
+            DefaultTimer.Tick += (s, e) =>
+            {
+                CurrentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+                if (DateTime.Now.AddDays(-1) > _dataService.BusinessDay)
+                    _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
+            };
+            DefaultTimer.Start();
+
+            InitializeCommand = new AsyncRelayCommand(LoadAllListsAsync);
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
             SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode);
 
-            //// 設定元件事件 (訊息視窗)
+            //  設定元件事件 (工具列)
+            TestCommand = new AsyncRelayCommand(() => SqlTestFunc());
+
+            // 設定元件事件 (訊息視窗)
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
 
             // 新增儀表卡片區
             //Cards.Add(new DeviceCardContainerViewModel(_log, _dataService, CurrentUser));
 
         }
+        // 載入初始化
+        public async Task LoadAllListsAsync()
+        {
+            var devicesTask = await GetDevicesListFromSqlAsync();
+            var materialsTask = await GetMaterialsListFromSqlAsync();
+            var errorsTask = await GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
+            var timeslotsTask = (await _dataService.TimeSlotLookupRep.GetAllAsync()).OrderBy(s => s.TimeSlotId);
+
+            // await Task.WhenAll(devicesTask, materialsTask, errorsTask); .Result // 無法同時開啟dbcontext
+
+            CommonLists = new ListsFormSql
+            {
+                DevicesList = devicesTask,
+                MaterialsList = materialsTask,
+                ErrorsList = errorsTask,
+                TimeSlotsList = timeslotsTask.ToList()
+            };
+            _log.AddLog($"已載入清單: " +
+                $"DevicesList:[{CommonLists.DevicesList.Count}]-MaterialsList:[{CommonLists.MaterialsList.Count}]-ErrorsList:[{CommonLists.ErrorsList.Count}]");
+        }
+
+        // 待翻譯log 並加上errorlog
+        public async Task<List<DeviceInfo>> GetDevicesListFromSqlAsync()
+        {
+            try
+            {
+                if (!_dataService.EquipmentRep.CheckConnection())
+                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
+
+                var equipmentList = (await _dataService.EquipmentRep.GetAllAsync());
+
+                var newlist = new List<DeviceInfo>();
+                foreach (var eq in equipmentList)
+                    newlist.Add(new DeviceInfo
+                    {
+                        Id = eq.Id,
+                        DeviceID = eq.Code,
+                        Name = eq.Name,
+                        IP = eq.Ip,
+                        Port = eq.Port,
+                        TypeId = eq.TypeId,
+                        Factory = eq.Factory,
+                        Building = eq.Building,
+                        Floor = eq.Floor,
+                        Description = eq.Description
+                    });
+                return newlist;
+            }
+            catch (SqlException sqlex)
+            {
+                Debug.WriteLine($"SqlException: {sqlex.Message}"); 
+                return new List<DeviceInfo>();
+            }
+            catch (TaskCanceledException taskex)
+            {
+                Debug.WriteLine($"TaskCanceledException: {taskex.Message}"); 
+                return new List<DeviceInfo>();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception: {ex.Message}"); 
+                return new List<DeviceInfo>();
+            }
+        }
+        public async Task<List<MaterialInfo>> GetMaterialsListFromSqlAsync()
+        {
+            try
+            {
+                if (!_dataService.MaterialRep.CheckConnection())
+                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
+
+                var materialList = (await _dataService.MaterialRep.GetAllAsync());
+
+                var newlist = new List<MaterialInfo>();
+                foreach (var ma in materialList)
+                    newlist.Add(new MaterialInfo
+                    {
+                        Id = ma.MaterialId,
+                        Code = ma.MaterialCode,
+                        Name = ma.Name,
+                        Brand = ma.Brand,
+                        Specification = ma.Specification,
+                        TypeId = ma.TypeId,
+                        Description = ma.Description,
+                        MinimumStock = ma.MinimumStock,
+                        QuantityInStock = ma.QuantityInStock
+                    });
+                return newlist;
+            }
+            catch (SqlException sqlex)
+            {
+                Debug.WriteLine($"SqlException: {sqlex.Message}");
+                return new List<MaterialInfo>();
+            }
+            catch (TaskCanceledException taskex)
+            {
+                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
+                return new List<MaterialInfo>();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception: {ex.Message}");
+                return new List<MaterialInfo>();
+            }
+        }
+        public async Task<List<ErrorInfo>> GetErrorsListFromSqlAsync(string languageCode)
+        {
+            try
+            {
+                if (!_dataService.MaterialRep.CheckConnection())
+                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
+
+                var errorList = (await _dataService.ErrorListRep.GetMessagesWithOtherAsync(languageCode));
+
+                var newlist = new List<ErrorInfo>();
+                foreach (var er in errorList)
+                    newlist.Add(new ErrorInfo
+                    {
+                        ErrorCode = er.ErrorCode,
+                        Message = er.Message,
+                        Category = er.Category
+                    });
+                return newlist;
+            }
+            catch (SqlException sqlex)
+            {
+                Debug.WriteLine($"SqlException: {sqlex.Message}");
+                return new List<ErrorInfo>();
+            }
+            catch (TaskCanceledException taskex)
+            {
+                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
+                return new List<ErrorInfo>();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception: {ex.Message}");
+                return new List<ErrorInfo>();
+            }
+        }
+
         // 導覽列事件
         public void SwitchMode(NavMode mode)
         {
@@ -109,7 +279,7 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Operation:
-                    var newvm = new DeviceCardContainerViewModel(_log, _dataService, CurrentUser);
+                    var newvm = new DeviceCardContainerViewModel(_log, _dataService, CurrentUser, CommonLists);
                     Card1 = newvm;
                     break;
 
@@ -160,14 +330,12 @@ namespace FProductionDashBoard.ViewModels
         }
 
         // 測試
-        private async void SqlTestFunc()
+        private async Task SqlTestFunc()
         {
             try
             {
-                _log.AddLog($"連線狀態: {_dataService.EquipmentRep.CheckConnection()}");
-
-                var devs = await _dataService.EquipmentRep.GetAllAsync();
-                foreach (var dev in devs) { _log.AddLog($"已新增設備: {dev.Name}", LogLevel.Info); }
+                Debug.WriteLine($"連線狀態: {_dataService.EquipmentRep.CheckConnection()}");
+                await _dataService.Demo();
             }
             catch (SqlException sqlex)
             {
@@ -176,6 +344,10 @@ namespace FProductionDashBoard.ViewModels
             catch (TaskCanceledException taskex)
             {
                 Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
+            }
+            catch(AggregateException aggEx) 
+            {
+                Debug.WriteLine($"TaskCanceledException: {aggEx.Message}");
             }
             catch (Exception ex)
             {

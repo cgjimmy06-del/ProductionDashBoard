@@ -18,7 +18,7 @@ namespace FProductionDashBoard.ViewModels
     public partial class DeviceCardContainerViewModel : ObservableObject
     {
         private string defaultDevicesFile = "defaultdevices.json"; // 預設設備檔案
-        private List<DeviceInfo> sqlDevicesList = new(); // 設備清單 (資料表來源)
+        private readonly ListsFormSql commonLists;
         public ObservableCollection<DeviceCardViewModel> Devices { get; } =
             new ObservableCollection<DeviceCardViewModel>();
 
@@ -32,103 +32,110 @@ namespace FProductionDashBoard.ViewModels
         public ICommand FastDownloadDevicesCommand { get; }
         public ICommand FastUploadDevicesCommand { get; }
 
-        public DeviceCardContainerViewModel(LogService log, IDataService dataservice, UserInfo currentuser)
+        public DeviceCardContainerViewModel(LogService log, IDataService dataservice, UserInfo currentuser, ListsFormSql getlists)
         {
             _log = log;
             _dataService = dataservice;
             CurrentUser = currentuser;
+            commonLists = getlists;
 
             FirstArticleInsAllCommand = new RelayCommand(() => FirstArticleInsAll());
             RoutineInsAllCommand = new RelayCommand(() => RoutineInsAll());
 
             AddDevicesCommand = new AsyncRelayCommand(() => AddDeviceCard());
             FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
-            FastUploadDevicesCommand = new RelayCommand(() => FastUploadDevices());
+            FastUploadDevicesCommand = new AsyncRelayCommand(() => FastUploadDevices());
         }
-        
-        private void FirstArticleInsAll()
+        // 待翻譯
+        private async void FirstArticleInsAll()
         {
-            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0]);
+            if (!Devices.Any()) return;
+
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0],
+                commonLists.ErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
 
             if (vm.IsConfirmed)
             {
-                var result = vm.Result ?? new() { IsNormal = false };
-                foreach (var idevice in Devices)
-                    idevice.InspectionStatuses.updateFirstInspection(result.IsNormal, result.Description);
-            }
-        }
-        private void RoutineInsAll()
-        {
-            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, Devices[0]);
-            var uc = new InspectionDialog { DataContext = vm };
-            var window = new DialogWindow(vm, uc);
-            window.ShowDialog();
+                try
+                {
+                    var result = vm.Result ?? new();
 
-            if (vm.IsConfirmed)
-            {
-                var result = vm.Result ?? new InspectionResult() { IsNormal = false };
-                int statusresult = result.IsNormal ? 0 : 2;
-                foreach (var idevice in Devices)
-                    idevice.InspectionStatuses.updateRoutineStatus(statusresult, result.Description);
-            }
-        }
-
-        public async Task GetDevicesListFromSqlAsync() // 待翻譯log 並加上errorlog
-        {
-            try
-            {
-                if (!_dataService.EquipmentRep.CheckConnection())
-                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
-
-                var equipmentList = (await _dataService.EquipmentRep.GetAllAsync());
-
-                if (sqlDevicesList.Any()) sqlDevicesList.Clear();
-                foreach (var eq in equipmentList)
-                    sqlDevicesList.Add(new DeviceInfo
+                    foreach (var idevice in Devices)
                     {
-                        Id = eq.Id,
-                        DeviceID = eq.Code,
-                        Name = eq.Name,
-                        IP = eq.Ip,
-                        Port = eq.Port,
-                        TypeId = eq.TypeId,
-                        Factory = eq.Factory,
-                        Building = eq.Building,
-                        Floor = eq.Floor,
-                        Description = eq.Description
-                    });
-            }
-            catch (SqlException sqlex)
-            {
-                Debug.WriteLine($"SqlException: {sqlex.Message}");
-            }
-            catch (TaskCanceledException taskex)
-            {
-                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception: {ex.Message}");
+                        await _dataService.AddFirstInspectionAsync(idevice.Info.Id, idevice.CurrentUser.Id, result.IsNormal,
+                        idevice.CurrentProduct.Name, result.ErrorCode, result.Description);
+
+                        idevice.FirstInspectionStatus = result.IsNormal;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _log.AddLog("首件紀錄上傳異常 (批次)");
+                    _log.AddErrorLog($"FirstArticleInspection: {ex.Message}");
+                }
             }
         }
+        private async void RoutineInsAll()
+        {
+            if (!Devices.Any()) return;
+
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0],
+                commonLists.ErrorsList);
+            var uc = new InspectionDialog { DataContext = vm };
+            var window = new DialogWindow(vm, uc);
+            window.ShowDialog();
+
+            if (vm.IsConfirmed)
+            {
+                try
+                {
+                    var result = vm.Result ?? new();
+
+                    var currentTimeSlot = await _dataService.GetCurrentTimeSlotIdAsync();
+                    if (currentTimeSlot == null)
+                    {
+                        _log.AddLog("目前不在任何巡檢時段內");
+                        return;
+                    }
+
+                    foreach (var idevice in Devices)
+                    {
+                        await _dataService.AddRoutineInspectionAsync(idevice.Info.Id, idevice.CurrentUser.Id, result.IsNormal,
+                            currentTimeSlot ?? 1, idevice.CurrentProduct.Name, result.ErrorCode, result.Description);
+                        await idevice.UpdateTimeSlotsStatusAsync();
+                    }
+                }
+                catch(SqlException sqlex)
+                {
+                    _log.AddLog("巡檢紀錄上傳異常 (批次)");
+                    _log.AddErrorLog($"RoutineInspection: {sqlex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    _log.AddLog("巡檢紀錄上傳異常 (批次)");
+                    _log.AddErrorLog($"RoutineInspection: {ex.Message}");
+                }
+            }
+        }
+
         private async Task AddDeviceCard()
         {
-            await GetDevicesListFromSqlAsync(); // 可評估是否外部呼叫
-            var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile, 
-                                                    sqlDevicesList, [.. Devices]); // [.. X] = X.ToList()
+            var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile,
+                                                    commonLists.DevicesList, [.. Devices]); // [.. X] = X.ToList()
             var uc = new AddDeviceDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
 
             if (vm.IsConfirmed)
             {
-                var result = vm.Result ?? new DeviceCardsResult { Selections = new List<DeviceInfo>() };
+                var result = vm.Result ?? new();
                 foreach (var iselection in result.Selections)
                 {
-                    var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService);
+                    var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService, commonLists);
+                    await idevice.UpdateTimeSlotsStatusAsync();
                     Devices.Add(idevice);
                     _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
                 }
@@ -139,7 +146,7 @@ namespace FProductionDashBoard.ViewModels
             JsonDataService.Save(Devices.Select(s => s.Info), defaultDevicesFile);
             _log.AddLog($"{Properties.Resources.ComStrDownloaded}: {defaultDevicesFile}", LogLevel.Info);
         }
-        private void FastUploadDevices()
+        private async Task FastUploadDevices()
         {
             var result = JsonDataService.Load<List<DeviceInfo>>(defaultDevicesFile).AsEnumerable();
             if (Devices.Any())
@@ -149,7 +156,8 @@ namespace FProductionDashBoard.ViewModels
             }
             foreach (var iselection in result)
             {
-                var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService);
+                var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService, commonLists);
+                await idevice.UpdateTimeSlotsStatusAsync();
                 Devices.Add(idevice);
                 _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
             }

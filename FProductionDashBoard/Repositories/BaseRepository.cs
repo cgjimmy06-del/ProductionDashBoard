@@ -11,18 +11,19 @@ namespace FProductionDashBoard.Repositories
     {
         public string CurrectConnStr { get; set; }
         bool CheckConnection();
+        public TContext GetContext();
 
-        Task<IEnumerable<T>> GetAllAsync();
-        Task<T?> GetByIdAsync(int id);
-        Task AddAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(int id);
+        public Task<IEnumerable<T>> GetAllAsync();
+        public Task<T?> GetByIdAsync(int id);
+        public Task AddAsync(T entity);
+        public Task UpdateAsync(T entity);
+        public Task DeleteAsync(int id);
     }
 
     public class Repository<T, TContext> : IRepository<T, TContext> where T : class where TContext : DbContext
     {
-        private readonly TContext _context;
-        private readonly DbSet<T> _dbSet;
+        protected readonly TContext _context;
+        protected readonly DbSet<T> _dbSet;
 
         public string CurrectConnStr { get; set; } = "";
 
@@ -36,6 +37,8 @@ namespace FProductionDashBoard.Repositories
 
         public bool CheckConnection() 
         { return _context.Database.CanConnect(); }
+        public TContext GetContext() {  return _context; }
+
         public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
         public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
         public async Task AddAsync(T entity)

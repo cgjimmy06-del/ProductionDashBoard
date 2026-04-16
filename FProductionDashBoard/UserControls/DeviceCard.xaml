@@ -2,12 +2,11 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:localuc="clr-namespace:FProductionDashBoard.UserControls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="200" d:DesignWidth="600" d:Background="White">
-
     <!-- 卡片樣式綁在 Border -->
     <UserControl.Resources>
         <Style TargetType="Border" x:Key="CardBorderStyle">
@@ -101,7 +100,7 @@
                             Style="{DynamicResource DeviceMainButtonStyle}"
                             Content="{DynamicResource FirstInspectionButton}"
                             Command="{Binding FirstInspectionCommand}"
-                            Background="{Binding InspectionStatuses.FirstInspectionStatus, 
+                            Background="{Binding FirstInspectionStatus, 
                                     Converter={StaticResource BoolToColorConverter}}"
                             Foreground="White"/>
 
@@ -117,11 +116,11 @@
                 </StackPanel>
 
                 <!-- 巡檢燈 -->
-                <ItemsControl ItemsSource="{Binding InspectionStatuses.RoutineStatus}">
+                <ItemsControl ItemsSource="{Binding TimeSlotsStatus}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Rows="1" Margin="10,5,10,0"
-                                         Columns="{Binding InspectionStatuses.RoutineStatus.Count}"/>
+                                         Columns="{Binding TimeSlotsStatus.Count}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
