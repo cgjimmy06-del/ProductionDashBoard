@@ -23,6 +23,7 @@ namespace FProductionDashBoard.Models
         public string? Product { get; set; }
         public int? TimeSlotId { get; set; } // FK (巡檢用)
         public string? ErrorCode { get; set; } // FK
+        public string? Description { get; set; }
         public DateTime? CreateAt { get; set; }
 
         public Equipment? Equipment { get; set; }
@@ -56,6 +57,7 @@ namespace FProductionDashBoard.Models
             builder.Property(t => t.Product).HasColumnName("product");
             builder.Property(t => t.TimeSlotId).HasColumnName("timeslot_id");
             builder.Property(t => t.ErrorCode).HasColumnName("error_code");
+            builder.Property(t => t.Description).HasColumnName("description");
             builder.Property(e => e.CreateAt).HasColumnName("create_at").HasDefaultValueSql("GETDATE()");
 
             builder.HasOne(r => r.Equipment)

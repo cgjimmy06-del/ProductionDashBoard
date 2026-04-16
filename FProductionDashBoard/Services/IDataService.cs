@@ -1,4 +1,5 @@
-﻿using FProductionDashBoard.Repositories;
+﻿using FProductionDashBoard.Models;
+using FProductionDashBoard.Repositories;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -20,7 +21,33 @@ namespace FProductionDashBoard.Services
         public IMaterialRepository MaterialRep { get; }
         public IErrorListRepository ErrorListRep { get; }
         public IMaterialReplacementRepository MaterialReplacementRep { get; }
+        public ITimeSlotLookupRepository TimeSlotLookupRep { get; }
         public IInspectionRecordRepository InspectionRecordRep { get; }
+
+
+
+        /// <summary>
+        /// 取得當前巡檢區段ID
+        /// </summary>
+        public Task<int?> GetCurrentTimeSlotIdAsync();
+        /// <summary>
+        /// 新增首件紀錄
+        /// </summary>
+        public Task<int> AddFirstInspectionAsync(int equipmentId, int employeeId, bool result,
+            string? product, string? errorCode = null, string? description = null);
+        /// <summary>
+        /// 新增巡檢紀錄
+        /// </summary>
+        public Task<int> AddRoutineInspectionAsync(int equipmentId, int employeeId, bool result,
+            int timeSlotId, string? product, string? errorCode = null, string? description = null);
+        /// <summary>
+        /// 檢查當前時段是否有巡檢紀錄，若沒有則補一筆「未巡檢」紀錄
+        /// </summary>
+        public Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId, int employeeId);
+        /// <summary>
+        /// 檢查某設備在每個時段的狀態 (TimeSlotStatus)
+        /// </summary>
+        public Task<List<int>> GetAllSlotsStatusAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId);
 
     }
 }

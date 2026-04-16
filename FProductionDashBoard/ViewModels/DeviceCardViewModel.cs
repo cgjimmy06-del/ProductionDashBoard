@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Properties;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.Services.V1;
 using FProductionDashBoard.UiModels;
 using FProductionDashBoard.UserControls;
 using MaterialDesignThemes.Wpf;
@@ -42,7 +43,12 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private ProductInfo currentProduct = new() { ModelCode = "Unknown", TypeCode = "123" };
 
-        public InspectionService InspectionStatuses { get; } // 品檢
+        // 操作按鈕及狀態顯示
+        [ObservableProperty]
+        private bool routineCycleEnable = false; // 是否開啟巡檢功能
+        [ObservableProperty]
+        private bool firstInspectionStatus = false; // 首件狀態
+        public ObservableCollection<int> TimeSlotsStatus { get; } = new ObservableCollection<int>(); // 各時段狀態
         [ObservableProperty]
         private int currentAction = (int)UserAction.Producing; // 調試狀態
 
@@ -63,23 +69,31 @@ namespace FProductionDashBoard.ViewModels
             CurrentUser = currentuser;
             commonLists = getLists;
 
-            InspectionStatuses = new InspectionService(this, 9, 4, 2);
-            InspectionStatuses.OnLogEvent += _log.AddLog;
-            //InspectionStatuses.OnErrorLogEvent += _log.AddErrorLog;
+            for (int i = 0; i < getLists.TimeSlotsList.Count; i++) { TimeSlotsStatus.Add(-1); }
 
             MaterialsChangeCommand = new RelayCommand(MaterialsChange);
-            FirstInspectionCommand = new RelayCommand(FirstArticleInspection);
-            RoutineInspectionCommand = new RelayCommand(RoutineInspection);
+            FirstInspectionCommand = new AsyncRelayCommand(FirstArticleInspection);
+            RoutineInspectionCommand = new AsyncRelayCommand(RoutineInspection);
             OperationCommand = new RelayCommand(OperationChange);
 
             // 巡檢用計時
             checkTimer = new DispatcherTimer();
-            checkTimer.Interval = TimeSpan.FromSeconds(1);
-            checkTimer.Tick += (s, e) => { InspectionStatuses.checkRoutineTime(); };
-            checkTimer.Start();
+            //checkTimer.Interval = TimeSpan.FromSeconds(1);
+            //checkTimer.Tick += (s, e) => { InspectionStatuses.checkRoutineTime(); };
+            //checkTimer.Start();
+        }
+        public async Task UpdateTimeSlotsStatusAsync()
+        {
+            var ideviceslots = await _dataService.GetAllSlotsStatusAsync(commonLists.TimeSlotsList, Info.Id);
+
+            if (ideviceslots.Count != TimeSlotsStatus.Count) {
+                _log.AddLog("時間區段數量有問題"); return; }
+
+            for(int i = 0;i < ideviceslots.Count;i++)
+                TimeSlotsStatus[i] = ideviceslots[i];
         }
         // 操作員按鈕
-        private void MaterialsChange()
+        private void MaterialsChange() // 待翻譯
         {
             var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this, commonLists.MaterialsList);
             var uc = new MaterialsDialog { DataContext = vm };
@@ -94,7 +108,7 @@ namespace FProductionDashBoard.ViewModels
                     $"Sum: {result.Selections.Sum(d => d.SelectedCount)}", LogLevel.Success);
             }
         }
-        private void FirstArticleInspection()
+        private async Task FirstArticleInspection() // 待翻譯
         {
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, this, commonLists.ErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
@@ -103,11 +117,23 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                var result = vm.Result ?? new();
-                InspectionStatuses.updateFirstInspection(result.IsNormal, result.ErrorCode, result.Description); // SQL
+                try
+                {
+                    var result = vm.Result ?? new();
+                    await _dataService.AddFirstInspectionAsync(Info.Id, CurrentUser.Id, result.IsNormal,
+                        CurrentProduct.Name, result.ErrorCode, result.Description);
+
+                    FirstInspectionStatus = result.IsNormal;
+                }
+                catch (Exception ex)
+                {
+                    _log.AddLog("首件紀錄上傳異常");
+                    _log.AddErrorLog($"FirstArticleInspection: {ex.Message}");
+                    FirstInspectionStatus = false;
+                }
             }
         }
-        private void RoutineInspection()
+        private async Task RoutineInspection() // 待翻譯
         {
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, this, commonLists.ErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
@@ -116,9 +142,26 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                var result = vm.Result ?? new();
-                int statusresult = result.IsNormal ? 0 : 2;
-                InspectionStatuses.updateRoutineStatus(statusresult, result.ErrorCode, result.Description); // SQL
+                try
+                {
+                    var result = vm.Result ?? new();
+
+                    var currentTimeSlot = await _dataService.GetCurrentTimeSlotIdAsync();
+                    if (currentTimeSlot == null)
+                    {
+                        _log.AddLog("目前不在任何巡檢時段內");
+                        return;
+                    }
+
+                    await _dataService.AddRoutineInspectionAsync(Info.Id, CurrentUser.Id, result.IsNormal, currentTimeSlot ?? 1,
+                        CurrentProduct.Name, result.ErrorCode, result.Description);
+                    await UpdateTimeSlotsStatusAsync();
+                }
+                catch (Exception ex)
+                {
+                    _log.AddLog("巡檢紀錄上傳異常");
+                    _log.AddErrorLog($"RoutineInspection: {ex.Message}");
+                }
             }
         }
         private void OperationChange()
@@ -137,8 +180,6 @@ namespace FProductionDashBoard.ViewModels
             _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Success);
             _log.AddErrorLog($"設備 {Info.Name} 設備調試狀態更新:");
         }
-
-        // sql操作 待翻譯log 並加上errorlog
 
     }
 }

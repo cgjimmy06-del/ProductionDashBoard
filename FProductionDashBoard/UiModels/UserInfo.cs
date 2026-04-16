@@ -20,7 +20,7 @@ namespace FProductionDashBoard.UiModels
 
     public partial class UserInfo : ObservableObject
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 2; // 預設為訪客
         public required string UserId { get; set; }
         public required string Name { get; set; }
         public string? CardId { get; set; }

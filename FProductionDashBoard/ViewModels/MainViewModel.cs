@@ -20,6 +20,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -29,6 +30,7 @@ namespace FProductionDashBoard.ViewModels
         public List<MaterialInfo> MaterialsList = new(); // 物料清單
         public List<ErrorInfo> ErrorsList = new(); // 異常項目清單
         public List<UserInfo> EmployeesList = new(); // 人員清單
+        public List<TimeSlotLookup> TimeSlotsList = new(); // 人員清單
         //public List<DeviceInfo> OrdersList = new(); // 排單點檢清單
 
     }
@@ -131,6 +133,8 @@ namespace FProductionDashBoard.ViewModels
             var devicesTask = await GetDevicesListFromSqlAsync();
             var materialsTask = await GetMaterialsListFromSqlAsync();
             var errorsTask = await GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
+            var timeslotsTask = (await _dataService.TimeSlotLookupRep.GetAllAsync()).OrderBy(s => s.TimeSlotId);
+
             // await Task.WhenAll(devicesTask, materialsTask, errorsTask); .Result // 無法同時開啟dbcontext
 
             CommonLists = new ListsFormSql
@@ -138,6 +142,7 @@ namespace FProductionDashBoard.ViewModels
                 DevicesList = devicesTask,
                 MaterialsList = materialsTask,
                 ErrorsList = errorsTask,
+                TimeSlotsList = timeslotsTask.ToList()
             };
             _log.AddLog($"已載入清單: " +
                 $"DevicesList:[{CommonLists.DevicesList.Count}]-MaterialsList:[{CommonLists.MaterialsList.Count}]-ErrorsList:[{CommonLists.ErrorsList.Count}]");

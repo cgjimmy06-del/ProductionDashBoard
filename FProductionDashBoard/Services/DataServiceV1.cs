@@ -23,6 +23,7 @@ namespace FProductionDashBoard.Services.V1
         public ITimeSlotLookupRepository TimeSlotLookupRep { get; }
         public IInspectionRecordRepository InspectionRecordRep { get; }
 
+
         public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep,
             IErrorListRepository errorListRep, IMaterialReplacementRepository materialReplacementRep, 
             IInspectionRecordRepository inspectionRecordRep, ITimeSlotLookupRepository timeSlotLookupRep)
@@ -37,16 +38,20 @@ namespace FProductionDashBoard.Services.V1
         }
 
 
-        #region 品檢業務邏輯 - 首件 巡檢
+        #region 設備卡片區業務邏輯 - 物料 首件 巡檢
+        public async Task<int?> GetCurrentTimeSlotIdAsync()
+        {
+            return await TimeSlotLookupRep.GetCurrentTimeSlotIdAsync(BusinessDay);
+        }
         public async Task<int> AddFirstInspectionAsync(int equipmentId, int employeeId, bool result,
-            string? product, string? errorCode = null)
+            string? product, string? errorCode = null, string? description = null)
         {
             return await InspectionRecordRep.AddInspectionRecordAsync(
                 InspectionType.First, equipmentId, employeeId, result,
-                null, product, errorCode);
+                null, product, errorCode, description);
         }
         public async Task<int> AddRoutineInspectionAsync(int equipmentId,int employeeId, bool result,
-            int timeSlotId, string? product, string? errorCode = null)
+            int timeSlotId, string? product, string? errorCode = null, string? description = null) // 待翻譯
         {
             bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, timeSlotId, BusinessDay);
             if (exists)
@@ -54,11 +59,8 @@ namespace FProductionDashBoard.Services.V1
 
             return await InspectionRecordRep.AddInspectionRecordAsync(
                 InspectionType.Routine, equipmentId, employeeId, result,
-                timeSlotId, product, errorCode);
+                timeSlotId, product, errorCode, description);
         }
-        /// <summary>
-        /// 檢查當前時段是否有巡檢紀錄，若沒有則補一筆「未巡檢」紀錄
-        /// </summary>
         public async Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId, int employeeId)
         {
             // 找出所有已經結束的時段
@@ -87,14 +89,11 @@ namespace FProductionDashBoard.Services.V1
                     // 補上一筆逾時未巡檢紀錄
                     await InspectionRecordRep.AddInspectionRecordAsync(
                         InspectionType.Routine, equipmentId, employeeId, false,
-                        slot.TimeSlotId, null, "RTIN0001");
+                        slot.TimeSlotId, null, "RTIN0001", null);
                 }
             }
         }
-        /// <summary>
-        /// 檢查某設備在每個時段的狀態 (TimeSlotStatus)
-        /// </summary>
-        public async Task<List<int>> GetStatusForAllSlotsAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
+        public async Task<List<int>> GetAllSlotsStatusAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {
             var slotsResult = await InspectionRecordRep.GetStatusForAllSlotsAsync(equipmentId, BusinessDay);
 
@@ -117,24 +116,30 @@ namespace FProductionDashBoard.Services.V1
                 }
 
                 int status;
-                if (now < slotStart)
-                {
-                    status = -1; // 灰
-                }
-                else if (now >= slotStart && now < slotEnd)
-                {
-                    status = 1; // 黃
-                }
+                if (now < slotStart) status = -1; // 灰
                 else
                 {
-                    if (!hasRecord) status = 2; // 紅
-                    else status = recordResult ? 0 : 2;
+                    if (!hasRecord)
+                    {
+                        if (now >= slotStart && now < slotEnd) status = 1; // 黃
+                        else status = 2; // 紅
+                    }
+                    else status = recordResult ? 0 : 2; // 綠 : 紅
                 }
                 result.Add(status);
             }
             return result;
         }
+
+
         #endregion
+
+
+
+
+
+
+
 
 
         // 測試用
@@ -147,10 +152,10 @@ namespace FProductionDashBoard.Services.V1
             //foreach (var (ErrorCode, Message, Category) in devs) { Debug.WriteLine($"{ErrorCode} - {Message}"); }
 
             var timeslots = (await TimeSlotLookupRep.GetAllAsync()).ToList();
-            var timeslotstatus = await GetStatusForAllSlotsAsync(timeslots, 1);
+            var timeslotstatus = await GetAllSlotsStatusAsync(timeslots, 1);
             foreach (var slot in timeslotstatus)
             {
-                Debug.WriteLine($"新增成功，timeslotstatus = {slot}");
+                Debug.WriteLine($"timeslotstatus = {slot}");
             }
 
             //await CheckAndInsertMissedInspectionAsync(timeslots, 1, 1);

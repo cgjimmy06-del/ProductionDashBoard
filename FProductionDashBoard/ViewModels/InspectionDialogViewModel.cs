@@ -47,13 +47,7 @@ namespace FProductionDashBoard.ViewModels
         {
             CurrentDevice = $"{Properties.Resources.ComStrDevice}: {getinfo.Info.Name}";
             CurrentUser = $"{Properties.Resources.ComStrUser}: {getinfo.CurrentUser.Name}";
-
-            if (DialogInfoString == Properties.Resources.DeviceFirstInsDialog)
-                CurrentProduct = $"{Properties.Resources.ComStrProduct}: {getinfo.CurrentProduct.Name}";
-            else
-                CurrentProduct = $"{Properties.Resources.ComStrTimeSlot}: " +
-                    $"{getinfo.InspectionStatuses.StartTime + 
-                    getinfo.InspectionStatuses.CurrentRoutine * getinfo.InspectionStatuses.intervalTime}";
+            CurrentProduct = $"{Properties.Resources.ComStrProduct}: {getinfo.CurrentProduct.Name}";
 
             var categories = new List<string> { "INSP", "OTHER" };
             ErrorCodes = new ObservableCollection<ErrorInfo>(sqlerrorslist.Where(e => categories.Contains(e.Category ?? "")));
