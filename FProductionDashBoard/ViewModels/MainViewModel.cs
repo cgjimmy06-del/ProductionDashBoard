@@ -50,9 +50,13 @@ namespace FProductionDashBoard.ViewModels
         #endregion
         #region -- 介面邏輯 --
         [ObservableProperty]
-        private bool isCollapsedNav = false; // 導覽列收合
+        private int businessHour = 8; // 定義工作天的時
+        [ObservableProperty]
+        private int businessMinute = 0; // 定義工作天的分
         [ObservableProperty]
         private string currentTime = ""; // 系統時間
+        [ObservableProperty]
+        private bool isCollapsedNav = false; // 導覽列收合
         [ObservableProperty]
         private bool autoScrollEnabled = true; // 訊息視窗是否滾動
         [ObservableProperty]
@@ -87,18 +91,24 @@ namespace FProductionDashBoard.ViewModels
             AppVersion = FileVersionInfo.GetVersionInfo(
                 Assembly.GetExecutingAssembly().Location).FileVersion ?? "Unknown";
 
-            // 建立 DispatcherTimer 每秒更新一次時間
-            DefaultTimer = new DispatcherTimer();
-            DefaultTimer.Interval = TimeSpan.FromSeconds(1);
-            DefaultTimer.Tick += (s, e) =>
-            { CurrentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm"); };
-            DefaultTimer.Start();
-
             // DI注入 Repository
             SystemUser = user;
             CurrentUser = user;
             _log = log;
             _dataService = dataservice;
+
+            // 建立 DispatcherTimer 每秒更新一次時間，並定義工作起始時間
+            _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
+
+            DefaultTimer = new DispatcherTimer();
+            DefaultTimer.Interval = TimeSpan.FromSeconds(1);
+            DefaultTimer.Tick += (s, e) =>
+            {
+                CurrentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+                if (DateTime.Now.AddDays(-1) > _dataService.BusinessDay)
+                    _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
+            };
+            DefaultTimer.Start();
 
             InitializeCommand = new AsyncRelayCommand(LoadAllListsAsync);
             // 設定元件事件 (導覽列)

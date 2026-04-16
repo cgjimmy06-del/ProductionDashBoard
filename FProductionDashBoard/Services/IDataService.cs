@@ -13,11 +13,14 @@ namespace FProductionDashBoard.Services
 {
     public interface IDataService
     {
+        public DateTime BusinessDay { get; set; }
         public Task Demo();
         public IEquipmentRepository EquipmentRep { get; }
         public IEmployeeRepository EmployeeRep { get; }
         public IMaterialRepository MaterialRep { get; }
         public IErrorListRepository ErrorListRep { get; }
+        public IMaterialReplacementRepository MaterialReplacementRep { get; }
+        public IInspectionRecordRepository InspectionRecordRep { get; }
 
     }
 }

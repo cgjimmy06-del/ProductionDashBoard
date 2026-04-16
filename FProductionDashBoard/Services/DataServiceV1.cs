@@ -1,45 +1,166 @@
-﻿using FProductionDashBoard.Repositories;
+﻿using FProductionDashBoard.Models;
+using FProductionDashBoard.Repositories;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace FProductionDashBoard.Services.V1
 {
     public class DataService : IDataService
     {
+        public DateTime BusinessDay { get; set; }
         public IEquipmentRepository EquipmentRep { get; }
         public IEmployeeRepository EmployeeRep { get; }
         public IMaterialRepository MaterialRep { get; }
         public IErrorListRepository ErrorListRep { get; }
         public IMaterialReplacementRepository MaterialReplacementRep { get; }
+        public ITimeSlotLookupRepository TimeSlotLookupRep { get; }
+        public IInspectionRecordRepository InspectionRecordRep { get; }
 
         public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep,
-            IErrorListRepository errorListRep, IMaterialReplacementRepository materialReplacementRep)
+            IErrorListRepository errorListRep, IMaterialReplacementRepository materialReplacementRep, 
+            IInspectionRecordRepository inspectionRecordRep, ITimeSlotLookupRepository timeSlotLookupRep)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
             MaterialRep = materialrep;
             ErrorListRep = errorListRep;
             MaterialReplacementRep = materialReplacementRep;
+            InspectionRecordRep = inspectionRecordRep;
+            TimeSlotLookupRep = timeSlotLookupRep;
         }
 
 
+        #region 品檢業務邏輯 - 首件 巡檢
+        public async Task<int> AddFirstInspectionAsync(int equipmentId, int employeeId, bool result,
+            string? product, string? errorCode = null)
+        {
+            return await InspectionRecordRep.AddInspectionRecordAsync(
+                InspectionType.First, equipmentId, employeeId, result,
+                null, product, errorCode);
+        }
+        public async Task<int> AddRoutineInspectionAsync(int equipmentId,int employeeId, bool result,
+            int timeSlotId, string? product, string? errorCode = null)
+        {
+            bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, timeSlotId, BusinessDay);
+            if (exists)
+            { throw new InvalidOperationException("同一設備同一時段已有紀錄，不能重複新增。"); }
+
+            return await InspectionRecordRep.AddInspectionRecordAsync(
+                InspectionType.Routine, equipmentId, employeeId, result,
+                timeSlotId, product, errorCode);
+        }
+        /// <summary>
+        /// 檢查當前時段是否有巡檢紀錄，若沒有則補一筆「未巡檢」紀錄
+        /// </summary>
+        public async Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId, int employeeId)
+        {
+            // 找出所有已經結束的時段
+            var endedSlots = timeSlotLookups.Where(slot =>
+            {
+                // 將 slot 的 Start/EndTime (TimeSpan) 映射到當天業務日
+                var slotStart = BusinessDay.Date.Add(slot.StartAt);
+                var slotEnd = BusinessDay.Date.Add(slot.EndAt);
+
+                // 跨日邏輯: 跨整點 EndAt + 1；跨日 StartAt, EndAt + 1
+                if (slot.IsCrossDay)
+                {
+                    slotEnd = slotEnd.AddDays(1);
+                    if (slot.EndAt > slot.StartAt)
+                        slotStart = slotStart.AddDays(1);
+                }
+
+                return slotEnd <= DateTime.Now && slotStart >= BusinessDay && slotEnd <= BusinessDay.AddDays(1);
+            });
+            foreach (var slot in endedSlots)
+            {
+                // 檢查該設備在此時段是否已有紀錄
+                bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, slot.TimeSlotId, BusinessDay);
+                if (!exists)
+                {
+                    // 補上一筆逾時未巡檢紀錄
+                    await InspectionRecordRep.AddInspectionRecordAsync(
+                        InspectionType.Routine, equipmentId, employeeId, false,
+                        slot.TimeSlotId, null, "RTIN0001");
+                }
+            }
+        }
+        /// <summary>
+        /// 檢查某設備在每個時段的狀態 (TimeSlotStatus)
+        /// </summary>
+        public async Task<List<int>> GetStatusForAllSlotsAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
+        {
+            var slotsResult = await InspectionRecordRep.GetStatusForAllSlotsAsync(equipmentId, BusinessDay);
+
+            var now = DateTime.Now;
+            var result = new List<int>();
+            for (int i = 0; i < timeSlotLookups.Count; i++)
+            {
+                var slot = timeSlotLookups[i];
+                var (hasRecord, recordResult) = slotsResult[i];
+
+                var slotStart = BusinessDay.Date.Add(slot.StartAt);
+                var slotEnd = BusinessDay.Date.Add(slot.EndAt);
+
+                // 跨日邏輯: 跨整點 EndAt + 1；跨日 StartAt, EndAt + 1
+                if (slot.IsCrossDay)
+                {
+                    slotEnd = slotEnd.AddDays(1);
+                    if (slot.EndAt > slot.StartAt)
+                        slotStart = slotStart.AddDays(1);
+                }
+
+                int status;
+                if (now < slotStart)
+                {
+                    status = -1; // 灰
+                }
+                else if (now >= slotStart && now < slotEnd)
+                {
+                    status = 1; // 黃
+                }
+                else
+                {
+                    if (!hasRecord) status = 2; // 紅
+                    else status = recordResult ? 0 : 2;
+                }
+                result.Add(status);
+            }
+            return result;
+        }
+        #endregion
 
 
         // 測試用
         public async Task Demo()
         {
             // 查詢
-            var devs = await ErrorListRep.GetMessagesWithOtherAsync("zh-TW"); //zh-TW INSP0001
+            //var devs = await ErrorListRep.GetMessagesWithOtherAsync("zh-TW"); //zh-TW INSP0001
             //foreach (var dev in devs) { Debug.WriteLine($"{dev.LanguageCode} - {dev.Message}"); }
             //Debug.WriteLine($"{devs}");
-            foreach (var (ErrorCode, Message, Category) in devs) { Debug.WriteLine($"{ErrorCode} - {Message}"); }
+            //foreach (var (ErrorCode, Message, Category) in devs) { Debug.WriteLine($"{ErrorCode} - {Message}"); }
 
+            var timeslots = (await TimeSlotLookupRep.GetAllAsync()).ToList();
+            var timeslotstatus = await GetStatusForAllSlotsAsync(timeslots, 1);
+            foreach (var slot in timeslotstatus)
+            {
+                Debug.WriteLine($"新增成功，timeslotstatus = {slot}");
+            }
+
+            //await CheckAndInsertMissedInspectionAsync(timeslots, 1, 1);
             // 插入
+
+            //var firstInspId = await CreateFirstInspectionAsync(1, 1, true,"ABC-123", null);
+            //var routineInspId = await CreateRoutineInspectionAsync(1, 1, false, 3, "CDE-456", "INSP0002");
+
+            //Debug.WriteLine($"新增成功，firstInspId = {firstInspId}");
+            //Debug.WriteLine($"新增成功，routineInspId = {routineInspId}");
             //var replacementId = await MaterialReplacementRep.AddReplacementRecordAsync(
             //                    equipmentId: 3,
             //                    employeeId: 2,

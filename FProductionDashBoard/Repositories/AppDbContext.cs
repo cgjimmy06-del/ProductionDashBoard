@@ -20,6 +20,8 @@ namespace FProductionDashBoard.Repositories
         public DbSet<ErrorTranslation> ErrorTranslations { get; set; }
         public DbSet<MaterialReplacementRecord> MaterialReplacementRecords { get; set; }
         public DbSet<MaterialReplacementDetail> MaterialReplacementDetails { get; set; }
+        public DbSet<InspectionRecord> InspectionRecords { get; set; }
+        public DbSet<TimeSlotLookup> TimeSlotLookups { get; set; }
 
         public MesDbContext(DbContextOptions<MesDbContext> options) : base(options) { }
 
