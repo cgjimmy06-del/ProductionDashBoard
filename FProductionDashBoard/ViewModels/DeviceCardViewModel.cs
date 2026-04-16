@@ -71,7 +71,7 @@ namespace FProductionDashBoard.ViewModels
 
             for (int i = 0; i < getLists.TimeSlotsList.Count; i++) { TimeSlotsStatus.Add(-1); }
 
-            MaterialsChangeCommand = new RelayCommand(MaterialsChange);
+            MaterialsChangeCommand = new AsyncRelayCommand(MaterialsChange);
             FirstInspectionCommand = new AsyncRelayCommand(FirstArticleInspection);
             RoutineInspectionCommand = new AsyncRelayCommand(RoutineInspection);
             OperationCommand = new RelayCommand(OperationChange);
@@ -93,7 +93,7 @@ namespace FProductionDashBoard.ViewModels
                 TimeSlotsStatus[i] = ideviceslots[i];
         }
         // 操作員按鈕
-        private void MaterialsChange() // 待翻譯
+        private async Task MaterialsChange() // 待翻譯
         {
             var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this, commonLists.MaterialsList);
             var uc = new MaterialsDialog { DataContext = vm };
@@ -102,10 +102,26 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                var result = vm.Result ?? new();
-                // SQL
-                _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - Category: {result.Selections.Count} -> " +
-                    $"Sum: {result.Selections.Sum(d => d.SelectedCount)}", LogLevel.Success);
+                try
+                {
+                    var result = vm.Result ?? new();
+
+                    List<(int materialId, int quantity)> selectdetials = new List<(int, int)>();
+                    foreach (var mdetial in result.Selections)
+                        selectdetials.Add((mdetial.Id, mdetial.SelectedCount));
+
+                    await _dataService.AddReplacementRecordAsync(Info.Id, CurrentUser.Id, selectdetials);
+
+                    _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
+                        $"Category: {result.Selections.Count} -> " +
+                        $"Sum: {result.Selections.Sum(d => d.SelectedCount)}", LogLevel.Success);
+                }
+                catch (Exception ex)
+                {
+                    _log.AddLog("物料更換紀錄上傳異常");
+                    _log.AddErrorLog($"MaterialsChange: {ex.Message}");
+                    FirstInspectionStatus = false;
+                }
             }
         }
         private async Task FirstArticleInspection() // 待翻譯
@@ -124,6 +140,7 @@ namespace FProductionDashBoard.ViewModels
                         CurrentProduct.Name, result.ErrorCode, result.Description);
 
                     FirstInspectionStatus = result.IsNormal;
+                    _log.AddLog("首件紀錄上傳完成");
                 }
                 catch (Exception ex)
                 {
@@ -156,6 +173,7 @@ namespace FProductionDashBoard.ViewModels
                     await _dataService.AddRoutineInspectionAsync(Info.Id, CurrentUser.Id, result.IsNormal, currentTimeSlot ?? 1,
                         CurrentProduct.Name, result.ErrorCode, result.Description);
                     await UpdateTimeSlotsStatusAsync();
+                    _log.AddLog("巡檢紀錄上傳完成");
                 }
                 catch (Exception ex)
                 {

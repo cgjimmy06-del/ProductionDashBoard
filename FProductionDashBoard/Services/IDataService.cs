@@ -26,6 +26,11 @@ namespace FProductionDashBoard.Services
 
 
 
+
+        /// <summary>
+        /// 新增物料更換紀錄
+        /// </summary>
+        public Task<int> AddReplacementRecordAsync(int equipmentId, int employeeId, List<(int materialId, int quantity)> materialDetails);
         /// <summary>
         /// 取得當前巡檢區段ID
         /// </summary>

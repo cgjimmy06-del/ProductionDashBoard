@@ -39,6 +39,13 @@ namespace FProductionDashBoard.Services.V1
 
 
         #region 設備卡片區業務邏輯 - 物料 首件 巡檢
+        public async Task<int> AddReplacementRecordAsync(int equipmentId, int employeeId, 
+            List<(int materialId, int quantity)> materialDetails)
+        {
+            return await MaterialReplacementRep.AddReplacementRecordAsync(
+                                equipmentId, employeeId, "MTRP0001", materialDetails);
+        }
+
         public async Task<int?> GetCurrentTimeSlotIdAsync()
         {
             return await TimeSlotLookupRep.GetCurrentTimeSlotIdAsync(BusinessDay);
