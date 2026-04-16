@@ -16,7 +16,7 @@ namespace FProductionDashBoard.ViewModels
 {
     public class DeviceCardsResult
     {
-        public required List<DeviceInfo> Selections;
+        public List<DeviceInfo> Selections { get; set; } = new();
     }
 
     public partial class AddDeivceDialogViewModel : DialogBaseViewModel<DeviceCardsResult>

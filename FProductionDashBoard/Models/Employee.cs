@@ -18,8 +18,8 @@ namespace FProductionDashBoard.Models
         public string? Email { get; set; }
         public int Permission { get; set; }
         public string? DepartmentId { get; set; }
-        public DateTime CreateAt { get; set; }
-        public DateTime UpdateAt { get; set; }
+        public DateTime? CreateAt { get; set; }
+        public DateTime? UpdateAt { get; set; }
     }
     public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
     {
@@ -37,8 +37,8 @@ namespace FProductionDashBoard.Models
             builder.Property(e => e.Email).HasColumnName("email");
             builder.Property(e => e.Permission).HasColumnName("permission");
             builder.Property(e => e.DepartmentId).HasColumnName("department_id");
-            builder.Property(e => e.CreateAt).HasColumnName("create_at");
-            builder.Property(e => e.UpdateAt).HasColumnName("update_at");
+            builder.Property(e => e.CreateAt).HasColumnName("create_at").HasDefaultValueSql("GETDATE()"); ;
+            builder.Property(e => e.UpdateAt).HasColumnName("update_at").HasDefaultValueSql("GETDATE()"); ;
         }
     }
 }

@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace FProductionDashBoard.UiModels
 {
-    public partial class ErrorInfo : ObservableObject
+    public class ErrorInfo
     {
         public string ErrorCode { get; set; } = string.Empty;
         public string? Message { get; set; }
+        public string? Category { get; set; }
     }
 }

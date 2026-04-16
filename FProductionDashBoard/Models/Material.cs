@@ -19,10 +19,11 @@ namespace FProductionDashBoard.Models
         public string? Description { get; set; }
         public int MinimumStock { get; set; } = 0;
         public int QuantityInStock { get; set; } = 0;
-        public DateTime CreateAt { get; set; }
-        public DateTime UpdateAt { get; set; }
+        public DateTime? CreateAt { get; set; }
+        public DateTime? UpdateAt { get; set; }
 
         public MaterialType? Type { get; set; } // 導覽屬性
+        public ICollection<MaterialReplacementDetail> ReplacementDetails { get; set; } = []; // 對應的明細
     }
     public class MaterialConfiguration : IEntityTypeConfiguration<Material>
     {
@@ -41,8 +42,8 @@ namespace FProductionDashBoard.Models
             builder.Property(m => m.Description).HasColumnName("description");
             builder.Property(m => m.MinimumStock).HasColumnName("minimum_stock");
             builder.Property(m => m.QuantityInStock).HasColumnName("quantity_instock");
-            builder.Property(m => m.CreateAt).HasColumnName("create_at");
-            builder.Property(m => m.UpdateAt).HasColumnName("update_at");
+            builder.Property(m => m.CreateAt).HasColumnName("create_at").HasDefaultValueSql("GETDATE()"); ;
+            builder.Property(m => m.UpdateAt).HasColumnName("update_at").HasDefaultValueSql("GETDATE()"); ;
 
             // 外鍵關聯
             builder.HasOne(m => m.Type)

@@ -19,7 +19,7 @@ namespace FProductionDashBoard.ViewModels
     }
     public class InspectionResult
     {
-        public required bool IsNormal { get; set; }
+        public bool IsNormal { get; set; } = false;
         public string? ErrorCode { get; set; }
         public string? Description { get; set; }
     }
@@ -47,15 +47,10 @@ namespace FProductionDashBoard.ViewModels
         {
             CurrentDevice = $"{Properties.Resources.ComStrDevice}: {getinfo.Info.Name}";
             CurrentUser = $"{Properties.Resources.ComStrUser}: {getinfo.CurrentUser.Name}";
+            CurrentProduct = $"{Properties.Resources.ComStrProduct}: {getinfo.CurrentProduct.Name}";
 
-            if (DialogInfoString == Properties.Resources.DeviceFirstInsDialog)
-                CurrentProduct = $"{Properties.Resources.ComStrProduct}: {getinfo.CurrentProduct.Name}";
-            else
-                CurrentProduct = $"{Properties.Resources.ComStrTimeSlot}: " +
-                    $"{getinfo.InspectionStatuses.StartTime + 
-                    getinfo.InspectionStatuses.CurrentRoutine * getinfo.InspectionStatuses.intervalTime}";
-
-            ErrorCodes = new ObservableCollection<ErrorInfo>(sqlerrorslist);
+            var categories = new List<string> { "INSP", "OTHER" };
+            ErrorCodes = new ObservableCollection<ErrorInfo>(sqlerrorslist.Where(e => categories.Contains(e.Category ?? "")));
             SelectionCode = (ErrorCodes.FirstOrDefault() ?? new()).ErrorCode;
 
             ConfirmCommand = new RelayCommand(() => OnConfirm());
