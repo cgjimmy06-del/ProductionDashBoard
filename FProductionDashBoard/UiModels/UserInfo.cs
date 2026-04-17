@@ -9,15 +9,6 @@ using System.Threading.Tasks;
 
 namespace FProductionDashBoard.UiModels
 {
-    public enum Roles
-    {
-        None = -1,
-        Admin = 0,
-        Viewer = 1,
-        Supervisor = 2,
-        Operator = 3 // 後續加入不同職責的操作員代碼
-    }
-
     public partial class UserInfo : ObservableObject
     {
         public int Id { get; set; } = 2; // 預設為訪客
@@ -26,7 +17,7 @@ namespace FProductionDashBoard.UiModels
         public string? CardId { get; set; }
         public string Password { get; set; } = string.Empty;
         public string? Email { get; set; }
-        public int Role { get; set; } = (int)Roles.Viewer;
+        public int RoleId { get; set; } = 1; // 訪客權限
         public string? DepartmentId { get; set; }
 
         [ObservableProperty]

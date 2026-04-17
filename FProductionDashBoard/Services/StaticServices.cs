@@ -252,7 +252,7 @@ namespace FProductionDashBoard.Services
                 .Build();
 
             var connStr = config.GetConnectionString($"{serverKey}_MESDashboard");
-            var sqlStr = "SELECT user_id, name, permission FROM employee WHERE user_id=@Userid AND password=@Password";
+            var sqlStr = "SELECT user_id, name, role_id FROM employee WHERE user_id=@Userid AND password=@Password";
 
             using var conn = new SqlConnection(connStr);
             return conn.QueryFirstOrDefault<UiModels.UserInfo>(sqlStr, new { Userid = userid, Password = password });
