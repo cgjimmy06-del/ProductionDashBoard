@@ -46,7 +46,8 @@ namespace FProductionDashBoard.ViewModels
 
         #region  -- DI注入資源 --
         private readonly IDataService _dataService;
-        public LogService _log { get; }
+        private LogService _log { get; }
+        private AuthorizationService _authService { get; }
         public UserInfo SystemUser { get; }
         public UserInfo CurrentUser { get; }
         #endregion
@@ -87,7 +88,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand SaveLogsCommand { get; }
         // 主視覺視窗
 
-        public MainViewModel(UserInfo user, LogService log, IDataService dataservice)
+        public MainViewModel(UserInfo user, LogService log, IDataService dataservice, AuthorizationService auth)
         {
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(
@@ -98,6 +99,7 @@ namespace FProductionDashBoard.ViewModels
             CurrentUser = user;
             _log = log;
             _dataService = dataservice;
+            _authService = auth;
 
             // 建立 DispatcherTimer 每秒更新一次時間，並定義工作起始時間
             _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
@@ -115,10 +117,12 @@ namespace FProductionDashBoard.ViewModels
             InitializeCommand = new AsyncRelayCommand(LoadAllListsAsync);
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
-            SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode);
+            SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode, 
+                (NavMode) => _authService.HasPermission(Services.Permission.View));
 
             //  設定元件事件 (工具列)
-            TestCommand = new AsyncRelayCommand(() => SqlTestFunc());
+            TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
+                () => _authService.HasPermission(Services.Permission.Test));
 
             // 設定元件事件 (訊息視窗)
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
@@ -209,7 +213,7 @@ namespace FProductionDashBoard.ViewModels
                 foreach (var us in userList)
                     newlist.Add(new UserInfo
                     {
-                        Id = us.Id,
+                        Id = us.EmployeeId,
                         UserId = us.UserId,
                         Name = us.Name,
                         CardId = us.CardId,
@@ -324,7 +328,8 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Operation:
-                    var newvm = new DeviceCardContainerViewModel(_log, _dataService, CurrentUser, CommonLists);
+                    var newvm = new DeviceCardContainerViewModel(_log, _dataService, _authService, 
+                        CurrentUser, CommonLists);
                     Card1 = newvm;
                     break;
 

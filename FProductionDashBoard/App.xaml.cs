@@ -33,6 +33,7 @@ namespace FProductionDashBoard
             // 後續加入語言
             string selectedServer = loginWindow.SelectedServer;
             var user = loginWindow.User;
+            Debug.WriteLine($"Login User: {user.Name}, RoleId: {user.RoleId}");
 
             var services = new ServiceCollection();
             var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
@@ -56,12 +57,13 @@ namespace FProductionDashBoard
             services.AddScoped<Repositories.ITimeSlotLookupRepository, Repositories.TimeSlotLookupRepository>();
             services.AddScoped<Repositories.IInspectionRecordRepository, Repositories.InspectionRecordRepository>();
 
+            // 註冊 資訊
+            services.AddSingleton(user);
+
             // 註冊 Service
             services.AddScoped<Services.IDataService, Services.V1.DataService>();
             services.AddScoped<Services.LogService>();
-
-            // 註冊 資訊
-            services.AddSingleton(user);
+            services.AddScoped<Services.AuthorizationService>();
 
             // 註冊 ViewModel
             services.AddScoped<ViewModels.MainViewModel>();

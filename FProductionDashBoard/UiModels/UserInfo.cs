@@ -22,6 +22,5 @@ namespace FProductionDashBoard.UiModels
 
         [ObservableProperty]
         private int status;
-        //public ICollection<DeviceInfo> Devices { get; set; } = new List<DeviceInfo>();
     }
 }

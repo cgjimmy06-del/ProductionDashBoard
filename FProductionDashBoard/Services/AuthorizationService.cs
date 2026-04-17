@@ -9,6 +9,7 @@ using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FProductionDashBoard.Services
 {
@@ -99,22 +100,22 @@ namespace FProductionDashBoard.Services
     {
         public List<Role> RolesList { get; set; } = []; // 由此映射，外部僅需知道其角色
         private HashSet<Permission> _userPermissions;
-        public AuthorizationService(int roleid) // IEnumerable<Permission> permissions
+        public AuthorizationService(UiModels.UserInfo nuser) // IEnumerable<Permission> permissions
         {
             GetRolesList();
 
-            if (!Enum.IsDefined(typeof(RoleId), roleid)) roleid = 1; // 如果角色編號沒有被定義，則為訪客
+            if (!Enum.IsDefined(typeof(RoleId), nuser.RoleId)) nuser.RoleId = 1; // 如果角色編號定義異常，則為訪客
 
-            var permissions = RolesList.First(r => r.Id == (RoleId)roleid).Permissions;
+            var permissions = RolesList.First(r => r.Id == (RoleId)nuser.RoleId).Permissions;
             _userPermissions = [.. permissions];
         }
         public bool HasPermission(Permission permission) =>
             _userPermissions.Contains(permission);
-        public void UpdateUser(int roleid)
+        public void UpdateUser(UiModels.UserInfo nuser)
         {
-            if (!Enum.IsDefined(typeof(RoleId), roleid)) roleid = 1; // 如果角色編號沒有被定義，則為訪客
+            if (!Enum.IsDefined(typeof(RoleId), nuser.RoleId)) nuser.RoleId = 1; // 如果角色編號定義異常，則為訪客
 
-            var permissions = RolesList.First(r => r.Id == (RoleId)roleid).Permissions;
+            var permissions = RolesList.First(r => r.Id == (RoleId)nuser.RoleId).Permissions;
             _userPermissions = [.. permissions];
         }
 

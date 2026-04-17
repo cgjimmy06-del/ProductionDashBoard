@@ -10,7 +10,7 @@ namespace FProductionDashBoard.Models
 {
     public class Employee
     {
-        public int Id { get; set; } // PK
+        public int EmployeeId { get; set; } // PK
         public string UserId { get; set; } = string.Empty;
         public string? CardId { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -27,8 +27,8 @@ namespace FProductionDashBoard.Models
         {
             builder.ToTable("employee");
 
-            builder.HasKey(e => e.Id);
-            builder.Property(e => e.Id).HasColumnName("employee_id").ValueGeneratedOnAdd();
+            builder.HasKey(e => e.EmployeeId);
+            builder.Property(e => e.EmployeeId).HasColumnName("employee_id").ValueGeneratedOnAdd();
 
             builder.Property(e => e.UserId).HasColumnName("user_id");
             builder.Property(e => e.CardId).HasColumnName("card_id");
