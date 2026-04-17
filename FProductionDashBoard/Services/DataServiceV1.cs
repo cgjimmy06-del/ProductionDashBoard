@@ -68,38 +68,6 @@ namespace FProductionDashBoard.Services.V1
                 InspectionType.Routine, equipmentId, employeeId, result,
                 timeSlotId, product, errorCode, description);
         }
-        public async Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId, int employeeId)
-        {
-            // 找出所有已經結束的時段
-            var endedSlots = timeSlotLookups.Where(slot =>
-            {
-                // 將 slot 的 Start/EndTime (TimeSpan) 映射到當天業務日
-                var slotStart = BusinessDay.Date.Add(slot.StartAt);
-                var slotEnd = BusinessDay.Date.Add(slot.EndAt);
-
-                // 跨日邏輯: 跨整點 EndAt + 1；跨日 StartAt, EndAt + 1
-                if (slot.IsCrossDay)
-                {
-                    slotEnd = slotEnd.AddDays(1);
-                    if (slot.EndAt > slot.StartAt)
-                        slotStart = slotStart.AddDays(1);
-                }
-
-                return slotEnd <= DateTime.Now && slotStart >= BusinessDay && slotEnd <= BusinessDay.AddDays(1);
-            });
-            foreach (var slot in endedSlots)
-            {
-                // 檢查該設備在此時段是否已有紀錄
-                bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, slot.TimeSlotId, BusinessDay);
-                if (!exists)
-                {
-                    // 補上一筆逾時未巡檢紀錄
-                    await InspectionRecordRep.AddInspectionRecordAsync(
-                        InspectionType.Routine, equipmentId, employeeId, false,
-                        slot.TimeSlotId, null, "RTIN0001", null);
-                }
-            }
-        }
         public async Task<List<int>> GetAllSlotsStatusAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {
             var slotsResult = await InspectionRecordRep.GetStatusForAllSlotsAsync(equipmentId, BusinessDay);
@@ -136,6 +104,38 @@ namespace FProductionDashBoard.Services.V1
                 result.Add(status);
             }
             return result;
+        }
+        public async Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
+        {
+            // 找出所有已經結束的時段
+            var endedSlots = timeSlotLookups.Where(slot =>
+            {
+                // 將 slot 的 Start/EndTime (TimeSpan) 映射到當天業務日
+                var slotStart = BusinessDay.Date.Add(slot.StartAt);
+                var slotEnd = BusinessDay.Date.Add(slot.EndAt);
+
+                // 跨日邏輯: 跨整點 EndAt + 1；跨日 StartAt, EndAt + 1
+                if (slot.IsCrossDay)
+                {
+                    slotEnd = slotEnd.AddDays(1);
+                    if (slot.EndAt > slot.StartAt)
+                        slotStart = slotStart.AddDays(1);
+                }
+
+                return slotEnd <= DateTime.Now && slotStart >= BusinessDay && slotEnd <= BusinessDay.AddDays(1);
+            });
+            foreach (var slot in endedSlots)
+            {
+                // 檢查該設備在此時段是否已有紀錄
+                bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, slot.TimeSlotId, BusinessDay);
+                if (!exists)
+                {
+                    // 補上一筆逾時未巡檢紀錄 (以管理員為記錄)
+                    await InspectionRecordRep.AddInspectionRecordAsync(
+                        InspectionType.Routine, equipmentId, 1, false,
+                        slot.TimeSlotId, null, "RTIN0001", null);
+                }
+            }
         }
 
 

@@ -29,7 +29,7 @@ namespace FProductionDashBoard.ViewModels
         public List<DeviceInfo> DevicesList = new(); // 設備清單
         public List<MaterialInfo> MaterialsList = new(); // 物料清單
         public List<ErrorInfo> ErrorsList = new(); // 異常項目清單
-        public List<UserInfo> EmployeesList = new(); // 人員清單
+        public List<UserInfo> UsersList = new(); // 人員清單
         public List<TimeSlotLookup> TimeSlotsList = new(); // 人員清單
         //public List<DeviceInfo> OrdersList = new(); // 排單點檢清單
 
@@ -46,7 +46,8 @@ namespace FProductionDashBoard.ViewModels
 
         #region  -- DI注入資源 --
         private readonly IDataService _dataService;
-        public LogService _log { get; }
+        private LogService _log { get; }
+        private AuthorizationService _authService { get; }
         public UserInfo SystemUser { get; }
         public UserInfo CurrentUser { get; }
         #endregion
@@ -87,7 +88,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand SaveLogsCommand { get; }
         // 主視覺視窗
 
-        public MainViewModel(UserInfo user, LogService log, IDataService dataservice)
+        public MainViewModel(UserInfo user, LogService log, IDataService dataservice, AuthorizationService auth)
         {
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(
@@ -98,6 +99,7 @@ namespace FProductionDashBoard.ViewModels
             CurrentUser = user;
             _log = log;
             _dataService = dataservice;
+            _authService = auth;
 
             // 建立 DispatcherTimer 每秒更新一次時間，並定義工作起始時間
             _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
@@ -115,10 +117,12 @@ namespace FProductionDashBoard.ViewModels
             InitializeCommand = new AsyncRelayCommand(LoadAllListsAsync);
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
-            SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode);
+            SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode, 
+                (NavMode) => _authService.HasPermission(Services.Permission.View));
 
             //  設定元件事件 (工具列)
-            TestCommand = new AsyncRelayCommand(() => SqlTestFunc());
+            TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
+                () => _authService.HasPermission(Services.Permission.Test));
 
             // 設定元件事件 (訊息視窗)
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
@@ -127,10 +131,12 @@ namespace FProductionDashBoard.ViewModels
             //Cards.Add(new DeviceCardContainerViewModel(_log, _dataService, CurrentUser));
 
         }
-        // 載入初始化
+
+        // 載入初始化 待翻譯log 並加上errorlog
         public async Task LoadAllListsAsync()
         {
             var devicesTask = await GetDevicesListFromSqlAsync();
+            var usersTask = await GetUsersListFromSqlAsync();
             var materialsTask = await GetMaterialsListFromSqlAsync();
             var errorsTask = await GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
             var timeslotsTask = (await _dataService.TimeSlotLookupRep.GetAllAsync()).OrderBy(s => s.TimeSlotId);
@@ -142,13 +148,16 @@ namespace FProductionDashBoard.ViewModels
                 DevicesList = devicesTask,
                 MaterialsList = materialsTask,
                 ErrorsList = errorsTask,
+                UsersList = usersTask,
                 TimeSlotsList = timeslotsTask.ToList()
             };
             _log.AddLog($"已載入清單: " +
-                $"DevicesList:[{CommonLists.DevicesList.Count}]-MaterialsList:[{CommonLists.MaterialsList.Count}]-ErrorsList:[{CommonLists.ErrorsList.Count}]");
+                $"Devices:[{CommonLists.DevicesList.Count}]-" +
+                $"Users:[{CommonLists.UsersList.Count}]-" +
+                $"Materials:[{CommonLists.MaterialsList.Count}]-" +
+                $"Errors:[{CommonLists.ErrorsList.Count}]" +
+                $"TimeSlots:[{CommonLists.TimeSlotsList.Count}]");
         }
-
-        // 待翻譯log 並加上errorlog
         public async Task<List<DeviceInfo>> GetDevicesListFromSqlAsync()
         {
             try
@@ -156,7 +165,7 @@ namespace FProductionDashBoard.ViewModels
                 if (!_dataService.EquipmentRep.CheckConnection())
                     _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
 
-                var equipmentList = (await _dataService.EquipmentRep.GetAllAsync());
+                var equipmentList = await _dataService.EquipmentRep.GetAllAsync();
 
                 var newlist = new List<DeviceInfo>();
                 foreach (var eq in equipmentList)
@@ -191,6 +200,46 @@ namespace FProductionDashBoard.ViewModels
                 return new List<DeviceInfo>();
             }
         }
+        public async Task<List<UserInfo>> GetUsersListFromSqlAsync()
+        {
+            try
+            {
+                if (!_dataService.EquipmentRep.CheckConnection())
+                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
+
+                var userList = await _dataService.EmployeeRep.GetAllAsync();
+
+                var newlist = new List<UserInfo>();
+                foreach (var us in userList)
+                    newlist.Add(new UserInfo
+                    {
+                        Id = us.EmployeeId,
+                        UserId = us.UserId,
+                        Name = us.Name,
+                        CardId = us.CardId,
+                        Password = us.Password,
+                        Email = us.Email,
+                        RoleId = us.RoleId,
+                        DepartmentId = us.DepartmentId
+                    });
+                return newlist;
+            }
+            catch (SqlException sqlex)
+            {
+                Debug.WriteLine($"SqlException: {sqlex.Message}");
+                return new List<UserInfo>();
+            }
+            catch (TaskCanceledException taskex)
+            {
+                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
+                return new List<UserInfo>();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception: {ex.Message}");
+                return new List<UserInfo>();
+            }
+        }
         public async Task<List<MaterialInfo>> GetMaterialsListFromSqlAsync()
         {
             try
@@ -198,7 +247,7 @@ namespace FProductionDashBoard.ViewModels
                 if (!_dataService.MaterialRep.CheckConnection())
                     _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
 
-                var materialList = (await _dataService.MaterialRep.GetAllAsync());
+                var materialList = await _dataService.MaterialRep.GetAllAsync();
 
                 var newlist = new List<MaterialInfo>();
                 foreach (var ma in materialList)
@@ -239,7 +288,7 @@ namespace FProductionDashBoard.ViewModels
                 if (!_dataService.MaterialRep.CheckConnection())
                     _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
 
-                var errorList = (await _dataService.ErrorListRep.GetMessagesWithOtherAsync(languageCode));
+                var errorList = await _dataService.ErrorListRep.GetMessagesWithOtherAsync(languageCode);
 
                 var newlist = new List<ErrorInfo>();
                 foreach (var er in errorList)
@@ -279,7 +328,8 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Operation:
-                    var newvm = new DeviceCardContainerViewModel(_log, _dataService, CurrentUser, CommonLists);
+                    var newvm = new DeviceCardContainerViewModel(_log, _dataService, _authService, 
+                        CurrentUser, CommonLists);
                     Card1 = newvm;
                     break;
 

@@ -35,6 +35,7 @@ namespace FProductionDashBoard.ViewModels
         public DeviceInfo Info { get; }
         private readonly LogService _log;
         private readonly IDataService _dataService;
+        private readonly AuthorizationService _authService;
         private readonly ListsFormSql commonLists;
 
         // 訊息顯示
@@ -61,11 +62,13 @@ namespace FProductionDashBoard.ViewModels
 #pragma warning disable CS8618 // 退出建構函式時，不可為 Null 的欄位必須包含非 Null 值。請考慮新增 'required' 修飾元，或將欄位宣告為可以為 Null。
         public DeviceCardViewModel() { }
 #pragma warning restore CS8618 // 退出建構函式時，不可為 Null 的欄位必須包含非 Null 值。請考慮新增 'required' 修飾元，或將欄位宣告為可以為 Null。
-        public DeviceCardViewModel(DeviceInfo info, UserInfo currentuser, LogService log, IDataService dataservice, ListsFormSql getLists)
+        public DeviceCardViewModel(LogService log, IDataService dataservice, AuthorizationService authService,
+            DeviceInfo info, UserInfo currentuser, ListsFormSql getLists)
         {
-            Info = info;
             _log = log;
             _dataService = dataservice;
+            _authService = authService;
+            Info = info;
             CurrentUser = currentuser;
             commonLists = getLists;
 
@@ -79,7 +82,7 @@ namespace FProductionDashBoard.ViewModels
             // 巡檢用計時
             checkTimer = new DispatcherTimer();
             //checkTimer.Interval = TimeSpan.FromSeconds(1);
-            //checkTimer.Tick += (s, e) => { InspectionStatuses.checkRoutineTime(); };
+            //checkTimer.Tick += (s, e) => {  };
             //checkTimer.Start();
         }
         public async Task UpdateTimeSlotsStatusAsync()

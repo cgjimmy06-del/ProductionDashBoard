@@ -24,6 +24,7 @@ namespace FProductionDashBoard.ViewModels
 
         private readonly LogService _log;
         private readonly IDataService _dataService;
+        private readonly AuthorizationService _authService;
         public UserInfo CurrentUser { get; }
 
         public ICommand FirstArticleInsAllCommand { get; }
@@ -32,10 +33,12 @@ namespace FProductionDashBoard.ViewModels
         public ICommand FastDownloadDevicesCommand { get; }
         public ICommand FastUploadDevicesCommand { get; }
 
-        public DeviceCardContainerViewModel(LogService log, IDataService dataservice, UserInfo currentuser, ListsFormSql getlists)
+        public DeviceCardContainerViewModel(LogService log, IDataService dataservice, AuthorizationService authservice,
+            UserInfo currentuser, ListsFormSql getlists)
         {
             _log = log;
             _dataService = dataservice;
+            _authService = authservice;
             CurrentUser = currentuser;
             commonLists = getlists;
 
@@ -134,7 +137,7 @@ namespace FProductionDashBoard.ViewModels
                 var result = vm.Result ?? new();
                 foreach (var iselection in result.Selections)
                 {
-                    var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService, commonLists);
+                    var idevice = new DeviceCardViewModel(_log, _dataService, _authService, iselection, CurrentUser, commonLists);
                     await idevice.UpdateTimeSlotsStatusAsync();
                     Devices.Add(idevice);
                     _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
@@ -156,7 +159,7 @@ namespace FProductionDashBoard.ViewModels
             }
             foreach (var iselection in result)
             {
-                var idevice = new DeviceCardViewModel(iselection, CurrentUser, _log, _dataService, commonLists);
+                var idevice = new DeviceCardViewModel(_log, _dataService, _authService, iselection, CurrentUser, commonLists);
                 await idevice.UpdateTimeSlotsStatusAsync();
                 Devices.Add(idevice);
                 _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
