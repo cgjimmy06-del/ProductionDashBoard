@@ -1,0 +1,63 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    
+    <!--#region login window 登入視窗 -->
+    <sys:String x:Key="LanguageText">Language</sys:String>
+    <sys:String x:Key="ServerText">Server</sys:String>
+    <sys:String x:Key="AccountText">Account (Staff Number)</sys:String>
+    <sys:String x:Key="PasswordText">Password</sys:String>
+    <sys:String x:Key="RequiredText">Required</sys:String>
+    <sys:String x:Key="RememberMeCheck">Remember Me</sys:String>
+    <sys:String x:Key="LoginButton">Log In</sys:String>
+    <sys:String x:Key="VisitorButton">Visitor</sys:String>
+    <!--#endregion-->
+    <!--#region Main Window 主視窗 (含導覽列/訊息視窗) -->
+    <sys:String x:Key="HomeNavButton">Home</sys:String>
+    <sys:String x:Key="OperationNavButton">On-Site Operation</sys:String>
+    <sys:String x:Key="ViewNavButton">Chart</sys:String>
+    <sys:String x:Key="SettingNavButton">Setting</sys:String>
+    <sys:String x:Key="PinButtonTooltip">Pin the messages to the last</sys:String>
+    <sys:String x:Key="ErrorLogButtonTooltip">Show error log</sys:String>
+    <sys:String x:Key="LargeFontButtonTooltip">Make the text bigger</sys:String>
+    <sys:String x:Key="LogSaveButtonTooltip">Save current logs and errorlogs</sys:String>
+    <!--#endregion-->
+    <!--#region device card container 設備卡片操作區 -->
+    <sys:String x:Key="FirstInsAllButtonTooltip">Do first inspection for all devices</sys:String>
+    <sys:String x:Key="RoutineInsAllButtonTooltip">Do routine inspection for all devices</sys:String>
+    <sys:String x:Key="AddDeviceButtonTooltip">Add new device card to the block</sys:String>
+    <sys:String x:Key="FastUploadButtonTooltip">Fast upload default list to device block</sys:String>
+    <sys:String x:Key="FastDownloadButtonTooltip">Fast download list to default file</sys:String>
+    <!--#endregion-->
+    <!--#region device card 設備卡片 -->
+    <sys:String x:Key="MetarialChangeButton">Metarial</sys:String>
+    <sys:String x:Key="FirstInspectionButton">First Ins.</sys:String>
+    <sys:String x:Key="RoutineInspectionButton">Routine Ins.</sys:String>
+    <sys:String x:Key="OperationButton">Operation</sys:String>
+    <!--#endregion-->
+    <!--#region dialog window 彈出視窗 -->
+    <sys:String x:Key="ConfirmButton">Confirm</sys:String>
+    <sys:String x:Key="CancelButton">Cancel</sys:String>
+    <!--#endregion-->
+    <!--#region inspection dialog 檢驗視窗 -->
+    <sys:String x:Key="NormalRadioButton">Pass</sys:String>
+    <sys:String x:Key="IssueRadioButton">Report Issue</sys:String>
+    <!--#endregion-->
+    <!--#region material change dialog 物料視窗 -->
+    <sys:String x:Key="ModeChangeButton">ModeChange</sys:String>
+    <sys:String x:Key="ClearSelectionButton">Clear</sys:String>
+    <!--#endregion-->
+    <!--#region common datagrid header 欄位抬頭共用字串 -->
+    <sys:String x:Key="DeivceIdDataGridHeader">Device ID</sys:String>
+    <sys:String x:Key="NameDataGridHeader">Name</sys:String>
+    <sys:String x:Key="IpDataGridHeader">IP</sys:String>
+    <sys:String x:Key="LoadedDataGridHeader">Loaded</sys:String>
+    <!--#endregion-->
+    <!--#region dcard manage dialog 設備卡片新增視窗 -->
+    <sys:String x:Key="AddToSelectedButtonTooltip">Move selected devices to loaded list</sys:String>
+    <sys:String x:Key="RemoveSelectedButtonTooltip">Remove Selected devices from loaded list</sys:String>
+    <sys:String x:Key="UploadButtonTooltip">Upload list to loaded</sys:String>
+    <sys:String x:Key="DownloadButtonTooltip">Download list to file</sys:String>
+    <!--#endregion-->
+
+</ResourceDictionary>

@@ -3,29 +3,308 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:FProductionDashBoard"
+        xmlns:localuc="clr-namespace:FProductionDashBoard.UserControls"
+        xmlns:localvm="clr-namespace:FProductionDashBoard.ViewModels"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource MaterialDesignWindow}"
+        Title="{Binding AppVersion, StringFormat=ProductionDashBoard -- V{0}}" 
+        Height="600" Width="1000" Icon="appIcon.ico">
+    <!-- window載入事件 -->
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding InitializeCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <!-- 資源匯入 -->
     <Window.Resources>
-        <ResourceDictionary Source="Themes/CardStyles.xaml"/>
+        <ResourceDictionary>
+            <!-- 外部資源 -->
+            <ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- 本地資源 -->
+            <Storyboard x:Key="CollapseNav">
+                <DoubleAnimation Storyboard.TargetProperty="Width"
+                             To="50" Duration="0:0:0.3" />
+            </Storyboard>
+            <Storyboard x:Key="ExpandNav">
+                <DoubleAnimation Storyboard.TargetProperty="Width"
+                             To="200" Duration="0:0:0.3" />
+            </Storyboard>
+
+            <!-- ViewModel 綁定 User Control -->
+            <DataTemplate DataType="{x:Type localvm:DeviceCardContainerViewModel}">
+                <localuc:DeviceCardContainer />
+            </DataTemplate>
+
+        </ResourceDictionary>
     </Window.Resources>
-    
-    <StackPanel Margin="20">
-        <!-- 總計資訊 -->
-        <TextBlock Text="{Binding TotalDevices, StringFormat=設備總數: {0}}" 
-                   FontSize="16" Margin="0,0,0,10"/>
-        <TextBlock Text="{Binding TotalButtonClicks, StringFormat=按鈕總點擊次數: {0}}" 
-                   FontSize="16" Margin="0,0,0,20"/>
-        <!-- 新增設備按鈕 -->
-        <Button Content="新增設備" Command="{Binding AddDeviceCommand}" Width="100" Margin="0,0,0,20"/>
-        <!-- 設備卡片清單 -->
-        <ItemsControl ItemsSource="{Binding Devices}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <local:DeviceCard Style="{StaticResource MainCardStyle}"/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </StackPanel>
+
+    <DockPanel LastChildFill="True">
+        <!-- Menu 區域 -->
+        <Menu DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignPaper}">
+            <MenuItem Header="_檔案">
+                <MenuItem.Icon>
+                    <materialDesign:PackIcon Kind="File" Width="20" Height="20"/>
+                </MenuItem.Icon>
+                <MenuItem Header="開啟" InputGestureText="Ctrl+O"/>
+                <MenuItem Header="儲存" InputGestureText="Ctrl+S"/>
+                <Separator/>
+                <MenuItem Header="結束"/>
+            </MenuItem>
+
+            <MenuItem Header="_編輯">
+                <MenuItem.Icon>
+                    <materialDesign:PackIcon Kind="Edit" Width="20" Height="20"/>
+                </MenuItem.Icon>
+                <MenuItem Header="剪下"/>
+                <MenuItem Header="複製"/>
+                <MenuItem Header="貼上"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- ToolBar 區域 -->
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button ToolTip="新增">
+                    <materialDesign:PackIcon Kind="Add" Width="20" Height="20"/>
+                </Button>
+                <Button ToolTip="開啟">
+                    <materialDesign:PackIcon Kind="FolderOpen" Width="20" Height="20"/>
+                </Button>
+                <Button ToolTip="儲存">
+                    <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
+                </Button>
+                <Separator/>
+                <Button ToolTip="剪下">
+                    <materialDesign:PackIcon Kind="ContentCut" Width="20" Height="20"/>
+                </Button>
+                <Button ToolTip="複製">
+                    <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20"/>
+                </Button>
+                <Button ToolTip="貼上">
+                    <materialDesign:PackIcon Kind="ContentPaste" Width="20" Height="20"/>
+                </Button>
+                <Separator/>
+                <Button ToolTip="測試" Command="{Binding TestCommand}">
+                    <materialDesign:PackIcon Kind="AbTesting" Width="20" Height="20"/>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+
+        <!-- StatusBar 區域 -->
+        <StatusBar DockPanel.Dock="Bottom"
+                   Background="{DynamicResource MaterialDesignPaper}"
+                   Foreground="{DynamicResource MaterialDesignBody}">
+
+            <StatusBarItem>
+                <ProgressBar Style="{StaticResource MaterialDesignLinearProgressBar}"
+                            Width="120"  Height="10" Value="{Binding ProgressValue}"
+                             VerticalAlignment="Center"/>
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="{Binding ProgressString}" d:Text="Idle"
+                               VerticalAlignment="Center" Margin="5,0,8,0"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" d:Text="welcome 使用者"
+                        Text="{Binding SystemUser.Name, StringFormat=Welcome! {0}}" 
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Grid.Column="2" d:Text="xxxx/xx/xx xx:xx"
+                        Text="{Binding CurrentTime}"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                </Grid>
+            </StatusBarItem>
+        </StatusBar>
+
+        <!-- 主區域(中) -->
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <!-- 導覽列 -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- 主內容 -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!-- 導覽列 -->
+            <Border Grid.Column="0" Margin="0" d:Width="200"
+                    Background="{DynamicResource PrimaryBackgroundBrush}"
+                    Width="{Binding IsCollapsedNav, Converter={StaticResource CollapseWidthConverter}}">
+                <StackPanel Margin="0">
+                    <!-- 收合按鈕"☰" -->
+                    <RadioButton Style="{StaticResource NavButtonStyle}"
+                            Command="{Binding CollapseNavCommand}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon Kind="Home" Margin="0,0,5,0"
+                                                     Width="30" Height="30"/>
+                            <TextBlock Text="{DynamicResource HomeNavButton}" 
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <!-- 導覽內容 -->
+                    <RadioButton Style="{StaticResource NavButtonStyle}"
+                                 Command="{Binding SwitchModeCommand}" 
+                                 CommandParameter="{x:Static localvm:NavMode.Operation}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon Kind="WrenchCheck" Margin="0,0,5,0"
+                                                     Width="30" Height="30"/>
+                            <TextBlock Text="{DynamicResource OperationNavButton}" 
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource NavButtonStyle}"
+                                 Command="{Binding SwitchModeCommand}" 
+                                 CommandParameter="{x:Static localvm:NavMode.View}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon Kind="ChartBox" Margin="0,0,5,0"
+                                                     Width="30" Height="30"/>
+                            <TextBlock Text="{DynamicResource ViewNavButton}" 
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource NavButtonStyle}"
+                                 Command="{Binding SwitchModeCommand}" 
+                                 CommandParameter="{x:Static localvm:NavMode.Setting}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon Kind="Cog" Margin="0,0,5,0"
+                                                     Width="30" Height="30"/>
+                            <TextBlock Text="{DynamicResource SettingNavButton}" 
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton>
+                </StackPanel>
+            </Border>
+
+            <!-- 儀錶板主顯示區 -->
+            <Grid Grid.Column="1" Margin="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="150" />
+                </Grid.RowDefinitions>
+                <!-- 主內容UI (預設2欄儀表板卡片) ScrollViewer/WrapPanel -->
+                <Grid Grid.Row="0">
+                    <!-- 後續定義分割區塊 -->
+                    <!--<ItemsControl ItemsSource="{Binding Cards}">
+                        <ItemsControl.Resources>
+                            <DataTemplate DataType="{x:Type localvm:DeviceCardContainerViewModel}">
+                                <localuc:DeviceCardContainer />
+                            </DataTemplate>
+                        </ItemsControl.Resources>
+                    </ItemsControl>-->
+                    <!-- 使用者自訂卡片區塊 -->
+                    <ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding Card1}" />
+
+                </Grid>
+                <!-- GridSplitter -->
+                <GridSplitter Grid.Row="1"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Center"
+                          Height="5"
+                          ResizeDirection="Rows"
+                          ResizeBehavior="PreviousAndNext"
+                          Background="Gray"/>
+                <!-- 狀態訊息區 -->
+                <Border Grid.Row="2" BorderBrush="Gray" 
+                    BorderThickness="1" Margin="5" Padding="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="30"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- 訊息視窗 -->
+                        <ListBox Grid.Column="0" x:Name="LogListBox"
+                                 Background="{DynamicResource BackgroundBrush}"
+                                 ItemsSource="{Binding CurrentLogs}"
+                                 local:ListBoxBehavior.AutoScrollToEnd="{Binding AutoScrollEnabled}">
+                            <!-- 行高/內距/文字大小/行距 -->
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Height" Value="24" />
+                                    <Setter Property="FontSize" Value="11" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Margin" Value="0" />
+                                    <Setter Property="FontWeight"  Value="Semibold" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DataContext.IsLargeFontMode, 
+                                            RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                            Value="True">
+                                            <Setter Property="Height" Value="32" />
+                                            <Setter Property="FontSize" Value="15" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="5">
+                                        <!-- 時間StringFormat={}[{0:HH:mm:ss}] -->
+                                        <TextBlock Margin="0,0,5,0" Foreground="{Binding Color}"
+                                            Text="{Binding Timestamp, StringFormat='[{0:HH:mm:ss}]'}"/>
+                                        <!-- 圖示 (PackIconKind enum 綁定) -->
+                                        <materialDesign:PackIcon Kind="{Binding Icon}" 
+                                         Foreground="{Binding Color}" VerticalAlignment="Center"
+                                         Width="14" Height="14" Margin="0,0,5,0"/>
+                                        <!-- 訊息 -->
+                                        <TextBlock Margin="0,0,5,0" Foreground="{Binding Color}"
+                                                   Style="{StaticResource EllipsisTextBlock}"
+                                                   Text="{Binding Message}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <!-- 訊息視窗操作介面 -->
+                        <StackPanel Grid.Column="1" Margin="2" HorizontalAlignment="Center">
+                            <ToggleButton Width="25" Height="25" Margin="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource FunctionToggleButtonStyle}"
+                                    IsChecked="{Binding AutoScrollEnabled}"
+                                    ToolTip="{DynamicResource PinButtonTooltip}">
+                                <materialDesign:PackIcon Kind="Pin"
+                                                     Width="25" Height="25"/>
+                            </ToggleButton>
+                            <ToggleButton Width="25" Height="25" Margin="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource FunctionToggleButtonStyle}"
+                                    IsChecked="{Binding IsErrorMode}"
+                                    ToolTip="{DynamicResource ErrorLogButtonTooltip}">
+                                <materialDesign:PackIcon Kind="{Binding _log.IsNewErrorLog, 
+                                            Converter={StaticResource BoolToAlertConverter}}"
+                                                     Width="23" Height="23"/>
+                            </ToggleButton>
+                            <ToggleButton Width="25" Height="25" Margin="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource FunctionToggleButtonStyle}"
+                                    IsChecked="{Binding IsLargeFontMode}"
+                                    ToolTip="{DynamicResource LargeFontButtonTooltip}">
+                                <materialDesign:PackIcon Kind="AlphaBCircleOutline"
+                                                     Width="25" Height="25"/>
+                            </ToggleButton>
+                            <Button Width="25" Height="25" Margin="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource FunctionButtonStyle}"
+                                    Command="{Binding SaveLogsCommand}"
+                                    ToolTip="{DynamicResource LogSaveButtonTooltip}">
+                                <materialDesign:PackIcon Kind="DownloadCircleOutline"
+                                                     Width="25" Height="25"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </DockPanel>
 </Window>

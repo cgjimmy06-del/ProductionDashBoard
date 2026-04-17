@@ -1,29 +1,138 @@
-﻿<UserControl x:Class="FProductionDashBoard.DeviceCard"
+﻿<UserControl x:Class="FProductionDashBoard.UserControls.DeviceCard"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:FProductionDashBoard"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    
-    <Border BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="5">
-        <StackPanel>
-            <!-- 標題區 -->
-            <TextBlock Text="{Binding Info.Name}" FontWeight="Bold"/>
-            <!-- 描述區 -->
-            <TextBlock Text="{Binding Info.Description}" FontStyle="Italic"/>
-            <TextBlock Text="{Binding ButtonClickCount, StringFormat=點擊次數: {0}}"/>
-            <!-- 控制區 -->
-            <StackPanel Orientation="Horizontal" >
-                <Button Content="設備按鈕" Command="{Binding ButtonClickCommand}" 
-                        Background="#4CAF50" Foreground="White" Padding="5,2"/>
-                <Button Content="切換燈號" Command="{Binding ToggleLightCommand}" 
-                        Background="#2196F3" Foreground="White" Padding="5,2"/>
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localuc="clr-namespace:FProductionDashBoard.UserControls"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             d:DesignHeight="200" d:DesignWidth="600" d:Background="White">
+    <!-- 卡片樣式綁在 Border -->
+    <UserControl.Resources>
+        <Style TargetType="Border" x:Key="CardBorderStyle">
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <!-- 陰影 -->
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black"
+                                      BlurRadius="12"
+                                      ShadowDepth="3"
+                                      Opacity="0.25"/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <!-- Hover 效果 -->
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="Black"
+                                              BlurRadius="15"
+                                              ShadowDepth="4"
+                                              Opacity="0.4"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <!-- 點擊 效果 -->
+                <EventTrigger RoutedEvent="PreviewMouseDown">
+                    <BeginStoryboard Storyboard="{StaticResource PressDownStoryboard}"/>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="PreviewMouseUp">
+                    <BeginStoryboard Storyboard="{StaticResource ReleaseStoryboard}"/>
+                </EventTrigger>
+
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource CardBorderStyle}"
+            Background="{DynamicResource MaterialDesignPaper}"
+            CornerRadius="12"
+            Padding="0"
+            BorderBrush="{DynamicResource PrimaryHueLightBrush}"
+            BorderThickness="1">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <!-- 左側狀態燈號 -->
+                <ColumnDefinition Width="15"/>
+                <!-- 主體內容 -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 狀態燈號 -->
+            <Border Grid.Column="0"
+                    Background="{Binding Info.Status, Converter={StaticResource IntToColorConverter}}"
+                    d:Background="Green"
+                    CornerRadius="3"/>
+
+            <!-- 主體內容 -->
+            <StackPanel Grid.Column="1" Margin="5,0,0,0" Orientation="Vertical">
+
+                <!-- 機台名稱 -->
+                <TextBlock Text="{Binding Info.Name}" d:Text="A1"
+                           FontWeight="Bold" FontSize="30" Cursor="Hand"
+                           TextDecorations="Underline"/>
+
+                <!-- 資訊列 --> <!-- language -->
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <TextBlock d:Text="default 123"
+                               Text="{Binding CurrentProduct.Name, StringFormat=: {0}}"/>
+                    
+                    <TextBlock d:Text="yun"
+                               Text="{Binding CurrentUser.Name, StringFormat=: {0}}"/>
+                    <!--<TextBlock Text="產量: 1200 件" 
+                               Foreground="{DynamicResource SecondaryHueMidBrush}"/>-->
+                </StackPanel>
+
+                <!-- 按鈕列 -->
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <Button Margin="0, 5, 5, 5"
+                            Style="{DynamicResource DeviceMainButtonStyle}"
+                            Content="{DynamicResource MetarialChangeButton}"
+                            Command="{Binding MaterialsChangeCommand}"/>
+
+                    <Button Margin="5"
+                            Style="{DynamicResource DeviceMainButtonStyle}"
+                            Content="{DynamicResource FirstInspectionButton}"
+                            Command="{Binding FirstInspectionCommand}"
+                            Background="{Binding FirstInspectionStatus, 
+                                    Converter={StaticResource BoolToColorConverter}}"
+                            Foreground="White"/>
+
+                    <Button Margin="5"
+                            Style="{DynamicResource DeviceMainButtonStyle}"
+                            Content="{DynamicResource RoutineInspectionButton}" 
+                            Command="{Binding RoutineInspectionCommand}"/>
+
+                    <Button Margin="5"
+                            Style="{DynamicResource DeviceMainButtonStyle}"
+                            Content="{DynamicResource OperationButton}" 
+                            Command="{Binding OperationCommand}"/>
+                </StackPanel>
+
+                <!-- 巡檢燈 -->
+                <ItemsControl ItemsSource="{Binding TimeSlotsStatus}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1" Margin="10,5,10,0"
+                                         Columns="{Binding TimeSlotsStatus.Count}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Rectangle Height="10" Margin="5"
+                       Fill="{Binding Converter={StaticResource IntToColorConverter}}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
             </StackPanel>
-            <!-- 狀態顯示 -->
-            <TextBlock Text="{Binding Info.LightOn, StringFormat=燈號狀態: {0}}" 
-                       FontSize="12" Foreground="{Binding Info.LightOn, Converter={StaticResource BoolToColorConverter}}" Margin="0,10,0,0"/>
-        </StackPanel>
+
+        </Grid>
     </Border>
 </UserControl>

@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- 此xaml為文字設計樣式 -->
+    <!-- 用於 字型、大小 等文字設計 -->
+    
+    <sys:Double x:Key="FontSizeSmall">12</sys:Double>
+    <sys:Double x:Key="FontSizeMedium">14</sys:Double>
+    <sys:Double x:Key="FontSizeLarge">18</sys:Double>
+    <FontFamily x:Key="PrimaryFont">Segoe UI</FontFamily>
+
+</ResourceDictionary>

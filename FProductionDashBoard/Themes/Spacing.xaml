@@ -1,0 +1,10 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- 此xaml為空間設計樣式 -->
+    <!-- 用於 間隔、形狀 等空間排版 -->
+    
+    <Thickness x:Key="DefaultMargin">8</Thickness>
+    <CornerRadius x:Key="DefaultCornerRadius">4</CornerRadius>
+    
+</ResourceDictionary>

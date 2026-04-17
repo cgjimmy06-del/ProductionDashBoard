@@ -1,0 +1,120 @@
+﻿<UserControl x:Class="FProductionDashBoard.UserControls.AddDeviceDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:FProductionDashBoard"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" d:Background="White"
+             d:DesignHeight="500" d:DesignWidth="600">
+    <Grid Width="Auto">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="10,0" Orientation="Horizontal">
+            <TextBox  Width="90" Height="30" Padding="2"
+                      Text="{Binding DeviceId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      materialDesign:HintAssist.Hint="ex. FSPROB..."/>
+
+            <TextBox  Width="90" Height="30" Padding="2"
+                      Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      materialDesign:HintAssist.Hint="ex. A01"/>
+
+            <TextBox  Width="90" Height="30" Padding="2"
+                      Text="{Binding Ip, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      materialDesign:HintAssist.Hint="ex. 0.0.0.0"/>
+
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="5,0" Height="300" Orientation="Horizontal">
+            <!-- 篩選清單 -->
+            <DataGrid ItemsSource="{Binding FilteredDevices}"
+                      local:DataGridSelectedItemsBehavior.SelectedItems="{Binding SelectedFromFiltered}">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                </DataGrid.CellStyle>
+                <i:Interaction.Triggers>
+                    <!-- 雙擊加入 -->
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding AddToSelectedCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{DynamicResource DeivceIdDataGridHeader}" 
+                                        Width="100" Binding="{Binding DeviceID}"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="{DynamicResource NameDataGridHeader}" 
+                                        Width="100" Binding="{Binding Name}"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="{DynamicResource IpDataGridHeader}" 
+                                        Width="100" Binding="{Binding IP}"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <!-- 增減操作 -->
+            <StackPanel VerticalAlignment="Center">
+                <Button Margin="5" Height="40" Width="40" Padding="2"
+                        Command="{Binding AddToSelectedCommand}" 
+                        ToolTip="{DynamicResource AddToSelectedButtonTooltip}">
+                        <materialDesign:PackIcon Kind="ChevronDoubleRight"
+                                                 Width="30" Height="30"/>
+                </Button>
+                <Button Margin="5" Height="40" Width="40" Padding="2"
+                        Command="{Binding RemoveFromSelectedCommand}"
+                        ToolTip="{DynamicResource RemoveSelectedButtonTooltip}">
+                        <materialDesign:PackIcon Kind="ChevronDoubleLeft"
+                                                 Width="30" Height="30"/>
+                </Button>
+            </StackPanel>
+            <!-- 選擇清單 -->
+            <DataGrid ItemsSource="{Binding SelectedDevices}"
+                      local:DataGridSelectedItemsBehavior.SelectedItems="{Binding SelectedFromSelected}">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                </DataGrid.CellStyle>
+                <i:Interaction.Triggers>
+                    <!-- 雙擊加入 -->
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding RemoveFromSelectedCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{DynamicResource LoadedDataGridHeader}" 
+                                        Width="100" Binding="{Binding Name}"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <!-- 上下載操作 -->
+            <StackPanel VerticalAlignment="Center">
+                <Button Margin="5" Height="40" Width="40" Padding="2"
+                        Command="{Binding UploadDeivcesCommand}"
+                        ToolTip="{DynamicResource UploadButtonTooltip}">
+                    <materialDesign:PackIcon Kind="FileUpload"
+                                             Width="30" Height="30"/>
+                </Button>
+                <Button Margin="5" Height="40" Width="40" Padding="2"
+                        Command="{Binding DownloadDeivcesCommand}"
+                        ToolTip="{DynamicResource DownloadButtonTooltip}">
+                    <materialDesign:PackIcon Kind="FileDownload"
+                                             Width="30" Height="30"/>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="FProductionDashBoard.UserControls.InspectionDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:localuc="clr-namespace:FProductionDashBoard.UserControls"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" Height="Auto" Width="450"
+             d:DesignHeight="400" d:DesignWidth="400" d:Background="White">
+
+    <StackPanel Margin="20, 5">
+        <!-- 當前操作資訊 -->
+        <TextBlock Margin="0,0,0,10" d:Text="機台"
+            Text="{Binding CurrentDevice}"/>
+        <TextBlock Margin="0,0,0,10" d:Text="操作人員"
+            Text="{Binding CurrentUser}" />
+        <TextBlock Margin="0,0,0,10" d:Text="產品"
+            Text="{Binding CurrentProduct}" />
+
+        <StackPanel Margin="20, 5">
+            <!-- 第一層 -->
+            <RadioButton Content="{DynamicResource NormalRadioButton}"
+                     GroupName="Level1" Name="RadioBtnSuccess"
+                     IsChecked="{Binding InspectionCheck, Mode=TwoWay, 
+                Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Success}"
+                     Style="{StaticResource MaterialDesignRadioButton}"/>
+            <RadioButton Content="{DynamicResource IssueRadioButton}"
+                     GroupName="Level1" Name="RadioBtnFailure"
+                         IsChecked="{Binding InspectionCheck, Mode=TwoWay, 
+                Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Failure}"
+                     Style="{StaticResource MaterialDesignRadioButton}"/>
+
+            <!-- 第二層 (只有 B 選取時才可用) -->
+            <StackPanel Margin="30,0,0,0">
+                <ComboBox Name="ComboBoxFailureReason" HorizontalAlignment="Left"
+                          Width="200" SelectedIndex="0"
+                          IsEnabled="{Binding IsChecked, ElementName=RadioBtnFailure}"
+                          Style="{StaticResource MaterialDesignComboBox}"
+                          ItemsSource="{Binding ErrorCodes}"
+                          DisplayMemberPath="Message"
+                          SelectedValuePath="ErrorCode"
+                          SelectedValue="{Binding SelectionCode, Mode=TwoWay}">
+                </ComboBox>
+
+                <!-- B4 其他: TextBox -->
+                <TextBox Width="200" Padding="2" Margin="0,5" HorizontalAlignment="Left"
+                         Text="{Binding OtherDescription}"
+                         IsEnabled="{Binding IsChecked, ElementName=RadioBtnFailure}"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Visibility="{Binding IsOtherSelected, 
+                         Converter={StaticResource BooleanToVisibilityConverter}}">
+                </TextBox>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
