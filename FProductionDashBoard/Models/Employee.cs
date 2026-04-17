@@ -10,13 +10,13 @@ namespace FProductionDashBoard.Models
 {
     public class Employee
     {
-        public int Id { get; set; } // 代理鍵 主鍵
+        public int EmployeeId { get; set; } // PK
         public string UserId { get; set; } = string.Empty;
         public string? CardId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string? Email { get; set; }
-        public int Permission { get; set; }
+        public int RoleId { get; set; }
         public string? DepartmentId { get; set; }
         public DateTime? CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
@@ -27,15 +27,15 @@ namespace FProductionDashBoard.Models
         {
             builder.ToTable("employee");
 
-            builder.HasKey(e => e.Id);
-            builder.Property(e => e.Id).HasColumnName("employee_id").ValueGeneratedOnAdd();
+            builder.HasKey(e => e.EmployeeId);
+            builder.Property(e => e.EmployeeId).HasColumnName("employee_id").ValueGeneratedOnAdd();
 
             builder.Property(e => e.UserId).HasColumnName("user_id");
             builder.Property(e => e.CardId).HasColumnName("card_id");
             builder.Property(e => e.Name).HasColumnName("name");
             builder.Property(e => e.Password).HasColumnName("password");
             builder.Property(e => e.Email).HasColumnName("email");
-            builder.Property(e => e.Permission).HasColumnName("permission");
+            builder.Property(e => e.RoleId).HasColumnName("role_id");
             builder.Property(e => e.DepartmentId).HasColumnName("department_id");
             builder.Property(e => e.CreateAt).HasColumnName("create_at").HasDefaultValueSql("GETDATE()"); ;
             builder.Property(e => e.UpdateAt).HasColumnName("update_at").HasDefaultValueSql("GETDATE()"); ;

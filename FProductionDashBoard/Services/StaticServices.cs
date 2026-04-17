@@ -252,10 +252,31 @@ namespace FProductionDashBoard.Services
                 .Build();
 
             var connStr = config.GetConnectionString($"{serverKey}_MESDashboard");
-            var sqlStr = "SELECT user_id, name, permission FROM employee WHERE user_id=@Userid AND password=@Password";
+            var sqlStr = "SELECT user_id, name, role_id FROM employee WHERE user_id=@Userid AND password=@Password";
 
             using var conn = new SqlConnection(connStr);
-            return conn.QueryFirstOrDefault<UiModels.UserInfo>(sqlStr, new { Userid = userid, Password = password });
+            using var cmd = new SqlCommand(sqlStr, conn);
+            cmd.Parameters.AddWithValue("@Userid", userid);
+            cmd.Parameters.AddWithValue("@Password", password);
+
+            conn.Open();
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                // 手動對應，確保欄位正確
+                var userId = reader["user_id"].ToString() ?? "";
+                var name = reader["name"].ToString() ?? "";
+                var roleId = reader["role_id"] != DBNull.Value ? Convert.ToInt32(reader["role_id"]) : 1;
+
+                return new UiModels.UserInfo
+                {
+                    UserId = userId,
+                    Name = name,
+                    RoleId = roleId
+                };
+            }
+            return null;
+            //return conn.QueryFirstOrDefault<UiModels.UserInfo>(sqlStr, new { Userid = userid, Password = password });
         }
     }
 }
