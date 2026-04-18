@@ -78,17 +78,7 @@ namespace FProductionDashBoard.Services.V1
             {
                 var slot = timeSlotLookups[i];
                 var (hasRecord, recordResult) = slotsResult[i];
-
-                var slotStart = BusinessDay.Date.Add(slot.StartAt);
-                var slotEnd = BusinessDay.Date.Add(slot.EndAt);
-
-                // 跨日邏輯: 跨整點 EndAt + 1；跨日 StartAt, EndAt + 1
-                if (slot.IsCrossDay)
-                {
-                    slotEnd = slotEnd.AddDays(1);
-                    if (slot.EndAt > slot.StartAt)
-                        slotStart = slotStart.AddDays(1);
-                }
+                var (slotStart, slotEnd) = GetSlotBounds(slot);
 
                 int status;
                 if (now < slotStart) status = -1; // 灰
@@ -107,26 +97,13 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {
-            // 找出所有已經結束的時段
             var endedSlots = timeSlotLookups.Where(slot =>
             {
-                // 將 slot 的 Start/EndTime (TimeSpan) 映射到當天業務日
-                var slotStart = BusinessDay.Date.Add(slot.StartAt);
-                var slotEnd = BusinessDay.Date.Add(slot.EndAt);
-
-                // 跨日邏輯: 跨整點 EndAt + 1；跨日 StartAt, EndAt + 1
-                if (slot.IsCrossDay)
-                {
-                    slotEnd = slotEnd.AddDays(1);
-                    if (slot.EndAt > slot.StartAt)
-                        slotStart = slotStart.AddDays(1);
-                }
-
-                return slotEnd <= DateTime.Now && slotStart >= BusinessDay && slotEnd <= BusinessDay.AddDays(1);
+                var (_, slotEnd) = GetSlotBounds(slot);
+                return slotEnd <= DateTime.Now;
             });
             foreach (var slot in endedSlots)
             {
-                // 檢查該設備在此時段是否已有紀錄
                 bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, slot.TimeSlotId, BusinessDay);
                 if (!exists)
                 {
@@ -136,6 +113,20 @@ namespace FProductionDashBoard.Services.V1
                         slot.TimeSlotId, null, "RTIN0001", null);
                 }
             }
+        }
+
+        // 跨日邏輯: 跨整點 EndAt + 1；跨日 StartAt, EndAt + 1
+        private (DateTime slotStart, DateTime slotEnd) GetSlotBounds(TimeSlotLookup slot)
+        {
+            var slotStart = BusinessDay.Date.Add(slot.StartAt);
+            var slotEnd   = BusinessDay.Date.Add(slot.EndAt);
+            if (slot.IsCrossDay)
+            {
+                slotEnd = slotEnd.AddDays(1);
+                if (slot.EndAt > slot.StartAt)
+                    slotStart = slotStart.AddDays(1);
+            }
+            return (slotStart, slotEnd);
         }
 
 
