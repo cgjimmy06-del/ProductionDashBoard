@@ -36,7 +36,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly LogService _log;
         private readonly IDataService _dataService;
         private readonly AuthorizationService _authService;
-        private readonly ListsFormSql commonLists;
+        private readonly ListsFromSql commonLists;
 
         // 訊息顯示
         [ObservableProperty]
@@ -63,7 +63,7 @@ namespace FProductionDashBoard.ViewModels
         public DeviceCardViewModel() { }
 #pragma warning restore CS8618 // 退出建構函式時，不可為 Null 的欄位必須包含非 Null 值。請考慮新增 'required' 修飾元，或將欄位宣告為可以為 Null。
         public DeviceCardViewModel(LogService log, IDataService dataservice, AuthorizationService authService,
-            DeviceInfo info, UserInfo currentuser, ListsFormSql getLists)
+            DeviceInfo info, UserInfo currentuser, ListsFromSql getLists)
         {
             _log = log;
             _dataService = dataservice;

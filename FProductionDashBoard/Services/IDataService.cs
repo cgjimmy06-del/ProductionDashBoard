@@ -1,5 +1,6 @@
 ﻿using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
+using FProductionDashBoard.UiModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -16,6 +17,10 @@ namespace FProductionDashBoard.Services
     {
         public DateTime BusinessDay { get; set; }
         public Task Demo();
+        public Task<List<DeviceInfo>> GetDevicesAsync();
+        public Task<List<UserInfo>> GetUsersAsync();
+        public Task<List<MaterialInfo>> GetMaterialsAsync();
+        public Task<List<ErrorInfo>> GetErrorsAsync(string languageCode);
         public IEquipmentRepository EquipmentRep { get; }
         public IEmployeeRepository EmployeeRep { get; }
         public IMaterialRepository MaterialRep { get; }
