@@ -1,5 +1,6 @@
 ﻿using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
+using FProductionDashBoard.UiModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -37,6 +38,75 @@ namespace FProductionDashBoard.Services.V1
             TimeSlotLookupRep = timeSlotLookupRep;
         }
 
+
+        #region 清單查詢與 Mapping
+        public async Task<List<DeviceInfo>> GetDevicesAsync()
+        {
+            if (!EquipmentRep.CheckConnection())
+                throw new InvalidOperationException("Equipment repository connection failed");
+            var list = await EquipmentRep.GetAllAsync();
+            return list.Select(eq => new DeviceInfo
+            {
+                Id = eq.Id,
+                DeviceID = eq.Code,
+                Name = eq.Name,
+                IP = eq.Ip,
+                Port = eq.Port,
+                TypeId = eq.TypeId,
+                Factory = eq.Factory,
+                Building = eq.Building,
+                Floor = eq.Floor,
+                Description = eq.Description
+            }).ToList();
+        }
+        public async Task<List<UserInfo>> GetUsersAsync()
+        {
+            if (!EmployeeRep.CheckConnection())
+                throw new InvalidOperationException("Employee repository connection failed");
+            var list = await EmployeeRep.GetAllAsync();
+            return list.Select(us => new UserInfo
+            {
+                Id = us.EmployeeId,
+                UserId = us.UserId,
+                Name = us.Name,
+                CardId = us.CardId,
+                Password = us.Password,
+                Email = us.Email,
+                RoleId = us.RoleId,
+                DepartmentId = us.DepartmentId
+            }).ToList();
+        }
+        public async Task<List<MaterialInfo>> GetMaterialsAsync()
+        {
+            if (!MaterialRep.CheckConnection())
+                throw new InvalidOperationException("Material repository connection failed");
+            var list = await MaterialRep.GetAllAsync();
+            return list.Select(ma => new MaterialInfo
+            {
+                Id = ma.MaterialId,
+                Code = ma.MaterialCode,
+                Name = ma.Name,
+                Brand = ma.Brand,
+                Specification = ma.Specification,
+                TypeId = ma.TypeId,
+                Description = ma.Description,
+                MinimumStock = ma.MinimumStock,
+                QuantityInStock = ma.QuantityInStock
+            }).ToList();
+        }
+        public async Task<List<ErrorInfo>> GetErrorsAsync(string languageCode)
+        {
+            if (!ErrorListRep.CheckConnection())
+                throw new InvalidOperationException("ErrorList repository connection failed");
+            var list = await ErrorListRep.GetMessagesWithOtherAsync(languageCode);
+            return list.Select(er => new ErrorInfo
+            {
+                ErrorCode = er.ErrorCode,
+                Message = er.Message,
+                Category = er.Category
+            }).ToList();
+        }
+        #endregion
 
         #region 設備卡片區業務邏輯 - 物料 首件 巡檢
         public async Task<int> AddReplacementRecordAsync(int equipmentId, int employeeId, 

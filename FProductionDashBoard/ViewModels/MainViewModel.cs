@@ -24,16 +24,6 @@ using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.ViewModels
 {
-    public class ListsFormSql
-    {
-        public List<DeviceInfo> DevicesList = new(); // 設備清單
-        public List<MaterialInfo> MaterialsList = new(); // 物料清單
-        public List<ErrorInfo> ErrorsList = new(); // 異常項目清單
-        public List<UserInfo> UsersList = new(); // 人員清單
-        public List<TimeSlotLookup> TimeSlotsList = new(); // 人員清單
-        //public List<DeviceInfo> OrdersList = new(); // 排單點檢清單
-
-    }
     public enum NavMode { Home, Operation, Setting, View }
     public partial class MainViewModel : ObservableObject
     {
@@ -75,7 +65,7 @@ namespace FProductionDashBoard.ViewModels
         #endregion
 
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
-        public ListsFormSql CommonLists = new();
+        public ListsFromSql CommonLists = new();
 
         public ICommand InitializeCommand { get; }
         // 菜單列
@@ -143,7 +133,7 @@ namespace FProductionDashBoard.ViewModels
 
             // await Task.WhenAll(devicesTask, materialsTask, errorsTask); .Result // 無法同時開啟dbcontext
 
-            CommonLists = new ListsFormSql
+            CommonLists = new ListsFromSql
             {
                 DevicesList = devicesTask,
                 MaterialsList = materialsTask,
@@ -160,161 +150,23 @@ namespace FProductionDashBoard.ViewModels
         }
         public async Task<List<DeviceInfo>> GetDevicesListFromSqlAsync()
         {
-            try
-            {
-                if (!_dataService.EquipmentRep.CheckConnection())
-                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
-
-                var equipmentList = await _dataService.EquipmentRep.GetAllAsync();
-
-                var newlist = new List<DeviceInfo>();
-                foreach (var eq in equipmentList)
-                    newlist.Add(new DeviceInfo
-                    {
-                        Id = eq.Id,
-                        DeviceID = eq.Code,
-                        Name = eq.Name,
-                        IP = eq.Ip,
-                        Port = eq.Port,
-                        TypeId = eq.TypeId,
-                        Factory = eq.Factory,
-                        Building = eq.Building,
-                        Floor = eq.Floor,
-                        Description = eq.Description
-                    });
-                return newlist;
-            }
-            catch (SqlException sqlex)
-            {
-                Debug.WriteLine($"SqlException: {sqlex.Message}"); 
-                return new List<DeviceInfo>();
-            }
-            catch (TaskCanceledException taskex)
-            {
-                Debug.WriteLine($"TaskCanceledException: {taskex.Message}"); 
-                return new List<DeviceInfo>();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception: {ex.Message}"); 
-                return new List<DeviceInfo>();
-            }
+            try { return await _dataService.GetDevicesAsync(); }
+            catch (Exception ex) { _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); return new List<DeviceInfo>(); }
         }
         public async Task<List<UserInfo>> GetUsersListFromSqlAsync()
         {
-            try
-            {
-                if (!_dataService.EquipmentRep.CheckConnection())
-                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
-
-                var userList = await _dataService.EmployeeRep.GetAllAsync();
-
-                var newlist = new List<UserInfo>();
-                foreach (var us in userList)
-                    newlist.Add(new UserInfo
-                    {
-                        Id = us.EmployeeId,
-                        UserId = us.UserId,
-                        Name = us.Name,
-                        CardId = us.CardId,
-                        Password = us.Password,
-                        Email = us.Email,
-                        RoleId = us.RoleId,
-                        DepartmentId = us.DepartmentId
-                    });
-                return newlist;
-            }
-            catch (SqlException sqlex)
-            {
-                Debug.WriteLine($"SqlException: {sqlex.Message}");
-                return new List<UserInfo>();
-            }
-            catch (TaskCanceledException taskex)
-            {
-                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
-                return new List<UserInfo>();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception: {ex.Message}");
-                return new List<UserInfo>();
-            }
+            try { return await _dataService.GetUsersAsync(); }
+            catch (Exception ex) { _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); return new List<UserInfo>(); }
         }
         public async Task<List<MaterialInfo>> GetMaterialsListFromSqlAsync()
         {
-            try
-            {
-                if (!_dataService.MaterialRep.CheckConnection())
-                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
-
-                var materialList = await _dataService.MaterialRep.GetAllAsync();
-
-                var newlist = new List<MaterialInfo>();
-                foreach (var ma in materialList)
-                    newlist.Add(new MaterialInfo
-                    {
-                        Id = ma.MaterialId,
-                        Code = ma.MaterialCode,
-                        Name = ma.Name,
-                        Brand = ma.Brand,
-                        Specification = ma.Specification,
-                        TypeId = ma.TypeId,
-                        Description = ma.Description,
-                        MinimumStock = ma.MinimumStock,
-                        QuantityInStock = ma.QuantityInStock
-                    });
-                return newlist;
-            }
-            catch (SqlException sqlex)
-            {
-                Debug.WriteLine($"SqlException: {sqlex.Message}");
-                return new List<MaterialInfo>();
-            }
-            catch (TaskCanceledException taskex)
-            {
-                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
-                return new List<MaterialInfo>();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception: {ex.Message}");
-                return new List<MaterialInfo>();
-            }
+            try { return await _dataService.GetMaterialsAsync(); }
+            catch (Exception ex) { _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); return new List<MaterialInfo>(); }
         }
         public async Task<List<ErrorInfo>> GetErrorsListFromSqlAsync(string languageCode)
         {
-            try
-            {
-                if (!_dataService.MaterialRep.CheckConnection())
-                    _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: Check connection error", LogLevel.Error);
-
-                var errorList = await _dataService.ErrorListRep.GetMessagesWithOtherAsync(languageCode);
-
-                var newlist = new List<ErrorInfo>();
-                foreach (var er in errorList)
-                    newlist.Add(new ErrorInfo
-                    {
-                        ErrorCode = er.ErrorCode,
-                        Message = er.Message,
-                        Category = er.Category
-                    });
-                return newlist;
-            }
-            catch (SqlException sqlex)
-            {
-                Debug.WriteLine($"SqlException: {sqlex.Message}");
-                return new List<ErrorInfo>();
-            }
-            catch (TaskCanceledException taskex)
-            {
-                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
-                return new List<ErrorInfo>();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception: {ex.Message}");
-                return new List<ErrorInfo>();
-            }
+            try { return await _dataService.GetErrorsAsync(languageCode); }
+            catch (Exception ex) { _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); return new List<ErrorInfo>(); }
         }
 
         // 導覽列事件

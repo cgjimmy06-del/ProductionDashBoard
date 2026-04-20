@@ -18,7 +18,7 @@ namespace FProductionDashBoard.ViewModels
     public partial class DeviceCardContainerViewModel : ObservableObject
     {
         private string defaultDevicesFile = "defaultdevices.json"; // 預設設備檔案
-        private readonly ListsFormSql commonLists;
+        private readonly ListsFromSql commonLists;
         public ObservableCollection<DeviceCardViewModel> Devices { get; } =
             new ObservableCollection<DeviceCardViewModel>();
 
@@ -34,7 +34,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand FastUploadDevicesCommand { get; }
 
         public DeviceCardContainerViewModel(LogService log, IDataService dataservice, AuthorizationService authservice,
-            UserInfo currentuser, ListsFormSql getlists)
+            UserInfo currentuser, ListsFromSql getlists)
         {
             _log = log;
             _dataService = dataservice;
