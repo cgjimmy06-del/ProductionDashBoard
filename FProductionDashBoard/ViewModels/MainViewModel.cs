@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FProductionDashBoard.Services.Offline;
 using FProductionDashBoard.UiModels;
 using FProductionDashBoard.Services;
 using Microsoft.Data.SqlClient;
@@ -36,6 +37,7 @@ namespace FProductionDashBoard.ViewModels
 
         #region  -- DI注入資源 --
         private readonly IDataService _dataService;
+        private readonly IOfflineSyncService _syncService;
         private LogService _log { get; }
         private AuthorizationService _authService { get; }
         public UserInfo SystemUser { get; }
@@ -78,7 +80,10 @@ namespace FProductionDashBoard.ViewModels
         public ICommand SaveLogsCommand { get; }
         // 主視覺視窗
 
-        public MainViewModel(UserInfo user, LogService log, IDataService dataservice, AuthorizationService auth)
+        private int _syncTickCounter = 0;
+
+        public MainViewModel(UserInfo user, LogService log, IDataService dataservice, AuthorizationService auth,
+            IOfflineSyncService syncService)
         {
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(
@@ -90,17 +95,25 @@ namespace FProductionDashBoard.ViewModels
             _log = log;
             _dataService = dataservice;
             _authService = auth;
+            _syncService = syncService;
 
             // 建立 DispatcherTimer 每秒更新一次時間，並定義工作起始時間
             _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
 
             DefaultTimer = new DispatcherTimer();
             DefaultTimer.Interval = TimeSpan.FromSeconds(1);
-            DefaultTimer.Tick += (s, e) =>
+            DefaultTimer.Tick += async (s, e) =>
             {
                 CurrentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
                 if (DateTime.Now.AddDays(-1) > _dataService.BusinessDay)
                     _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
+
+                _syncTickCounter++;
+                if (_syncTickCounter >= 30)
+                {
+                    _syncTickCounter = 0;
+                    await SyncAndLogAsync();
+                }
             };
             DefaultTimer.Start();
 
@@ -147,6 +160,17 @@ namespace FProductionDashBoard.ViewModels
                 $"Materials:[{CommonLists.MaterialsList.Count}]-" +
                 $"Errors:[{CommonLists.ErrorsList.Count}]" +
                 $"TimeSlots:[{CommonLists.TimeSlotsList.Count}]");
+
+            await SyncAndLogAsync();
+        }
+        private async Task SyncAndLogAsync()
+        {
+            var result = await _syncService.SyncPendingAsync();
+            if (result?.SyncedCount > 0)
+                _log.AddLog($"SyncedCount: {result?.SyncedCount}");
+            if (result?.FailedCount > 0)
+                _log.AddLog($"SyncedCount: {result?.FailedCount}");
+            // TODO: 根據 result.SyncedCount / result.FailedCount 決定 log 輸出時機
         }
         public async Task<List<DeviceInfo>> GetDevicesListFromSqlAsync()
         {

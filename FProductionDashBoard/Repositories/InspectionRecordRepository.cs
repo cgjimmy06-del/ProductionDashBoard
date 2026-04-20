@@ -45,7 +45,8 @@ namespace FProductionDashBoard.Repositories
         }
         
         public async Task<int> AddInspectionRecordAsync(InspectionType type, int equipmentId, int employeeId,
-            bool result, int? timeSlotId, string? productName, string? errorCode, string? description)
+            bool result, int? timeSlotId, string? productName, string? errorCode, string? description,
+            DateTime? operatedAt = null)
         {
             var record = new InspectionRecord
             {
@@ -57,7 +58,7 @@ namespace FProductionDashBoard.Repositories
                 Result = result,
                 ErrorCode = errorCode,
                 Description = description,
-                CreateAt = DateTime.Now
+                CreateAt = operatedAt ?? DateTime.Now
             };
 
             _context.InspectionRecords.Add(record);

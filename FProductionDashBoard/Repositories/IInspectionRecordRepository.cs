@@ -17,7 +17,8 @@ namespace FProductionDashBoard.Repositories
         /// 新增一筆檢驗紀錄
         /// </summary>
         public Task<int> AddInspectionRecordAsync(InspectionType type, int equipmentId, int employeeId,
-            bool result, int? timeSlotId, string? productName, string? errorCode, string? description);
+            bool result, int? timeSlotId, string? productName, string? errorCode, string? description,
+            DateTime? operatedAt = null);
         /// <summary>
         /// 檢查某設備在指定時段是否已有巡檢紀錄
         /// </summary>

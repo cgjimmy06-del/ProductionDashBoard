@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Properties;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.Services.Exceptions;
 using FProductionDashBoard.Services.V1;
 using FProductionDashBoard.UiModels;
 using FProductionDashBoard.UserControls;
@@ -121,6 +122,10 @@ namespace FProductionDashBoard.ViewModels
                         $"Category: {result.Selections.Count} -> " +
                         $"Sum: {result.Selections.Sum(d => d.SelectedCount)}", LogLevel.Success);
                 }
+                catch (OfflineOperationQueuedException)
+                {
+                    _log.AddLog("物料更換已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                }
                 catch (Exception ex)
                 {
                     _log.AddLog("物料更換紀錄上傳異常");
@@ -146,6 +151,15 @@ namespace FProductionDashBoard.ViewModels
 
                     FirstInspectionStatus = result.IsNormal;
                     _log.AddLog("首件紀錄上傳完成");
+                }
+                catch (OfflineOperationQueuedException)
+                {
+                    _log.AddLog("首件紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                }
+                catch (BusinessRuleException ex)
+                {
+                    _log.AddLog(ex.Message, LogLevel.Error);
+                    FirstInspectionStatus = false;
                 }
                 catch (Exception ex)
                 {
@@ -179,6 +193,14 @@ namespace FProductionDashBoard.ViewModels
                         CurrentProduct.Name, result.ErrorCode, result.Description);
                     await UpdateTimeSlotsStatusAsync();
                     _log.AddLog("巡檢紀錄上傳完成");
+                }
+                catch (OfflineOperationQueuedException)
+                {
+                    _log.AddLog("巡檢紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                }
+                catch (BusinessRuleException ex)
+                {
+                    _log.AddLog(ex.Message, LogLevel.Error);
                 }
                 catch (Exception ex)
                 {
