@@ -2,6 +2,6 @@ namespace FProductionDashBoard.Services.Offline
 {
     public interface IOfflineSyncService
     {
-        Task SyncPendingAsync();
+        Task<SyncResult> SyncPendingAsync();
     }
 }

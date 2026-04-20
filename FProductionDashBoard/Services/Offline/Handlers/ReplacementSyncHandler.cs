@@ -18,7 +18,7 @@ namespace FProductionDashBoard.Services.Offline.Handlers
             var details = payload.Materials
                 .Select(m => (m.MaterialId, m.Quantity))
                 .ToList();
-            await _repo.AddReplacementRecordAsync(payload.EquipmentId, payload.EmployeeId, "MTRP0001", details);
+            await _repo.AddReplacementRecordAsync(payload.EquipmentId, payload.EmployeeId, "MTRP0001", details, payload.OperatedAt);
         }
     }
 }

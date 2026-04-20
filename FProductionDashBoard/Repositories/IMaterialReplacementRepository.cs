@@ -10,6 +10,7 @@ namespace FProductionDashBoard.Repositories
     public interface IMaterialReplacementRepository : IRepository<MaterialReplacementRecord, MesDbContext>
     {
         public Task<int> AddReplacementRecordAsync(int equipmentId, int employeeId, string errorCode,
-                                                                List<(int materialId, int quantity)> details);
+                                                                List<(int materialId, int quantity)> details,
+                                                                DateTime? operatedAt = null);
     }
 }

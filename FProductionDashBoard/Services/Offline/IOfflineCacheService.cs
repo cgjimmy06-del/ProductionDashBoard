@@ -5,7 +5,7 @@ namespace FProductionDashBoard.Services.Offline
         Task EnqueueAsync(PendingOperation operation);
         Task<List<PendingOperation>> GetPendingAsync();
         Task MarkSyncedAsync(Guid id);
-        Task MarkFailedAsync(Guid id, int maxRetry);
+        Task MarkFailedAsync(Guid id);
         Task<bool> HasPendingAsync();
     }
 }

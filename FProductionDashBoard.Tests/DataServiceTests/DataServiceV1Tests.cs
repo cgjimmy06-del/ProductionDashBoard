@@ -246,7 +246,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 .ReturnsAsync(false);
             _inspectionRecordRep
                 .Setup(r => r.AddInspectionRecordAsync(
-                    InspectionType.Routine, 1, 10, true, 2, "PROD-A", null, null))
+                    InspectionType.Routine, 1, 10, true, 2, "PROD-A", null, null, It.IsAny<DateTime?>()))
                 .ReturnsAsync(99);
 
             var id = await CreateService(DateTime.Today).AddRoutineInspectionAsync(1, 10, true, 2, "PROD-A");
@@ -267,7 +267,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             _inspectionRecordRep.Verify(r => r.AddInspectionRecordAsync(
                 It.IsAny<InspectionType>(), It.IsAny<int>(), It.IsAny<int>(),
                 It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<string?>(),
-                It.IsAny<string?>(), It.IsAny<string?>()), Times.Never);
+                It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Never);
         }
 
         [Fact]
@@ -291,7 +291,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         {
             _inspectionRecordRep
                 .Setup(r => r.AddInspectionRecordAsync(
-                    InspectionType.First, 1, 10, true, null, "PROD-A", null, null))
+                    InspectionType.First, 1, 10, true, null, "PROD-A", null, null, It.IsAny<DateTime?>()))
                 .ReturnsAsync(42);
 
             var id = await CreateService(DateTime.Today).AddFirstInspectionAsync(1, 10, true, "PROD-A");
@@ -304,7 +304,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         {
             _inspectionRecordRep
                 .Setup(r => r.AddInspectionRecordAsync(
-                    InspectionType.First, 2, 5, false, null, "PROD-B", "INSP0001", "外觀不良"))
+                    InspectionType.First, 2, 5, false, null, "PROD-B", "INSP0001", "外觀不良", It.IsAny<DateTime?>()))
                 .ReturnsAsync(55);
 
             var id = await CreateService(DateTime.Today).AddFirstInspectionAsync(2, 5, false, "PROD-B", "INSP0001", "外觀不良");
@@ -319,7 +319,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 .Setup(r => r.AddInspectionRecordAsync(
                     InspectionType.First, It.IsAny<int>(), It.IsAny<int>(),
                     It.IsAny<bool>(), null, It.IsAny<string?>(),
-                    It.IsAny<string?>(), It.IsAny<string?>()))
+                    It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()))
                 .ReturnsAsync(1);
 
             await CreateService(DateTime.Today).AddFirstInspectionAsync(1, 1, true, "P");
@@ -327,7 +327,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             _inspectionRecordRep.Verify(r => r.AddInspectionRecordAsync(
                 InspectionType.First, It.IsAny<int>(), It.IsAny<int>(),
                 It.IsAny<bool>(), null,
-                It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string?>()), Times.Once);
+                It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Once);
         }
 
         [Fact]
@@ -351,13 +351,13 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         {
             var details = new List<(int materialId, int quantity)> { (1, 2), (3, 1) };
             _materialReplacementRep
-                .Setup(r => r.AddReplacementRecordAsync(1, 10, "MTRP0001", details))
+                .Setup(r => r.AddReplacementRecordAsync(1, 10, "MTRP0001", details, It.IsAny<DateTime?>()))
                 .ReturnsAsync(7);
 
             var id = await CreateService(DateTime.Today).AddReplacementRecordAsync(1, 10, details);
 
             Assert.Equal(7, id);
-            _materialReplacementRep.Verify(r => r.AddReplacementRecordAsync(1, 10, "MTRP0001", details), Times.Once);
+            _materialReplacementRep.Verify(r => r.AddReplacementRecordAsync(1, 10, "MTRP0001", details, It.IsAny<DateTime?>()), Times.Once);
         }
 
         [Fact]
@@ -365,7 +365,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         {
             var details = new List<(int materialId, int quantity)>();
             _materialReplacementRep
-                .Setup(r => r.AddReplacementRecordAsync(2, 3, "MTRP0001", details))
+                .Setup(r => r.AddReplacementRecordAsync(2, 3, "MTRP0001", details, It.IsAny<DateTime?>()))
                 .ReturnsAsync(0);
 
             var id = await CreateService(DateTime.Today).AddReplacementRecordAsync(2, 3, details);
@@ -407,13 +407,13 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 .ReturnsAsync(false);
             _inspectionRecordRep
                 .Setup(r => r.AddInspectionRecordAsync(
-                    InspectionType.Routine, 1, 1, false, 5, null, "RTIN0001", null))
+                    InspectionType.Routine, 1, 1, false, 5, null, "RTIN0001", null, It.IsAny<DateTime?>()))
                 .ReturnsAsync(1);
 
             await CreateService(DateTime.Today).CheckAndInsertMissedInspectionAsync([slot], 1);
 
             _inspectionRecordRep.Verify(r => r.AddInspectionRecordAsync(
-                InspectionType.Routine, 1, 1, false, 5, null, "RTIN0001", null), Times.Once);
+                InspectionType.Routine, 1, 1, false, 5, null, "RTIN0001", null, It.IsAny<DateTime?>()), Times.Once);
         }
 
         [Fact]
@@ -437,7 +437,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             _inspectionRecordRep.Verify(r => r.AddInspectionRecordAsync(
                 It.IsAny<InspectionType>(), It.IsAny<int>(), It.IsAny<int>(),
                 It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<string?>(),
-                It.IsAny<string?>(), It.IsAny<string?>()), Times.Never);
+                It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Never);
         }
 
         [Fact]
@@ -471,14 +471,14 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             _inspectionRecordRep.Setup(r => r.ExistsInspectionInSlotAsync(1, 1, It.IsAny<DateTime>())).ReturnsAsync(true);
             _inspectionRecordRep.Setup(r => r.ExistsInspectionInSlotAsync(1, 2, It.IsAny<DateTime>())).ReturnsAsync(false);
             _inspectionRecordRep.Setup(r => r.AddInspectionRecordAsync(
-                InspectionType.Routine, 1, 1, false, 2, null, "RTIN0001", null)).ReturnsAsync(1);
+                InspectionType.Routine, 1, 1, false, 2, null, "RTIN0001", null, It.IsAny<DateTime?>())).ReturnsAsync(1);
 
             await CreateService(DateTime.Today).CheckAndInsertMissedInspectionAsync(slots, 1);
 
             _inspectionRecordRep.Verify(r => r.AddInspectionRecordAsync(
                 It.IsAny<InspectionType>(), It.IsAny<int>(), It.IsAny<int>(),
                 It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<string?>(),
-                It.IsAny<string?>(), It.IsAny<string?>()), Times.Once);
+                It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Once);
         }
 
         [Fact]
@@ -523,14 +523,14 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             _inspectionRecordRep.Setup(r => r.ExistsInspectionInSlotAsync(1, 1, It.IsAny<DateTime>())).ReturnsAsync(true);
             _inspectionRecordRep.Setup(r => r.ExistsInspectionInSlotAsync(1, 2, It.IsAny<DateTime>())).ReturnsAsync(false);
             _inspectionRecordRep.Setup(r => r.AddInspectionRecordAsync(
-                InspectionType.Routine, 1, 1, false, 2, null, "RTIN0001", null)).ReturnsAsync(1);
+                InspectionType.Routine, 1, 1, false, 2, null, "RTIN0001", null, It.IsAny<DateTime?>())).ReturnsAsync(1);
 
             await CreateService(DateTime.Today).CheckAndInsertMissedInspectionAsync(slots, 1);
 
             _inspectionRecordRep.Verify(r => r.AddInspectionRecordAsync(
                 It.IsAny<InspectionType>(), It.IsAny<int>(), It.IsAny<int>(),
                 It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<string?>(),
-                It.IsAny<string?>(), It.IsAny<string?>()), Times.Once);
+                It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Once);
         }
 
         // ─── GetCurrentTimeSlotIdAsync ─────────────────────────────────────────

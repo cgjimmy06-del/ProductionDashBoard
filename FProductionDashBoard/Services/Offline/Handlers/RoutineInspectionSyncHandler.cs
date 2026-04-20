@@ -18,7 +18,8 @@ namespace FProductionDashBoard.Services.Offline.Handlers
             var payload = JsonSerializer.Deserialize<RoutineInspectionPayload>(op.PayloadJson)!;
             await _repo.AddInspectionRecordAsync(
                 InspectionType.Routine, payload.EquipmentId, payload.EmployeeId,
-                payload.Result, payload.TimeSlotId, payload.Product, payload.ErrorCode, payload.Description);
+                payload.Result, payload.TimeSlotId, payload.Product, payload.ErrorCode, payload.Description,
+                operatedAt: payload.OperatedAt);
         }
     }
 }

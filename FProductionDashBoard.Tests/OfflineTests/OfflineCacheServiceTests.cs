@@ -44,16 +44,15 @@ namespace FProductionDashBoard.Tests.OfflineTests
 
             var stored = await _db.PendingOperations.FindAsync(op.Id);
             Assert.NotNull(stored);
-            Assert.Equal(PendingStatus.Pending, stored.Status);
+            Assert.Equal(0, stored.RetryCount);
         }
 
         [Fact]
-        public async Task EnqueueAsync_DefaultStatus_IsPending()
+        public async Task EnqueueAsync_DefaultRetryCount_IsZero()
         {
             var op = MakePending();
             await _sut.EnqueueAsync(op);
 
-            Assert.Equal(PendingStatus.Pending, op.Status);
             Assert.Equal(0, op.RetryCount);
         }
 
@@ -66,7 +65,7 @@ namespace FProductionDashBoard.Tests.OfflineTests
         }
 
         [Fact]
-        public async Task HasPendingAsync_WhenPendingExists_ReturnsTrue()
+        public async Task HasPendingAsync_WhenExists_ReturnsTrue()
         {
             await _sut.EnqueueAsync(MakePending());
             Assert.True(await _sut.HasPendingAsync());
@@ -75,19 +74,16 @@ namespace FProductionDashBoard.Tests.OfflineTests
         // ─── GetPendingAsync ─────────────────────────────────────────────────
 
         [Fact]
-        public async Task GetPendingAsync_ReturnsOnlyPendingStatus()
+        public async Task GetPendingAsync_ReturnsAllOperations()
         {
-            var pending = MakePending();
-            var failed = MakePending(PendingOperationType.AddFirstInspection);
-            failed.Status = PendingStatus.Failed;
+            var op1 = MakePending();
+            var op2 = MakePending(PendingOperationType.AddFirstInspection);
 
-            await _sut.EnqueueAsync(pending);
-            _db.PendingOperations.Add(failed);
-            await _db.SaveChangesAsync();
+            await _sut.EnqueueAsync(op1);
+            await _sut.EnqueueAsync(op2);
 
             var result = await _sut.GetPendingAsync();
-            Assert.Single(result);
-            Assert.Equal(pending.Id, result[0].Id);
+            Assert.Equal(2, result.Count);
         }
 
         [Fact]
@@ -129,30 +125,30 @@ namespace FProductionDashBoard.Tests.OfflineTests
         // ─── MarkFailedAsync ─────────────────────────────────────────────────
 
         [Fact]
-        public async Task MarkFailedAsync_BelowMaxRetry_IncrementsRetryCount()
+        public async Task MarkFailedAsync_IncrementsRetryCount()
         {
             var op = MakePending();
             await _sut.EnqueueAsync(op);
 
-            await _sut.MarkFailedAsync(op.Id, maxRetry: 3);
+            await _sut.MarkFailedAsync(op.Id);
 
             var updated = await _db.PendingOperations.FindAsync(op.Id);
             Assert.Equal(1, updated!.RetryCount);
-            Assert.Equal(PendingStatus.Pending, updated.Status);
+            Assert.NotNull(updated.LastAttemptAt);
         }
 
         [Fact]
-        public async Task MarkFailedAsync_AtMaxRetry_SetsStatusToFailed()
+        public async Task MarkFailedAsync_MultipleRetries_KeepsIncrementing()
         {
             var op = MakePending();
-            op.RetryCount = 2;
             await _sut.EnqueueAsync(op);
 
-            await _sut.MarkFailedAsync(op.Id, maxRetry: 3);
+            await _sut.MarkFailedAsync(op.Id);
+            await _sut.MarkFailedAsync(op.Id);
+            await _sut.MarkFailedAsync(op.Id);
 
             var updated = await _db.PendingOperations.FindAsync(op.Id);
-            Assert.Equal(PendingStatus.Failed, updated!.Status);
-            Assert.NotNull(updated.LastAttemptAt);
+            Assert.Equal(3, updated!.RetryCount);
         }
     }
 }

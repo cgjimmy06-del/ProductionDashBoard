@@ -15,19 +15,20 @@ namespace FProductionDashBoard.Services.Offline
             _scopeFactory = scopeFactory;
         }
 
-        public async Task SyncPendingAsync()
+        public async Task<SyncResult> SyncPendingAsync()
         {
-            if (!await _cache.HasPendingAsync()) return;
+            if (!await _cache.HasPendingAsync()) return SyncResult.Empty;
 
             using var scope = _scopeFactory.CreateScope();
             var sp = scope.ServiceProvider;
 
             var equipmentRep = sp.GetRequiredService<IEquipmentRepository>();
-            if (!equipmentRep.CheckConnection()) return;
+            if (!equipmentRep.CheckConnection()) return SyncResult.Empty;
 
             var handlers = sp.GetServices<IPendingOperationHandler>();
             var pending = await _cache.GetPendingAsync();
 
+            int syncedCount = 0, failedCount = 0;
             foreach (var op in pending)
             {
                 var handler = handlers.FirstOrDefault(h => h.OperationType == op.OperationType);
@@ -37,12 +38,16 @@ namespace FProductionDashBoard.Services.Offline
                 {
                     await handler.HandleAsync(op);
                     await _cache.MarkSyncedAsync(op.Id);
+                    syncedCount++;
                 }
                 catch
                 {
-                    await _cache.MarkFailedAsync(op.Id, maxRetry: 3);
+                    await _cache.MarkFailedAsync(op.Id);
+                    failedCount++;
                 }
             }
+
+            return new SyncResult(syncedCount, failedCount);
         }
     }
 }

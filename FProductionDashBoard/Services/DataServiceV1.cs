@@ -137,7 +137,8 @@ namespace FProductionDashBoard.Services.V1
             {
                 EquipmentId = equipmentId,
                 EmployeeId = employeeId,
-                Materials = materialDetails.Select(m => new MaterialItem { MaterialId = m.materialId, Quantity = m.quantity }).ToList()
+                Materials = materialDetails.Select(m => new MaterialItem { MaterialId = m.materialId, Quantity = m.quantity }).ToList(),
+                OperatedAt = DateTime.Now
             };
             var op = new PendingOperation
             {
@@ -172,7 +173,8 @@ namespace FProductionDashBoard.Services.V1
             var payload = new FirstInspectionPayload
             {
                 EquipmentId = equipmentId, EmployeeId = employeeId,
-                Result = result, Product = product, ErrorCode = errorCode, Description = description
+                Result = result, Product = product, ErrorCode = errorCode, Description = description,
+                OperatedAt = DateTime.Now
             };
             var op = new PendingOperation
             {
@@ -208,7 +210,8 @@ namespace FProductionDashBoard.Services.V1
             {
                 EquipmentId = equipmentId, EmployeeId = employeeId,
                 Result = result, TimeSlotId = timeSlotId,
-                Product = product, ErrorCode = errorCode, Description = description
+                Product = product, ErrorCode = errorCode, Description = description,
+                OperatedAt = DateTime.Now
             };
             var op = new PendingOperation
             {

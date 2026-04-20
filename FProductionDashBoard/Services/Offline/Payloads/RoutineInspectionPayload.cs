@@ -9,5 +9,6 @@ namespace FProductionDashBoard.Services.Offline.Payloads
         public string? Product { get; set; }
         public string? ErrorCode { get; set; }
         public string? Description { get; set; }
+        public DateTime OperatedAt { get; set; } = DateTime.Now;
     }
 }

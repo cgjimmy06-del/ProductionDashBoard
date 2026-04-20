@@ -112,7 +112,7 @@ namespace FProductionDashBoard.ViewModels
                 if (_syncTickCounter >= 30)
                 {
                     _syncTickCounter = 0;
-                    await _syncService.SyncPendingAsync();
+                    await SyncAndLogAsync();
                 }
             };
             DefaultTimer.Start();
@@ -161,7 +161,12 @@ namespace FProductionDashBoard.ViewModels
                 $"Errors:[{CommonLists.ErrorsList.Count}]" +
                 $"TimeSlots:[{CommonLists.TimeSlotsList.Count}]");
 
-            await _syncService.SyncPendingAsync();
+            await SyncAndLogAsync();
+        }
+        private async Task SyncAndLogAsync()
+        {
+            var result = await _syncService.SyncPendingAsync();
+            // TODO: 根據 result.SyncedCount / result.FailedCount 決定 log 輸出時機
         }
         public async Task<List<DeviceInfo>> GetDevicesListFromSqlAsync()
         {

@@ -22,7 +22,6 @@ namespace FProductionDashBoard.Services.Offline
         public async Task<List<PendingOperation>> GetPendingAsync()
         {
             return await _db.PendingOperations
-                .Where(p => p.Status == PendingStatus.Pending)
                 .OrderBy(p => p.CreatedAt)
                 .ToListAsync();
         }
@@ -37,23 +36,19 @@ namespace FProductionDashBoard.Services.Offline
             }
         }
 
-        public async Task MarkFailedAsync(Guid id, int maxRetry)
+        public async Task MarkFailedAsync(Guid id)
         {
             var op = await _db.PendingOperations.FindAsync(id);
             if (op is null) return;
 
             op.RetryCount++;
             op.LastAttemptAt = DateTime.Now;
-            if (op.RetryCount >= maxRetry)
-                op.Status = PendingStatus.Failed;
-
             await _db.SaveChangesAsync();
         }
 
         public async Task<bool> HasPendingAsync()
         {
-            return await _db.PendingOperations
-                .AnyAsync(p => p.Status == PendingStatus.Pending);
+            return await _db.PendingOperations.AnyAsync();
         }
     }
 }

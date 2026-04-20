@@ -15,7 +15,6 @@ namespace FProductionDashBoard.Repositories
             {
                 e.HasKey(p => p.Id);
                 e.Property(p => p.OperationType).HasConversion<string>();
-                e.Property(p => p.Status).HasConversion<string>();
             });
         }
     }
