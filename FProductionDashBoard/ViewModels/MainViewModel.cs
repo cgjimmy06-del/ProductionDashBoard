@@ -81,6 +81,7 @@ namespace FProductionDashBoard.ViewModels
         // 主視覺視窗
 
         private int _syncTickCounter = 0;
+        private bool _isSyncing = false;
 
         public MainViewModel(UserInfo user, LogService log, IDataService dataservice, AuthorizationService auth,
             IOfflineSyncService syncService)
@@ -165,8 +166,17 @@ namespace FProductionDashBoard.ViewModels
         }
         private async Task SyncAndLogAsync()
         {
-            var result = await _syncService.SyncPendingAsync();
-            // TODO: 根據 result.SyncedCount / result.FailedCount 決定 log 輸出時機
+            if (_isSyncing) return;
+            _isSyncing = true;
+            try
+            {
+                var result = await _syncService.SyncPendingAsync();
+                // TODO: 根據 result.SyncedCount / result.FailedCount 決定 log 輸出時機
+            }
+            finally
+            {
+                _isSyncing = false;
+            }
         }
         public async Task<List<DeviceInfo>> GetDevicesListFromSqlAsync()
         {

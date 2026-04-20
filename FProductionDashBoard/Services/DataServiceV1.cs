@@ -50,7 +50,7 @@ namespace FProductionDashBoard.Services.V1
         #region 清單查詢與 Mapping
         public async Task<List<DeviceInfo>> GetDevicesAsync()
         {
-            if (!EquipmentRep.CheckConnection())
+            if (!await EquipmentRep.CheckConnectionAsync())
                 throw new InvalidOperationException("Equipment repository connection failed");
             var list = await EquipmentRep.GetAllAsync();
             return list.Select(eq => new DeviceInfo
@@ -69,7 +69,7 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<UserInfo>> GetUsersAsync()
         {
-            if (!EmployeeRep.CheckConnection())
+            if (!await EmployeeRep.CheckConnectionAsync())
                 throw new InvalidOperationException("Employee repository connection failed");
             var list = await EmployeeRep.GetAllAsync();
             return list.Select(us => new UserInfo
@@ -86,7 +86,7 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<MaterialInfo>> GetMaterialsAsync()
         {
-            if (!MaterialRep.CheckConnection())
+            if (!await MaterialRep.CheckConnectionAsync())
                 throw new InvalidOperationException("Material repository connection failed");
             var list = await MaterialRep.GetAllAsync();
             return list.Select(ma => new MaterialInfo
@@ -104,7 +104,7 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<ErrorInfo>> GetErrorsAsync(string languageCode)
         {
-            if (!ErrorListRep.CheckConnection())
+            if (!await ErrorListRep.CheckConnectionAsync())
                 throw new InvalidOperationException("ErrorList repository connection failed");
             var list = await ErrorListRep.GetMessagesWithOtherAsync(languageCode);
             return list.Select(er => new ErrorInfo
@@ -120,7 +120,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task<int> AddReplacementRecordAsync(int equipmentId, int employeeId,
             List<(int materialId, int quantity)> materialDetails)
         {
-            if (MaterialReplacementRep.CheckConnection())
+            if (await MaterialReplacementRep.CheckConnectionAsync())
             {
                 try
                 {
@@ -156,7 +156,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task<int> AddFirstInspectionAsync(int equipmentId, int employeeId, bool result,
             string? product, string? errorCode = null, string? description = null)
         {
-            if (InspectionRecordRep.CheckConnection())
+            if (await InspectionRecordRep.CheckConnectionAsync())
             {
                 try
                 {
@@ -188,7 +188,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task<int> AddRoutineInspectionAsync(int equipmentId, int employeeId, bool result,
             int timeSlotId, string? product, string? errorCode = null, string? description = null)
         {
-            if (InspectionRecordRep.CheckConnection())
+            if (await InspectionRecordRep.CheckConnectionAsync())
             {
                 bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, timeSlotId, BusinessDay);
                 if (exists)
