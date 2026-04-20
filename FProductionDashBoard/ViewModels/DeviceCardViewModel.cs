@@ -46,6 +46,8 @@ namespace FProductionDashBoard.ViewModels
 
         // 操作按鈕及狀態顯示
         [ObservableProperty]
+        private bool isSelected = false; // 是否被選擇
+        [ObservableProperty]
         private bool routineCycleEnable = false; // 是否開啟巡檢功能
         [ObservableProperty]
         private bool firstInspectionStatus = false; // 首件狀態
