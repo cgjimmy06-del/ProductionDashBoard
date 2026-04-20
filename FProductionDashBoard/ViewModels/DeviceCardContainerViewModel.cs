@@ -32,6 +32,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand AddDevicesCommand { get; }
         public ICommand FastDownloadDevicesCommand { get; }
         public ICommand FastUploadDevicesCommand { get; }
+        public ICommand DeleteDevicesCommand { get; }
 
         public DeviceCardContainerViewModel(LogService log, IDataService dataservice, AuthorizationService authservice,
             UserInfo currentuser, ListsFromSql getlists)
@@ -48,6 +49,7 @@ namespace FProductionDashBoard.ViewModels
             AddDevicesCommand = new AsyncRelayCommand(() => AddDeviceCard());
             FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
             FastUploadDevicesCommand = new AsyncRelayCommand(() => FastUploadDevices());
+            DeleteDevicesCommand = new RelayCommand(() => DeleteDevices());
         }
         // 待翻譯
         private async void FirstArticleInsAll()
@@ -165,6 +167,9 @@ namespace FProductionDashBoard.ViewModels
                 _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
             }
         }
-
+        private void DeleteDevices()
+        {
+            if (Devices.Any()) Devices.Clear();
+        }
     }
 }

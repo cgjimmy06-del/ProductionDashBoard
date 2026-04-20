@@ -44,7 +44,6 @@
                 <EventTrigger RoutedEvent="PreviewMouseUp">
                     <BeginStoryboard Storyboard="{StaticResource ReleaseStoryboard}"/>
                 </EventTrigger>
-
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
