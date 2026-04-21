@@ -248,6 +248,7 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Setting:
+                    Card1 = new SettingViewModel(_log, _dataService, _authService);
                     break;
 
                 default:

@@ -1,4 +1,5 @@
-﻿using FProductionDashBoard.Models;
+﻿using FProductionDashBoard.Dtos;
+using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
 using FProductionDashBoard.Services.Exceptions;
 using FProductionDashBoard.Services.Offline;
@@ -319,7 +320,123 @@ namespace FProductionDashBoard.Services.V1
 
         #endregion
 
+        #region 設定：設備 CRUD
 
+        public async Task<List<Equipment>> GetAllEquipmentAsync()
+        {
+            if (!await EquipmentRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Equipment repository connection failed");
+            return (await EquipmentRep.GetAllAsync()).ToList();
+        }
+
+        public async Task AddEquipmentAsync(EquipmentFormDto dto)
+        {
+            if (!await EquipmentRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Equipment repository connection failed");
+            var entity = new Equipment
+            {
+                Code = dto.Code,
+                Name = dto.Name,
+                Ip = dto.Ip,
+                Port = dto.Port,
+                TypeId = dto.TypeId,
+                Factory = dto.Factory,
+                Building = dto.Building,
+                Floor = dto.Floor,
+                DepartmentId = dto.DepartmentId,
+                Description = dto.Description
+            };
+            await EquipmentRep.AddAsync(entity);
+        }
+
+        public async Task UpdateEquipmentAsync(EquipmentFormDto dto)
+        {
+            if (!await EquipmentRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Equipment repository connection failed");
+            var entity = await EquipmentRep.GetByIdAsync(dto.Id!.Value)
+                ?? throw new InvalidOperationException($"Equipment id={dto.Id} not found");
+            entity.Code = dto.Code;
+            entity.Name = dto.Name;
+            entity.Ip = dto.Ip;
+            entity.Port = dto.Port;
+            entity.TypeId = dto.TypeId;
+            entity.Factory = dto.Factory;
+            entity.Building = dto.Building;
+            entity.Floor = dto.Floor;
+            entity.DepartmentId = dto.DepartmentId;
+            entity.Description = dto.Description;
+            entity.UpdateAt = DateTime.Now;
+            await EquipmentRep.UpdateAsync(entity);
+        }
+
+        public async Task DeleteEquipmentAsync(int id)
+        {
+            if (!await EquipmentRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Equipment repository connection failed");
+            await EquipmentRep.DeleteAsync(id);
+        }
+
+        public async Task<List<EquipmentType>> GetEquipmentTypesAsync()
+        {
+            if (!await EquipmentRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Equipment repository connection failed");
+            return await EquipmentRep.GetContext().Set<EquipmentType>().ToListAsync();
+        }
+
+        #endregion
+
+        #region 設定：員工 CRUD
+
+        public async Task<List<Employee>> GetAllEmployeesAsync()
+        {
+            if (!await EmployeeRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Employee repository connection failed");
+            return (await EmployeeRep.GetAllAsync()).ToList();
+        }
+
+        public async Task AddEmployeeAsync(EmployeeFormDto dto)
+        {
+            if (!await EmployeeRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Employee repository connection failed");
+            var entity = new Employee
+            {
+                UserId = dto.UserId,
+                Name = dto.Name,
+                Password = dto.Password,
+                RoleId = dto.RoleId,
+                CardId = dto.CardId,
+                Email = dto.Email,
+                DepartmentId = dto.DepartmentId
+            };
+            await EmployeeRep.AddAsync(entity);
+        }
+
+        public async Task UpdateEmployeeAsync(EmployeeFormDto dto)
+        {
+            if (!await EmployeeRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Employee repository connection failed");
+            var entity = await EmployeeRep.GetByIdAsync(dto.Id!.Value)
+                ?? throw new InvalidOperationException($"Employee id={dto.Id} not found");
+            entity.UserId = dto.UserId;
+            entity.Name = dto.Name;
+            if (!string.IsNullOrEmpty(dto.Password))
+                entity.Password = dto.Password;
+            entity.RoleId = dto.RoleId;
+            entity.CardId = dto.CardId;
+            entity.Email = dto.Email;
+            entity.DepartmentId = dto.DepartmentId;
+            entity.UpdateAt = DateTime.Now;
+            await EmployeeRep.UpdateAsync(entity);
+        }
+
+        public async Task DeleteEmployeeAsync(int id)
+        {
+            if (!await EmployeeRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Employee repository connection failed");
+            await EmployeeRep.DeleteAsync(id);
+        }
+
+        #endregion
 
 
 

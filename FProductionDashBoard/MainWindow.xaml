@@ -40,6 +40,9 @@
             <DataTemplate DataType="{x:Type localvm:DeviceCardContainerViewModel}">
                 <localuc:DeviceCardContainer />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type localvm:SettingViewModel}">
+                <localuc:SettingView />
+            </DataTemplate>
 
         </ResourceDictionary>
     </Window.Resources>
