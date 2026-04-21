@@ -3,13 +3,13 @@
 
     <!--#region 基礎色 -->
     <!-- 主色系 -->
-    <Color x:Key="PrimaryColor">#7986CB</Color> <!-- Indigo 300 -->
-    <Color x:Key="PrimaryDarkColor">#5C6BC0</Color> <!-- Indigo 400, pressed/selected -->
-    <Color x:Key="PrimaryLightColor">#9FA8DA</Color> <!-- Indigo 200, hover bg -->
+    <Color x:Key="PrimaryColor">#5B7FA6</Color> <!-- Steel Blue, muted -->
+    <Color x:Key="PrimaryDarkColor">#3E6489</Color> <!-- Steel Blue dark, pressed/selected -->
+    <Color x:Key="PrimaryLightColor">#7898BF</Color> <!-- Steel Blue light, hover bg -->
     <Color x:Key="PrimaryBackgroundColor">#252525</Color>
     <!-- 輔色系 -->
-    <Color x:Key="SecondaryColor">#FFB74D</Color> <!-- Deep Orange 300 -->
-    <Color x:Key="SecondaryLightColor">#FFE0B2</Color> <!-- Deep Orange 100 -->
+    <Color x:Key="SecondaryColor">#4A9E8E</Color> <!-- Muted Teal -->
+    <Color x:Key="SecondaryLightColor">#72B8AB</Color> <!-- Muted Teal light, hover bg -->
     <!-- 背景/邊框/文字 -->
     <Color x:Key="BackgroundColor">#1E1E1E</Color>
     <Color x:Key="BorderColor">#4A4A4A</Color>
@@ -17,7 +17,7 @@
     <Color x:Key="TextDarkColor">#212121</Color>
     <Color x:Key="TextPrimaryColor">#E0E0E0</Color>
     <!-- 選取狀態 -->
-    <Color x:Key="SelectedColor">#5C6BC0</Color>
+    <Color x:Key="SelectedColor">#3E6489</Color>
     <!-- 狀態燈顏色 -->
     <Color x:Key="SuccessColor">#43A047</Color>
     <Color x:Key="WarningColor">#FBC02D</Color>
@@ -26,7 +26,7 @@
     <!-- 訊息顏色 -->
     <Color x:Key="InfoColor">#E0E0E0</Color>
     <Color x:Key="ProcessingColor">#82B1FF</Color>
-    <Color x:Key="AlertColor">#FBC02D</Color>
+    <Color x:Key="AlertColor">#F57C00</Color>
     <!-- 按鈕操作補充色 -->
     <Color x:Key="ButtonPrimaryColor">#81CFEE</Color>
     <Color x:Key="ButtonSecondaryDarkColor">#0288D1</Color>
