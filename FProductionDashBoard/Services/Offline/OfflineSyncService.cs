@@ -23,10 +23,10 @@ namespace FProductionDashBoard.Services.Offline
             var sp = scope.ServiceProvider;
 
             var equipmentRep = sp.GetRequiredService<IEquipmentRepository>();
-            if (!await equipmentRep.CheckConnectionAsync()) return SyncResult.Empty;
-
             var handlers = sp.GetServices<IPendingOperationHandler>();
             var pending = await _cache.GetPendingAsync();
+
+            if (!await equipmentRep.CheckConnectionAsync()) return new SyncResult(0, pending.Count);
 
             int syncedCount = 0, failedCount = 0;
             foreach (var op in pending)

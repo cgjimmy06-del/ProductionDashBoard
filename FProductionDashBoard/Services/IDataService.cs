@@ -21,6 +21,7 @@ namespace FProductionDashBoard.Services
         public Task<List<UserInfo>> GetUsersAsync();
         public Task<List<MaterialInfo>> GetMaterialsAsync();
         public Task<List<ErrorInfo>> GetErrorsAsync(string languageCode);
+        public Task<List<TimeSlotLookup>> GetTimeSlotsAsync();
         public IEquipmentRepository EquipmentRep { get; }
         public IEmployeeRepository EmployeeRep { get; }
         public IMaterialRepository MaterialRep { get; }
@@ -33,7 +34,7 @@ namespace FProductionDashBoard.Services
 
 
         /// <summary>
-        /// 新增物料更換紀錄
+        /// 新增物料更換紀錄 (可離線暫存)
         /// </summary>
         public Task<int> AddReplacementRecordAsync(int equipmentId, int employeeId, List<(int materialId, int quantity)> materialDetails);
         /// <summary>
@@ -45,12 +46,12 @@ namespace FProductionDashBoard.Services
         /// </summary>
         public int? GetCurrentTimeSlotId(List<TimeSlotLookup> timeslots);
         /// <summary>
-        /// 新增首件紀錄
+        /// 新增首件紀錄 (可離線暫存)
         /// </summary>
         public Task<int> AddFirstInspectionAsync(int equipmentId, int employeeId, bool result,
             string? product, string? errorCode = null, string? description = null);
         /// <summary>
-        /// 新增巡檢紀錄
+        /// 新增巡檢紀錄 (可離線暫存)
         /// </summary>
         public Task<int> AddRoutineInspectionAsync(int equipmentId, int employeeId, bool result,
             int timeSlotId, string? product, string? errorCode = null, string? description = null);
@@ -59,7 +60,7 @@ namespace FProductionDashBoard.Services
         /// </summary>
         public Task<List<int>> GetAllSlotsStatusAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId);
         /// <summary>
-        /// 檢查當前時段是否有巡檢紀錄，若沒有則補一筆「未巡檢」紀錄
+        /// 檢查當前時段是否有巡檢紀錄，若沒有則補一筆「未巡檢」紀錄 (不可離線暫存，若進到下個工作日仍無法上傳則不能更新未巡檢紀錄)
         /// </summary>
         public Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId);
 

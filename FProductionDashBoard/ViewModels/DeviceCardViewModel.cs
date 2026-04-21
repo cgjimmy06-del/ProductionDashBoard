@@ -90,13 +90,22 @@ namespace FProductionDashBoard.ViewModels
         }
         public async Task UpdateTimeSlotsStatusAsync()
         {
-            var ideviceslots = await _dataService.GetAllSlotsStatusAsync(commonLists.TimeSlotsList, Info.Id);
+            try
+            {
+                var ideviceslots = await _dataService.GetAllSlotsStatusAsync(commonLists.TimeSlotsList, Info.Id);
 
-            if (ideviceslots.Count != TimeSlotsStatus.Count) {
-                _log.AddLog("時間區段數量有問題"); return; }
+                if (ideviceslots.Count != TimeSlotsStatus.Count)
+                {
+                    _log.AddLog("時間區段數量有問題"); return;
+                }
 
-            for(int i = 0;i < ideviceslots.Count;i++)
-                TimeSlotsStatus[i] = ideviceslots[i];
+                for (int i = 0; i < ideviceslots.Count; i++)
+                    TimeSlotsStatus[i] = ideviceslots[i];
+            }
+            catch (Exception ex)
+            {
+                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error);
+            }
         }
         // 操作員按鈕
         private async Task MaterialsChange() // 待翻譯

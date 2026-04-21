@@ -38,7 +38,7 @@
         <!-- 密碼區 -->
         <TextBlock Text="{DynamicResource PasswordText}" Margin="5,5,5,0"/>
         <PasswordBox x:Name="PasswordBox" Margin="5,5,5,0" Padding="4"
-                     BorderBrush="Black"
+                     BorderBrush="{DynamicResource BorderBrush}"
                      Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
                      materialDesign:HintAssist.Hint="{DynamicResource RequiredText}"
                      materialDesign:HintAssist.IsFloating="False"
@@ -64,33 +64,32 @@
         <ToggleButton Width="60" Height="30" BorderThickness="0" Margin="0,10,0,0"
                     Command="{Binding ThemeChangeCommand}"
                     IsChecked="{Binding IsDarkMode, Mode=TwoWay}"
-                    Background="#303F9F" Foreground="#212121"
                     HorizontalAlignment="Center" VerticalAlignment="Bottom">
             <ToggleButton.Template>
                 <ControlTemplate TargetType="ToggleButton">
                     <Grid>
                         <!-- 背景 -->
                         <Border x:Name="BackgroundBorder"
-                        CornerRadius="13" Background="#BBDEFB"/>
+                        CornerRadius="13" Background="{DynamicResource PrimaryLightBrush}"/>
                         <!-- 圖示 -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <!-- 月亮/太陽 -->
                             <materialDesign:PackIcon Kind="WeatherNight"
                                                  Width="20" Height="20" Margin="0,0,6,0"
-                                                 Foreground="#B0BEC5" FontWeight="UltraBold"/>
+                                                 Foreground="{DynamicResource PrimaryBrush}" FontWeight="UltraBold"/>
                             <materialDesign:PackIcon Kind="WeatherSunny"
                                              Width="20" Height="20"
-                                             Foreground="Orange" FontWeight="UltraBold"/>
+                                             Foreground="{DynamicResource SecondaryBrush}" FontWeight="UltraBold"/>
                         </StackPanel>
                         <!-- 滑塊 -->
                         <Ellipse x:Name="Knob" Width="25" Height="25" Margin="3,0"
-                         Fill="#FFFFFF" HorizontalAlignment="Left" />
+                         Fill="{DynamicResource TextLightBrush}" HorizontalAlignment="Left" />
                     </Grid>
                     <!-- 狀態切換 -->
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="BackgroundBorder" Property="Background" Value="#303F9F"/>
-                            <Setter TargetName="Knob" Property="Fill" Value="#212121"/>
+                            <Setter TargetName="BackgroundBorder" Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
+                            <Setter TargetName="Knob" Property="Fill" Value="{DynamicResource TextDarkBrush}"/>
                             <Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right"/>
                             <Setter TargetName="Knob" Property="Margin" Value="3,0"/>
                         </Trigger>

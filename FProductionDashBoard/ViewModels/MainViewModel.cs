@@ -38,7 +38,7 @@ namespace FProductionDashBoard.ViewModels
         #region  -- DI注入資源 --
         private readonly IDataService _dataService;
         private readonly IOfflineSyncService _syncService;
-        private LogService _log { get; }
+        public LogService _log { get; } // public 是為了Window的顯示
         private AuthorizationService _authService { get; }
         public UserInfo SystemUser { get; }
         public UserInfo CurrentUser { get; }
@@ -113,6 +113,8 @@ namespace FProductionDashBoard.ViewModels
                 if (_syncTickCounter >= 30)
                 {
                     _syncTickCounter = 0;
+
+                    // 加入逾時未巡檢 (需含try catch)
                     await SyncAndLogAsync();
                 }
             };
@@ -143,7 +145,7 @@ namespace FProductionDashBoard.ViewModels
             var usersTask = await GetUsersListFromSqlAsync();
             var materialsTask = await GetMaterialsListFromSqlAsync();
             var errorsTask = await GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
-            var timeslotsTask = (await _dataService.TimeSlotLookupRep.GetAllAsync()).OrderBy(s => s.TimeSlotId);
+            var timeslotsTask = await GetTimeSlotsListFromSqlAsync();
 
             // await Task.WhenAll(devicesTask, materialsTask, errorsTask); .Result // 無法同時開啟dbcontext
 
@@ -214,6 +216,15 @@ namespace FProductionDashBoard.ViewModels
             { 
                 _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); 
                 return new List<ErrorInfo>(); 
+            }
+        }
+        public async Task<List<TimeSlotLookup>> GetTimeSlotsListFromSqlAsync()
+        {
+            try { return await _dataService.GetTimeSlotsAsync(); }
+            catch (Exception ex)
+            {
+                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error);
+                return new List<TimeSlotLookup>();
             }
         }
 

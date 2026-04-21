@@ -114,6 +114,13 @@ namespace FProductionDashBoard.Services.V1
                 Category = er.Category
             }).ToList();
         }
+        public async Task<List<TimeSlotLookup>> GetTimeSlotsAsync()
+        {
+            if (!await TimeSlotLookupRep.CheckConnectionAsync())
+                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+            var list = (await TimeSlotLookupRep.GetAllAsync()).OrderBy(s => s.TimeSlotId);
+            return list.ToList();
+        }
         #endregion
 
         #region 設備卡片區業務邏輯 - 物料 首件 巡檢
@@ -177,8 +184,12 @@ namespace FProductionDashBoard.Services.V1
 
             var payload = new FirstInspectionPayload
             {
-                EquipmentId = equipmentId, EmployeeId = employeeId,
-                Result = result, Product = product, ErrorCode = errorCode, Description = description,
+                EquipmentId = equipmentId,
+                EmployeeId = employeeId,
+                Result = result,
+                Product = product,
+                ErrorCode = errorCode,
+                Description = description,
                 OperatedAt = DateTime.Now
             };
             var op = new PendingOperation
@@ -214,9 +225,13 @@ namespace FProductionDashBoard.Services.V1
 
             var payload = new RoutineInspectionPayload
             {
-                EquipmentId = equipmentId, EmployeeId = employeeId,
-                Result = result, TimeSlotId = timeSlotId,
-                Product = product, ErrorCode = errorCode, Description = description,
+                EquipmentId = equipmentId,
+                EmployeeId = employeeId,
+                Result = result,
+                TimeSlotId = timeSlotId,
+                Product = product,
+                ErrorCode = errorCode,
+                Description = description,
                 OperatedAt = DateTime.Now
             };
             var op = new PendingOperation
@@ -230,6 +245,9 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<int>> GetAllSlotsStatusAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {
+            if (!await TimeSlotLookupRep.CheckConnectionAsync())
+                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+
             var slotsResult = await InspectionRecordRep.GetStatusForAllSlotsAsync(equipmentId, BusinessDay);
 
             var now = DateTime.Now;
@@ -257,6 +275,9 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {
+            if (!(await InspectionRecordRep.CheckConnectionAsync()))
+                throw new InvalidOperationException("InspectionRecordRep repository connection failed");
+
             var endedSlots = timeSlotLookups.Where(slot =>
             {
                 var (_, slotEnd) = GetSlotBounds(slot);
@@ -286,7 +307,7 @@ namespace FProductionDashBoard.Services.V1
         private (DateTime slotStart, DateTime slotEnd) GetSlotBounds(TimeSlotLookup slot)
         {
             var slotStart = BusinessDay.Date.Add(slot.StartAt);
-            var slotEnd   = BusinessDay.Date.Add(slot.EndAt);
+            var slotEnd = BusinessDay.Date.Add(slot.EndAt);
             if (slot.IsCrossDay)
             {
                 slotEnd = slotEnd.AddDays(1);
