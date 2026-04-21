@@ -28,6 +28,7 @@
     <sys:String x:Key="AddDeviceButtonTooltip">Add new device card to the block</sys:String>
     <sys:String x:Key="FastUploadButtonTooltip">Fast upload default list to device block</sys:String>
     <sys:String x:Key="FastDownloadButtonTooltip">Fast download list to default file</sys:String>
+    <sys:String x:Key="DeleteDevicesButtonTooltip">Delete device cards</sys:String>
     <!--#endregion-->
     <!--#region device card 設備卡片 -->
     <sys:String x:Key="MetarialChangeButton">Vật liệu</sys:String>
