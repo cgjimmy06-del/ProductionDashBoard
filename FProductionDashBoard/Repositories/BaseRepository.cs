@@ -11,6 +11,7 @@ namespace FProductionDashBoard.Repositories
     {
         public string CurrectConnStr { get; set; }
         bool CheckConnection();
+        Task<bool> CheckConnectionAsync();
         public TContext GetContext();
 
         public Task<IEnumerable<T>> GetAllAsync();
@@ -35,8 +36,10 @@ namespace FProductionDashBoard.Repositories
             CurrectConnStr = _context.Database.GetDbConnection().ConnectionString;
         }
 
-        public bool CheckConnection() 
+        public bool CheckConnection()
         { return _context.Database.CanConnect(); }
+        public async Task<bool> CheckConnectionAsync()
+            => await _context.Database.CanConnectAsync();
         public TContext GetContext() {  return _context; }
 
         public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();

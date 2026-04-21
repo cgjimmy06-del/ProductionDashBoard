@@ -1,5 +1,8 @@
 ﻿using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
+using FProductionDashBoard.Services.Exceptions;
+using FProductionDashBoard.Services.Offline;
+using FProductionDashBoard.Services.Offline.Payloads;
 using FProductionDashBoard.UiModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using static System.Reflection.Metadata.BlobBuilder;
 
@@ -25,9 +29,12 @@ namespace FProductionDashBoard.Services.V1
         public IInspectionRecordRepository InspectionRecordRep { get; }
 
 
+        private readonly IOfflineCacheService _offlineCache;
+
         public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep,
-            IErrorListRepository errorListRep, IMaterialReplacementRepository materialReplacementRep, 
-            IInspectionRecordRepository inspectionRecordRep, ITimeSlotLookupRepository timeSlotLookupRep)
+            IErrorListRepository errorListRep, IMaterialReplacementRepository materialReplacementRep,
+            IInspectionRecordRepository inspectionRecordRep, ITimeSlotLookupRepository timeSlotLookupRep,
+            IOfflineCacheService offlineCache)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
@@ -36,13 +43,14 @@ namespace FProductionDashBoard.Services.V1
             MaterialReplacementRep = materialReplacementRep;
             InspectionRecordRep = inspectionRecordRep;
             TimeSlotLookupRep = timeSlotLookupRep;
+            _offlineCache = offlineCache;
         }
 
 
         #region 清單查詢與 Mapping
         public async Task<List<DeviceInfo>> GetDevicesAsync()
         {
-            if (!EquipmentRep.CheckConnection())
+            if (!await EquipmentRep.CheckConnectionAsync())
                 throw new InvalidOperationException("Equipment repository connection failed");
             var list = await EquipmentRep.GetAllAsync();
             return list.Select(eq => new DeviceInfo
@@ -61,7 +69,7 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<UserInfo>> GetUsersAsync()
         {
-            if (!EmployeeRep.CheckConnection())
+            if (!await EmployeeRep.CheckConnectionAsync())
                 throw new InvalidOperationException("Employee repository connection failed");
             var list = await EmployeeRep.GetAllAsync();
             return list.Select(us => new UserInfo
@@ -78,7 +86,7 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<MaterialInfo>> GetMaterialsAsync()
         {
-            if (!MaterialRep.CheckConnection())
+            if (!await MaterialRep.CheckConnectionAsync())
                 throw new InvalidOperationException("Material repository connection failed");
             var list = await MaterialRep.GetAllAsync();
             return list.Select(ma => new MaterialInfo
@@ -96,7 +104,7 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<ErrorInfo>> GetErrorsAsync(string languageCode)
         {
-            if (!ErrorListRep.CheckConnection())
+            if (!await ErrorListRep.CheckConnectionAsync())
                 throw new InvalidOperationException("ErrorList repository connection failed");
             var list = await ErrorListRep.GetMessagesWithOtherAsync(languageCode);
             return list.Select(er => new ErrorInfo
@@ -109,34 +117,116 @@ namespace FProductionDashBoard.Services.V1
         #endregion
 
         #region 設備卡片區業務邏輯 - 物料 首件 巡檢
-        public async Task<int> AddReplacementRecordAsync(int equipmentId, int employeeId, 
+        public async Task<int> AddReplacementRecordAsync(int equipmentId, int employeeId,
             List<(int materialId, int quantity)> materialDetails)
         {
-            return await MaterialReplacementRep.AddReplacementRecordAsync(
-                                equipmentId, employeeId, "MTRP0001", materialDetails);
+            if (await MaterialReplacementRep.CheckConnectionAsync())
+            {
+                try
+                {
+                    return await MaterialReplacementRep.AddReplacementRecordAsync(
+                        equipmentId, employeeId, "MTRP0001", materialDetails);
+                }
+                catch (SqlException ex)
+                {
+                    throw new DatabaseConnectionException("新增物料更換紀錄時資料庫發生錯誤。", ex);
+                }
+            }
+
+            var payload = new ReplacementPayload
+            {
+                EquipmentId = equipmentId,
+                EmployeeId = employeeId,
+                Materials = materialDetails.Select(m => new MaterialItem { MaterialId = m.materialId, Quantity = m.quantity }).ToList(),
+                OperatedAt = DateTime.Now
+            };
+            var op = new PendingOperation
+            {
+                OperationType = PendingOperationType.AddReplacement,
+                PayloadJson = JsonSerializer.Serialize(payload)
+            };
+            _ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
+
+            throw new OfflineOperationQueuedException(op.Id);
         }
 
         public async Task<int?> GetCurrentTimeSlotIdAsync()
         {
             return await TimeSlotLookupRep.GetCurrentTimeSlotIdAsync(BusinessDay);
         }
+        public int? GetCurrentTimeSlotId(List<TimeSlotLookup> timeslots)
+        {
+            return TimeSlotLookupRep.GetCurrentTimeSlotId(BusinessDay, timeslots);
+        }
         public async Task<int> AddFirstInspectionAsync(int equipmentId, int employeeId, bool result,
             string? product, string? errorCode = null, string? description = null)
         {
-            return await InspectionRecordRep.AddInspectionRecordAsync(
-                InspectionType.First, equipmentId, employeeId, result,
-                null, product, errorCode, description);
-        }
-        public async Task<int> AddRoutineInspectionAsync(int equipmentId,int employeeId, bool result,
-            int timeSlotId, string? product, string? errorCode = null, string? description = null) // 待翻譯
-        {
-            bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, timeSlotId, BusinessDay);
-            if (exists)
-            { throw new InvalidOperationException("同一設備同一時段已有紀錄，不能重複新增。"); }
+            if (await InspectionRecordRep.CheckConnectionAsync())
+            {
+                try
+                {
+                    return await InspectionRecordRep.AddInspectionRecordAsync(
+                        InspectionType.First, equipmentId, employeeId, result,
+                        null, product, errorCode, description);
+                }
+                catch (SqlException ex)
+                {
+                    throw new DatabaseConnectionException("新增首件紀錄時資料庫發生錯誤。", ex);
+                }
+            }
 
-            return await InspectionRecordRep.AddInspectionRecordAsync(
-                InspectionType.Routine, equipmentId, employeeId, result,
-                timeSlotId, product, errorCode, description);
+            var payload = new FirstInspectionPayload
+            {
+                EquipmentId = equipmentId, EmployeeId = employeeId,
+                Result = result, Product = product, ErrorCode = errorCode, Description = description,
+                OperatedAt = DateTime.Now
+            };
+            var op = new PendingOperation
+            {
+                OperationType = PendingOperationType.AddFirstInspection,
+                PayloadJson = JsonSerializer.Serialize(payload)
+            };
+            _ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
+
+            throw new OfflineOperationQueuedException(op.Id);
+        }
+
+        public async Task<int> AddRoutineInspectionAsync(int equipmentId, int employeeId, bool result,
+            int timeSlotId, string? product, string? errorCode = null, string? description = null)
+        {
+            if (await InspectionRecordRep.CheckConnectionAsync())
+            {
+                bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, timeSlotId, BusinessDay);
+                if (exists)
+                    throw new BusinessRuleException("同一設備同一時段已有紀錄，不能重複新增。");
+
+                try
+                {
+                    return await InspectionRecordRep.AddInspectionRecordAsync(
+                        InspectionType.Routine, equipmentId, employeeId, result,
+                        timeSlotId, product, errorCode, description);
+                }
+                catch (SqlException ex)
+                {
+                    throw new DatabaseConnectionException("新增巡檢紀錄時資料庫發生錯誤。", ex);
+                }
+            }
+
+            var payload = new RoutineInspectionPayload
+            {
+                EquipmentId = equipmentId, EmployeeId = employeeId,
+                Result = result, TimeSlotId = timeSlotId,
+                Product = product, ErrorCode = errorCode, Description = description,
+                OperatedAt = DateTime.Now
+            };
+            var op = new PendingOperation
+            {
+                OperationType = PendingOperationType.AddRoutineInspection,
+                PayloadJson = JsonSerializer.Serialize(payload)
+            };
+            _ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
+
+            throw new OfflineOperationQueuedException(op.Id);
         }
         public async Task<List<int>> GetAllSlotsStatusAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {
@@ -177,10 +267,17 @@ namespace FProductionDashBoard.Services.V1
                 bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, slot.TimeSlotId, BusinessDay);
                 if (!exists)
                 {
-                    // 補上一筆逾時未巡檢紀錄 (以管理員為記錄)
-                    await InspectionRecordRep.AddInspectionRecordAsync(
-                        InspectionType.Routine, equipmentId, 1, false,
-                        slot.TimeSlotId, null, "RTIN0001", null);
+                    try
+                    {
+                        // 補上一筆逾時未巡檢紀錄 (以管理員為記錄)
+                        await InspectionRecordRep.AddInspectionRecordAsync(
+                            InspectionType.Routine, equipmentId, 1, false,
+                            slot.TimeSlotId, null, "RTIN0001", null);
+                    }
+                    catch (SqlException ex)
+                    {
+                        throw new DatabaseConnectionException($"補填時段 {slot.TimeSlotId} 失敗。", ex);
+                    }
                 }
             }
         }

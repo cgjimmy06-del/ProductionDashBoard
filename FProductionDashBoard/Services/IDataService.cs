@@ -41,6 +41,10 @@ namespace FProductionDashBoard.Services
         /// </summary>
         public Task<int?> GetCurrentTimeSlotIdAsync();
         /// <summary>
+        /// 取得當前巡檢區段ID (離線表)
+        /// </summary>
+        public int? GetCurrentTimeSlotId(List<TimeSlotLookup> timeslots);
+        /// <summary>
         /// 新增首件紀錄
         /// </summary>
         public Task<int> AddFirstInspectionAsync(int equipmentId, int employeeId, bool result,

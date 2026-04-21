@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FProductionDashBoard.UiModels;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.Services.Exceptions;
+using FProductionDashBoard.UiModels;
 using FProductionDashBoard.UserControls;
 using Microsoft.Data.SqlClient;
 using System;
@@ -32,6 +33,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand AddDevicesCommand { get; }
         public ICommand FastDownloadDevicesCommand { get; }
         public ICommand FastUploadDevicesCommand { get; }
+        public ICommand DeleteDevicesCommand { get; }
 
         public DeviceCardContainerViewModel(LogService log, IDataService dataservice, AuthorizationService authservice,
             UserInfo currentuser, ListsFromSql getlists)
@@ -48,6 +50,7 @@ namespace FProductionDashBoard.ViewModels
             AddDevicesCommand = new AsyncRelayCommand(() => AddDeviceCard());
             FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
             FastUploadDevicesCommand = new AsyncRelayCommand(() => FastUploadDevices());
+            DeleteDevicesCommand = new RelayCommand(() => DeleteDevices());
         }
         // 待翻譯
         private async void FirstArticleInsAll()
@@ -62,22 +65,40 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                try
-                {
-                    var result = vm.Result ?? new();
+                var result = vm.Result ?? new();
 
-                    foreach (var idevice in Devices)
+                foreach (var idevice in Devices)
+                {
+                    try
                     {
+                        idevice.FirstInspectionStatus = result.IsNormal;
+
                         await _dataService.AddFirstInspectionAsync(idevice.Info.Id, idevice.CurrentUser.Id, result.IsNormal,
                         idevice.CurrentProduct.Name, result.ErrorCode, result.Description);
 
-                        idevice.FirstInspectionStatus = result.IsNormal;
+                        _log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                        $"首件紀錄上傳完成");
                     }
-                }
-                catch (Exception ex)
-                {
-                    _log.AddLog("首件紀錄上傳異常 (批次)");
-                    _log.AddErrorLog($"FirstArticleInspection: {ex.Message}");
+                    catch (OfflineOperationQueuedException)
+                    {
+                        _log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                            $"首件紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                    }
+                    catch (BusinessRuleException ex)
+                    {
+                        _log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                        $"業務規則異常", LogLevel.Error);
+                        _log.AddErrorLog($"FirstInspection BusinessRuleEx: {ex.Message}");
+                        idevice.FirstInspectionStatus = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                            $"首件紀錄上傳異常");
+                        _log.AddErrorLog($"FirstInspection Ex: {ex.Message}");
+                        idevice.FirstInspectionStatus = false;
+                    }
+
                 }
             }
         }
@@ -93,33 +114,43 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                try
+                var result = vm.Result ?? new();
+
+                var currentTimeSlot = _dataService.GetCurrentTimeSlotId(commonLists.TimeSlotsList);
+                if (currentTimeSlot == null)
                 {
-                    var result = vm.Result ?? new();
+                    _log.AddLog("目前不在任何巡檢時段內");
+                    return;
+                }
 
-                    var currentTimeSlot = await _dataService.GetCurrentTimeSlotIdAsync();
-                    if (currentTimeSlot == null)
-                    {
-                        _log.AddLog("目前不在任何巡檢時段內");
-                        return;
-                    }
-
-                    foreach (var idevice in Devices)
+                foreach (var idevice in Devices)
+                {
+                    try
                     {
                         await _dataService.AddRoutineInspectionAsync(idevice.Info.Id, idevice.CurrentUser.Id, result.IsNormal,
                             currentTimeSlot ?? 1, idevice.CurrentProduct.Name, result.ErrorCode, result.Description);
                         await idevice.UpdateTimeSlotsStatusAsync();
+
+                        _log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                        $"巡檢紀錄上傳完成");
                     }
-                }
-                catch(SqlException sqlex)
-                {
-                    _log.AddLog("巡檢紀錄上傳異常 (批次)");
-                    _log.AddErrorLog($"RoutineInspection: {sqlex.Message}");
-                }
-                catch (Exception ex)
-                {
-                    _log.AddLog("巡檢紀錄上傳異常 (批次)");
-                    _log.AddErrorLog($"RoutineInspection: {ex.Message}");
+                    catch (OfflineOperationQueuedException)
+                    {
+                        _log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                            $"巡檢紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                    }
+                    catch (BusinessRuleException ex)
+                    {
+                        _log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                            $"業務規則異常", LogLevel.Error);
+                        _log.AddErrorLog($"RoutineInspection BusinessRuleEx: {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                            $"巡檢紀錄上傳異常");
+                        _log.AddErrorLog($"RoutineInspection Ex: {ex.Message}");
+                    }
                 }
             }
         }
@@ -165,6 +196,9 @@ namespace FProductionDashBoard.ViewModels
                 _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
             }
         }
-
+        private void DeleteDevices()
+        {
+            if (Devices.Any()) Devices.Clear();
+        }
     }
 }

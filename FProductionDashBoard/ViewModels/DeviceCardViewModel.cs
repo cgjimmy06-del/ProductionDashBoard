@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Properties;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.Services.Exceptions;
 using FProductionDashBoard.Services.V1;
 using FProductionDashBoard.UiModels;
 using FProductionDashBoard.UserControls;
@@ -45,6 +46,8 @@ namespace FProductionDashBoard.ViewModels
         private ProductInfo currentProduct = new() { ModelCode = "Unknown", TypeCode = "123" };
 
         // 操作按鈕及狀態顯示
+        [ObservableProperty]
+        private bool isSelected = false; // 是否被選擇
         [ObservableProperty]
         private bool routineCycleEnable = false; // 是否開啟巡檢功能
         [ObservableProperty]
@@ -119,6 +122,10 @@ namespace FProductionDashBoard.ViewModels
                         $"Category: {result.Selections.Count} -> " +
                         $"Sum: {result.Selections.Sum(d => d.SelectedCount)}", LogLevel.Success);
                 }
+                catch (OfflineOperationQueuedException)
+                {
+                    _log.AddLog("物料更換已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                }
                 catch (Exception ex)
                 {
                     _log.AddLog("物料更換紀錄上傳異常");
@@ -139,16 +146,31 @@ namespace FProductionDashBoard.ViewModels
                 try
                 {
                     var result = vm.Result ?? new();
+                    FirstInspectionStatus = result.IsNormal;
+
                     await _dataService.AddFirstInspectionAsync(Info.Id, CurrentUser.Id, result.IsNormal,
                         CurrentProduct.Name, result.ErrorCode, result.Description);
 
-                    FirstInspectionStatus = result.IsNormal;
-                    _log.AddLog("首件紀錄上傳完成");
+                    _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
+                        $"首件紀錄上傳完成");
+                }
+                catch (OfflineOperationQueuedException)
+                {
+                    _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
+                        $"首件紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                }
+                catch (BusinessRuleException ex)
+                {
+                    _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
+                        $"業務規則異常", LogLevel.Error);
+                    _log.AddErrorLog($"FirstInspection BusinessRuleEx: {ex.Message}");
+                    FirstInspectionStatus = false;
                 }
                 catch (Exception ex)
                 {
-                    _log.AddLog("首件紀錄上傳異常");
-                    _log.AddErrorLog($"FirstArticleInspection: {ex.Message}");
+                    _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
+                        $"首件紀錄上傳異常");
+                    _log.AddErrorLog($"FirstInspection Ex: {ex.Message}");
                     FirstInspectionStatus = false;
                 }
             }
@@ -166,7 +188,7 @@ namespace FProductionDashBoard.ViewModels
                 {
                     var result = vm.Result ?? new();
 
-                    var currentTimeSlot = await _dataService.GetCurrentTimeSlotIdAsync();
+                    var currentTimeSlot = _dataService.GetCurrentTimeSlotId(commonLists.TimeSlotsList);
                     if (currentTimeSlot == null)
                     {
                         _log.AddLog("目前不在任何巡檢時段內");
@@ -176,12 +198,25 @@ namespace FProductionDashBoard.ViewModels
                     await _dataService.AddRoutineInspectionAsync(Info.Id, CurrentUser.Id, result.IsNormal, currentTimeSlot ?? 1,
                         CurrentProduct.Name, result.ErrorCode, result.Description);
                     await UpdateTimeSlotsStatusAsync();
-                    _log.AddLog("巡檢紀錄上傳完成");
+                    _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
+                        $"巡檢紀錄上傳完成");
+                }
+                catch (OfflineOperationQueuedException)
+                {
+                    _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
+                        $"巡檢紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                }
+                catch (BusinessRuleException ex)
+                {
+                    _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
+                        $"業務規則異常", LogLevel.Error);
+                    _log.AddErrorLog($"RoutineInspection BusinessRuleEx: {ex.Message}");
                 }
                 catch (Exception ex)
                 {
-                    _log.AddLog("巡檢紀錄上傳異常");
-                    _log.AddErrorLog($"RoutineInspection: {ex.Message}");
+                    _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
+                        $"巡檢紀錄上傳異常");
+                    _log.AddErrorLog($"RoutineInspection Ex: {ex.Message}");
                 }
             }
         }
