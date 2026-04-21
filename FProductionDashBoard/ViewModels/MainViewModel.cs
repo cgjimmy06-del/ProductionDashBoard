@@ -38,7 +38,7 @@ namespace FProductionDashBoard.ViewModels
         #region  -- DI注入資源 --
         private readonly IDataService _dataService;
         private readonly IOfflineSyncService _syncService;
-        private LogService _log { get; }
+        public LogService _log { get; } // public 是為了Window的顯示
         private AuthorizationService _authService { get; }
         public UserInfo SystemUser { get; }
         public UserInfo CurrentUser { get; }

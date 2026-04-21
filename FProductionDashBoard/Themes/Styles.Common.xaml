@@ -60,6 +60,8 @@
 
     <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
     </Style>
     <Style TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignOutlinedComboBox}">
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>

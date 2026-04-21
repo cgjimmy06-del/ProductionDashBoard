@@ -14,11 +14,11 @@
 
             <!-- 主按鈕區 -->
             <StackPanel Orientation="Horizontal">
-                <Button Margin="10" Padding="5" Width="75"
+                <Button Margin="5" Padding="5" Width="90" Height="40" FontSize="18"
                         Style="{StaticResource FunctionButtonStyle}"
                         Content="{DynamicResource ModeChangeButton}"
                         Command="{Binding ToggleModeCommand}"/>
-                <Button Margin="10" Padding="5" Width="75"
+                <Button Margin="5" Padding="5" Width="90" Height="40" FontSize="18"
                         Style="{StaticResource FunctionButtonStyle}"
                         Content="{DynamicResource ClearSelectionButton}"
                         Command="{Binding ClearSelectionCommand}" />
