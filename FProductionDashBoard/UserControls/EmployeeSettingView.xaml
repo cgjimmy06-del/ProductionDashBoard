@@ -17,7 +17,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" MaxHeight="320" />
         </Grid.RowDefinitions>
 
         <!-- DataGrid -->
@@ -84,6 +84,8 @@
                 Visibility="{Binding IsFormVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                 Padding="12,8" BorderThickness="0,1,0,0"
                 BorderBrush="{DynamicResource MaterialDesignDivider}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
                 <TextBlock Text="{Binding EditingId, StringFormat=編輯員工 (ID: {0}),
                            TargetNullValue=新增員工}"
@@ -175,6 +177,7 @@
                             Content="儲存"/>
                 </StackPanel>
             </StackPanel>
+            </ScrollViewer>
         </Border>
     </Grid>
 </UserControl>

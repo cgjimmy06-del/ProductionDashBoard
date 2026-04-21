@@ -8,12 +8,35 @@
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="800">
 
-    <TabControl Style="{StaticResource MaterialDesignTabControl}" Margin="4">
-        <TabItem Header="設備管理">
+    <TabControl Style="{StaticResource MaterialDesignFilledTabControl}" Margin="4">
+
+        <TabItem MinWidth="140">
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Margin="4,0">
+                    <materialDesign:PackIcon Kind="Memory"
+                                             Width="20" Height="20"
+                                             VerticalAlignment="Center"
+                                             Margin="0,0,6,0"/>
+                    <TextBlock Text="設備管理" VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </StackPanel>
+            </TabItem.Header>
             <localuc:EquipmentSettingView DataContext="{Binding Equipment}"/>
         </TabItem>
-        <TabItem Header="員工管理">
+
+        <TabItem MinWidth="140">
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Margin="4,0">
+                    <materialDesign:PackIcon Kind="AccountGroup"
+                                             Width="20" Height="20"
+                                             VerticalAlignment="Center"
+                                             Margin="0,0,6,0"/>
+                    <TextBlock Text="員工管理" VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </StackPanel>
+            </TabItem.Header>
             <localuc:EmployeeSettingView DataContext="{Binding Employee}"/>
         </TabItem>
+
     </TabControl>
 </UserControl>
