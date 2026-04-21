@@ -25,7 +25,7 @@
     <!-- 訊息顏色 -->
     <Color x:Key="InfoColor">#FFFFFF</Color>
     <Color x:Key="ProcessingColor">Lightblue</Color>
-    <Color x:Key="AlertColor">#FBC02D</Color>
+    <Color x:Key="AlertColor">#F57C00</Color>
     <!-- 按鈕操作補充色 -->
     <Color x:Key="ButtonPrimaryColor">#81CFEE</Color>
     <Color x:Key="ButtonSecondaryDarkColor">#0288D1</Color>

@@ -81,7 +81,7 @@
                 </Button>
                 <Button Height="40" Width="80" Margin="5,0"
                                             Command="{Binding DeleteDevicesCommand}"
-                                            ToolTip="{DynamicResource AddDeviceButtonTooltip}">
+                                            ToolTip="{DynamicResource DeleteDevicesButtonTooltip}">
                     <materialDesign:PackIcon Kind="Delete"
                                                      Width="30" Height="30"/>
                 </Button>

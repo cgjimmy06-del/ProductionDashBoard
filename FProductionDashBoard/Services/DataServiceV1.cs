@@ -177,8 +177,12 @@ namespace FProductionDashBoard.Services.V1
 
             var payload = new FirstInspectionPayload
             {
-                EquipmentId = equipmentId, EmployeeId = employeeId,
-                Result = result, Product = product, ErrorCode = errorCode, Description = description,
+                EquipmentId = equipmentId,
+                EmployeeId = employeeId,
+                Result = result,
+                Product = product,
+                ErrorCode = errorCode,
+                Description = description,
                 OperatedAt = DateTime.Now
             };
             var op = new PendingOperation
@@ -214,9 +218,13 @@ namespace FProductionDashBoard.Services.V1
 
             var payload = new RoutineInspectionPayload
             {
-                EquipmentId = equipmentId, EmployeeId = employeeId,
-                Result = result, TimeSlotId = timeSlotId,
-                Product = product, ErrorCode = errorCode, Description = description,
+                EquipmentId = equipmentId,
+                EmployeeId = employeeId,
+                Result = result,
+                TimeSlotId = timeSlotId,
+                Product = product,
+                ErrorCode = errorCode,
+                Description = description,
                 OperatedAt = DateTime.Now
             };
             var op = new PendingOperation
@@ -257,6 +265,9 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {
+            if (!(await InspectionRecordRep.CheckConnectionAsync()))
+                throw new InvalidOperationException("InspectionRecordRep repository connection failed");
+
             var endedSlots = timeSlotLookups.Where(slot =>
             {
                 var (_, slotEnd) = GetSlotBounds(slot);
@@ -286,7 +297,7 @@ namespace FProductionDashBoard.Services.V1
         private (DateTime slotStart, DateTime slotEnd) GetSlotBounds(TimeSlotLookup slot)
         {
             var slotStart = BusinessDay.Date.Add(slot.StartAt);
-            var slotEnd   = BusinessDay.Date.Add(slot.EndAt);
+            var slotEnd = BusinessDay.Date.Add(slot.EndAt);
             if (slot.IsCrossDay)
             {
                 slotEnd = slotEnd.AddDays(1);
