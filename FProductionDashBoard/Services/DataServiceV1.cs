@@ -114,6 +114,13 @@ namespace FProductionDashBoard.Services.V1
                 Category = er.Category
             }).ToList();
         }
+        public async Task<List<TimeSlotLookup>> GetTimeSlotsAsync()
+        {
+            if (!await TimeSlotLookupRep.CheckConnectionAsync())
+                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+            var list = (await TimeSlotLookupRep.GetAllAsync()).OrderBy(s => s.TimeSlotId);
+            return list.ToList();
+        }
         #endregion
 
         #region 設備卡片區業務邏輯 - 物料 首件 巡檢
@@ -238,6 +245,9 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<int>> GetAllSlotsStatusAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {
+            if (!await TimeSlotLookupRep.CheckConnectionAsync())
+                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+
             var slotsResult = await InspectionRecordRep.GetStatusForAllSlotsAsync(equipmentId, BusinessDay);
 
             var now = DateTime.Now;

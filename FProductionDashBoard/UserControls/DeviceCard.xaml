@@ -101,7 +101,7 @@
                             Command="{Binding FirstInspectionCommand}"
                             Background="{Binding FirstInspectionStatus, 
                                     Converter={StaticResource BoolToColorConverter}}"
-                            Foreground="White"/>
+                            Foreground="{DynamicResource TextLightBrush}"/>
 
                     <Button Margin="5"
                             Style="{DynamicResource DeviceMainButtonStyle}"

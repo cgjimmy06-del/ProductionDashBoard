@@ -3,18 +3,19 @@
 
     <!--#region 基礎色 -->
     <!-- 主色系 -->
-    <Color x:Key="PrimaryColor">#3F51B5</Color> <!-- Indigo 500 -->
-    <Color x:Key="PrimaryDarkColor">#303F9F</Color> <!-- Indigo 700 -->
-    <Color x:Key="PrimaryLightColor">#C5CAE9</Color> <!-- Indigo 100 -->
-    <Color x:Key="PrimaryBackgroundColor">#E8EAF6</Color>
+    <Color x:Key="PrimaryColor">#3D6B9C</Color> <!-- Slate Blue -->
+    <Color x:Key="PrimaryDarkColor">#2A5580</Color> <!-- Slate Blue dark, pressed/selected -->
+    <Color x:Key="PrimaryLightColor">#B0CCDE</Color> <!-- Slate Blue light, hover bg -->
+    <Color x:Key="PrimaryBackgroundColor">#DDE8F0</Color>
     <!-- 輔色系 -->
-    <Color x:Key="SecondaryColor">#F57C00</Color> <!-- Deep Orange 600 -->
-    <Color x:Key="SecondaryLightColor">#FFCCBC</Color> <!-- Deep Orange 100 -->
+    <Color x:Key="SecondaryColor">#C07040</Color> <!-- Brick Orange, muted -->
+    <Color x:Key="SecondaryLightColor">#E8B990</Color> <!-- Soft Peach, hover bg -->
     <!-- 背景/邊框/文字 -->
     <Color x:Key="BackgroundColor">#F5F5F5</Color>
     <Color x:Key="BorderColor">#E0E0E0</Color>
     <Color x:Key="TextLightColor">#FFFFFF</Color>
     <Color x:Key="TextDarkColor">#212121</Color>
+    <Color x:Key="TextPrimaryColor">#212121</Color>
     <!-- 選取狀態 -->
     <Color x:Key="SelectedColor">#0277BD</Color>
     <!-- 狀態燈顏色 -->
@@ -48,6 +49,7 @@
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
     <SolidColorBrush x:Key="TextLightBrush" Color="{StaticResource TextLightColor}" />
     <SolidColorBrush x:Key="TextDarkBrush" Color="{StaticResource TextDarkColor}" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
 
     <SolidColorBrush x:Key="SelectedBrush" Color="{StaticResource SelectedColor}" />
     
