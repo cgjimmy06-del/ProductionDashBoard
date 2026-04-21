@@ -113,6 +113,8 @@ namespace FProductionDashBoard.ViewModels
                 if (_syncTickCounter >= 30)
                 {
                     _syncTickCounter = 0;
+
+                    // 加入逾時未巡檢 (需含try catch)
                     await SyncAndLogAsync();
                 }
             };
