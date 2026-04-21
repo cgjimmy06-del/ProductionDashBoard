@@ -10,6 +10,7 @@ namespace FProductionDashBoard.Repositories
     public interface ITimeSlotLookupRepository : IRepository<TimeSlotLookup, MesDbContext>
     {
         public Task<int?> GetCurrentTimeSlotIdAsync(DateTime businessDate);
+        public int? GetCurrentTimeSlotId(DateTime businessDate, List<TimeSlotLookup> timeslots);
     }
     public interface IInspectionRecordRepository : IRepository<InspectionRecord, MesDbContext>
     {

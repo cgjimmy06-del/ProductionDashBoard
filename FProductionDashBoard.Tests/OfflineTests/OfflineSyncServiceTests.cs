@@ -45,7 +45,7 @@ namespace FProductionDashBoard.Tests.OfflineTests
         public async Task SyncPendingAsync_WhenConnectionFails_ReturnsEmptyAndDoesNotProcessOps()
         {
             _cache.Setup(c => c.HasPendingAsync()).ReturnsAsync(true);
-            _equipmentRep.Setup(r => r.CheckConnection()).Returns(false);
+            _equipmentRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
             var sut = CreateService();
 
             var result = await sut.SyncPendingAsync();
@@ -61,7 +61,7 @@ namespace FProductionDashBoard.Tests.OfflineTests
             _cache.Setup(c => c.HasPendingAsync()).ReturnsAsync(true);
             _cache.Setup(c => c.GetPendingAsync()).ReturnsAsync(new List<PendingOperation> { op });
             _cache.Setup(c => c.MarkSyncedAsync(op.Id)).Returns(Task.CompletedTask);
-            _equipmentRep.Setup(r => r.CheckConnection()).Returns(true);
+            _equipmentRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
             _handler.Setup(h => h.OperationType).Returns(PendingOperationType.AddReplacement);
             _handler.Setup(h => h.HandleAsync(op)).Returns(Task.CompletedTask);
 
@@ -82,7 +82,7 @@ namespace FProductionDashBoard.Tests.OfflineTests
             _cache.Setup(c => c.GetPendingAsync()).ReturnsAsync(new List<PendingOperation> { op1, op2 });
             _cache.Setup(c => c.MarkSyncedAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
             _cache.Setup(c => c.MarkFailedAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
-            _equipmentRep.Setup(r => r.CheckConnection()).Returns(true);
+            _equipmentRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
 
             var handler1 = new Mock<IPendingOperationHandler>();
             handler1.Setup(h => h.OperationType).Returns(PendingOperationType.AddReplacement);
@@ -110,7 +110,7 @@ namespace FProductionDashBoard.Tests.OfflineTests
             var op = new PendingOperation { OperationType = PendingOperationType.AddReplacement, PayloadJson = "{}" };
             _cache.Setup(c => c.HasPendingAsync()).ReturnsAsync(true);
             _cache.Setup(c => c.GetPendingAsync()).ReturnsAsync(new List<PendingOperation> { op });
-            _equipmentRep.Setup(r => r.CheckConnection()).Returns(true);
+            _equipmentRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
             _handler.Setup(h => h.OperationType).Returns(PendingOperationType.AddFirstInspection);
 
             var sut = CreateService();

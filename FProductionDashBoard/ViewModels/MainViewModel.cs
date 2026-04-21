@@ -81,6 +81,7 @@ namespace FProductionDashBoard.ViewModels
         // 主視覺視窗
 
         private int _syncTickCounter = 0;
+        private bool _isSyncing = false;
 
         public MainViewModel(UserInfo user, LogService log, IDataService dataservice, AuthorizationService auth,
             IOfflineSyncService syncService)
@@ -165,32 +166,55 @@ namespace FProductionDashBoard.ViewModels
         }
         private async Task SyncAndLogAsync()
         {
-            var result = await _syncService.SyncPendingAsync();
-            if (result?.SyncedCount > 0)
-                _log.AddLog($"SyncedCount: {result?.SyncedCount}");
-            if (result?.FailedCount > 0)
-                _log.AddLog($"SyncedCount: {result?.FailedCount}");
-            // TODO: 根據 result.SyncedCount / result.FailedCount 決定 log 輸出時機
+            if (_isSyncing) return;
+            _isSyncing = true;
+            try
+            {
+                var result = await _syncService.SyncPendingAsync();
+                // TODO: 根據 result.SyncedCount / result.FailedCount 決定 log 輸出時機
+                if (result?.SyncedCount > 0)
+                	_log.AddLog($"已重新連線: 已上傳{result?.SyncedCount}筆暫存資料");
+            	if (result?.FailedCount > 0)
+                	_log.AddLog($"連線失敗: {result?.FailedCount}筆資料等待上傳");
+            }
+            finally
+            { _isSyncing = false; }
         }
         public async Task<List<DeviceInfo>> GetDevicesListFromSqlAsync()
         {
             try { return await _dataService.GetDevicesAsync(); }
-            catch (Exception ex) { _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); return new List<DeviceInfo>(); }
+            catch (Exception ex) 
+            { 
+                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); 
+                return new List<DeviceInfo>(); 
+            }
         }
         public async Task<List<UserInfo>> GetUsersListFromSqlAsync()
         {
             try { return await _dataService.GetUsersAsync(); }
-            catch (Exception ex) { _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); return new List<UserInfo>(); }
+            catch (Exception ex) 
+            { 
+                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); 
+                return new List<UserInfo>(); 
+            }
         }
         public async Task<List<MaterialInfo>> GetMaterialsListFromSqlAsync()
         {
             try { return await _dataService.GetMaterialsAsync(); }
-            catch (Exception ex) { _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); return new List<MaterialInfo>(); }
+            catch (Exception ex) 
+            { 
+                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); 
+                return new List<MaterialInfo>(); 
+            }
         }
         public async Task<List<ErrorInfo>> GetErrorsListFromSqlAsync(string languageCode)
         {
             try { return await _dataService.GetErrorsAsync(languageCode); }
-            catch (Exception ex) { _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); return new List<ErrorInfo>(); }
+            catch (Exception ex) 
+            { 
+                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); 
+                return new List<ErrorInfo>(); 
+            }
         }
 
         // 導覽列事件
@@ -243,15 +267,15 @@ namespace FProductionDashBoard.ViewModels
             catch (AggregateException ex)
             {
                 ProgressString = Properties.Resources.MainProgressStopped;
-                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogsCommand");
-                _log.AddErrorLog($"SaveLogsCommand Aggre.Ex: {ex.ToString()}");
+                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogs");
+                _log.AddErrorLog($"SaveLogs Aggre.Ex: {ex.ToString()}");
             }
             catch (Exception ex)
             {
                 // 最外層保護，抓所有未預期的錯誤
                 ProgressString = Properties.Resources.MainProgressStopped;
-                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogsCommand");
-                _log.AddErrorLog($"SaveLogsCommand Ex: {ex.ToString()}");
+                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogs");
+                _log.AddErrorLog($"SaveLogs Ex: {ex.ToString()}");
             }
         }
 

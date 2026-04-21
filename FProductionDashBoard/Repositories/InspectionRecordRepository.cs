@@ -37,6 +37,27 @@ namespace FProductionDashBoard.Repositories
             }
             return null; // 若不在任何時段範圍內
         }
+        public int? GetCurrentTimeSlotId(DateTime businessDate, List<TimeSlotLookup> timeslots)
+        {
+            var now = DateTime.Now;
+            foreach (var slot in timeslots)
+            {
+                var slotStart = businessDate.Date.Add(slot.StartAt);
+                var slotEnd = businessDate.Date.Add(slot.EndAt);
+
+                // 跨日邏輯: 跨整點 EndAt + 1；跨日 StartAt, EndAt + 1
+                if (slot.IsCrossDay)
+                {
+                    slotEnd = slotEnd.AddDays(1);
+                    if (slot.EndAt > slot.StartAt)
+                        slotStart = slotStart.AddDays(1);
+                }
+
+                if (now >= slotStart && now < slotEnd)
+                    return slot.TimeSlotId; // 找到當前時段
+            }
+            return null; // 若不在任何時段範圍內
+        }
     }
     public class InspectionRecordRepository : Repository<InspectionRecord, MesDbContext>, IInspectionRecordRepository
     {

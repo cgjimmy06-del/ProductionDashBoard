@@ -22,8 +22,8 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         public DataServiceV1Tests()
         {
             // 預設連線正常
-            _materialReplacementRep.Setup(r => r.CheckConnection()).Returns(true);
-            _inspectionRecordRep.Setup(r => r.CheckConnection()).Returns(true);
+            _materialReplacementRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
+            _inspectionRecordRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
             _offlineCache.Setup(c => c.EnqueueAsync(It.IsAny<PendingOperation>())).Returns(Task.CompletedTask);
         }
 
@@ -273,7 +273,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         [Fact]
         public async Task AddRoutineInspectionAsync_WhenConnectionFails_EnqueuesAndThrowsOfflineException()
         {
-            _inspectionRecordRep.Setup(r => r.CheckConnection()).Returns(false);
+            _inspectionRecordRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
 
             var ex = await Assert.ThrowsAsync<OfflineOperationQueuedException>(
                 () => CreateService(DateTime.Today).AddRoutineInspectionAsync(1, 10, true, 2, "PROD-A"));
@@ -333,7 +333,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         [Fact]
         public async Task AddFirstInspectionAsync_WhenConnectionFails_EnqueuesAndThrowsOfflineException()
         {
-            _inspectionRecordRep.Setup(r => r.CheckConnection()).Returns(false);
+            _inspectionRecordRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
 
             var ex = await Assert.ThrowsAsync<OfflineOperationQueuedException>(
                 () => CreateService(DateTime.Today).AddFirstInspectionAsync(1, 10, true, "PROD-A"));
@@ -376,7 +376,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         [Fact]
         public async Task AddReplacementRecordAsync_WhenConnectionFails_EnqueuesAndThrowsOfflineException()
         {
-            _materialReplacementRep.Setup(r => r.CheckConnection()).Returns(false);
+            _materialReplacementRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
             var details = new List<(int materialId, int quantity)> { (1, 2) };
 
             var ex = await Assert.ThrowsAsync<OfflineOperationQueuedException>(
