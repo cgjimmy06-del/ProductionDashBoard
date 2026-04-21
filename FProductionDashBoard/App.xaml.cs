@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FProductionDashBoard.Services.Offline;
+using FProductionDashBoard.Services.Offline.Handlers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
@@ -59,6 +61,15 @@ namespace FProductionDashBoard
 
             // 註冊 資訊
             services.AddSingleton(user);
+
+            // 離線暫存服務
+            services.AddDbContext<Repositories.LocalDbContext>(opt =>
+                opt.UseSqlite("Data Source=Settings/local_cache.db"), ServiceLifetime.Singleton);
+            services.AddSingleton<IOfflineCacheService, OfflineCacheService>();
+            services.AddSingleton<IOfflineSyncService, OfflineSyncService>();
+            services.AddTransient<IPendingOperationHandler, ReplacementSyncHandler>();
+            services.AddTransient<IPendingOperationHandler, FirstInspectionSyncHandler>();
+            services.AddTransient<IPendingOperationHandler, RoutineInspectionSyncHandler>();
 
             // 註冊 Service
             services.AddScoped<Services.IDataService, Services.V1.DataService>();
