@@ -46,7 +46,8 @@
 
     <DockPanel LastChildFill="True">
         <!-- Menu 區域 -->
-        <Menu DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignPaper}">
+        <Menu DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignPaper}"
+              Foreground="{DynamicResource MaterialDesignBody}">
             <MenuItem Header="_檔案">
                 <MenuItem.Icon>
                     <materialDesign:PackIcon Kind="File" Width="20" Height="20"/>
@@ -212,9 +213,9 @@
                           Height="5"
                           ResizeDirection="Rows"
                           ResizeBehavior="PreviousAndNext"
-                          Background="Gray"/>
+                          Background="{DynamicResource BorderBrush}"/>
                 <!-- 狀態訊息區 -->
-                <Border Grid.Row="2" BorderBrush="Gray" 
+                <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1" Margin="5" Padding="5">
                     <Grid>
                         <Grid.ColumnDefinitions>

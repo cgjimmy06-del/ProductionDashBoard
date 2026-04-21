@@ -143,7 +143,7 @@ namespace FProductionDashBoard.ViewModels
             var usersTask = await GetUsersListFromSqlAsync();
             var materialsTask = await GetMaterialsListFromSqlAsync();
             var errorsTask = await GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
-            var timeslotsTask = (await _dataService.TimeSlotLookupRep.GetAllAsync()).OrderBy(s => s.TimeSlotId);
+            var timeslotsTask = await GetTimeSlotsListFromSqlAsync();
 
             // await Task.WhenAll(devicesTask, materialsTask, errorsTask); .Result // 無法同時開啟dbcontext
 
@@ -214,6 +214,15 @@ namespace FProductionDashBoard.ViewModels
             { 
                 _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); 
                 return new List<ErrorInfo>(); 
+            }
+        }
+        public async Task<List<TimeSlotLookup>> GetTimeSlotsListFromSqlAsync()
+        {
+            try { return await _dataService.GetTimeSlotsAsync(); }
+            catch (Exception ex)
+            {
+                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error);
+                return new List<TimeSlotLookup>();
             }
         }
 

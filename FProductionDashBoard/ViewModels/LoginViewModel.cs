@@ -98,11 +98,17 @@ namespace FProductionDashBoard.ViewModels
             if (UserId == "" || Password == "")
             { Errorinfo = Properties.Resources.LogInFillOutError; return; }
 
-            if (!LoginService.checkConnection(SelectedServer))
-            { Errorinfo = Properties.Resources.LogInConnectionError; return; }
+            UserInfo? user = new UserInfo { 
+                UserId = "visitor", Name = "訪客", RoleId = 1, Id = 2}; // 預設 loginSource = "Visitor"
+            
+            if (loginSource == "Normal")
+            {
+                if (!LoginService.checkConnection(SelectedServer))
+                { Errorinfo = Properties.Resources.LogInConnectionError; return; }
+                // 之後password透過EncryptionService加密後儲存
+                user = LoginService.validateUser(SelectedServer, UserId, Password);
+            }
 
-            // 之後password透過EncryptionService加密後儲存
-            var user = LoginService.validateUser(SelectedServer, UserId, Password);
             if (user != null)
             {
                 if (loginSource != "Normal") { UserId = ""; Password = ""; } // 避免記憶 非常規登入資訊

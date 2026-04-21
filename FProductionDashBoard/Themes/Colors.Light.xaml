@@ -15,6 +15,7 @@
     <Color x:Key="BorderColor">#E0E0E0</Color>
     <Color x:Key="TextLightColor">#FFFFFF</Color>
     <Color x:Key="TextDarkColor">#212121</Color>
+    <Color x:Key="TextPrimaryColor">#212121</Color>
     <!-- 選取狀態 -->
     <Color x:Key="SelectedColor">#0277BD</Color>
     <!-- 狀態燈顏色 -->
@@ -48,6 +49,7 @@
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
     <SolidColorBrush x:Key="TextLightBrush" Color="{StaticResource TextLightColor}" />
     <SolidColorBrush x:Key="TextDarkBrush" Color="{StaticResource TextDarkColor}" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
 
     <SolidColorBrush x:Key="SelectedBrush" Color="{StaticResource SelectedColor}" />
     

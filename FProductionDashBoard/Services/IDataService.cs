@@ -21,6 +21,7 @@ namespace FProductionDashBoard.Services
         public Task<List<UserInfo>> GetUsersAsync();
         public Task<List<MaterialInfo>> GetMaterialsAsync();
         public Task<List<ErrorInfo>> GetErrorsAsync(string languageCode);
+        public Task<List<TimeSlotLookup>> GetTimeSlotsAsync();
         public IEquipmentRepository EquipmentRep { get; }
         public IEmployeeRepository EmployeeRep { get; }
         public IMaterialRepository MaterialRep { get; }
