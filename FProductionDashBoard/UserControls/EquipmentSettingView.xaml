@@ -44,22 +44,35 @@
                       SelectionMode="Single"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="*"/>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*"/>
-                    <DataGridTextColumn Header="IP" Binding="{Binding Ip}" Width="*"/>
-                    <DataGridTextColumn Header="Port" Binding="{Binding Port}" Width="60"/>
-                    <DataGridTextColumn Header="類型" Binding="{Binding Type.Name}" Width="80"/>
-                    <DataGridTemplateColumn Header="操作" Width="100">
+                    <DataGridTextColumn Header="編號" Binding="{Binding Code}" Width="Auto"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="名稱" Binding="{Binding Name}" Width="*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="IP" Binding="{Binding Ip}" Width="Auto"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="Port" Binding="{Binding Port}" Width="50"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="廠區" Binding="{Binding Factory}" Width="40"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="棟別" Binding="{Binding Building}" Width="40"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="樓層" Binding="{Binding Floor}" Width="40"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="類型" Binding="{Binding Type.Name}" Width="80"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="描述" Binding="{Binding Description}" Width="1.5*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTemplateColumn Header="操作" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
                                             ToolTip="編輯">
                                         <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
                                     </Button>
-                                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                                    <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
                                             ToolTip="刪除"

@@ -38,8 +38,6 @@
         <!-- 密碼區 -->
         <TextBlock Text="{DynamicResource PasswordText}" Margin="5,5,5,0"/>
         <PasswordBox x:Name="PasswordBox" Margin="5,5,5,0" Padding="4"
-                     BorderBrush="{DynamicResource BorderBrush}"
-                     Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
                      materialDesign:HintAssist.Hint="{DynamicResource RequiredText}"
                      materialDesign:HintAssist.IsFloating="False"
                      materialDesign:PasswordBoxAssist.Password="{Binding Password, Mode=TwoWay}"/>

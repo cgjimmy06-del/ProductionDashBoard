@@ -44,22 +44,26 @@
                       SelectionMode="Single"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding TimeSlotId}" Width="50"/>
-                    <DataGridTextColumn Header="開始時間" Binding="{Binding StartAt, Converter={StaticResource TimeSpanToHhmmConverter}}" Width="*"/>
-                    <DataGridTextColumn Header="結束時間" Binding="{Binding EndAt, Converter={StaticResource TimeSpanToHhmmConverter}}" Width="*"/>
+                    <DataGridTextColumn Header="ID" Binding="{Binding TimeSlotId}" Width="50"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="開始時間" Binding="{Binding StartAt, Converter={StaticResource TimeSpanToHhmmConverter}}" Width="*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="結束時間" Binding="{Binding EndAt, Converter={StaticResource TimeSpanToHhmmConverter}}" Width="*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridCheckBoxColumn Header="跨日" Binding="{Binding IsCrossDay}" Width="60"/>
-                    <DataGridTextColumn Header="標籤" Binding="{Binding Label}" Width="*"/>
-                    <DataGridTemplateColumn Header="操作" Width="100">
+                    <DataGridTextColumn Header="標籤" Binding="{Binding Label}" Width="2*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTemplateColumn Header="操作" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
                                             ToolTip="編輯">
                                         <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
                                     </Button>
-                                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                                    <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
                                             ToolTip="刪除"
