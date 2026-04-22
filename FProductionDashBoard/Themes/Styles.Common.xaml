@@ -67,6 +67,8 @@
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="5"/>
         <Setter Property="Height" Value="30"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
     </Style>
     <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
         <Setter Property="Width" Value="Auto"/>
@@ -78,6 +80,15 @@
         <Setter Property="Margin" Value="5"/>
         <Setter Property="Padding" Value="4"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style TargetType="PasswordBox" BasedOn="{StaticResource MaterialDesignOutlinedPasswordBox}">
+        <Setter Property="materialDesign:HintAssist.IsFloating" Value="False"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
     </Style>
     <Style TargetType="DataGrid" BasedOn="{StaticResource MaterialDesignDataGrid}">
         <Setter Property="AutoGenerateColumns" Value="False"/>

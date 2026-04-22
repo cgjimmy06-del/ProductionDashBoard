@@ -29,7 +29,7 @@
 
             <Button Grid.Row="0" HorizontalAlignment="Left" Margin="8,6"
                     Command="{Binding NewCommand}"
-                    Style="{StaticResource MaterialDesignRaisedButton}">
+                    Style="{StaticResource FunctionButtonStyle}">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/>
                     <TextBlock Text="新增"/>
@@ -42,7 +42,6 @@
                       IsReadOnly="True"
                       CanUserAddRows="False"
                       SelectionMode="Single"
-                      Style="{StaticResource MaterialDesignDataGrid}"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="UserId" Binding="{Binding UserId}" Width="*"/>
@@ -63,7 +62,7 @@
                                             Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
                                             ToolTip="刪除"
-                                            Foreground="{DynamicResource MaterialDesignValidationErrorBrush}">
+                                            Foreground="{DynamicResource ErrorBrush}">
                                         <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
                                     </Button>
                                 </StackPanel>
@@ -83,13 +82,15 @@
         <Border Grid.Row="2"
                 Visibility="{Binding IsFormVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                 Padding="12,8" BorderThickness="0,1,0,0"
-                BorderBrush="{DynamicResource MaterialDesignDivider}">
+                BorderBrush="{DynamicResource MaterialDesignDivider}"
+                Background="{DynamicResource PrimaryBackgroundBrush}">
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
                 <TextBlock Text="{Binding EditingId, StringFormat=編輯員工 (ID: {0}),
                            TargetNullValue=新增員工}"
                            Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
                            Margin="0,0,0,8"/>
 
                 <Grid>
@@ -106,17 +107,14 @@
 
                     <TextBox Grid.Row="0" Grid.Column="0" Margin="4"
                              materialDesign:HintAssist.Hint="UserId *"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormUserId, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBox Grid.Row="0" Grid.Column="1" Margin="4"
                              materialDesign:HintAssist.Hint="姓名 *"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <PasswordBox Grid.Row="0" Grid.Column="2" Margin="4"
                                  x:Name="PwdBox"
-                                 Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
                                  PasswordChanged="PwdBox_PasswordChanged">
                         <materialDesign:HintAssist.Hint>
                             <TextBlock>
@@ -136,7 +134,6 @@
 
                     <ComboBox Grid.Row="0" Grid.Column="3" Margin="4"
                               materialDesign:HintAssist.Hint="角色 *"
-                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
                               ItemsSource="{Binding RoleItems}"
                               SelectedValuePath="Value"
                               DisplayMemberPath="DisplayName"
@@ -144,36 +141,34 @@
 
                     <TextBox Grid.Row="1" Grid.Column="0" Margin="4"
                              materialDesign:HintAssist.Hint="卡號"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormCardId, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBox Grid.Row="1" Grid.Column="1" Margin="4"
                              materialDesign:HintAssist.Hint="Email"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormEmail, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBox Grid.Row="1" Grid.Column="2" Margin="4"
                              materialDesign:HintAssist.Hint="部門"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormDepartmentId, UpdateSourceTrigger=PropertyChanged}"/>
                 </Grid>
 
                 <!-- Error / Success messages -->
                 <TextBlock Text="{Binding FormErrorString}" Margin="4,4,4,0"
-                           Foreground="{DynamicResource MaterialDesignValidationErrorBrush}"
+                           Foreground="{DynamicResource ErrorBrush}"
                            Visibility="{Binding FormErrorString, Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
                 <TextBlock Text="{Binding FormSuccessString}" Margin="4,4,4,0"
-                           Foreground="{DynamicResource PrimaryHueMidBrush}"
+                           Foreground="{DynamicResource SuccessBrush}"
                            Visibility="{Binding FormSuccessString, Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
 
                 <!-- Buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,4,4">
                     <Button Margin="0,0,8,0"
                             Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Foreground="{DynamicResource PrimaryBrush}"
+                            BorderBrush="{DynamicResource PrimaryBrush}"
                             Command="{Binding CancelCommand}"
                             Content="取消"/>
-                    <Button Style="{StaticResource MaterialDesignRaisedButton}"
-                            Command="{Binding SaveCommand}"
+                    <Button Command="{Binding SaveCommand}"
                             Content="儲存"/>
                 </StackPanel>
             </StackPanel>

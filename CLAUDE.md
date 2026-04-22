@@ -62,6 +62,14 @@ FProductionDashBoard/ 	# 視窗元件
 
 \- 大部分套用material design xaml套件
 
+\- **介面設計原則：所有介面設計與優化皆以 `Themes/` 資料夾中定義的樣式為基礎**
+
+  \- 顏色引用優先使用 `Colors.Dark.xaml` / `Colors.Light.xaml` 中定義的自訂 Brush（如 `ErrorBrush`、`SuccessBrush`、`TextPrimaryBrush`），不使用 MaterialDesign 內建 Brush；配色以主色系與輔色系為出發（主要功能如確認、取消等用主色 `PrimaryBrush`，延伸功能如新增、刪除等用輔色 `SecondaryBrush`）
+
+  \- 元件樣式優先繼承 `Styles.Common.xaml` 的全域樣式，避免在個別 XAML 中寫 explicit `Style="{StaticResource MaterialDesign...}"`
+
+  \- 新增元件若需自訂樣式，應先在 `Styles.Common.xaml` 補充全域或具名樣式，再於 View 中引用
+
 
 
 \## 開發規範

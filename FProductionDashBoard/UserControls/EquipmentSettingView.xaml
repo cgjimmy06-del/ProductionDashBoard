@@ -29,7 +29,7 @@
 
             <Button Grid.Row="0" HorizontalAlignment="Left" Margin="8,6"
                     Command="{Binding NewCommand}"
-                    Style="{StaticResource MaterialDesignRaisedButton}">
+                    Style="{StaticResource FunctionButtonStyle}">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/>
                     <TextBlock Text="新增"/>
@@ -42,7 +42,6 @@
                       IsReadOnly="True"
                       CanUserAddRows="False"
                       SelectionMode="Single"
-                      Style="{StaticResource MaterialDesignDataGrid}"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="*"/>
@@ -64,7 +63,7 @@
                                             Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
                                             ToolTip="刪除"
-                                            Foreground="{DynamicResource MaterialDesignValidationErrorBrush}">
+                                            Foreground="{DynamicResource ErrorBrush}">
                                         <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
                                     </Button>
                                 </StackPanel>
@@ -84,13 +83,15 @@
         <Border Grid.Row="2"
                 Visibility="{Binding IsFormVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                 Padding="12,8" BorderThickness="0,1,0,0"
-                BorderBrush="{DynamicResource MaterialDesignDivider}">
+                BorderBrush="{DynamicResource MaterialDesignDivider}"
+                Background="{DynamicResource PrimaryBackgroundBrush}">
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
                 <TextBlock Text="{Binding EditingId, StringFormat=編輯設備 (ID: {0}),
                            TargetNullValue=新增設備}"
                            Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
                            Margin="0,0,0,8"/>
 
                 <Grid>
@@ -107,27 +108,22 @@
 
                     <TextBox Grid.Row="0" Grid.Column="0" Margin="4"
                              materialDesign:HintAssist.Hint="Code *"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormCode, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBox Grid.Row="0" Grid.Column="1" Margin="4"
                              materialDesign:HintAssist.Hint="Name *"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBox Grid.Row="0" Grid.Column="2" Margin="4"
                              materialDesign:HintAssist.Hint="IP *"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormIp, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBox Grid.Row="0" Grid.Column="3" Margin="4"
                              materialDesign:HintAssist.Hint="Port *"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormPort, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <ComboBox Grid.Row="1" Grid.Column="0" Margin="4"
                               materialDesign:HintAssist.Hint="設備類型"
-                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
                               ItemsSource="{Binding EquipmentTypes}"
                               SelectedValuePath="TypeId"
                               DisplayMemberPath="Name"
@@ -135,17 +131,14 @@
 
                     <TextBox Grid.Row="1" Grid.Column="1" Margin="4"
                              materialDesign:HintAssist.Hint="廠區"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormFactory, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBox Grid.Row="1" Grid.Column="2" Margin="4"
                              materialDesign:HintAssist.Hint="棟別"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormBuilding, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBox Grid.Row="1" Grid.Column="3" Margin="4"
                              materialDesign:HintAssist.Hint="樓層"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormFloor, UpdateSourceTrigger=PropertyChanged}"/>
                 </Grid>
 
@@ -156,20 +149,21 @@
 
                 <!-- Error / Success messages -->
                 <TextBlock Text="{Binding FormErrorString}" Margin="4,4,4,0"
-                           Foreground="{DynamicResource MaterialDesignValidationErrorBrush}"
+                           Foreground="{DynamicResource ErrorBrush}"
                            Visibility="{Binding FormErrorString, Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
                 <TextBlock Text="{Binding FormSuccessString}" Margin="4,4,4,0"
-                           Foreground="{DynamicResource PrimaryHueMidBrush}"
+                           Foreground="{DynamicResource SuccessBrush}"
                            Visibility="{Binding FormSuccessString, Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
 
                 <!-- Buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,4,4">
                     <Button Margin="0,0,8,0"
                             Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Foreground="{DynamicResource PrimaryBrush}"
+                            BorderBrush="{DynamicResource PrimaryBrush}"
                             Command="{Binding CancelCommand}"
                             Content="取消"/>
-                    <Button Style="{StaticResource MaterialDesignRaisedButton}"
-                            Command="{Binding SaveCommand}"
+                    <Button Command="{Binding SaveCommand}"
                             Content="儲存"/>
                 </StackPanel>
             </StackPanel>
