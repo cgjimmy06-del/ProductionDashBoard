@@ -29,9 +29,7 @@ namespace FProductionDashBoard.Services
         public IMaterialReplacementRepository MaterialReplacementRep { get; }
         public ITimeSlotLookupRepository TimeSlotLookupRep { get; }
         public IInspectionRecordRepository InspectionRecordRep { get; }
-
-
-
+        public IRolePermissionRepository RolePermissionRep { get; }
 
         /// <summary>
         /// 新增物料更換紀錄 (可離線暫存)

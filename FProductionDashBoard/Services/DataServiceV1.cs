@@ -27,14 +27,14 @@ namespace FProductionDashBoard.Services.V1
         public IMaterialReplacementRepository MaterialReplacementRep { get; }
         public ITimeSlotLookupRepository TimeSlotLookupRep { get; }
         public IInspectionRecordRepository InspectionRecordRep { get; }
-
+        public IRolePermissionRepository RolePermissionRep { get; }
 
         private readonly IOfflineCacheService _offlineCache;
 
         public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep,
             IErrorListRepository errorListRep, IMaterialReplacementRepository materialReplacementRep,
             IInspectionRecordRepository inspectionRecordRep, ITimeSlotLookupRepository timeSlotLookupRep,
-            IOfflineCacheService offlineCache)
+            IOfflineCacheService offlineCache, IRolePermissionRepository rolePermissionRep)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
@@ -44,6 +44,7 @@ namespace FProductionDashBoard.Services.V1
             InspectionRecordRep = inspectionRecordRep;
             TimeSlotLookupRep = timeSlotLookupRep;
             _offlineCache = offlineCache;
+            RolePermissionRep = rolePermissionRep;
         }
 
 
@@ -336,11 +337,12 @@ namespace FProductionDashBoard.Services.V1
             //Debug.WriteLine($"{devs}");
             //foreach (var (ErrorCode, Message, Category) in devs) { Debug.WriteLine($"{ErrorCode} - {Message}"); }
 
-            var timeslots = (await TimeSlotLookupRep.GetAllAsync()).ToList();
-            var timeslotstatus = await GetAllSlotsStatusAsync(timeslots, 1);
-            foreach (var slot in timeslotstatus)
+            var roles = (await RolePermissionRep.GetAllRolesAsync()).ToList();
+            foreach (var nrole in roles)
             {
-                Debug.WriteLine($"timeslotstatus = {slot}");
+                Debug.WriteLine($"nrole.Name = {nrole.Name}");
+                foreach(var npermission in nrole.RolePermissions)
+                { Debug.WriteLine($"permission = {npermission.PermissionId}"); }
             }
 
             //await CheckAndInsertMissedInspectionAsync(timeslots, 1, 1);

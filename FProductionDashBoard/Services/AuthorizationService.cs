@@ -100,7 +100,7 @@ namespace FProductionDashBoard.Services
     {
         public List<Role> RolesList { get; set; } = []; // 由此映射，外部僅需知道其角色
         private HashSet<Permission> _userPermissions;
-        public AuthorizationService(UiModels.UserInfo nuser) // IEnumerable<Permission> permissions
+        public AuthorizationService(UiModels.UserInfo nuser) // 之後直接由此注入 RolesList 或是UsersList 已存在每位員工的permissions
         {
             GetRolesList();
 
@@ -119,7 +119,7 @@ namespace FProductionDashBoard.Services
             _userPermissions = [.. permissions];
         }
 
-        private void GetRolesList() // 後續規劃由清單建立，可於UI設定權限
+        private void GetRolesList() // 後續規劃由清單建立，可於UI設定權限 (DI取代此函式)
         {
             RolesList.Add(new Role() {
                 Id = RoleId.None
