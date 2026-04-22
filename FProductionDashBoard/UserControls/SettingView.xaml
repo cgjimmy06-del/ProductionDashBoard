@@ -66,5 +66,19 @@
             <localuc:ErrorListSettingView DataContext="{Binding ErrorList}"/>
         </TabItem>
 
+        <TabItem MinWidth="140">
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Margin="4,0">
+                    <materialDesign:PackIcon Kind="ClockOutline"
+                                             Width="20" Height="20"
+                                             VerticalAlignment="Center"
+                                             Margin="0,0,6,0"/>
+                    <TextBlock Text="巡檢時段" VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </StackPanel>
+            </TabItem.Header>
+            <localuc:TimeSlotSettingView DataContext="{Binding TimeSlot}"/>
+        </TabItem>
+
     </TabControl>
 </UserControl>

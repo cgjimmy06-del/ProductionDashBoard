@@ -627,5 +627,38 @@ namespace FProductionDashBoard.Services.V1
 
 
         }
+        // ─── 設定：巡檢時段 CRUD ─────────────────────────────────────────────────
+        public async Task AddTimeSlotAsync(TimeSlotFormDto dto)
+        {
+            if (!await TimeSlotLookupRep.CheckConnectionAsync())
+                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+            var entity = new TimeSlotLookup
+            {
+                TimeSlotId = dto.TimeSlotId,
+                StartAt = dto.StartAt,
+                EndAt = dto.EndAt,
+                IsCrossDay = dto.IsCrossDay,
+                Label = dto.Label
+            };
+            await TimeSlotLookupRep.AddAsync(entity);
+        }
+        public async Task UpdateTimeSlotAsync(TimeSlotFormDto dto)
+        {
+            if (!await TimeSlotLookupRep.CheckConnectionAsync())
+                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+            var entity = await TimeSlotLookupRep.GetByIdAsync(dto.TimeSlotId)
+                ?? throw new InvalidOperationException($"TimeSlot {dto.TimeSlotId} not found");
+            entity.StartAt = dto.StartAt;
+            entity.EndAt = dto.EndAt;
+            entity.IsCrossDay = dto.IsCrossDay;
+            entity.Label = dto.Label;
+            await TimeSlotLookupRep.UpdateAsync(entity);
+        }
+        public async Task DeleteTimeSlotAsync(int timeSlotId)
+        {
+            if (!await TimeSlotLookupRep.CheckConnectionAsync())
+                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+            await TimeSlotLookupRep.DeleteAsync(timeSlotId);
+        }
     }
 }

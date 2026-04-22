@@ -90,5 +90,10 @@ namespace FProductionDashBoard.Services
         public Task AddErrorListAsync(ErrorListFormDto dto);
         public Task UpdateErrorListAsync(ErrorListFormDto dto);
         public Task DeleteErrorListAsync(int id);
+
+        // ─── 設定：巡檢時段 CRUD ─────────────────────────────────────────────────
+        public Task AddTimeSlotAsync(TimeSlotFormDto dto);
+        public Task UpdateTimeSlotAsync(TimeSlotFormDto dto);
+        public Task DeleteTimeSlotAsync(int timeSlotId);
     }
 }
