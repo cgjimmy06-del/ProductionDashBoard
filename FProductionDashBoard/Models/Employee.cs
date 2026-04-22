@@ -20,6 +20,8 @@ namespace FProductionDashBoard.Models
         public string? DepartmentId { get; set; }
         public DateTime? CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
+
+        public Role? Role { get; set; } // 導覽屬性
     }
     public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
     {
@@ -39,6 +41,10 @@ namespace FProductionDashBoard.Models
             builder.Property(e => e.DepartmentId).HasColumnName("department_id");
             builder.Property(e => e.CreateAt).HasColumnName("create_at").HasDefaultValueSql("GETDATE()"); ;
             builder.Property(e => e.UpdateAt).HasColumnName("update_at").HasDefaultValueSql("GETDATE()"); ;
+
+            builder.HasOne(m => m.Role)
+                   .WithMany(t => t.Employees)
+                   .HasForeignKey(m => m.RoleId);
         }
     }
 }
