@@ -49,6 +49,8 @@
             <local:CollapseWidthConverter x:Key="CollapseWidthConverter"/>
             <local:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
             <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <local:StringHasValueToVisibilityConverter x:Key="StringHasValueToVisibilityConverter"/>
+            <local:TimeSpanToHhmmConverter x:Key="TimeSpanToHhmmConverter"/>
             <!--#endregion-->
             
         </ResourceDictionary>

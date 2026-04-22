@@ -1,4 +1,5 @@
-﻿using FProductionDashBoard.Models;
+﻿using FProductionDashBoard.Dtos;
+using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
 using FProductionDashBoard.UiModels;
 using Microsoft.Data.SqlClient;
@@ -62,5 +63,35 @@ namespace FProductionDashBoard.Services
         /// </summary>
         public Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId);
 
+        // ─── 設定：設備 CRUD ─────────────────────────────────────────────────────────
+        public Task<List<Equipment>> GetAllEquipmentAsync();
+        public Task AddEquipmentAsync(EquipmentFormDto dto);
+        public Task UpdateEquipmentAsync(EquipmentFormDto dto);
+        public Task DeleteEquipmentAsync(int id);
+        public Task<List<EquipmentType>> GetEquipmentTypesAsync();
+
+        // ─── 設定：員工 CRUD ─────────────────────────────────────────────────────────
+        public Task<List<Employee>> GetAllEmployeesAsync();
+        public Task AddEmployeeAsync(EmployeeFormDto dto);
+        public Task UpdateEmployeeAsync(EmployeeFormDto dto);     // dto.Password 空字串 = 不更新密碼
+        public Task DeleteEmployeeAsync(int id);
+
+        // ─── 設定：材料 CRUD ─────────────────────────────────────────────────────────
+        public Task<List<Material>> GetAllMaterialsAsync();
+        public Task<List<MaterialType>> GetMaterialTypesAsync();
+        public Task AddMaterialAsync(MaterialFormDto dto);
+        public Task UpdateMaterialAsync(MaterialFormDto dto);
+        public Task DeleteMaterialAsync(int id);
+
+        // ─── 設定：錯誤清單 CRUD ─────────────────────────────────────────────────────
+        public Task<List<ErrorList>> GetAllErrorListsAsync();
+        public Task AddErrorListAsync(ErrorListFormDto dto);
+        public Task UpdateErrorListAsync(ErrorListFormDto dto);
+        public Task DeleteErrorListAsync(int id);
+
+        // ─── 設定：巡檢時段 CRUD ─────────────────────────────────────────────────
+        public Task AddTimeSlotAsync(TimeSlotFormDto dto);
+        public Task UpdateTimeSlotAsync(TimeSlotFormDto dto);
+        public Task DeleteTimeSlotAsync(int timeSlotId);
     }
 }
