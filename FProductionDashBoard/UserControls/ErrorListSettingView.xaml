@@ -27,13 +27,12 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Button Grid.Row="0" HorizontalAlignment="Left" Margin="8,6"
+            <Button Grid.Row="0" HorizontalAlignment="Right" Margin="8,6"
                     Command="{Binding NewCommand}"
                     Style="{StaticResource FunctionButtonStyle}">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                    <TextBlock Text="新增"/>
-                </StackPanel>
+                <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
+                                         VerticalAlignment="Center" 
+                                         HorizontalAlignment="Center"/>
             </Button>
 
             <DataGrid Grid.Row="1" Margin="8,0,8,4"
@@ -127,11 +126,6 @@
                     </Grid>
 
                     <!-- 翻譯欄位 -->
-                    <TextBlock Text="錯誤訊息翻譯（空白不寫入）"
-                               Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                               Foreground="{DynamicResource TextPrimaryBrush}"
-                               Margin="4,8,4,2"/>
-
                     <StackPanel Margin="4,2">
                         <TextBlock Text="zh-TW 中文" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <TextBox materialDesign:HintAssist.Hint="請輸入中文訊息"

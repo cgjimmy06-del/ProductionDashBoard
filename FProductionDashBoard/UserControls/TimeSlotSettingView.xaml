@@ -27,13 +27,12 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Button Grid.Row="0" HorizontalAlignment="Left" Margin="8,6"
+            <Button Grid.Row="0" HorizontalAlignment="Right" Margin="8,6"
                     Command="{Binding NewCommand}"
                     Style="{StaticResource FunctionButtonStyle}">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                    <TextBlock Text="新增"/>
-                </StackPanel>
+                <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
+                                         VerticalAlignment="Center" 
+                                         HorizontalAlignment="Center"/>
             </Button>
 
             <DataGrid Grid.Row="1" Margin="8,0,8,4"
@@ -104,6 +103,7 @@
                             <ColumnDefinition Width="80"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
                         <!-- ID -->
@@ -144,6 +144,13 @@
                                           materialDesign:HintAssist.Hint="分"/>
                             </StackPanel>
                         </StackPanel>
+                        
+                        <StackPanel Grid.Column="3" Margin="4" Orientation="Horizontal" VerticalAlignment="Bottom">
+                            <CheckBox IsChecked="{Binding FormIsCrossDay}"
+                                      Content="跨日 (IsCrossDay)"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"
+                                      VerticalAlignment="Center"/>
+                        </StackPanel>
                     </Grid>
 
                     <!-- Row 1: IsCrossDay / Label -->
@@ -153,14 +160,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0" Margin="4" Orientation="Horizontal" VerticalAlignment="Bottom">
-                            <CheckBox IsChecked="{Binding FormIsCrossDay}"
-                                      Content="跨日 (IsCrossDay)"
-                                      Foreground="{DynamicResource TextPrimaryBrush}"
-                                      VerticalAlignment="Center"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Margin="4">
+                        <StackPanel Grid.Column="0" Margin="4">
                             <TextBlock Text="標籤 (自動產生)" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <TextBox Text="{Binding ComputedLabel, Mode=OneWay}"
                                      IsEnabled="False"/>

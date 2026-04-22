@@ -27,13 +27,12 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Button Grid.Row="0" HorizontalAlignment="Left" Margin="8,6"
+            <Button Grid.Row="0" HorizontalAlignment="Right" Margin="8,6"
                     Command="{Binding NewCommand}"
                     Style="{StaticResource FunctionButtonStyle}">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                    <TextBlock Text="新增"/>
-                </StackPanel>
+                <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
+                                         VerticalAlignment="Center" 
+                                         HorizontalAlignment="Center"/>
             </Button>
 
             <DataGrid Grid.Row="1" Margin="8,0,8,4"
@@ -117,26 +116,26 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel Grid.Row="0" Grid.Column="0" Margin="4">
-                            <TextBlock Text="MaterialCode *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="MaterialCode *"
+                            <TextBlock Text="編號 *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="編號 *"
                                      Text="{Binding FormMaterialCode, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="0" Grid.Column="1" Margin="4">
-                            <TextBlock Text="Name *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Name *"
+                            <TextBlock Text="名稱 *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="名稱 *"
                                      Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="0" Grid.Column="2" Margin="4">
-                            <TextBlock Text="Brand" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Brand"
+                            <TextBlock Text="廠牌" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="廠牌"
                                      Text="{Binding FormBrand, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="0" Grid.Column="3" Margin="4">
-                            <TextBlock Text="Specification" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Specification"
+                            <TextBlock Text="規格" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="規格"
                                      Text="{Binding FormSpecification, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
@@ -149,22 +148,22 @@
                                       SelectedValue="{Binding FormTypeId}"/>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="4">
-                            <TextBlock Text="備註" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="備註"
-                                     Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="1" Grid.Column="3" Margin="4">
+                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="4">
                             <TextBlock Text="最低庫存" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <TextBox materialDesign:HintAssist.Hint="最低庫存"
                                      Text="{Binding FormMinimumStock, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="2" Grid.Column="0" Margin="4">
+                        <StackPanel Grid.Row="1" Grid.Column="2" Margin="4">
                             <TextBlock Text="目前庫存" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <TextBox materialDesign:HintAssist.Hint="目前庫存"
                                      Text="{Binding FormQuantityInStock, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="4">
+                            <TextBlock Text="備註" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="按鈕顯示內容"
+                                     Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
 

@@ -11,8 +11,8 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource MaterialDesignWindow}"
-        Title="{Binding AppVersion, StringFormat=ProductionDashBoard -- V{0}}" 
-        Height="600" Width="1000" Icon="appIcon.ico">
+        Title="{Binding AppVersion, StringFormat=ProductionDashBoard -- V{0}}"
+        Height="800" Width="1280" Icon="appIcon.ico">
     <!-- window載入事件 -->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
