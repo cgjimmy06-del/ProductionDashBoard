@@ -104,48 +104,66 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <TextBox Grid.Row="0" Grid.Column="0" Margin="4"
-                             materialDesign:HintAssist.Hint="Code *"
-                             Text="{Binding FormCode, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="4">
+                        <TextBlock Text="Code *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox materialDesign:HintAssist.Hint="Code *"
+                                 Text="{Binding FormCode, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
 
-                    <TextBox Grid.Row="0" Grid.Column="1" Margin="4"
-                             materialDesign:HintAssist.Hint="Name *"
-                             Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="4">
+                        <TextBlock Text="Name *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox materialDesign:HintAssist.Hint="Name *"
+                                 Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
 
-                    <TextBox Grid.Row="0" Grid.Column="2" Margin="4"
-                             materialDesign:HintAssist.Hint="IP *"
-                             Text="{Binding FormIp, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Grid.Row="0" Grid.Column="2" Margin="4">
+                        <TextBlock Text="IP *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox materialDesign:HintAssist.Hint="IP *"
+                                 Text="{Binding FormIp, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
 
-                    <TextBox Grid.Row="0" Grid.Column="3" Margin="4"
-                             materialDesign:HintAssist.Hint="Port *"
-                             Text="{Binding FormPort, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Grid.Row="0" Grid.Column="3" Margin="4">
+                        <TextBlock Text="Port *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox materialDesign:HintAssist.Hint="Port *"
+                                 Text="{Binding FormPort, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
 
-                    <ComboBox Grid.Row="1" Grid.Column="0" Margin="4"
-                              materialDesign:HintAssist.Hint="設備類型"
-                              ItemsSource="{Binding EquipmentTypes}"
-                              SelectedValuePath="TypeId"
-                              DisplayMemberPath="Name"
-                              SelectedValue="{Binding FormTypeId}"/>
+                    <StackPanel Grid.Row="1" Grid.Column="0" Margin="4">
+                        <TextBlock Text="設備類型" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <ComboBox materialDesign:HintAssist.Hint="設備類型"
+                                  ItemsSource="{Binding EquipmentTypes}"
+                                  SelectedValuePath="TypeId"
+                                  DisplayMemberPath="Name"
+                                  SelectedValue="{Binding FormTypeId}"/>
+                    </StackPanel>
 
-                    <TextBox Grid.Row="1" Grid.Column="1" Margin="4"
-                             materialDesign:HintAssist.Hint="廠區"
-                             Text="{Binding FormFactory, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="4">
+                        <TextBlock Text="廠區" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox materialDesign:HintAssist.Hint="廠區"
+                                 Text="{Binding FormFactory, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
 
-                    <TextBox Grid.Row="1" Grid.Column="2" Margin="4"
-                             materialDesign:HintAssist.Hint="棟別"
-                             Text="{Binding FormBuilding, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Grid.Row="1" Grid.Column="2" Margin="4">
+                        <TextBlock Text="棟別" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox materialDesign:HintAssist.Hint="棟別"
+                                 Text="{Binding FormBuilding, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
 
-                    <TextBox Grid.Row="1" Grid.Column="3" Margin="4"
-                             materialDesign:HintAssist.Hint="樓層"
-                             Text="{Binding FormFloor, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Grid.Row="1" Grid.Column="3" Margin="4">
+                        <TextBlock Text="樓層" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox materialDesign:HintAssist.Hint="樓層"
+                                 Text="{Binding FormFloor, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="4">
+                        <TextBlock Text="備註" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox materialDesign:HintAssist.Hint="備註"
+                                 Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
                 </Grid>
-
-                <TextBox Margin="4,4,4,0"
-                         materialDesign:HintAssist.Hint="備註"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <!-- Error / Success messages -->
                 <TextBlock Text="{Binding FormErrorString}" Margin="4,4,4,0"

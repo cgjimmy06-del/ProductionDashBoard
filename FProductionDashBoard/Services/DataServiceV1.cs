@@ -438,7 +438,66 @@ namespace FProductionDashBoard.Services.V1
 
         #endregion
 
+        #region 設定：材料 CRUD
 
+        public async Task<List<Material>> GetAllMaterialsAsync()
+        {
+            if (!await MaterialRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Material repository connection failed");
+            return (await MaterialRep.GetAllAsync()).ToList();
+        }
+
+        public async Task<List<MaterialType>> GetMaterialTypesAsync()
+        {
+            if (!await MaterialRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Material repository connection failed");
+            return await MaterialRep.GetContext().Set<MaterialType>().ToListAsync();
+        }
+
+        public async Task AddMaterialAsync(MaterialFormDto dto)
+        {
+            if (!await MaterialRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Material repository connection failed");
+            var entity = new Material
+            {
+                MaterialCode = dto.MaterialCode,
+                Name = dto.Name,
+                Brand = dto.Brand,
+                Specification = dto.Specification,
+                TypeId = dto.TypeId,
+                Description = dto.Description,
+                MinimumStock = dto.MinimumStock,
+                QuantityInStock = dto.QuantityInStock
+            };
+            await MaterialRep.AddAsync(entity);
+        }
+
+        public async Task UpdateMaterialAsync(MaterialFormDto dto)
+        {
+            if (!await MaterialRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Material repository connection failed");
+            var entity = await MaterialRep.GetByIdAsync(dto.Id!.Value)
+                ?? throw new InvalidOperationException($"Material id={dto.Id} not found");
+            entity.MaterialCode = dto.MaterialCode;
+            entity.Name = dto.Name;
+            entity.Brand = dto.Brand;
+            entity.Specification = dto.Specification;
+            entity.TypeId = dto.TypeId;
+            entity.Description = dto.Description;
+            entity.MinimumStock = dto.MinimumStock;
+            entity.QuantityInStock = dto.QuantityInStock;
+            entity.UpdateAt = DateTime.Now;
+            await MaterialRep.UpdateAsync(entity);
+        }
+
+        public async Task DeleteMaterialAsync(int id)
+        {
+            if (!await MaterialRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Material repository connection failed");
+            await MaterialRep.DeleteAsync(id);
+        }
+
+        #endregion
 
 
 

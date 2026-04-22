@@ -77,5 +77,12 @@ namespace FProductionDashBoard.Services
         public Task AddEmployeeAsync(EmployeeFormDto dto);
         public Task UpdateEmployeeAsync(EmployeeFormDto dto);     // dto.Password 空字串 = 不更新密碼
         public Task DeleteEmployeeAsync(int id);
+
+        // ─── 設定：材料 CRUD ─────────────────────────────────────────────────────────
+        public Task<List<Material>> GetAllMaterialsAsync();
+        public Task<List<MaterialType>> GetMaterialTypesAsync();
+        public Task AddMaterialAsync(MaterialFormDto dto);
+        public Task UpdateMaterialAsync(MaterialFormDto dto);
+        public Task DeleteMaterialAsync(int id);
     }
 }
