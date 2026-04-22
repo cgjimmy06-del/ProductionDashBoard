@@ -84,5 +84,11 @@ namespace FProductionDashBoard.Services
         public Task AddMaterialAsync(MaterialFormDto dto);
         public Task UpdateMaterialAsync(MaterialFormDto dto);
         public Task DeleteMaterialAsync(int id);
+
+        // ─── 設定：錯誤清單 CRUD ─────────────────────────────────────────────────────
+        public Task<List<ErrorList>> GetAllErrorListsAsync();
+        public Task AddErrorListAsync(ErrorListFormDto dto);
+        public Task UpdateErrorListAsync(ErrorListFormDto dto);
+        public Task DeleteErrorListAsync(int id);
     }
 }

@@ -503,6 +503,87 @@ namespace FProductionDashBoard.Services.V1
 
 
 
+
+        #region 設定：錯誤清單 CRUD
+
+        public async Task<List<ErrorList>> GetAllErrorListsAsync()
+        {
+            if (!await ErrorListRep.CheckConnectionAsync())
+                throw new InvalidOperationException("ErrorList repository connection failed");
+            return await ErrorListRep.GetContext().Set<ErrorList>()
+                .Include(e => e.Translations)
+                .ToListAsync();
+        }
+
+        public async Task AddErrorListAsync(ErrorListFormDto dto)
+        {
+            if (!await ErrorListRep.CheckConnectionAsync())
+                throw new InvalidOperationException("ErrorList repository connection failed");
+            var error = new ErrorList
+            {
+                ErrorCode = dto.ErrorCode,
+                Category = dto.Category,
+                Severity = dto.Severity
+            };
+            var translations = new List<ErrorTranslation>();
+            if (!string.IsNullOrWhiteSpace(dto.MessageZhTw))
+                translations.Add(new ErrorTranslation { ErrorCode = dto.ErrorCode, LanguageCode = "zh-TW", Message = dto.MessageZhTw });
+            if (!string.IsNullOrWhiteSpace(dto.MessageEnUs))
+                translations.Add(new ErrorTranslation { ErrorCode = dto.ErrorCode, LanguageCode = "en-US", Message = dto.MessageEnUs });
+            if (!string.IsNullOrWhiteSpace(dto.MessageViVn))
+                translations.Add(new ErrorTranslation { ErrorCode = dto.ErrorCode, LanguageCode = "vi-VN", Message = dto.MessageViVn });
+            await ErrorListRep.AddErrorAsync(error, translations);
+        }
+
+        public async Task UpdateErrorListAsync(ErrorListFormDto dto)
+        {
+            if (!await ErrorListRep.CheckConnectionAsync())
+                throw new InvalidOperationException("ErrorList repository connection failed");
+            var context = ErrorListRep.GetContext();
+            var entity = await context.Set<ErrorList>()
+                .Include(e => e.Translations)
+                .FirstOrDefaultAsync(e => e.ErrorId == dto.Id!.Value)
+                ?? throw new InvalidOperationException($"ErrorList id={dto.Id} not found");
+            entity.Category = dto.Category;
+            entity.Severity = dto.Severity;
+            entity.UpdateAt = DateTime.Now;
+            var langMessages = new[] {
+                ("zh-TW", dto.MessageZhTw),
+                ("en-US", dto.MessageEnUs),
+                ("vi-VN", dto.MessageViVn)
+            };
+            foreach (var (lang, message) in langMessages)
+            {
+                if (string.IsNullOrWhiteSpace(message)) continue;
+                var existing = entity.Translations.FirstOrDefault(t => t.LanguageCode == lang);
+                if (existing != null)
+                {
+                    existing.Message = message;
+                    existing.UpdateAt = DateTime.Now;
+                }
+                else
+                {
+                    entity.Translations.Add(new ErrorTranslation
+                    {
+                        ErrorCode = entity.ErrorCode,
+                        LanguageCode = lang,
+                        Message = message
+                    });
+                }
+            }
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteErrorListAsync(int id)
+        {
+            if (!await ErrorListRep.CheckConnectionAsync())
+                throw new InvalidOperationException("ErrorList repository connection failed");
+            var entity = await ErrorListRep.GetByIdAsync(id)
+                ?? throw new InvalidOperationException($"ErrorList id={id} not found");
+            await ErrorListRep.DeleteErrorAsync(entity.ErrorCode);
+        }
+
+        #endregion
         // 測試用
         public async Task Demo()
         {
