@@ -631,5 +631,36 @@ namespace FProductionDashBoard.Services.V1
                 throw new InvalidOperationException("RolePermission repository connection failed");
             return await RolePermissionRep.GetAllRolesAsync();
         }
+
+        // ─── 設定：角色權限 CRUD ─────────────────────────────────────────────────
+        public async Task<List<Models.Permission>> GetAllPermissionsAsync()
+        {
+            if (!await RolePermissionRep.CheckConnectionAsync())
+                throw new InvalidOperationException("RolePermission repository connection failed");
+            return await RolePermissionRep.GetAllPermissionsAsync();
+        }
+
+        public async Task AddRoleAsync(RoleFormDto dto)
+        {
+            if (!await RolePermissionRep.CheckConnectionAsync())
+                throw new InvalidOperationException("RolePermission repository connection failed");
+            await RolePermissionRep.AddRoleWithPermissionsAsync(dto.RoleId, dto.Name, dto.Description, dto.SelectedPermissionIds);
+        }
+
+        public async Task UpdateRoleAsync(RoleFormDto dto)
+        {
+            if (!await RolePermissionRep.CheckConnectionAsync())
+                throw new InvalidOperationException("RolePermission repository connection failed");
+            await RolePermissionRep.UpdateRoleWithPermissionsAsync(dto.Id!.Value, dto.Name, dto.Description, dto.SelectedPermissionIds);
+        }
+
+        public async Task DeleteRoleAsync(int id)
+        {
+            if (!await RolePermissionRep.CheckConnectionAsync())
+                throw new InvalidOperationException("RolePermission repository connection failed");
+            if (await RolePermissionRep.HasEmployeesByRoleAsync(id))
+                throw new InvalidOperationException("此角色有員工使用，無法刪除");
+            await RolePermissionRep.DeleteAsync(id);
+        }
     }
 }

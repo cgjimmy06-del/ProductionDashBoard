@@ -9,6 +9,7 @@ namespace FProductionDashBoard.ViewModels
         public MaterialSettingViewModel Material { get; }
         public ErrorListSettingViewModel ErrorList { get; }
         public TimeSlotSettingViewModel TimeSlot { get; }
+        public RolePermissionSettingViewModel RolePermission { get; }
 
         public SettingViewModel(LogService log, IDataService dataService, AuthorizationService auth)
         {
@@ -17,6 +18,7 @@ namespace FProductionDashBoard.ViewModels
             Material = new MaterialSettingViewModel(log, dataService);
             ErrorList = new ErrorListSettingViewModel(log, dataService);
             TimeSlot = new TimeSlotSettingViewModel(log, dataService);
+            RolePermission = new RolePermissionSettingViewModel(log, dataService);
         }
     }
 }

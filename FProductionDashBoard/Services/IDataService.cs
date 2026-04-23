@@ -96,5 +96,11 @@ namespace FProductionDashBoard.Services
 
         // ─── 角色與權限 ───────────────────────────────────────────────────────────
         public Task<List<Models.Role>> GetAllRolesAsync();
+
+        // ─── 設定：角色權限 CRUD ─────────────────────────────────────────────────
+        public Task<List<Models.Permission>> GetAllPermissionsAsync();
+        public Task AddRoleAsync(RoleFormDto dto);
+        public Task UpdateRoleAsync(RoleFormDto dto);
+        public Task DeleteRoleAsync(int id);
     }
 }

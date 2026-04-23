@@ -124,11 +124,11 @@ namespace FProductionDashBoard.ViewModels
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
             SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode, 
-                (NavMode) => _authService.HasPermission(Services.Permission.View));
+                (NavMode) => _authService.HasPermission(Services.AuthPermission.View));
 
             //  設定元件事件 (工具列)
             TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
-                () => _authService.HasPermission(Services.Permission.Test));
+                () => _authService.HasPermission(Services.AuthPermission.Test));
 
             // 設定元件事件 (訊息視窗)
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
