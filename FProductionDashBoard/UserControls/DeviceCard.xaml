@@ -77,11 +77,12 @@
                            FontWeight="Bold" FontSize="30" Cursor="Hand"
                            TextDecorations="Underline"/>
 
-                <!-- 資訊列 --> <!-- language -->
+                <!-- 資訊列 -->
+                <!-- language -->
                 <StackPanel Orientation="Horizontal" Margin="5">
                     <TextBlock d:Text="default 123"
                                Text="{Binding CurrentProduct.Name, StringFormat=: {0}}"/>
-                    
+
                     <TextBlock d:Text="yun"
                                Text="{Binding CurrentUser.Name, StringFormat=: {0}}"/>
                     <!--<TextBlock Text="產量: 1200 件" 
@@ -100,8 +101,9 @@
                             Content="{DynamicResource FirstInspectionButton}"
                             Command="{Binding FirstInspectionCommand}"
                             Background="{Binding FirstInspectionStatus, 
-                                    Converter={StaticResource BoolToColorConverter}}"
-                            Foreground="{DynamicResource TextLightBrush}"/>
+                                    Converter={StaticResource BoolToColorConverter},
+                                    ConverterParameter='NoError'}">
+                    </Button>
 
                     <Button Margin="5"
                             Style="{DynamicResource DeviceMainButtonStyle}"

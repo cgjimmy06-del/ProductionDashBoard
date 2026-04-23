@@ -19,7 +19,7 @@ namespace FProductionDashBoard.Repositories
     public interface IEquipmentRepository : IRepository<Equipment, MesDbContext>
     {
         public Task<IEnumerable<DeviceDto>> GetDevicesAllDapperAsync();
-
+        public Task<List<EquipmentType>> GetEquipmentTypesAsync();
     }
 
 

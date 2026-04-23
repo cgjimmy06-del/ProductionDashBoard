@@ -71,6 +71,7 @@ namespace FProductionDashBoard.ViewModels
 
         public ICommand InitializeCommand { get; }
         // 菜單列
+
         // 工具列
         public ICommand TestCommand { get; }
         // 導覽列
@@ -124,11 +125,11 @@ namespace FProductionDashBoard.ViewModels
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
             SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode, 
-                (NavMode) => _authService.HasPermission(Services.Permission.View));
+                (NavMode) => _authService.HasPermission(Services.AuthPermission.View));
 
             //  設定元件事件 (工具列)
             TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
-                () => _authService.HasPermission(Services.Permission.Test));
+                () => _authService.HasPermission(Services.AuthPermission.Test));
 
             // 設定元件事件 (訊息視窗)
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
@@ -141,30 +142,42 @@ namespace FProductionDashBoard.ViewModels
         // 載入初始化 待翻譯log 並加上errorlog
         public async Task LoadAllListsAsync()
         {
-            var devicesTask = await GetDevicesListFromSqlAsync();
-            var usersTask = await GetUsersListFromSqlAsync();
-            var materialsTask = await GetMaterialsListFromSqlAsync();
-            var errorsTask = await GetErrorsListFromSqlAsync(Properties.Settings.Default.CultureCode);
-            var timeslotsTask = await GetTimeSlotsListFromSqlAsync();
-
-            // await Task.WhenAll(devicesTask, materialsTask, errorsTask); .Result // 無法同時開啟dbcontext
+            var t1 = FetchListAsync(() => _dataService.GetDevicesAsync());
+            var t2 = FetchListAsync(() => _dataService.GetUsersAsync());
+            var t3 = FetchListAsync(() => _dataService.GetMaterialsAsync());
+            var t4 = FetchListAsync(() => _dataService.GetErrorsAsync(Properties.Settings.Default.CultureCode));
+            var t5 = FetchListAsync(() => _dataService.GetTimeSlotsAsync());
+            var t6 = FetchListAsync(() => _dataService.GetAllRolesAsync());
+            await Task.WhenAll(t1, t2, t3, t4, t5, t6);
 
             CommonLists = new ListsFromSql
             {
-                DevicesList = devicesTask,
-                MaterialsList = materialsTask,
-                ErrorsList = errorsTask,
-                UsersList = usersTask,
-                TimeSlotsList = timeslotsTask.ToList()
+                DevicesList  = t1.Result,
+                UsersList    = t2.Result,
+                MaterialsList = t3.Result,
+                ErrorsList   = t4.Result,
+                TimeSlotsList = t5.Result.ToList(),
+                RolesList    = t6.Result
             };
             _log.AddLog($"已載入清單: " +
                 $"Devices:[{CommonLists.DevicesList.Count}]-" +
                 $"Users:[{CommonLists.UsersList.Count}]-" +
                 $"Materials:[{CommonLists.MaterialsList.Count}]-" +
-                $"Errors:[{CommonLists.ErrorsList.Count}]" +
-                $"TimeSlots:[{CommonLists.TimeSlotsList.Count}]");
+                $"Errors:[{CommonLists.ErrorsList.Count}]-" +
+                $"TimeSlots:[{CommonLists.TimeSlotsList.Count}]-" +
+                $"Roles:[{CommonLists.RolesList.Count}]");
 
             await SyncAndLogAsync();
+        }
+
+        private async Task<List<T>> FetchListAsync<T>(Func<Task<List<T>>> fetch)
+        {
+            try { return await fetch(); }
+            catch (Exception ex)
+            {
+                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error);
+                return [];
+            }
         }
         private async Task SyncAndLogAsync()
         {
@@ -175,59 +188,13 @@ namespace FProductionDashBoard.ViewModels
                 var result = await _syncService.SyncPendingAsync();
                 // TODO: 根據 result.SyncedCount / result.FailedCount 決定 log 輸出時機
                 if (result?.SyncedCount > 0)
-                	_log.AddLog($"已重新連線: 已上傳{result?.SyncedCount}筆暫存資料");
+                	_log.AddLog($"已重新連線: 上傳{result?.SyncedCount}筆暫存資料");
             	if (result?.FailedCount > 0)
-                	_log.AddLog($"連線失敗: {result?.FailedCount}筆資料等待上傳");
+                	_log.AddLog($"連線失敗: {result?.FailedCount}筆資料等待上傳", LogLevel.Warning);
             }
             finally
             { _isSyncing = false; }
         }
-        public async Task<List<DeviceInfo>> GetDevicesListFromSqlAsync()
-        {
-            try { return await _dataService.GetDevicesAsync(); }
-            catch (Exception ex) 
-            { 
-                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); 
-                return new List<DeviceInfo>(); 
-            }
-        }
-        public async Task<List<UserInfo>> GetUsersListFromSqlAsync()
-        {
-            try { return await _dataService.GetUsersAsync(); }
-            catch (Exception ex) 
-            { 
-                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); 
-                return new List<UserInfo>(); 
-            }
-        }
-        public async Task<List<MaterialInfo>> GetMaterialsListFromSqlAsync()
-        {
-            try { return await _dataService.GetMaterialsAsync(); }
-            catch (Exception ex) 
-            { 
-                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); 
-                return new List<MaterialInfo>(); 
-            }
-        }
-        public async Task<List<ErrorInfo>> GetErrorsListFromSqlAsync(string languageCode)
-        {
-            try { return await _dataService.GetErrorsAsync(languageCode); }
-            catch (Exception ex) 
-            { 
-                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error); 
-                return new List<ErrorInfo>(); 
-            }
-        }
-        public async Task<List<TimeSlotLookup>> GetTimeSlotsListFromSqlAsync()
-        {
-            try { return await _dataService.GetTimeSlotsAsync(); }
-            catch (Exception ex)
-            {
-                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error);
-                return new List<TimeSlotLookup>();
-            }
-        }
-
         // 導覽列事件
         public void SwitchMode(NavMode mode)
         {
