@@ -13,7 +13,7 @@ namespace FProductionDashBoard.Repositories
 {
     public class EquipmentRepository : Repository<Equipment, MesDbContext>, IEquipmentRepository
     {
-        public EquipmentRepository(MesDbContext context) : base(context)
+        public EquipmentRepository(IDbContextFactory<MesDbContext> factory) : base(factory)
         {
         }
 
@@ -27,6 +27,10 @@ namespace FProductionDashBoard.Repositories
             }
         }
 
-
+        public async Task<List<EquipmentType>> GetEquipmentTypesAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Set<EquipmentType>().ToListAsync();
+        }
     }
 }

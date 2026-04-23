@@ -9,4 +9,5 @@ public class ListsFromSql
     public List<ErrorInfo> ErrorsList = new();
     public List<UserInfo> UsersList = new();
     public List<TimeSlotLookup> TimeSlotsList = new();
+    public List<Role> RolesList = new();
 }

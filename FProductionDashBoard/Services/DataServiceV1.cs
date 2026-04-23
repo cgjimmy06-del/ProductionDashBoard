@@ -381,7 +381,7 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await EquipmentRep.CheckConnectionAsync())
                 throw new InvalidOperationException("Equipment repository connection failed");
-            return await EquipmentRep.GetContext().Set<EquipmentType>().ToListAsync();
+            return await EquipmentRep.GetEquipmentTypesAsync();
         }
 
         #endregion
@@ -452,7 +452,7 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await MaterialRep.CheckConnectionAsync())
                 throw new InvalidOperationException("Material repository connection failed");
-            return await MaterialRep.GetContext().Set<MaterialType>().ToListAsync();
+            return await MaterialRep.GetMaterialTypesAsync();
         }
 
         public async Task AddMaterialAsync(MaterialFormDto dto)
@@ -500,20 +500,13 @@ namespace FProductionDashBoard.Services.V1
 
         #endregion
 
-
-
-
-
-
         #region 設定：錯誤清單 CRUD
 
         public async Task<List<ErrorList>> GetAllErrorListsAsync()
         {
             if (!await ErrorListRep.CheckConnectionAsync())
                 throw new InvalidOperationException("ErrorList repository connection failed");
-            return await ErrorListRep.GetContext().Set<ErrorList>()
-                .Include(e => e.Translations)
-                .ToListAsync();
+            return await ErrorListRep.GetAllWithTranslationsAsync();
         }
 
         public async Task AddErrorListAsync(ErrorListFormDto dto)
@@ -540,39 +533,7 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await ErrorListRep.CheckConnectionAsync())
                 throw new InvalidOperationException("ErrorList repository connection failed");
-            var context = ErrorListRep.GetContext();
-            var entity = await context.Set<ErrorList>()
-                .Include(e => e.Translations)
-                .FirstOrDefaultAsync(e => e.ErrorId == dto.Id!.Value)
-                ?? throw new InvalidOperationException($"ErrorList id={dto.Id} not found");
-            entity.Category = dto.Category;
-            entity.Severity = dto.Severity;
-            entity.UpdateAt = DateTime.Now;
-            var langMessages = new[] {
-                ("zh-TW", dto.MessageZhTw),
-                ("en-US", dto.MessageEnUs),
-                ("vi-VN", dto.MessageViVn)
-            };
-            foreach (var (lang, message) in langMessages)
-            {
-                if (string.IsNullOrWhiteSpace(message)) continue;
-                var existing = entity.Translations.FirstOrDefault(t => t.LanguageCode == lang);
-                if (existing != null)
-                {
-                    existing.Message = message;
-                    existing.UpdateAt = DateTime.Now;
-                }
-                else
-                {
-                    entity.Translations.Add(new ErrorTranslation
-                    {
-                        ErrorCode = entity.ErrorCode,
-                        LanguageCode = lang,
-                        Message = message
-                    });
-                }
-            }
-            await context.SaveChangesAsync();
+            await ErrorListRep.UpdateErrorListAsync(dto);
         }
 
         public async Task DeleteErrorListAsync(int id)
@@ -661,6 +622,14 @@ namespace FProductionDashBoard.Services.V1
             if (!await TimeSlotLookupRep.CheckConnectionAsync())
                 throw new InvalidOperationException("TimeSlotLookup repository connection failed");
             await TimeSlotLookupRep.DeleteAsync(timeSlotId);
+        }
+
+        // ─── 角色與權限 ───────────────────────────────────────────────────────────
+        public async Task<List<Models.Role>> GetAllRolesAsync()
+        {
+            if (!await RolePermissionRep.CheckConnectionAsync())
+                throw new InvalidOperationException("RolePermission repository connection failed");
+            return await RolePermissionRep.GetAllRolesAsync();
         }
     }
 }

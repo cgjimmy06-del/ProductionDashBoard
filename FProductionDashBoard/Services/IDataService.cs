@@ -93,5 +93,8 @@ namespace FProductionDashBoard.Services
         public Task AddTimeSlotAsync(TimeSlotFormDto dto);
         public Task UpdateTimeSlotAsync(TimeSlotFormDto dto);
         public Task DeleteTimeSlotAsync(int timeSlotId);
+
+        // ─── 角色與權限 ───────────────────────────────────────────────────────────
+        public Task<List<Models.Role>> GetAllRolesAsync();
     }
 }

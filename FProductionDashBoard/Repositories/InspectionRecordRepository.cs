@@ -1,4 +1,4 @@
-﻿using FProductionDashBoard.Models;
+using FProductionDashBoard.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,12 +11,14 @@ namespace FProductionDashBoard.Repositories
 {
     public class TimeSlotLookupRepository : Repository<TimeSlotLookup, MesDbContext>, ITimeSlotLookupRepository
     {
-        public TimeSlotLookupRepository(MesDbContext context) : base(context)
+        public TimeSlotLookupRepository(IDbContextFactory<MesDbContext> factory) : base(factory)
         {
         }
+
         public async Task<int?> GetCurrentTimeSlotIdAsync(DateTime businessDate)
         {
-            var slots = await _context.TimeSlotLookups.ToListAsync();
+            await using var ctx = _factory.CreateDbContext();
+            var slots = await ctx.TimeSlotLookups.ToListAsync();
 
             var now = DateTime.Now;
             foreach (var slot in slots)
@@ -33,10 +35,11 @@ namespace FProductionDashBoard.Repositories
                 }
 
                 if (now >= slotStart && now < slotEnd)
-                    return slot.TimeSlotId; // 找到當前時段
+                    return slot.TimeSlotId;
             }
-            return null; // 若不在任何時段範圍內
+            return null;
         }
+
         public int? GetCurrentTimeSlotId(DateTime businessDate, List<TimeSlotLookup> timeslots)
         {
             var now = DateTime.Now;
@@ -54,21 +57,23 @@ namespace FProductionDashBoard.Repositories
                 }
 
                 if (now >= slotStart && now < slotEnd)
-                    return slot.TimeSlotId; // 找到當前時段
+                    return slot.TimeSlotId;
             }
-            return null; // 若不在任何時段範圍內
+            return null;
         }
     }
+
     public class InspectionRecordRepository : Repository<InspectionRecord, MesDbContext>, IInspectionRecordRepository
     {
-        public InspectionRecordRepository(MesDbContext context) : base(context)
+        public InspectionRecordRepository(IDbContextFactory<MesDbContext> factory) : base(factory)
         {
         }
-        
+
         public async Task<int> AddInspectionRecordAsync(InspectionType type, int equipmentId, int employeeId,
             bool result, int? timeSlotId, string? productName, string? errorCode, string? description,
             DateTime? operatedAt = null)
         {
+            await using var ctx = _factory.CreateDbContext();
             var record = new InspectionRecord
             {
                 InspectionType = type,
@@ -82,32 +87,34 @@ namespace FProductionDashBoard.Repositories
                 CreateAt = operatedAt ?? DateTime.Now
             };
 
-            _context.InspectionRecords.Add(record);
-            await _context.SaveChangesAsync();
+            ctx.InspectionRecords.Add(record);
+            await ctx.SaveChangesAsync();
             return record.InspectionId;
         }
+
         public async Task<bool> ExistsInspectionInSlotAsync(int equipmentId, int timeSlotId, DateTime businessDate)
         {
+            await using var ctx = _factory.CreateDbContext();
             var businessDateEnd = businessDate.AddDays(1);
 
-            return await _context.InspectionRecords
+            return await ctx.InspectionRecords
                 .AnyAsync(r => r.EquipmentId == equipmentId &&
                                r.TimeSlotId == timeSlotId &&
                                r.CreateAt >= businessDate &&
                                r.CreateAt < businessDateEnd);
         }
+
         public async Task<List<(bool hasRecord, bool result)>> GetStatusForAllSlotsAsync(int equipmentId, DateTime businessDate)
         {
+            await using var ctx = _factory.CreateDbContext();
             var businessDateEnd = businessDate.AddDays(1);
 
-            // 先抓出當日該設備的所有紀錄
-            var records = await _context.InspectionRecords
+            var records = await ctx.InspectionRecords
                 .Where(r => r.EquipmentId == equipmentId &&
                             r.CreateAt >= businessDate &&
                             r.CreateAt < businessDateEnd).ToListAsync();
 
-            // 抓出所有時段定義
-            var slots = await _context.TimeSlotLookups.OrderBy(s => s.TimeSlotId).ToListAsync();
+            var slots = await ctx.TimeSlotLookups.OrderBy(s => s.TimeSlotId).ToListAsync();
 
             var result = new List<(bool hasRecord, bool result)>();
             foreach (var slot in slots)
@@ -115,22 +122,21 @@ namespace FProductionDashBoard.Repositories
                 var record = records.FirstOrDefault(r => r.TimeSlotId == slot.TimeSlotId);
 
                 if (record == null)
-                    result.Add((false, false)); // 沒有紀錄 → result 固定 false
+                    result.Add((false, false));
                 else
-                    result.Add((true, record.Result)); // 有紀錄 → result 取紀錄的結果
+                    result.Add((true, record.Result));
             }
 
             return result;
         }
-
-
 
         /// <summary>
         /// 查詢某設備的所有檢驗紀錄
         /// </summary>
         public async Task<List<InspectionRecord>> GetRecordsByEquipmentAsync(int equipmentId)
         {
-            return await _context.InspectionRecords
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.InspectionRecords
                 .Where(r => r.EquipmentId == equipmentId)
                 .Include(r => r.Employee)
                 .Include(r => r.TimeSlot)
@@ -144,13 +150,12 @@ namespace FProductionDashBoard.Repositories
         /// </summary>
         public async Task<List<InspectionRecord>> GetRecordsByTimeSlotAsync(int timeSlotId, DateTime date)
         {
-            return await _context.InspectionRecords
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.InspectionRecords
                 .Where(r => r.TimeSlotId == timeSlotId && r.CreateAt == date.Date)
                 .Include(r => r.Equipment)
                 .Include(r => r.Employee)
                 .ToListAsync();
         }
-
     }
-
 }

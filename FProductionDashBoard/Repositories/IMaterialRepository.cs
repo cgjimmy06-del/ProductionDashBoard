@@ -9,5 +9,6 @@ namespace FProductionDashBoard.Repositories
 {
     public interface IMaterialRepository : IRepository<Material, MesDbContext>
     {
+        public Task<List<MaterialType>> GetMaterialTypesAsync();
     }
 }

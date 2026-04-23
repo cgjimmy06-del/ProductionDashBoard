@@ -1,4 +1,4 @@
-﻿using FProductionDashBoard.Models;
+using FProductionDashBoard.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace FProductionDashBoard.Repositories
 {
     public class RolePermissionRepository : Repository<Role, MesDbContext>, IRolePermissionRepository
     {
-        public RolePermissionRepository(MesDbContext context) : base(context)
+        public RolePermissionRepository(IDbContextFactory<MesDbContext> factory) : base(factory)
         {
         }
 
@@ -19,7 +19,8 @@ namespace FProductionDashBoard.Repositories
         /// </summary>
         public async Task<List<Permission>> GetAllPermissionsAsync()
         {
-            return await _context.Permissions.ToListAsync();
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Permissions.ToListAsync();
         }
 
         /// <summary>
@@ -27,17 +28,20 @@ namespace FProductionDashBoard.Repositories
         /// </summary>
         public async Task<List<Role>> GetAllRolesAsync()
         {
-            return await _context.Roles
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Roles
                 .Include(r => r.RolePermissions)
                     .ThenInclude(rp => rp.Permission)
                 .ToListAsync();
         }
+
         /// <summary>
         /// 取得指定員工的所有權限
         /// </summary>
         public async Task<List<Permission>> GetEmployeePermissionsAsync(int employeeId)
         {
-            return await _context.Employees
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Employees
                 .Where(e => e.EmployeeId == employeeId)
                 .Include(e => e.Role)
                     .ThenInclude(r => (r ?? new()).RolePermissions)

@@ -11,7 +11,7 @@ namespace FProductionDashBoard.Repositories
 {
     public class EmployeeRepository : Repository<Employee, MesDbContext>, IEmployeeRepository
     {
-        public EmployeeRepository(MesDbContext context) : base(context)
+        public EmployeeRepository(IDbContextFactory<MesDbContext> factory) : base(factory)
         {
         }
 
