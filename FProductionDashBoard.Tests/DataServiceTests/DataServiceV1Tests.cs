@@ -1,3 +1,4 @@
+using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
 using FProductionDashBoard.Services.Exceptions;
@@ -24,6 +25,8 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             // 預設連線正常
             _materialReplacementRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
             _inspectionRecordRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
+            _timeSlotLookupRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
+            _rolePermissionRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
             _offlineCache.Setup(c => c.EnqueueAsync(It.IsAny<PendingOperation>())).Returns(Task.CompletedTask);
         }
 
@@ -560,6 +563,133 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             var result = await CreateService(DateTime.Today).GetCurrentTimeSlotIdAsync();
 
             Assert.Null(result);
+        }
+
+        // ─── GetAllPermissionsAsync ─────────────────────────────────────────────
+
+        [Fact]
+        public async Task GetAllPermissionsAsync_WhenConnected_ReturnsPermissionsFromRepository()
+        {
+            var perms = new List<Permission> { new() { PermissionId = 1, Name = "View" } };
+            _rolePermissionRep.Setup(r => r.GetAllPermissionsAsync()).ReturnsAsync(perms);
+
+            var result = await CreateService().GetAllPermissionsAsync();
+
+            Assert.Equal(perms, result);
+        }
+
+        [Fact]
+        public async Task GetAllPermissionsAsync_WhenConnectionFails_Throws()
+        {
+            _rolePermissionRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().GetAllPermissionsAsync());
+        }
+
+        // ─── GetAllRolesAsync ────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task GetAllRolesAsync_WhenConnected_ReturnsRolesFromRepository()
+        {
+            var roles = new List<Role> { new() { RoleId = 1, Name = "Admin" } };
+            _rolePermissionRep.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(roles);
+
+            var result = await CreateService().GetAllRolesAsync();
+
+            Assert.Equal(roles, result);
+        }
+
+        [Fact]
+        public async Task GetAllRolesAsync_WhenConnectionFails_Throws()
+        {
+            _rolePermissionRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().GetAllRolesAsync());
+        }
+
+        // ─── AddRoleAsync ────────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task AddRoleAsync_WhenConnected_DelegatesToRepository()
+        {
+            var dto = new RoleFormDto { RoleId = 5, Name = "Operator", SelectedPermissionIds = [1, 2] };
+            _rolePermissionRep
+                .Setup(r => r.AddRoleWithPermissionsAsync(dto.RoleId, dto.Name, dto.Description, dto.SelectedPermissionIds))
+                .Returns(Task.CompletedTask);
+
+            await CreateService().AddRoleAsync(dto);
+
+            _rolePermissionRep.Verify(r => r.AddRoleWithPermissionsAsync(
+                dto.RoleId, dto.Name, dto.Description, dto.SelectedPermissionIds), Times.Once);
+        }
+
+        [Fact]
+        public async Task AddRoleAsync_WhenConnectionFails_Throws()
+        {
+            _rolePermissionRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().AddRoleAsync(new RoleFormDto { RoleId = 1, Name = "Test" }));
+        }
+
+        // ─── UpdateRoleAsync ─────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task UpdateRoleAsync_WhenConnected_DelegatesToRepository()
+        {
+            var dto = new RoleFormDto { Id = 3, RoleId = 3, Name = "Updated", SelectedPermissionIds = [2] };
+            _rolePermissionRep
+                .Setup(r => r.UpdateRoleWithPermissionsAsync(dto.Id!.Value, dto.Name, dto.Description, dto.SelectedPermissionIds))
+                .Returns(Task.CompletedTask);
+
+            await CreateService().UpdateRoleAsync(dto);
+
+            _rolePermissionRep.Verify(r => r.UpdateRoleWithPermissionsAsync(
+                dto.Id!.Value, dto.Name, dto.Description, dto.SelectedPermissionIds), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateRoleAsync_WhenConnectionFails_Throws()
+        {
+            _rolePermissionRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().UpdateRoleAsync(new RoleFormDto { Id = 1, RoleId = 1, Name = "X" }));
+        }
+
+        // ─── DeleteRoleAsync ─────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task DeleteRoleAsync_WhenNoEmployees_DeletesRole()
+        {
+            _rolePermissionRep.Setup(r => r.HasEmployeesByRoleAsync(7)).ReturnsAsync(false);
+            _rolePermissionRep.Setup(r => r.DeleteAsync(7)).Returns(Task.CompletedTask);
+
+            await CreateService().DeleteRoleAsync(7);
+
+            _rolePermissionRep.Verify(r => r.DeleteAsync(7), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteRoleAsync_WhenRoleHasEmployees_Throws()
+        {
+            _rolePermissionRep.Setup(r => r.HasEmployeesByRoleAsync(7)).ReturnsAsync(true);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().DeleteRoleAsync(7));
+
+            _rolePermissionRep.Verify(r => r.DeleteAsync(It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task DeleteRoleAsync_WhenConnectionFails_Throws()
+        {
+            _rolePermissionRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().DeleteRoleAsync(1));
         }
     }
 }
