@@ -19,8 +19,13 @@ namespace FProductionDashBoard
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool isOn = (bool)value;
+            
+            if (parameter?.ToString() == "NoError")
+            { return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["PrimaryBrush"]; }
+
             if (parameter?.ToString() == "Invert")
                 isOn = !isOn;
+
             return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["ErrorBrush"];
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

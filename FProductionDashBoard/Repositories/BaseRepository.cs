@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +12,6 @@ namespace FProductionDashBoard.Repositories
         public string CurrectConnStr { get; set; }
         bool CheckConnection();
         Task<bool> CheckConnectionAsync();
-        public TContext GetContext();
 
         public Task<IEnumerable<T>> GetAllAsync();
         public Task<T?> GetByIdAsync(int id);
@@ -23,46 +22,63 @@ namespace FProductionDashBoard.Repositories
 
     public class Repository<T, TContext> : IRepository<T, TContext> where T : class where TContext : DbContext
     {
-        protected readonly TContext _context;
-        protected readonly DbSet<T> _dbSet;
+        protected readonly IDbContextFactory<TContext> _factory;
 
         public string CurrectConnStr { get; set; } = "";
 
-        public Repository(TContext context)
+        public Repository(IDbContextFactory<TContext> factory)
         {
-            _context = context;
-            _dbSet = context.Set<T>();
-
-            CurrectConnStr = _context.Database.GetDbConnection().ConnectionString;
+            _factory = factory;
+            using var ctx = factory.CreateDbContext();
+            CurrectConnStr = ctx.Database.GetDbConnection().ConnectionString;
         }
 
         public bool CheckConnection()
-        { return _context.Database.CanConnect(); }
-        public async Task<bool> CheckConnectionAsync()
-            => await _context.Database.CanConnectAsync();
-        public TContext GetContext() {  return _context; }
+        {
+            using var ctx = _factory.CreateDbContext();
+            return ctx.Database.CanConnect();
+        }
 
-        public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
-        public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
+        public async Task<bool> CheckConnectionAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Database.CanConnectAsync();
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Set<T>().ToListAsync();
+        }
+
+        public async Task<T?> GetByIdAsync(int id)
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Set<T>().FindAsync(id);
+        }
+
         public async Task AddAsync(T entity)
         {
-            _dbSet.Add(entity);
-            await _context.SaveChangesAsync();
+            await using var ctx = _factory.CreateDbContext();
+            ctx.Set<T>().Add(entity);
+            await ctx.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(T entity)
         {
-            _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
+            await using var ctx = _factory.CreateDbContext();
+            ctx.Set<T>().Update(entity);
+            await ctx.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
-            var entity = await _dbSet.FindAsync(id);
+            await using var ctx = _factory.CreateDbContext();
+            var entity = await ctx.Set<T>().FindAsync(id);
             if (entity != null)
             {
-                _dbSet.Remove(entity);
-                await _context.SaveChangesAsync();
+                ctx.Set<T>().Remove(entity);
+                await ctx.SaveChangesAsync();
             }
         }
     }

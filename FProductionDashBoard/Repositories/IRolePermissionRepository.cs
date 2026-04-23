@@ -12,5 +12,8 @@ namespace FProductionDashBoard.Repositories
         Task<List<Permission>> GetAllPermissionsAsync();
         Task<List<Role>> GetAllRolesAsync();
         Task<List<Permission>> GetEmployeePermissionsAsync(int employeeId);
+        Task AddRoleWithPermissionsAsync(int roleId, string name, string? description, List<int> permissionIds);
+        Task UpdateRoleWithPermissionsAsync(int roleId, string name, string? description, List<int> permissionIds);
+        Task<bool> HasEmployeesByRoleAsync(int roleId);
     }
 }
