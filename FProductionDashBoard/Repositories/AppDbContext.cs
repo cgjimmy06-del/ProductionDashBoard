@@ -23,6 +23,10 @@ namespace FProductionDashBoard.Repositories
         public DbSet<InspectionRecord> InspectionRecords { get; set; }
         public DbSet<TimeSlotLookup> TimeSlotLookups { get; set; }
 
+        public DbSet<Role> Roles => Set<Role>();
+        public DbSet<Permission> Permissions => Set<Permission>();
+        public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+
         public MesDbContext(DbContextOptions<MesDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

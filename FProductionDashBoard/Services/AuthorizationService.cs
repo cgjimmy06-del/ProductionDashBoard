@@ -100,7 +100,7 @@ namespace FProductionDashBoard.Services
     {
         public List<Role> RolesList { get; set; } = []; // 由此映射，外部僅需知道其角色
         private HashSet<Permission> _userPermissions;
-        public AuthorizationService(UiModels.UserInfo nuser) // IEnumerable<Permission> permissions
+        public AuthorizationService(UiModels.UserInfo nuser) // 之後直接由此注入 RolesList 或是UsersList 已存在每位員工的permissions
         {
             GetRolesList();
 
@@ -119,7 +119,7 @@ namespace FProductionDashBoard.Services
             _userPermissions = [.. permissions];
         }
 
-        private void GetRolesList() // 後續規劃由清單建立，可於UI設定權限
+        private void GetRolesList() // 後續規劃由清單建立，可於UI設定權限 (DI取代此函式)
         {
             RolesList.Add(new Role() {
                 Id = RoleId.None
@@ -177,91 +177,4 @@ namespace FProductionDashBoard.Services
             });
         }
     }
-
-    public class LocalizedDescriptionAttribute : DescriptionAttribute
-    {
-        private readonly string _resourceKey;
-        private readonly ResourceManager _resourceManager;
-
-        public LocalizedDescriptionAttribute(string resourceKey, Type resourceType)
-        {
-            _resourceKey = resourceKey;
-            _resourceManager = new ResourceManager(resourceType);
-        }
-
-        public override string Description
-        {
-            get
-            {
-                // 根據目前的 UI 文化特性 (CurrentUICulture) 取得翻譯
-                string? displayName = _resourceManager.GetString(_resourceKey);
-                return string.IsNullOrEmpty(displayName) ? _resourceKey : displayName;
-            }
-        }
-    }
-
-    //public class AuthorizationCommand : ICommand
-    //{
-    //    private readonly Action _execute;
-    //    private readonly Func<bool> _canExecute;
-    //    //private readonly AuditLogger _logger;
-    //    //private readonly User _user;
-    //    //private readonly Permission _permission;
-
-    //    public AuthorizationCommand(Action execute, Func<bool> canExecute
-    //                                /*,AuditLogger logger, User user, Permission permission*/)
-    //    {
-    //        _execute = execute;
-    //        _canExecute = canExecute;
-    //        //_logger = logger;
-    //        //_user = user;
-    //        //_permission = permission;
-    //    }
-
-    //    public bool CanExecute(object parameter) => _canExecute();
-
-    //    public void Execute(object parameter)
-    //    {
-    //        //_logger.Log(_user.UserName, _permission, "執行 Command");
-    //        _execute();
-    //    }
-
-    //    public event EventHandler CanExecuteChanged;
-    //    public void RaiseCanExecuteChanged() =>
-    //        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-    //}
-    //public class AuthorizationAsyncCommand : IAsyncRelayCommand
-    //{
-    //    private readonly Func<Task> _executeAsync;
-    //    private readonly Func<bool> _canExecute;
-    //    private readonly AuditLogger _logger;
-    //    private readonly string _userName;
-    //    private readonly Permission _permission;
-
-    //    public AuthorizationAsyncCommand(Func<Task> executeAsync, Func<bool> canExecute,
-    //                                     AuditLogger logger, string userName, Permission permission)
-    //    {
-    //        _executeAsync = executeAsync;
-    //        _canExecute = canExecute;
-    //        _logger = logger;
-    //        _userName = userName;
-    //        _permission = permission;
-    //    }
-
-    //    public bool CanExecute(object parameter) => _canExecute();
-
-    //    public async Task ExecuteAsync(object parameter)
-    //    {
-    //        _logger.Log(_userName, _permission, "執行 Async Command");
-    //        await _executeAsync();
-    //    }
-
-    //    // IAsyncRelayCommand 需要這些成員
-    //    public event EventHandler CanExecuteChanged;
-    //    public void RaiseCanExecuteChanged() =>
-    //        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-
-    //    // 讓 WPF 的 Command 機制能正常運作
-    //    void ICommand.Execute(object parameter) => ExecuteAsync(parameter).ConfigureAwait(false);
-    //}
 }

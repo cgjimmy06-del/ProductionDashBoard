@@ -18,7 +18,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         private readonly Mock<IInspectionRecordRepository> _inspectionRecordRep = new();
         private readonly Mock<ITimeSlotLookupRepository> _timeSlotLookupRep = new();
         private readonly Mock<IOfflineCacheService> _offlineCache = new();
-
+        private readonly Mock<IRolePermissionRepository> _rolePermissionRep = new();
         public DataServiceV1Tests()
         {
             // 預設連線正常
@@ -37,7 +37,8 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 _materialReplacementRep.Object,
                 _inspectionRecordRep.Object,
                 _timeSlotLookupRep.Object,
-                _offlineCache.Object
+                _offlineCache.Object,
+                _rolePermissionRep.Object
             );
             service.BusinessDay = businessDay ?? DateTime.Today;
             return service;

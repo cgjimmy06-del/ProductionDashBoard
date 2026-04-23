@@ -58,6 +58,7 @@ namespace FProductionDashBoard
             services.AddScoped<Repositories.IMaterialReplacementRepository, Repositories.MaterialReplacementRepository>();
             services.AddScoped<Repositories.ITimeSlotLookupRepository, Repositories.TimeSlotLookupRepository>();
             services.AddScoped<Repositories.IInspectionRecordRepository, Repositories.InspectionRecordRepository>();
+            services.AddScoped<Repositories.IRolePermissionRepository, Repositories.RolePermissionRepository>();
 
             // 註冊 資訊
             services.AddSingleton(user);
