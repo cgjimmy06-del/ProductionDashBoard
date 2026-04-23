@@ -48,6 +48,51 @@ namespace FProductionDashBoard.Services.V1
             RolePermissionRep = rolePermissionRep;
         }
 
+        #region 測試用
+        public async Task Demo()
+        {
+            // 查詢
+            //var devs = await ErrorListRep.GetMessagesWithOtherAsync("zh-TW"); //zh-TW INSP0001
+            //foreach (var dev in devs) { Debug.WriteLine($"{dev.LanguageCode} - {dev.Message}"); }
+            //Debug.WriteLine($"{devs}");
+            //foreach (var (ErrorCode, Message, Category) in devs) { Debug.WriteLine($"{ErrorCode} - {Message}"); }
+
+            var roles = (await RolePermissionRep.GetAllRolesAsync()).ToList();
+            foreach (var nrole in roles)
+            {
+                Debug.WriteLine($"nrole.Name = {nrole.Name}");
+                foreach (var npermission in nrole.RolePermissions)
+                { Debug.WriteLine($"permission = {npermission.PermissionId}"); }
+            }
+
+            //await CheckAndInsertMissedInspectionAsync(timeslots, 1, 1);
+            // 插入
+
+            //var firstInspId = await CreateFirstInspectionAsync(1, 1, true,"ABC-123", null);
+            //var routineInspId = await CreateRoutineInspectionAsync(1, 1, false, 3, "CDE-456", "INSP0002");
+
+            //Debug.WriteLine($"新增成功，firstInspId = {firstInspId}");
+            //Debug.WriteLine($"新增成功，routineInspId = {routineInspId}");
+            //var replacementId = await MaterialReplacementRep.AddReplacementRecordAsync(
+            //                    equipmentId: 3,
+            //                    employeeId: 2,
+            //                    errorCode: "MTRP0001",
+            //                    details: new List<(int materialId, int quantity)>
+            //                    {
+            //                        (materialId: 1, quantity: 1),
+            //                        (materialId: 3, quantity: 1),
+            //                        (materialId: 4, quantity: 3),
+            //                    }
+            //                );
+            //Debug.WriteLine($"新增成功，ReplacementId = {replacementId}");
+            // 更新
+
+
+            // 刪除
+
+
+        }
+        #endregion
 
         #region 清單查詢與 Mapping
         public async Task<List<DeviceInfo>> GetDevicesAsync()
@@ -381,7 +426,7 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await EquipmentRep.CheckConnectionAsync())
                 throw new InvalidOperationException("Equipment repository connection failed");
-            return await EquipmentRep.GetContext().Set<EquipmentType>().ToListAsync();
+            return await EquipmentRep.GetEquipmentTypesAsync();
         }
 
         #endregion
@@ -452,7 +497,7 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await MaterialRep.CheckConnectionAsync())
                 throw new InvalidOperationException("Material repository connection failed");
-            return await MaterialRep.GetContext().Set<MaterialType>().ToListAsync();
+            return await MaterialRep.GetMaterialTypesAsync();
         }
 
         public async Task AddMaterialAsync(MaterialFormDto dto)
@@ -500,20 +545,13 @@ namespace FProductionDashBoard.Services.V1
 
         #endregion
 
-
-
-
-
-
         #region 設定：錯誤清單 CRUD
 
         public async Task<List<ErrorList>> GetAllErrorListsAsync()
         {
             if (!await ErrorListRep.CheckConnectionAsync())
                 throw new InvalidOperationException("ErrorList repository connection failed");
-            return await ErrorListRep.GetContext().Set<ErrorList>()
-                .Include(e => e.Translations)
-                .ToListAsync();
+            return await ErrorListRep.GetAllWithTranslationsAsync();
         }
 
         public async Task AddErrorListAsync(ErrorListFormDto dto)
@@ -540,39 +578,7 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await ErrorListRep.CheckConnectionAsync())
                 throw new InvalidOperationException("ErrorList repository connection failed");
-            var context = ErrorListRep.GetContext();
-            var entity = await context.Set<ErrorList>()
-                .Include(e => e.Translations)
-                .FirstOrDefaultAsync(e => e.ErrorId == dto.Id!.Value)
-                ?? throw new InvalidOperationException($"ErrorList id={dto.Id} not found");
-            entity.Category = dto.Category;
-            entity.Severity = dto.Severity;
-            entity.UpdateAt = DateTime.Now;
-            var langMessages = new[] {
-                ("zh-TW", dto.MessageZhTw),
-                ("en-US", dto.MessageEnUs),
-                ("vi-VN", dto.MessageViVn)
-            };
-            foreach (var (lang, message) in langMessages)
-            {
-                if (string.IsNullOrWhiteSpace(message)) continue;
-                var existing = entity.Translations.FirstOrDefault(t => t.LanguageCode == lang);
-                if (existing != null)
-                {
-                    existing.Message = message;
-                    existing.UpdateAt = DateTime.Now;
-                }
-                else
-                {
-                    entity.Translations.Add(new ErrorTranslation
-                    {
-                        ErrorCode = entity.ErrorCode,
-                        LanguageCode = lang,
-                        Message = message
-                    });
-                }
-            }
-            await context.SaveChangesAsync();
+            await ErrorListRep.UpdateErrorListAsync(dto);
         }
 
         public async Task DeleteErrorListAsync(int id)
@@ -585,50 +591,7 @@ namespace FProductionDashBoard.Services.V1
         }
 
         #endregion
-        // 測試用
-        public async Task Demo()
-        {
-            // 查詢
-            //var devs = await ErrorListRep.GetMessagesWithOtherAsync("zh-TW"); //zh-TW INSP0001
-            //foreach (var dev in devs) { Debug.WriteLine($"{dev.LanguageCode} - {dev.Message}"); }
-            //Debug.WriteLine($"{devs}");
-            //foreach (var (ErrorCode, Message, Category) in devs) { Debug.WriteLine($"{ErrorCode} - {Message}"); }
-
-            var roles = (await RolePermissionRep.GetAllRolesAsync()).ToList();
-            foreach (var nrole in roles)
-            {
-                Debug.WriteLine($"nrole.Name = {nrole.Name}");
-                foreach(var npermission in nrole.RolePermissions)
-                { Debug.WriteLine($"permission = {npermission.PermissionId}"); }
-            }
-
-            //await CheckAndInsertMissedInspectionAsync(timeslots, 1, 1);
-            // 插入
-
-            //var firstInspId = await CreateFirstInspectionAsync(1, 1, true,"ABC-123", null);
-            //var routineInspId = await CreateRoutineInspectionAsync(1, 1, false, 3, "CDE-456", "INSP0002");
-
-            //Debug.WriteLine($"新增成功，firstInspId = {firstInspId}");
-            //Debug.WriteLine($"新增成功，routineInspId = {routineInspId}");
-            //var replacementId = await MaterialReplacementRep.AddReplacementRecordAsync(
-            //                    equipmentId: 3,
-            //                    employeeId: 2,
-            //                    errorCode: "MTRP0001",
-            //                    details: new List<(int materialId, int quantity)>
-            //                    {
-            //                        (materialId: 1, quantity: 1),
-            //                        (materialId: 3, quantity: 1),
-            //                        (materialId: 4, quantity: 3),
-            //                    }
-            //                );
-            //Debug.WriteLine($"新增成功，ReplacementId = {replacementId}");
-            // 更新
-
-
-            // 刪除
-
-
-        }
+        
         // ─── 設定：巡檢時段 CRUD ─────────────────────────────────────────────────
         public async Task AddTimeSlotAsync(TimeSlotFormDto dto)
         {
@@ -661,6 +624,45 @@ namespace FProductionDashBoard.Services.V1
             if (!await TimeSlotLookupRep.CheckConnectionAsync())
                 throw new InvalidOperationException("TimeSlotLookup repository connection failed");
             await TimeSlotLookupRep.DeleteAsync(timeSlotId);
+        }
+
+        // ─── 角色與權限 ───────────────────────────────────────────────────────────
+        public async Task<List<Models.Role>> GetAllRolesAsync()
+        {
+            if (!await RolePermissionRep.CheckConnectionAsync())
+                throw new InvalidOperationException("RolePermission repository connection failed");
+            return await RolePermissionRep.GetAllRolesAsync();
+        }
+
+        // ─── 設定：角色權限 CRUD ─────────────────────────────────────────────────
+        public async Task<List<Models.Permission>> GetAllPermissionsAsync()
+        {
+            if (!await RolePermissionRep.CheckConnectionAsync())
+                throw new InvalidOperationException("RolePermission repository connection failed");
+            return await RolePermissionRep.GetAllPermissionsAsync();
+        }
+
+        public async Task AddRoleAsync(RoleFormDto dto)
+        {
+            if (!await RolePermissionRep.CheckConnectionAsync())
+                throw new InvalidOperationException("RolePermission repository connection failed");
+            await RolePermissionRep.AddRoleWithPermissionsAsync(dto.RoleId, dto.Name, dto.Description, dto.SelectedPermissionIds);
+        }
+
+        public async Task UpdateRoleAsync(RoleFormDto dto)
+        {
+            if (!await RolePermissionRep.CheckConnectionAsync())
+                throw new InvalidOperationException("RolePermission repository connection failed");
+            await RolePermissionRep.UpdateRoleWithPermissionsAsync(dto.Id!.Value, dto.Name, dto.Description, dto.SelectedPermissionIds);
+        }
+
+        public async Task DeleteRoleAsync(int id)
+        {
+            if (!await RolePermissionRep.CheckConnectionAsync())
+                throw new InvalidOperationException("RolePermission repository connection failed");
+            if (await RolePermissionRep.HasEmployeesByRoleAsync(id))
+                throw new InvalidOperationException("此角色有員工使用，無法刪除");
+            await RolePermissionRep.DeleteAsync(id);
         }
     }
 }

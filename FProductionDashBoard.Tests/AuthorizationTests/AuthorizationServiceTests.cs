@@ -15,15 +15,15 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
         public void Constructor_InvalidRoleId_DefaultsToViewer()
         {
             var svc = new AuthorizationService(MakeUser(999));
-            Assert.True(svc.HasPermission(Permission.View));
-            Assert.False(svc.HasPermission(Permission.Edit));
+            Assert.True(svc.HasPermission(AuthPermission.View));
+            Assert.False(svc.HasPermission(AuthPermission.Edit));
         }
 
         [Fact]
         public void Constructor_NoneRole_GrantsNoPermissions()
         {
             var svc = new AuthorizationService(MakeUser((int)RoleId.None));
-            foreach (Permission p in Enum.GetValues<Permission>())
+            foreach (AuthPermission p in Enum.GetValues<AuthPermission>())
                 Assert.False(svc.HasPermission(p), $"None role should not have {p}");
         }
 
@@ -33,47 +33,47 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
         public void HasPermission_AdminRole_HasAllPermissions()
         {
             var svc = new AuthorizationService(MakeUser((int)RoleId.Admin));
-            foreach (Permission p in Enum.GetValues<Permission>())
+            foreach (AuthPermission p in Enum.GetValues<AuthPermission>())
                 Assert.True(svc.HasPermission(p), $"Admin should have {p}");
         }
 
-        // ─── Per-role permission matrix ───────────────────────────────────────────
+        // ─── Per-role AuthPermission matrix ───────────────────────────────────────────
 
         [Theory]
-        [InlineData((int)RoleId.Viewer,     Permission.View,              true)]
-        [InlineData((int)RoleId.Viewer,     Permission.Edit,              false)]
-        [InlineData((int)RoleId.Viewer,     Permission.OperateMaterial,   false)]
-        [InlineData((int)RoleId.Inspector,  Permission.View,              true)]
-        [InlineData((int)RoleId.Inspector,  Permission.OperateInspection, true)]
-        [InlineData((int)RoleId.Inspector,  Permission.OperateMaterial,   false)]
-        [InlineData((int)RoleId.Inspector,  Permission.Edit,              false)]
-        [InlineData((int)RoleId.Operator,   Permission.View,              true)]
-        [InlineData((int)RoleId.Operator,   Permission.OperateMaterial,   true)]
-        [InlineData((int)RoleId.Operator,   Permission.OperateTuning,     true)]
-        [InlineData((int)RoleId.Operator,   Permission.OperateInspection, false)]
-        [InlineData((int)RoleId.Operator,   Permission.Edit,              false)]
-        [InlineData((int)RoleId.Scheduler,  Permission.View,              true)]
-        [InlineData((int)RoleId.Scheduler,  Permission.Order,             true)]
-        [InlineData((int)RoleId.Scheduler,  Permission.Schedule,          true)]
-        [InlineData((int)RoleId.Scheduler,  Permission.Edit,              false)]
-        [InlineData((int)RoleId.Scheduler,  Permission.OperateMaterial,   false)]
-        [InlineData((int)RoleId.Supervisor, Permission.View,              true)]
-        [InlineData((int)RoleId.Supervisor, Permission.Setting,           true)]
-        [InlineData((int)RoleId.Supervisor, Permission.OperateTuning,     true)]
-        [InlineData((int)RoleId.Supervisor, Permission.Delete,            false)]
-        [InlineData((int)RoleId.Supervisor, Permission.Special,           false)]
-        [InlineData((int)RoleId.Supervisor, Permission.Schedule,          false)]
-        [InlineData((int)RoleId.Engineer,   Permission.View,              true)]
-        [InlineData((int)RoleId.Engineer,   Permission.Edit,              true)]
-        [InlineData((int)RoleId.Engineer,   Permission.OperateTuning,     true)]
-        [InlineData((int)RoleId.Engineer,   Permission.Schedule,          true)]
-        [InlineData((int)RoleId.Engineer,   Permission.Special,           false)]
-        [InlineData((int)RoleId.Engineer,   Permission.Delete,            false)]
-        [InlineData((int)RoleId.Engineer,   Permission.Test,              false)]
-        public void HasPermission_RolePermissionMatrix(int roleId, Permission permission, bool expected)
+        [InlineData((int)RoleId.Viewer,     AuthPermission.View,              true)]
+        [InlineData((int)RoleId.Viewer,     AuthPermission.Edit,              false)]
+        [InlineData((int)RoleId.Viewer,     AuthPermission.OperateMaterial,   false)]
+        [InlineData((int)RoleId.Inspector,  AuthPermission.View,              true)]
+        [InlineData((int)RoleId.Inspector,  AuthPermission.OperateInspection, true)]
+        [InlineData((int)RoleId.Inspector,  AuthPermission.OperateMaterial,   false)]
+        [InlineData((int)RoleId.Inspector,  AuthPermission.Edit,              false)]
+        [InlineData((int)RoleId.Operator,   AuthPermission.View,              true)]
+        [InlineData((int)RoleId.Operator,   AuthPermission.OperateMaterial,   true)]
+        [InlineData((int)RoleId.Operator,   AuthPermission.OperateTuning,     true)]
+        [InlineData((int)RoleId.Operator,   AuthPermission.OperateInspection, false)]
+        [InlineData((int)RoleId.Operator,   AuthPermission.Edit,              false)]
+        [InlineData((int)RoleId.Scheduler,  AuthPermission.View,              true)]
+        [InlineData((int)RoleId.Scheduler,  AuthPermission.Order,             true)]
+        [InlineData((int)RoleId.Scheduler,  AuthPermission.Schedule,          true)]
+        [InlineData((int)RoleId.Scheduler,  AuthPermission.Edit,              false)]
+        [InlineData((int)RoleId.Scheduler,  AuthPermission.OperateMaterial,   false)]
+        [InlineData((int)RoleId.Supervisor, AuthPermission.View,              true)]
+        [InlineData((int)RoleId.Supervisor, AuthPermission.Setting,           true)]
+        [InlineData((int)RoleId.Supervisor, AuthPermission.OperateTuning,     true)]
+        [InlineData((int)RoleId.Supervisor, AuthPermission.Delete,            false)]
+        [InlineData((int)RoleId.Supervisor, AuthPermission.Special,           false)]
+        [InlineData((int)RoleId.Supervisor, AuthPermission.Schedule,          false)]
+        [InlineData((int)RoleId.Engineer,   AuthPermission.View,              true)]
+        [InlineData((int)RoleId.Engineer,   AuthPermission.Edit,              true)]
+        [InlineData((int)RoleId.Engineer,   AuthPermission.OperateTuning,     true)]
+        [InlineData((int)RoleId.Engineer,   AuthPermission.Schedule,          true)]
+        [InlineData((int)RoleId.Engineer,   AuthPermission.Special,           false)]
+        [InlineData((int)RoleId.Engineer,   AuthPermission.Delete,            false)]
+        [InlineData((int)RoleId.Engineer,   AuthPermission.Test,              false)]
+        public void HasPermission_RolePermissionMatrix(int roleId, AuthPermission AuthPermission, bool expected)
         {
             var svc = new AuthorizationService(MakeUser(roleId));
-            Assert.Equal(expected, svc.HasPermission(permission));
+            Assert.Equal(expected, svc.HasPermission(AuthPermission));
         }
 
         // ─── UpdateUser ───────────────────────────────────────────────────────────
@@ -82,21 +82,21 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
         public void UpdateUser_ChangesPermissionsToNewRole()
         {
             var svc = new AuthorizationService(MakeUser((int)RoleId.Viewer));
-            Assert.False(svc.HasPermission(Permission.Edit));
+            Assert.False(svc.HasPermission(AuthPermission.Edit));
 
             svc.UpdateUser(MakeUser((int)RoleId.Admin));
-            Assert.True(svc.HasPermission(Permission.Edit));
+            Assert.True(svc.HasPermission(AuthPermission.Edit));
         }
 
         [Fact]
         public void UpdateUser_InvalidRoleId_DefaultsToViewer()
         {
             var svc = new AuthorizationService(MakeUser((int)RoleId.Admin));
-            Assert.True(svc.HasPermission(Permission.Delete));
+            Assert.True(svc.HasPermission(AuthPermission.Delete));
 
             svc.UpdateUser(MakeUser(999));
-            Assert.True(svc.HasPermission(Permission.View));
-            Assert.False(svc.HasPermission(Permission.Delete));
+            Assert.True(svc.HasPermission(AuthPermission.View));
+            Assert.False(svc.HasPermission(AuthPermission.Delete));
         }
 
         [Fact]
@@ -106,7 +106,7 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
 
             svc.UpdateUser(MakeUser((int)RoleId.None));
 
-            foreach (Permission p in Enum.GetValues<Permission>())
+            foreach (AuthPermission p in Enum.GetValues<AuthPermission>())
                 Assert.False(svc.HasPermission(p), $"None role should not have {p}");
         }
 

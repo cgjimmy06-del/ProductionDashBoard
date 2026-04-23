@@ -93,5 +93,14 @@ namespace FProductionDashBoard.Services
         public Task AddTimeSlotAsync(TimeSlotFormDto dto);
         public Task UpdateTimeSlotAsync(TimeSlotFormDto dto);
         public Task DeleteTimeSlotAsync(int timeSlotId);
+
+        // ─── 角色與權限 ───────────────────────────────────────────────────────────
+        public Task<List<Models.Role>> GetAllRolesAsync();
+
+        // ─── 設定：角色權限 CRUD ─────────────────────────────────────────────────
+        public Task<List<Models.Permission>> GetAllPermissionsAsync();
+        public Task AddRoleAsync(RoleFormDto dto);
+        public Task UpdateRoleAsync(RoleFormDto dto);
+        public Task DeleteRoleAsync(int id);
     }
 }
