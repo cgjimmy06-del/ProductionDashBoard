@@ -11,8 +11,8 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource MaterialDesignWindow}"
-        Title="{Binding AppVersion, StringFormat=ProductionDashBoard -- V{0}}" 
-        Height="600" Width="1000" Icon="appIcon.ico">
+        Title="{Binding AppVersion, StringFormat=ProductionDashBoard -- V{0}}"
+        Height="800" Width="1280" Icon="appIcon.ico">
     <!-- window載入事件 -->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -39,6 +39,9 @@
             <!-- ViewModel 綁定 User Control -->
             <DataTemplate DataType="{x:Type localvm:DeviceCardContainerViewModel}">
                 <localuc:DeviceCardContainer />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type localvm:SettingViewModel}">
+                <localuc:SettingView />
             </DataTemplate>
 
         </ResourceDictionary>
@@ -174,14 +177,15 @@
                     </RadioButton>
                     <RadioButton Style="{StaticResource NavButtonStyle}"
                                  Command="{Binding SwitchModeCommand}" 
-                                 CommandParameter="{x:Static localvm:NavMode.Setting}">
+                                 CommandParameter="{x:Static localvm:NavMode.List}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                            <materialDesign:PackIcon Kind="Cog" Margin="0,0,5,0"
+                            <materialDesign:PackIcon Kind="ListBox" Margin="0,0,5,0"
                                                      Width="30" Height="30"/>
-                            <TextBlock Text="{DynamicResource SettingNavButton}" 
+                            <TextBlock Text="{DynamicResource ListManagementNavButton}" 
                                        VerticalAlignment="Center"/>
                         </StackPanel>
                     </RadioButton>
+                    <!-- 加入:系統設定(主題、語言、預設參數) -->
                 </StackPanel>
             </Border>
 

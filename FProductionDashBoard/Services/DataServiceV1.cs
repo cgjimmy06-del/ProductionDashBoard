@@ -1,4 +1,5 @@
-﻿using FProductionDashBoard.Models;
+﻿using FProductionDashBoard.Dtos;
+using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
 using FProductionDashBoard.Services.Exceptions;
 using FProductionDashBoard.Services.Offline;
@@ -320,14 +321,270 @@ namespace FProductionDashBoard.Services.V1
 
         #endregion
 
+        #region 設定：設備 CRUD
+
+        public async Task<List<Equipment>> GetAllEquipmentAsync()
+        {
+            if (!await EquipmentRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Equipment repository connection failed");
+            return (await EquipmentRep.GetAllAsync()).ToList();
+        }
+
+        public async Task AddEquipmentAsync(EquipmentFormDto dto)
+        {
+            if (!await EquipmentRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Equipment repository connection failed");
+            var entity = new Equipment
+            {
+                Code = dto.Code,
+                Name = dto.Name,
+                Ip = dto.Ip,
+                Port = dto.Port,
+                TypeId = dto.TypeId,
+                Factory = dto.Factory,
+                Building = dto.Building,
+                Floor = dto.Floor,
+                DepartmentId = dto.DepartmentId,
+                Description = dto.Description
+            };
+            await EquipmentRep.AddAsync(entity);
+        }
+
+        public async Task UpdateEquipmentAsync(EquipmentFormDto dto)
+        {
+            if (!await EquipmentRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Equipment repository connection failed");
+            var entity = await EquipmentRep.GetByIdAsync(dto.Id!.Value)
+                ?? throw new InvalidOperationException($"Equipment id={dto.Id} not found");
+            entity.Code = dto.Code;
+            entity.Name = dto.Name;
+            entity.Ip = dto.Ip;
+            entity.Port = dto.Port;
+            entity.TypeId = dto.TypeId;
+            entity.Factory = dto.Factory;
+            entity.Building = dto.Building;
+            entity.Floor = dto.Floor;
+            entity.DepartmentId = dto.DepartmentId;
+            entity.Description = dto.Description;
+            entity.UpdateAt = DateTime.Now;
+            await EquipmentRep.UpdateAsync(entity);
+        }
+
+        public async Task DeleteEquipmentAsync(int id)
+        {
+            if (!await EquipmentRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Equipment repository connection failed");
+            await EquipmentRep.DeleteAsync(id);
+        }
+
+        public async Task<List<EquipmentType>> GetEquipmentTypesAsync()
+        {
+            if (!await EquipmentRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Equipment repository connection failed");
+            return await EquipmentRep.GetContext().Set<EquipmentType>().ToListAsync();
+        }
+
+        #endregion
+
+        #region 設定：員工 CRUD
+
+        public async Task<List<Employee>> GetAllEmployeesAsync()
+        {
+            if (!await EmployeeRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Employee repository connection failed");
+            return (await EmployeeRep.GetAllAsync()).ToList();
+        }
+
+        public async Task AddEmployeeAsync(EmployeeFormDto dto)
+        {
+            if (!await EmployeeRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Employee repository connection failed");
+            var entity = new Employee
+            {
+                UserId = dto.UserId,
+                Name = dto.Name,
+                Password = dto.Password,
+                RoleId = dto.RoleId,
+                CardId = dto.CardId,
+                Email = dto.Email,
+                DepartmentId = dto.DepartmentId
+            };
+            await EmployeeRep.AddAsync(entity);
+        }
+
+        public async Task UpdateEmployeeAsync(EmployeeFormDto dto)
+        {
+            if (!await EmployeeRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Employee repository connection failed");
+            var entity = await EmployeeRep.GetByIdAsync(dto.Id!.Value)
+                ?? throw new InvalidOperationException($"Employee id={dto.Id} not found");
+            entity.UserId = dto.UserId;
+            entity.Name = dto.Name;
+            if (!string.IsNullOrEmpty(dto.Password))
+                entity.Password = dto.Password;
+            entity.RoleId = dto.RoleId;
+            entity.CardId = dto.CardId;
+            entity.Email = dto.Email;
+            entity.DepartmentId = dto.DepartmentId;
+            entity.UpdateAt = DateTime.Now;
+            await EmployeeRep.UpdateAsync(entity);
+        }
+
+        public async Task DeleteEmployeeAsync(int id)
+        {
+            if (!await EmployeeRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Employee repository connection failed");
+            await EmployeeRep.DeleteAsync(id);
+        }
+
+        #endregion
+
+        #region 設定：材料 CRUD
+
+        public async Task<List<Material>> GetAllMaterialsAsync()
+        {
+            if (!await MaterialRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Material repository connection failed");
+            return (await MaterialRep.GetAllAsync()).ToList();
+        }
+
+        public async Task<List<MaterialType>> GetMaterialTypesAsync()
+        {
+            if (!await MaterialRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Material repository connection failed");
+            return await MaterialRep.GetContext().Set<MaterialType>().ToListAsync();
+        }
+
+        public async Task AddMaterialAsync(MaterialFormDto dto)
+        {
+            if (!await MaterialRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Material repository connection failed");
+            var entity = new Material
+            {
+                MaterialCode = dto.MaterialCode,
+                Name = dto.Name,
+                Brand = dto.Brand,
+                Specification = dto.Specification,
+                TypeId = dto.TypeId,
+                Description = dto.Description,
+                MinimumStock = dto.MinimumStock,
+                QuantityInStock = dto.QuantityInStock
+            };
+            await MaterialRep.AddAsync(entity);
+        }
+
+        public async Task UpdateMaterialAsync(MaterialFormDto dto)
+        {
+            if (!await MaterialRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Material repository connection failed");
+            var entity = await MaterialRep.GetByIdAsync(dto.Id!.Value)
+                ?? throw new InvalidOperationException($"Material id={dto.Id} not found");
+            entity.MaterialCode = dto.MaterialCode;
+            entity.Name = dto.Name;
+            entity.Brand = dto.Brand;
+            entity.Specification = dto.Specification;
+            entity.TypeId = dto.TypeId;
+            entity.Description = dto.Description;
+            entity.MinimumStock = dto.MinimumStock;
+            entity.QuantityInStock = dto.QuantityInStock;
+            entity.UpdateAt = DateTime.Now;
+            await MaterialRep.UpdateAsync(entity);
+        }
+
+        public async Task DeleteMaterialAsync(int id)
+        {
+            if (!await MaterialRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Material repository connection failed");
+            await MaterialRep.DeleteAsync(id);
+        }
+
+        #endregion
 
 
 
 
 
 
+        #region 設定：錯誤清單 CRUD
 
+        public async Task<List<ErrorList>> GetAllErrorListsAsync()
+        {
+            if (!await ErrorListRep.CheckConnectionAsync())
+                throw new InvalidOperationException("ErrorList repository connection failed");
+            return await ErrorListRep.GetContext().Set<ErrorList>()
+                .Include(e => e.Translations)
+                .ToListAsync();
+        }
 
+        public async Task AddErrorListAsync(ErrorListFormDto dto)
+        {
+            if (!await ErrorListRep.CheckConnectionAsync())
+                throw new InvalidOperationException("ErrorList repository connection failed");
+            var error = new ErrorList
+            {
+                ErrorCode = dto.ErrorCode,
+                Category = dto.Category,
+                Severity = dto.Severity
+            };
+            var translations = new List<ErrorTranslation>();
+            if (!string.IsNullOrWhiteSpace(dto.MessageZhTw))
+                translations.Add(new ErrorTranslation { ErrorCode = dto.ErrorCode, LanguageCode = "zh-TW", Message = dto.MessageZhTw });
+            if (!string.IsNullOrWhiteSpace(dto.MessageEnUs))
+                translations.Add(new ErrorTranslation { ErrorCode = dto.ErrorCode, LanguageCode = "en-US", Message = dto.MessageEnUs });
+            if (!string.IsNullOrWhiteSpace(dto.MessageViVn))
+                translations.Add(new ErrorTranslation { ErrorCode = dto.ErrorCode, LanguageCode = "vi-VN", Message = dto.MessageViVn });
+            await ErrorListRep.AddErrorAsync(error, translations);
+        }
+
+        public async Task UpdateErrorListAsync(ErrorListFormDto dto)
+        {
+            if (!await ErrorListRep.CheckConnectionAsync())
+                throw new InvalidOperationException("ErrorList repository connection failed");
+            var context = ErrorListRep.GetContext();
+            var entity = await context.Set<ErrorList>()
+                .Include(e => e.Translations)
+                .FirstOrDefaultAsync(e => e.ErrorId == dto.Id!.Value)
+                ?? throw new InvalidOperationException($"ErrorList id={dto.Id} not found");
+            entity.Category = dto.Category;
+            entity.Severity = dto.Severity;
+            entity.UpdateAt = DateTime.Now;
+            var langMessages = new[] {
+                ("zh-TW", dto.MessageZhTw),
+                ("en-US", dto.MessageEnUs),
+                ("vi-VN", dto.MessageViVn)
+            };
+            foreach (var (lang, message) in langMessages)
+            {
+                if (string.IsNullOrWhiteSpace(message)) continue;
+                var existing = entity.Translations.FirstOrDefault(t => t.LanguageCode == lang);
+                if (existing != null)
+                {
+                    existing.Message = message;
+                    existing.UpdateAt = DateTime.Now;
+                }
+                else
+                {
+                    entity.Translations.Add(new ErrorTranslation
+                    {
+                        ErrorCode = entity.ErrorCode,
+                        LanguageCode = lang,
+                        Message = message
+                    });
+                }
+            }
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteErrorListAsync(int id)
+        {
+            if (!await ErrorListRep.CheckConnectionAsync())
+                throw new InvalidOperationException("ErrorList repository connection failed");
+            var entity = await ErrorListRep.GetByIdAsync(id)
+                ?? throw new InvalidOperationException($"ErrorList id={id} not found");
+            await ErrorListRep.DeleteErrorAsync(entity.ErrorCode);
+        }
+
+        #endregion
         // 測試用
         public async Task Demo()
         {
@@ -371,6 +628,39 @@ namespace FProductionDashBoard.Services.V1
             // 刪除
 
 
+        }
+        // ─── 設定：巡檢時段 CRUD ─────────────────────────────────────────────────
+        public async Task AddTimeSlotAsync(TimeSlotFormDto dto)
+        {
+            if (!await TimeSlotLookupRep.CheckConnectionAsync())
+                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+            var entity = new TimeSlotLookup
+            {
+                TimeSlotId = dto.TimeSlotId,
+                StartAt = dto.StartAt,
+                EndAt = dto.EndAt,
+                IsCrossDay = dto.IsCrossDay,
+                Label = dto.Label
+            };
+            await TimeSlotLookupRep.AddAsync(entity);
+        }
+        public async Task UpdateTimeSlotAsync(TimeSlotFormDto dto)
+        {
+            if (!await TimeSlotLookupRep.CheckConnectionAsync())
+                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+            var entity = await TimeSlotLookupRep.GetByIdAsync(dto.TimeSlotId)
+                ?? throw new InvalidOperationException($"TimeSlot {dto.TimeSlotId} not found");
+            entity.StartAt = dto.StartAt;
+            entity.EndAt = dto.EndAt;
+            entity.IsCrossDay = dto.IsCrossDay;
+            entity.Label = dto.Label;
+            await TimeSlotLookupRep.UpdateAsync(entity);
+        }
+        public async Task DeleteTimeSlotAsync(int timeSlotId)
+        {
+            if (!await TimeSlotLookupRep.CheckConnectionAsync())
+                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+            await TimeSlotLookupRep.DeleteAsync(timeSlotId);
         }
     }
 }
