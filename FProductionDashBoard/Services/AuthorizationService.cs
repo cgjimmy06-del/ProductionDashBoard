@@ -79,7 +79,7 @@ namespace FProductionDashBoard.Services
         /// </summary>
         Test = 11,
     }
-    public class Role
+    public class RoleO
     {
         public RoleId Id { get; set; } = RoleId.Viewer;
         public List<Permission> Permissions { get; set; } = new();
@@ -98,7 +98,6 @@ namespace FProductionDashBoard.Services
 
     public class AuthorizationService
     {
-        public List<Role> RolesList { get; set; } = []; // 由此映射，外部僅需知道其角色
         private HashSet<Permission> _userPermissions;
         public AuthorizationService(UiModels.UserInfo nuser) // 之後直接由此注入 RolesList 或是UsersList 已存在每位員工的permissions
         {
@@ -119,25 +118,26 @@ namespace FProductionDashBoard.Services
             _userPermissions = [.. permissions];
         }
 
+        public List<RoleO> RolesList { get; set; } = []; // 由此映射，外部僅需知道其角色
         private void GetRolesList() // 後續規劃由清單建立，可於UI設定權限 (DI取代此函式)
         {
-            RolesList.Add(new Role() {
+            RolesList.Add(new RoleO() {
                 Id = RoleId.None
             });
-            RolesList.Add(new Role() {
+            RolesList.Add(new RoleO() {
                 Id = RoleId.Admin,
                 Permissions = new List<Permission>() { 
                     Permission.View, Permission.Edit, Permission.Delete, Permission.Setting,
                     Permission.Order, Permission.OperateMaterial, Permission.OperateInspection,
                     Permission.OperateTuning, Permission.Schedule, Permission.Special, Permission.Test
                 }});
-            RolesList.Add(new Role() {
+            RolesList.Add(new RoleO() {
                 Id = RoleId.Viewer,
                 Permissions = new List<Permission>() {
                     Permission.View,
                 }
             });
-            RolesList.Add(new Role() {
+            RolesList.Add(new RoleO() {
                 Id = RoleId.Engineer,
                 Permissions = new List<Permission>() {
                     Permission.View, Permission.Edit, Permission.Setting,
@@ -145,7 +145,7 @@ namespace FProductionDashBoard.Services
                     Permission.OperateTuning, Permission.Schedule,
                 }
             });
-            RolesList.Add(new Role() {
+            RolesList.Add(new RoleO() {
                 Id = RoleId.Supervisor,
                 Permissions = new List<Permission>() {
                     Permission.View, Permission.Setting,
@@ -153,14 +153,14 @@ namespace FProductionDashBoard.Services
                     Permission.OperateTuning,
                 }
             });
-            RolesList.Add(new Role() {
+            RolesList.Add(new RoleO() {
                 Id = RoleId.Scheduler,
                 Permissions = new List<Permission>() {
                     Permission.View,
                     Permission.Order, Permission.Schedule,
                 }
             });
-            RolesList.Add(new Role() {
+            RolesList.Add(new RoleO() {
                 Id = RoleId.Operator,
                 Permissions = new List<Permission>() {
                     Permission.View,
@@ -168,7 +168,7 @@ namespace FProductionDashBoard.Services
                     Permission.OperateTuning,
                 }
             });
-            RolesList.Add(new Role() {
+            RolesList.Add(new RoleO() {
                 Id = RoleId.Inspector,
                 Permissions = new List<Permission>() {
                     Permission.View,

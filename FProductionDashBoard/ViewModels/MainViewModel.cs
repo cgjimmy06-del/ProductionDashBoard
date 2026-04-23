@@ -71,6 +71,7 @@ namespace FProductionDashBoard.ViewModels
 
         public ICommand InitializeCommand { get; }
         // 菜單列
+
         // 工具列
         public ICommand TestCommand { get; }
         // 導覽列
