@@ -591,8 +591,8 @@ namespace FProductionDashBoard.Services.V1
         }
 
         #endregion
-        
-        // ─── 設定：巡檢時段 CRUD ─────────────────────────────────────────────────
+
+        #region 設定：巡檢時段 CRUD 
         public async Task AddTimeSlotAsync(TimeSlotFormDto dto)
         {
             if (!await TimeSlotLookupRep.CheckConnectionAsync())
@@ -626,7 +626,9 @@ namespace FProductionDashBoard.Services.V1
             await TimeSlotLookupRep.DeleteAsync(timeSlotId);
         }
 
-        // ─── 角色與權限 ───────────────────────────────────────────────────────────
+        #endregion
+
+        #region 角色與權限 
         public async Task<List<Models.Role>> GetAllRolesAsync()
         {
             if (!await RolePermissionRep.CheckConnectionAsync())
@@ -634,7 +636,9 @@ namespace FProductionDashBoard.Services.V1
             return await RolePermissionRep.GetAllRolesAsync();
         }
 
-        // ─── 設定：角色權限 CRUD ─────────────────────────────────────────────────
+        #endregion
+
+        #region 設定：角色權限 CRUD
         public async Task<List<Models.Permission>> GetAllPermissionsAsync()
         {
             if (!await RolePermissionRep.CheckConnectionAsync())
@@ -664,5 +668,7 @@ namespace FProductionDashBoard.Services.V1
                 throw new InvalidOperationException("此角色有員工使用，無法刪除");
             await RolePermissionRep.DeleteAsync(id);
         }
+
+        #endregion
     }
 }
