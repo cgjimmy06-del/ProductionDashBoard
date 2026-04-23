@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Services;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -96,8 +97,8 @@ namespace FProductionDashBoard.ViewModels
             if (string.IsNullOrWhiteSpace(FormCode) || string.IsNullOrWhiteSpace(FormName)
                 || string.IsNullOrWhiteSpace(FormIp))
             { FormErrorString = "Code、Name、IP 為必填"; return; }
-            if (FormPort is < 1 or > 65535)
-            { FormErrorString = "Port 需為 1–65535"; return; }
+            if (FormPort is < 0 or > 65535)
+            { FormErrorString = "Port 需為 0–65535"; return; }
 
             try
             {

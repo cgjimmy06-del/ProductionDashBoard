@@ -25,7 +25,7 @@ using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.ViewModels
 {
-    public enum NavMode { Home, Operation, Setting, View }
+    public enum NavMode { Home, Operation, List, View }
     public partial class MainViewModel : ObservableObject
     {
         public string AppVersion { get; }
@@ -247,7 +247,7 @@ namespace FProductionDashBoard.ViewModels
                 case NavMode.View:
                     break;
 
-                case NavMode.Setting:
+                case NavMode.List:
                     Card1 = new SettingViewModel(_log, _dataService, _authService);
                     break;
 

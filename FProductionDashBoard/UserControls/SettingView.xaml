@@ -9,8 +9,8 @@
              d:DesignHeight="600" d:DesignWidth="800">
 
     <TabControl Style="{StaticResource MaterialDesignFilledTabControl}" Margin="4">
-
-        <TabItem MinWidth="140">
+        
+        <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="Memory"
@@ -24,7 +24,7 @@
             <localuc:EquipmentSettingView DataContext="{Binding Equipment}"/>
         </TabItem>
 
-        <TabItem MinWidth="140">
+        <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="AccountGroup"
@@ -38,7 +38,7 @@
             <localuc:EmployeeSettingView DataContext="{Binding Employee}"/>
         </TabItem>
 
-        <TabItem MinWidth="140">
+        <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="Layers"
@@ -52,7 +52,7 @@
             <localuc:MaterialSettingView DataContext="{Binding Material}"/>
         </TabItem>
 
-        <TabItem MinWidth="140">
+        <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="AlertCircleOutline"
@@ -66,7 +66,7 @@
             <localuc:ErrorListSettingView DataContext="{Binding ErrorList}"/>
         </TabItem>
 
-        <TabItem MinWidth="140">
+        <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="ClockOutline"
