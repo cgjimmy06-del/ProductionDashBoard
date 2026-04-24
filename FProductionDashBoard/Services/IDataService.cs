@@ -85,6 +85,7 @@ namespace FProductionDashBoard.Services
 
         // ─── 設定：錯誤清單 CRUD ─────────────────────────────────────────────────────
         public Task<List<ErrorList>> GetAllErrorListsAsync();
+        public Task<List<ListType>> GetListTypesAsync();
         public Task AddErrorListAsync(ErrorListFormDto dto);
         public Task UpdateErrorListAsync(ErrorListFormDto dto);
         public Task DeleteErrorListAsync(int id);

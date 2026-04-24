@@ -49,8 +49,8 @@ namespace FProductionDashBoard.ViewModels
             CurrentUser = $"{Properties.Resources.ComStrUser}: {getinfo.CurrentUser.Name}";
             CurrentProduct = $"{Properties.Resources.ComStrProduct}: {getinfo.CurrentProduct.Name}";
 
-            var categories = new List<string> { "INSP", "OTHER" };
-            ErrorCodes = new ObservableCollection<ErrorInfo>(sqlerrorslist.Where(e => categories.Contains(e.Category ?? "")));
+            var categories = new List<int> { 1, 2 };
+            ErrorCodes = new ObservableCollection<ErrorInfo>(sqlerrorslist.Where(e => categories.Contains(e.TypeId ?? 1)));
             SelectionCode = (ErrorCodes.FirstOrDefault() ?? new()).ErrorCode;
 
             ConfirmCommand = new RelayCommand(() => OnConfirm());

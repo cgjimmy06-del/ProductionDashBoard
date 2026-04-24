@@ -118,7 +118,7 @@ namespace FProductionDashBoard.Repositories
                         .FirstOrDefaultAsync();
         }
 
-        public async Task<List<(string ErrorCode, string Message, string Category)>> GetMessagesAsync(string languageCode)
+        public async Task<List<(string ErrorCode, string Message, int TypeId)>> GetMessagesAsync(string languageCode)
         {
             await using var ctx = _factory.CreateDbContext();
             return await ctx.ErrorLists
@@ -126,15 +126,15 @@ namespace FProductionDashBoard.Repositories
                 {
                     e.ErrorCode,
                     Translation = e.Translations.FirstOrDefault(t => t.LanguageCode == languageCode),
-                    e.Category
+                    e.TypeId
                 })
             .Where(x => x.Translation != null)
-            .Select(x => new ValueTuple<string, string, string>(x.ErrorCode,
-                    x.Translation!.Message ?? "Unknown!", x.Category ?? "Unknown!"))
+            .Select(x => new ValueTuple<string, string, int>(x.ErrorCode,
+                    x.Translation!.Message ?? "Unknown!", x.TypeId ?? 1))
             .ToListAsync();
         }
 
-        public async Task<List<(string ErrorCode, string Message, string Category)>> GetMessagesWithOtherAsync(string languageCode)
+        public async Task<List<(string ErrorCode, string Message, int TypeId)>> GetMessagesWithOtherAsync(string languageCode)
         {
             await using var ctx = _factory.CreateDbContext();
             var results = await ctx.ErrorLists
@@ -142,11 +142,11 @@ namespace FProductionDashBoard.Repositories
                 {
                     e.ErrorCode,
                     Translation = e.Translations.FirstOrDefault(t => t.LanguageCode == languageCode),
-                    e.Category
+                    e.TypeId
                 })
                 .Where(x => x.Translation != null)
-                .Select(x => new ValueTuple<string, string, string>(x.ErrorCode,
-                    x.Translation!.Message ?? "Unknown!", x.Category ?? "Unknown!"))
+                .Select(x => new ValueTuple<string, string, int>(x.ErrorCode,
+                    x.Translation!.Message ?? "Unknown!", x.TypeId ?? 1))
                 .ToListAsync();
 
             return results
@@ -186,6 +186,11 @@ namespace FProductionDashBoard.Repositories
                 .Include(e => e.Translations)
                 .ToListAsync();
         }
+        public async Task<List<ListType>> GetListTypesAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Set<ListType>().ToListAsync();
+        }
 
         public async Task UpdateErrorListAsync(ErrorListFormDto dto)
         {
@@ -194,7 +199,7 @@ namespace FProductionDashBoard.Repositories
                 .Include(e => e.Translations)
                 .FirstOrDefaultAsync(e => e.ErrorId == dto.Id!.Value)
                 ?? throw new InvalidOperationException($"ErrorList id={dto.Id} not found");
-            entity.Category = dto.Category;
+            entity.TypeId = dto.TypeId;
             entity.Severity = dto.Severity;
             entity.UpdateAt = DateTime.Now;
             var langMessages = new[] {

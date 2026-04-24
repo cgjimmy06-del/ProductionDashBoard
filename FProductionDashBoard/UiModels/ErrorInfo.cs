@@ -11,6 +11,6 @@ namespace FProductionDashBoard.UiModels
     {
         public string ErrorCode { get; set; } = string.Empty;
         public string? Message { get; set; }
-        public string? Category { get; set; }
+        public int? TypeId { get; set; }
     }
 }

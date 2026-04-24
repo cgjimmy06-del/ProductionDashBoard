@@ -15,11 +15,12 @@ namespace FProductionDashBoard.ViewModels
     {
         public ObservableCollection<ErrorList> ErrorItems { get; } = new();
         public List<int> SeverityItems { get; } = new() { 0, 1, 2 };
+        public ObservableCollection<ListType> ListTypes { get; } = new();
 
         [ObservableProperty] private int? editingId;
         [ObservableProperty] private bool isNewMode = true;
         [ObservableProperty] private string formErrorCode = "";
-        [ObservableProperty] private string? formCategory;
+        [ObservableProperty] private int? formTypeId = 1;
         [ObservableProperty] private int formSeverity = 0;
         [ObservableProperty] private string? formMessageZhTw;
         [ObservableProperty] private string? formMessageEnUs;
@@ -32,6 +33,10 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
+                var types = await _dataService.GetListTypesAsync();
+                ListTypes.Clear();
+                foreach (var t in types) ListTypes.Add(t);
+
                 var list = await _dataService.GetAllErrorListsAsync();
                 ErrorItems.Clear();
                 foreach (var e in list) ErrorItems.Add(e);
@@ -59,8 +64,8 @@ namespace FProductionDashBoard.ViewModels
             EditingId = item.ErrorId;
             IsNewMode = false;
             FormErrorCode = item.ErrorCode;
-            FormCategory = item.Category;
-            FormSeverity = item.Severity ?? 0;
+            FormTypeId = item.TypeId;
+            FormSeverity = item.Severity;
             FormMessageZhTw = item.Translations.FirstOrDefault(t => t.LanguageCode == "zh-TW")?.Message;
             FormMessageEnUs = item.Translations.FirstOrDefault(t => t.LanguageCode == "en-US")?.Message;
             FormMessageViVn = item.Translations.FirstOrDefault(t => t.LanguageCode == "vi-VN")?.Message;
@@ -95,7 +100,7 @@ namespace FProductionDashBoard.ViewModels
                 {
                     Id = EditingId,
                     ErrorCode = FormErrorCode,
-                    Category = FormCategory,
+                    TypeId = FormTypeId,
                     Severity = FormSeverity,
                     MessageZhTw = FormMessageZhTw,
                     MessageEnUs = FormMessageEnUs,
@@ -125,7 +130,7 @@ namespace FProductionDashBoard.ViewModels
             EditingId = null;
             IsNewMode = true;
             FormErrorCode = "";
-            FormCategory = null;
+            FormTypeId = 1;
             FormSeverity = 0;
             FormMessageZhTw = null;
             FormMessageEnUs = null;

@@ -18,7 +18,7 @@ namespace FProductionDashBoard
     {
         private ServiceProvider? _serviceProvider;
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             ShutdownMode = ShutdownMode.OnExplicitShutdown; //「明確呼叫 Shutdown() 才結束」
@@ -60,9 +60,6 @@ namespace FProductionDashBoard
             services.AddScoped<Repositories.IInspectionRecordRepository, Repositories.InspectionRecordRepository>();
             services.AddScoped<Repositories.IRolePermissionRepository, Repositories.RolePermissionRepository>();
 
-            // 註冊 資訊
-            services.AddSingleton(user);
-
             // 離線暫存服務
             services.AddDbContext<Repositories.LocalDbContext>(opt =>
                 opt.UseSqlite("Data Source=Settings/local_cache.db"), ServiceLifetime.Singleton);
@@ -75,7 +72,7 @@ namespace FProductionDashBoard
             // 註冊 Service
             services.AddScoped<Services.IDataService, Services.V1.DataService>();
             services.AddScoped<Services.LogService>();
-            services.AddScoped<Services.AuthorizationService>();
+            services.AddSingleton<Services.AuthorizationService>();
 
             // 註冊 ViewModel
             services.AddScoped<ViewModels.MainViewModel>();
@@ -84,6 +81,8 @@ namespace FProductionDashBoard
             // services.AddScoped<MainWindow>();
 
             _serviceProvider = services.BuildServiceProvider();
+            var authService = _serviceProvider.GetRequiredService<Services.AuthorizationService>();
+            await authService.InitializeAsync(user);
 
             // 取代在 App.xaml 中的 StartupUri
             ShutdownMode = ShutdownMode.OnMainWindowClose; //「被設定為 MainWindow 之介面關閉則結束」

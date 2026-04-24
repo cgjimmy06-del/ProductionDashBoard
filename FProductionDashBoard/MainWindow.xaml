@@ -120,13 +120,24 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="20" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" d:Text="welcome 使用者"
-                        Text="{Binding SystemUser.Name, StringFormat=Welcome! {0}}" 
+                        Text="{Binding SystemUser.Name, StringFormat=Welcome! {0}}"
                                VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <TextBlock Grid.Column="2" d:Text="xxxx/xx/xx xx:xx"
                         Text="{Binding CurrentTime}"
                                VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Button Grid.Column="4"
+                            Command="{Binding LogoutCommand}"
+                            Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Foreground="{DynamicResource TextSecondaryBrush}"
+                            Padding="4,2" VerticalAlignment="Center"
+                            ToolTip="登出">
+                        <materialDesign:PackIcon Kind="Logout" Width="16" Height="16"/>
+                    </Button>
                 </Grid>
             </StatusBarItem>
         </StatusBar>

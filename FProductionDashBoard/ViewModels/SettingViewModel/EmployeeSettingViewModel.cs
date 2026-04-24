@@ -4,11 +4,7 @@ using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Services;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace FProductionDashBoard.ViewModels
@@ -16,17 +12,13 @@ namespace FProductionDashBoard.ViewModels
     public partial class EmployeeSettingViewModel : SettingViewModelBase
     {
         public ObservableCollection<Employee> EmployeeList { get; } = new();
-
-        public List<RoleItem> RoleItems { get; } = Enum.GetValues<RoleId>()
-            .Where(r => r != RoleId.None)
-            .Select(r => new RoleItem(r))
-            .ToList();
+        public ObservableCollection<Role> RoleItems { get; } = new();
 
         [ObservableProperty] private int? editingId;
         [ObservableProperty] private string formUserId = "";
         [ObservableProperty] private string formName = "";
         [ObservableProperty] private string formPassword = "";
-        [ObservableProperty] private int formRoleId = (int)RoleId.Operator;
+        [ObservableProperty] private int formRoleId = 1;
         [ObservableProperty] private string? formCardId;
         [ObservableProperty] private string? formEmail;
         [ObservableProperty] private string? formDepartmentId;
@@ -42,9 +34,13 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                var list = await _dataService.GetAllEmployeesAsync();
+                var employees = await _dataService.GetAllEmployeesAsync();
                 EmployeeList.Clear();
-                foreach (var e in list) EmployeeList.Add(e);
+                foreach (var e in employees) EmployeeList.Add(e);
+
+                var roles = await _dataService.GetAllRolesAsync();
+                RoleItems.Clear();
+                foreach (var r in roles) RoleItems.Add(r);
             }
             catch (Exception ex)
             {
@@ -138,24 +134,10 @@ namespace FProductionDashBoard.ViewModels
             FormUserId = "";
             FormName = "";
             FormPassword = "";
-            FormRoleId = (int)RoleId.Operator;
+            FormRoleId = 1;
             FormCardId = null;
             FormEmail = null;
             FormDepartmentId = null;
-        }
-    }
-
-    public class RoleItem
-    {
-        public int Value { get; }
-        public string DisplayName { get; }
-
-        public RoleItem(RoleId role)
-        {
-            Value = (int)role;
-            var field = typeof(RoleId).GetField(role.ToString());
-            var attr = field?.GetCustomAttribute<DescriptionAttribute>();
-            DisplayName = attr?.Description ?? role.ToString();
         }
     }
 }
