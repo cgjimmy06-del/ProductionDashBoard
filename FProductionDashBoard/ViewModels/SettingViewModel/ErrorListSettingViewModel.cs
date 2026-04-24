@@ -33,10 +33,11 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                var types = await _dataService.GetListTypesAsync();
-                ListTypes.Clear();
-                foreach (var t in types) ListTypes.Add(t);
-
+                if (!ListTypes.Any())
+                {
+                    var types = await _dataService.GetListTypesAsync();
+                    foreach (var t in types) ListTypes.Add(t);
+                }
                 var list = await _dataService.GetAllErrorListsAsync();
                 ErrorItems.Clear();
                 foreach (var e in list) ErrorItems.Add(e);

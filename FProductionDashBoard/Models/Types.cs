@@ -31,7 +31,6 @@ namespace FProductionDashBoard.Models
         public string Name { get; set; } = string.Empty;
         public string? Remark { get; set; }
 
-        // 對應 Equipments
         public ICollection<ErrorList> ErrorLists { get; set; } = new List<ErrorList>();
     }
 

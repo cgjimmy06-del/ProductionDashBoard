@@ -18,7 +18,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string formUserId = "";
         [ObservableProperty] private string formName = "";
         [ObservableProperty] private string formPassword = "";
-        [ObservableProperty] private int formRoleId = 1;
+        [ObservableProperty] private int? formRoleId;
         [ObservableProperty] private string? formCardId;
         [ObservableProperty] private string? formEmail;
         [ObservableProperty] private string? formDepartmentId;
@@ -34,13 +34,14 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
+                if (!RoleItems.Any())
+                {
+                    var roles = await _dataService.GetAllRolesAsync();
+                    foreach (var r in roles) RoleItems.Add(r);
+                }
                 var employees = await _dataService.GetAllEmployeesAsync();
                 EmployeeList.Clear();
                 foreach (var e in employees) EmployeeList.Add(e);
-
-                var roles = await _dataService.GetAllRolesAsync();
-                RoleItems.Clear();
-                foreach (var r in roles) RoleItems.Add(r);
             }
             catch (Exception ex)
             {
@@ -93,6 +94,8 @@ namespace FProductionDashBoard.ViewModels
         {
             if (string.IsNullOrWhiteSpace(FormUserId) || string.IsNullOrWhiteSpace(FormName))
             { FormErrorString = "UserId、姓名為必填"; return; }
+            if (FormRoleId == null)
+            { FormErrorString = "請確實設定員工角色"; return; }
             if (EditingId == null && string.IsNullOrWhiteSpace(FormPassword))
             { FormErrorString = "新增員工時密碼為必填"; return; }
 
@@ -104,7 +107,7 @@ namespace FProductionDashBoard.ViewModels
                     UserId = FormUserId,
                     Name = FormName,
                     Password = FormPassword,
-                    RoleId = FormRoleId,
+                    RoleId = FormRoleId ?? 1,
                     CardId = string.IsNullOrWhiteSpace(FormCardId) ? null : FormCardId,
                     Email = string.IsNullOrWhiteSpace(FormEmail) ? null : FormEmail,
                     DepartmentId = string.IsNullOrWhiteSpace(FormDepartmentId) ? null : FormDepartmentId

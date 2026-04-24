@@ -45,7 +45,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="編號" Binding="{Binding ErrorCode}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="類型" Binding="{Binding TypeId}" Width="*"
+                    <DataGridTextColumn Header="類型" Binding="{Binding Type.Remark}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTextColumn Header="優先級" Binding="{Binding Severity}" Width="70"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
@@ -101,6 +101,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="120"/>
                         </Grid.ColumnDefinitions>
@@ -121,7 +122,7 @@
                                       SelectedValue="{Binding FormTypeId}"/>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="2" Margin="4">
+                        <StackPanel Grid.Column="3" Margin="4">
                             <TextBlock Text="優先級" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <ComboBox materialDesign:HintAssist.Hint="優先級"
                                       ItemsSource="{Binding SeverityItems}"

@@ -34,10 +34,11 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                var types = await _dataService.GetEquipmentTypesAsync();
-                EquipmentTypes.Clear();
-                foreach (var t in types) EquipmentTypes.Add(t);
-
+                if (!EquipmentTypes.Any())
+                {
+                    var types = await _dataService.GetEquipmentTypesAsync();
+                    foreach (var t in types) EquipmentTypes.Add(t);
+                }
                 var list = await _dataService.GetAllEquipmentAsync();
                 EquipmentList.Clear();
                 foreach (var e in list) EquipmentList.Add(e);
@@ -142,7 +143,7 @@ namespace FProductionDashBoard.ViewModels
             FormName = "";
             FormIp = "";
             FormPort = 0;
-            FormTypeId = null;
+            FormTypeId = 0;
             FormFactory = null;
             FormBuilding = null;
             FormFloor = null;
