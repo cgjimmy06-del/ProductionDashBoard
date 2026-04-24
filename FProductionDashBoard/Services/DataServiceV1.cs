@@ -553,6 +553,12 @@ namespace FProductionDashBoard.Services.V1
                 throw new InvalidOperationException("ErrorList repository connection failed");
             return await ErrorListRep.GetAllWithTranslationsAsync();
         }
+        public async Task<List<ListType>> GetListTypesAsync()
+        {
+            if (!await ErrorListRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Material repository connection failed");
+            return await ErrorListRep.GetListTypesAsync();
+        }
 
         public async Task AddErrorListAsync(ErrorListFormDto dto)
         {

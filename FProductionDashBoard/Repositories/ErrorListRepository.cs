@@ -186,6 +186,11 @@ namespace FProductionDashBoard.Repositories
                 .Include(e => e.Translations)
                 .ToListAsync();
         }
+        public async Task<List<ListType>> GetListTypesAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Set<ListType>().ToListAsync();
+        }
 
         public async Task UpdateErrorListAsync(ErrorListFormDto dto)
         {

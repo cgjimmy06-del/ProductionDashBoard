@@ -113,8 +113,11 @@
 
                         <StackPanel Grid.Column="1" Margin="4">
                             <TextBlock Text="類型" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="類型"
-                                     Text="{Binding FormTypeId, UpdateSourceTrigger=PropertyChanged}"/>
+                            <ComboBox materialDesign:HintAssist.Hint="類型"
+                                      ItemsSource="{Binding ListTypes}"
+                                      SelectedValuePath="TypeId"
+                                      DisplayMemberPath="Name"
+                                      SelectedValue="{Binding FormTypeId}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2" Margin="4">

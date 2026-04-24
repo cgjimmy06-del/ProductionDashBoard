@@ -15,11 +15,12 @@ namespace FProductionDashBoard.ViewModels
     {
         public ObservableCollection<ErrorList> ErrorItems { get; } = new();
         public List<int> SeverityItems { get; } = new() { 0, 1, 2 };
+        public ObservableCollection<ListType> ListTypes { get; } = new();
 
         [ObservableProperty] private int? editingId;
         [ObservableProperty] private bool isNewMode = true;
         [ObservableProperty] private string formErrorCode = "";
-        [ObservableProperty] private int? formTypeId;
+        [ObservableProperty] private int? formTypeId = 1;
         [ObservableProperty] private int formSeverity = 0;
         [ObservableProperty] private string? formMessageZhTw;
         [ObservableProperty] private string? formMessageEnUs;
@@ -32,6 +33,10 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
+                var types = await _dataService.GetListTypesAsync();
+                ListTypes.Clear();
+                foreach (var t in types) ListTypes.Add(t);
+
                 var list = await _dataService.GetAllErrorListsAsync();
                 ErrorItems.Clear();
                 foreach (var e in list) ErrorItems.Add(e);
@@ -125,7 +130,7 @@ namespace FProductionDashBoard.ViewModels
             EditingId = null;
             IsNewMode = true;
             FormErrorCode = "";
-            FormTypeId = null;
+            FormTypeId = 1;
             FormSeverity = 0;
             FormMessageZhTw = null;
             FormMessageEnUs = null;
