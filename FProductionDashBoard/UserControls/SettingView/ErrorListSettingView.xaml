@@ -115,12 +115,19 @@
 
                         <StackPanel Grid.Column="1" Margin="4">
                             <TextBlock Text="類型" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <ComboBox materialDesign:HintAssist.Hint="類型"
+                            <ComboBox x:Name="TypeComboBox"
+                                      materialDesign:HintAssist.Hint="類型"
                                       ItemsSource="{Binding ListTypes}"
                                       SelectedValuePath="TypeId"
                                       DisplayMemberPath="Name"
                                       SelectedValue="{Binding FormTypeId}"/>
                         </StackPanel>
+
+                        <TextBlock Grid.Column="2" Margin="10,0"
+                                   VerticalAlignment="Center" FontSize="16"
+                                    Text="{Binding SelectedItem.Remark, ElementName=TypeComboBox}"
+                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
 
                         <StackPanel Grid.Column="3" Margin="4">
                             <TextBlock Text="優先級" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
