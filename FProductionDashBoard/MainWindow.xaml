@@ -72,29 +72,30 @@
         </Menu>
 
         <!-- ToolBar 區域 -->
-        <ToolBarTray DockPanel.Dock="Top">
-            <ToolBar>
-                <Button ToolTip="新增">
+        <ToolBarTray DockPanel.Dock="Top" Background="{DynamicResource PrimaryBackgroundBrush}">
+            <ToolBar Background="{DynamicResource PrimaryBackgroundBrush}">
+                <Button ToolTip="新增" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="Add" Width="20" Height="20"/>
                 </Button>
-                <Button ToolTip="開啟">
+                <Button ToolTip="開啟" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="FolderOpen" Width="20" Height="20"/>
                 </Button>
-                <Button ToolTip="儲存">
+                <Button ToolTip="儲存" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
                 </Button>
                 <Separator/>
-                <Button ToolTip="剪下">
+                <Button ToolTip="剪下" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="ContentCut" Width="20" Height="20"/>
                 </Button>
-                <Button ToolTip="複製">
+                <Button ToolTip="複製" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20"/>
                 </Button>
-                <Button ToolTip="貼上">
+                <Button ToolTip="貼上" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="ContentPaste" Width="20" Height="20"/>
                 </Button>
                 <Separator/>
-                <Button ToolTip="測試" Command="{Binding TestCommand}">
+                <Button ToolTip="測試" Foreground="{DynamicResource TextPrimaryBrush}"
+                        Command="{Binding TestCommand}">
                     <materialDesign:PackIcon Kind="AbTesting" Width="20" Height="20"/>
                 </Button>
             </ToolBar>
