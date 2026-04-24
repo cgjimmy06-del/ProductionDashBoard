@@ -40,8 +40,9 @@ namespace FProductionDashBoard.ViewModels
         private readonly IOfflineSyncService _syncService;
         public LogService _log { get; } // public 是為了Window的顯示
         private AuthorizationService _authService { get; }
-        public UserInfo SystemUser { get; }
-        public UserInfo CurrentUser { get; }
+        public UserInfo? SystemUser => _authService.CurrentUser;
+        public UserInfo? CurrentUser => _authService.CurrentUser;
+        public bool IsLoggedIn => _authService.IsLoggedIn;
         #endregion
         #region -- 介面邏輯 --
         [ObservableProperty]
@@ -72,11 +73,14 @@ namespace FProductionDashBoard.ViewModels
         public ICommand InitializeCommand { get; }
         // 菜單列
 
+        // 狀態列
+        public IAsyncRelayCommand LogoutCommand { get; }
+
         // 工具列
-        public ICommand TestCommand { get; }
+        public IRelayCommand TestCommand { get; }
         // 導覽列
         public ICommand CollapseNavCommand { get; }
-        public ICommand SwitchModeCommand { get; }
+        public IRelayCommand SwitchModeCommand { get; }
         // 訊息窗
         public ICommand SaveLogsCommand { get; }
         // 主視覺視窗
@@ -84,7 +88,7 @@ namespace FProductionDashBoard.ViewModels
         private int _syncTickCounter = 0;
         private bool _isSyncing = false;
 
-        public MainViewModel(UserInfo user, LogService log, IDataService dataservice, AuthorizationService auth,
+        public MainViewModel(LogService log, IDataService dataservice, AuthorizationService auth,
             IOfflineSyncService syncService)
         {
             // 讀取 FileVersion
@@ -92,16 +96,15 @@ namespace FProductionDashBoard.ViewModels
                 Assembly.GetExecutingAssembly().Location).FileVersion ?? "Unknown";
 
             // DI注入 Repository
-            SystemUser = user;
-            CurrentUser = user;
             _log = log;
             _dataService = dataservice;
             _authService = auth;
             _syncService = syncService;
 
-            // 建立 DispatcherTimer 每秒更新一次時間，並定義工作起始時間
+            // 定義工作起始時間 (於 DispatcherTimer 偵測更新)
             _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
 
+            // 建立 DispatcherTimer 每秒更新一次時間，此方法位於 "UI 執行緒" 需確認是否移至 "執行緒池"
             DefaultTimer = new DispatcherTimer();
             DefaultTimer.Interval = TimeSpan.FromSeconds(1);
             DefaultTimer.Tick += async (s, e) =>
@@ -124,15 +127,30 @@ namespace FProductionDashBoard.ViewModels
             InitializeCommand = new AsyncRelayCommand(LoadAllListsAsync);
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
-            SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode, 
-                (NavMode) => _authService.HasPermission(Services.AuthPermission.View));
+            SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode,
+                (NavMode) => _authService.HasPermission(Services.PermissionId.View));
 
             //  設定元件事件 (工具列)
             TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
-                () => _authService.HasPermission(Services.AuthPermission.Test));
+                () => _authService.HasPermission(Services.PermissionId.Test));
+
+            // 設定元件事件 (帳號)
+            LogoutCommand = new AsyncRelayCommand(() => _authService.LogoutAsync(),
+                () => _authService.IsLoggedIn);
 
             // 設定元件事件 (訊息視窗)
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
+
+            // (訂閱端) 使用者變更事件，刷新命令狀態與使用者顯示 (若 _authService 在執行緒池)
+            _authService.UserChanged += () => System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                SwitchModeCommand.NotifyCanExecuteChanged();
+                TestCommand.NotifyCanExecuteChanged();
+                LogoutCommand.NotifyCanExecuteChanged();
+                OnPropertyChanged(nameof(SystemUser));
+                OnPropertyChanged(nameof(CurrentUser));
+                OnPropertyChanged(nameof(IsLoggedIn));
+            });
 
             // 新增儀表卡片區
             //Cards.Add(new DeviceCardContainerViewModel(_log, _dataService, CurrentUser));
@@ -156,7 +174,7 @@ namespace FProductionDashBoard.ViewModels
                 UsersList    = t2.Result,
                 MaterialsList = t3.Result,
                 ErrorsList   = t4.Result,
-                TimeSlotsList = t5.Result.ToList(),
+                TimeSlotsList = t5.Result,
                 RolesList    = t6.Result
             };
             _log.AddLog($"已載入清單: " +
@@ -206,8 +224,8 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Operation:
-                    var newvm = new DeviceCardContainerViewModel(_log, _dataService, _authService, 
-                        CurrentUser, CommonLists);
+                    var newvm = new DeviceCardContainerViewModel(_log, _dataService, _authService,
+                        CurrentUser!, CommonLists);
                     Card1 = newvm;
                     break;
 
