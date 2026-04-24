@@ -158,8 +158,8 @@
                         <TextBlock Text="角色 *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <ComboBox materialDesign:HintAssist.Hint="角色 *"
                                   ItemsSource="{Binding RoleItems}"
-                                  SelectedValuePath="Value"
-                                  DisplayMemberPath="DisplayName"
+                                  SelectedValuePath="RoleId"
+                                  DisplayMemberPath="Name"
                                   SelectedValue="{Binding FormRoleId}"/>
                     </StackPanel>
 

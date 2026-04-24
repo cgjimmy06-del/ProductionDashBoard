@@ -1,138 +1,165 @@
+using FProductionDashBoard.Models;
+using FProductionDashBoard.Repositories;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.UiModels;
+using Moq;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FProductionDashBoard.Tests.AuthorizationTests
 {
     public class AuthorizationServiceTests
     {
-        private static UserInfo MakeUser(int roleId) =>
-            new() { UserId = "u1", Name = "user", RoleId = roleId };
-
-        // ─── Constructor ──────────────────────────────────────────────────────────
-
-        [Fact]
-        public void Constructor_InvalidRoleId_DefaultsToViewer()
+        private static async Task<AuthorizationService> CreateService(int roleId, params int[] permissionIds)
         {
-            var svc = new AuthorizationService(MakeUser(999));
-            Assert.True(svc.HasPermission(AuthPermission.View));
-            Assert.False(svc.HasPermission(AuthPermission.Edit));
+            var repo = new Mock<IRolePermissionRepository>();
+            var role = new Role
+            {
+                RoleId = roleId,
+                RolePermissions = permissionIds
+                    .Select(id => new RolePermission { RoleId = roleId, PermissionId = id })
+                    .ToList()
+            };
+            repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role> { role });
+
+            var svc = new AuthorizationService(repo.Object);
+            await svc.InitializeAsync(new UserInfo { UserId = "u1", Name = "n1", RoleId = roleId });
+            return svc;
         }
 
-        [Fact]
-        public void Constructor_NoneRole_GrantsNoPermissions()
+        private static async Task<AuthorizationService> CreateNoRoleService()
         {
-            var svc = new AuthorizationService(MakeUser((int)RoleId.None));
-            foreach (AuthPermission p in Enum.GetValues<AuthPermission>())
-                Assert.False(svc.HasPermission(p), $"None role should not have {p}");
+            var repo = new Mock<IRolePermissionRepository>();
+            repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role>());
+            var svc = new AuthorizationService(repo.Object);
+            await svc.InitializeAsync(new UserInfo { UserId = "u1", Name = "n1", RoleId = 99 });
+            return svc;
         }
 
-        // ─── Admin ────────────────────────────────────────────────────────────────
+        // ─── InitializeAsync ─────────────────────────────────────────────────────
 
         [Fact]
-        public void HasPermission_AdminRole_HasAllPermissions()
+        public async Task InitializeAsync_SetsCurrentUser()
         {
-            var svc = new AuthorizationService(MakeUser((int)RoleId.Admin));
-            foreach (AuthPermission p in Enum.GetValues<AuthPermission>())
-                Assert.True(svc.HasPermission(p), $"Admin should have {p}");
-        }
-
-        // ─── Per-role AuthPermission matrix ───────────────────────────────────────────
-
-        [Theory]
-        [InlineData((int)RoleId.Viewer,     AuthPermission.View,              true)]
-        [InlineData((int)RoleId.Viewer,     AuthPermission.Edit,              false)]
-        [InlineData((int)RoleId.Viewer,     AuthPermission.OperateMaterial,   false)]
-        [InlineData((int)RoleId.Inspector,  AuthPermission.View,              true)]
-        [InlineData((int)RoleId.Inspector,  AuthPermission.OperateInspection, true)]
-        [InlineData((int)RoleId.Inspector,  AuthPermission.OperateMaterial,   false)]
-        [InlineData((int)RoleId.Inspector,  AuthPermission.Edit,              false)]
-        [InlineData((int)RoleId.Operator,   AuthPermission.View,              true)]
-        [InlineData((int)RoleId.Operator,   AuthPermission.OperateMaterial,   true)]
-        [InlineData((int)RoleId.Operator,   AuthPermission.OperateTuning,     true)]
-        [InlineData((int)RoleId.Operator,   AuthPermission.OperateInspection, false)]
-        [InlineData((int)RoleId.Operator,   AuthPermission.Edit,              false)]
-        [InlineData((int)RoleId.Scheduler,  AuthPermission.View,              true)]
-        [InlineData((int)RoleId.Scheduler,  AuthPermission.Order,             true)]
-        [InlineData((int)RoleId.Scheduler,  AuthPermission.Schedule,          true)]
-        [InlineData((int)RoleId.Scheduler,  AuthPermission.Edit,              false)]
-        [InlineData((int)RoleId.Scheduler,  AuthPermission.OperateMaterial,   false)]
-        [InlineData((int)RoleId.Supervisor, AuthPermission.View,              true)]
-        [InlineData((int)RoleId.Supervisor, AuthPermission.Setting,           true)]
-        [InlineData((int)RoleId.Supervisor, AuthPermission.OperateTuning,     true)]
-        [InlineData((int)RoleId.Supervisor, AuthPermission.Delete,            false)]
-        [InlineData((int)RoleId.Supervisor, AuthPermission.Special,           false)]
-        [InlineData((int)RoleId.Supervisor, AuthPermission.Schedule,          false)]
-        [InlineData((int)RoleId.Engineer,   AuthPermission.View,              true)]
-        [InlineData((int)RoleId.Engineer,   AuthPermission.Edit,              true)]
-        [InlineData((int)RoleId.Engineer,   AuthPermission.OperateTuning,     true)]
-        [InlineData((int)RoleId.Engineer,   AuthPermission.Schedule,          true)]
-        [InlineData((int)RoleId.Engineer,   AuthPermission.Special,           false)]
-        [InlineData((int)RoleId.Engineer,   AuthPermission.Delete,            false)]
-        [InlineData((int)RoleId.Engineer,   AuthPermission.Test,              false)]
-        public void HasPermission_RolePermissionMatrix(int roleId, AuthPermission AuthPermission, bool expected)
-        {
-            var svc = new AuthorizationService(MakeUser(roleId));
-            Assert.Equal(expected, svc.HasPermission(AuthPermission));
-        }
-
-        // ─── UpdateUser ───────────────────────────────────────────────────────────
-
-        [Fact]
-        public void UpdateUser_ChangesPermissionsToNewRole()
-        {
-            var svc = new AuthorizationService(MakeUser((int)RoleId.Viewer));
-            Assert.False(svc.HasPermission(AuthPermission.Edit));
-
-            svc.UpdateUser(MakeUser((int)RoleId.Admin));
-            Assert.True(svc.HasPermission(AuthPermission.Edit));
+            var svc = await CreateService(1, PermissionId.View);
+            Assert.Equal("u1", svc.CurrentUser?.UserId);
         }
 
         [Fact]
-        public void UpdateUser_InvalidRoleId_DefaultsToViewer()
+        public async Task InitializeAsync_LoadsPermissionsFromRole()
         {
-            var svc = new AuthorizationService(MakeUser((int)RoleId.Admin));
-            Assert.True(svc.HasPermission(AuthPermission.Delete));
-
-            svc.UpdateUser(MakeUser(999));
-            Assert.True(svc.HasPermission(AuthPermission.View));
-            Assert.False(svc.HasPermission(AuthPermission.Delete));
+            var svc = await CreateService(1, PermissionId.View, PermissionId.Edit);
+            Assert.True(svc.HasPermission(PermissionId.View));
+            Assert.True(svc.HasPermission(PermissionId.Edit));
+            Assert.False(svc.HasPermission(PermissionId.Delete));
         }
 
         [Fact]
-        public void UpdateUser_ToNoneRole_ClearsAllPermissions()
+        public async Task InitializeAsync_UnknownRoleId_GrantsNoPermissions()
         {
-            var svc = new AuthorizationService(MakeUser((int)RoleId.Admin));
-
-            svc.UpdateUser(MakeUser((int)RoleId.None));
-
-            foreach (AuthPermission p in Enum.GetValues<AuthPermission>())
-                Assert.False(svc.HasPermission(p), $"None role should not have {p}");
+            var svc = await CreateNoRoleService();
+            Assert.False(svc.HasPermission(PermissionId.View));
         }
-
-        // ─── RolesList ────────────────────────────────────────────────────────────
 
         [Fact]
-        public void RolesList_ContainsAllDefinedRoles()
+        public async Task InitializeAsync_RaisesUserChangedEvent()
         {
-            var svc = new AuthorizationService(MakeUser((int)RoleId.Viewer));
-            Assert.Equal(Enum.GetValues<RoleId>().Length, svc.RolesList.Count);
+            var repo = new Mock<IRolePermissionRepository>();
+            repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role>());
+            var svc = new AuthorizationService(repo.Object);
+
+            bool eventRaised = false;
+            svc.UserChanged += () => eventRaised = true;
+
+            await svc.InitializeAsync(new UserInfo { UserId = "u1", Name = "n1", RoleId = 1 });
+            Assert.True(eventRaised);
         }
 
-        [Theory]
-        [InlineData(RoleId.None,       "未登入")]
-        [InlineData(RoleId.Admin,      "管理員")]
-        [InlineData(RoleId.Viewer,     "訪客")]
-        [InlineData(RoleId.Engineer,   "工程師")]
-        [InlineData(RoleId.Supervisor, "現場主管")]
-        [InlineData(RoleId.Scheduler,  "生管")]
-        [InlineData(RoleId.Operator,   "操作員")]
-        [InlineData(RoleId.Inspector,  "品檢員")]
-        public void Role_Name_ReturnsChineseDescription(RoleId roleId, string expectedName)
+        // ─── HasPermission ────────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task HasPermission_WithMatchingPermissionId_ReturnsTrue()
         {
-            var svc = new AuthorizationService(MakeUser((int)RoleId.Viewer));
-            var role = svc.RolesList.First(r => r.Id == roleId);
-            Assert.Equal(expectedName, role.Name);
+            var svc = await CreateService(1, PermissionId.View, PermissionId.Setting);
+            Assert.True(svc.HasPermission(PermissionId.View));
+            Assert.True(svc.HasPermission(PermissionId.Setting));
+        }
+
+        [Fact]
+        public async Task HasPermission_WithNonMatchingPermissionId_ReturnsFalse()
+        {
+            var svc = await CreateService(1, PermissionId.View);
+            Assert.False(svc.HasPermission(PermissionId.Edit));
+            Assert.False(svc.HasPermission(PermissionId.Test));
+        }
+
+        // ─── IsLoggedIn ──────────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task IsLoggedIn_RealUser_ReturnsTrue()
+        {
+            var svc = await CreateService(1, PermissionId.View);
+            Assert.True(svc.IsLoggedIn);
+        }
+
+        [Fact]
+        public async Task IsLoggedIn_VisitorUser_ReturnsFalse()
+        {
+            var repo = new Mock<IRolePermissionRepository>();
+            repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role>());
+            var svc = new AuthorizationService(repo.Object);
+            await svc.InitializeAsync(new UserInfo { UserId = "visitor", Name = "n1", RoleId = 1 });
+            Assert.False(svc.IsLoggedIn);
+        }
+
+        // ─── InitializeAsync offline fallback ────────────────────────────────────
+
+        [Fact]
+        public async Task InitializeAsync_DbThrows_FallsBackToVisitor()
+        {
+            var repo = new Mock<IRolePermissionRepository>();
+            repo.Setup(r => r.GetAllRolesAsync()).ThrowsAsync(new Exception("connection failed"));
+            var svc = new AuthorizationService(repo.Object);
+
+            await svc.InitializeAsync(new UserInfo { UserId = "admin", Name = "Admin", RoleId = 0 });
+
+            Assert.Equal("visitor", svc.CurrentUser?.UserId);
+            Assert.False(svc.IsLoggedIn);
+            Assert.True(svc.HasPermission(PermissionId.View));
+            Assert.False(svc.HasPermission(PermissionId.Edit));
+        }
+
+        // ─── LogoutAsync ─────────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task LogoutAsync_SetsCurrentUserToVisitor()
+        {
+            var repo = new Mock<IRolePermissionRepository>();
+            repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role>());
+            var svc = new AuthorizationService(repo.Object);
+            await svc.InitializeAsync(new UserInfo { UserId = "admin", Name = "n1", RoleId = 0 });
+
+            await svc.LogoutAsync();
+
+            Assert.Equal("visitor", svc.CurrentUser?.UserId);
+            Assert.False(svc.IsLoggedIn);
+        }
+
+        [Fact]
+        public async Task LogoutAsync_RaisesUserChangedEvent()
+        {
+            var repo = new Mock<IRolePermissionRepository>();
+            repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role>());
+            var svc = new AuthorizationService(repo.Object);
+            await svc.InitializeAsync(new UserInfo { UserId = "admin", Name = "n1", RoleId = 0 });
+
+            int eventCount = 0;
+            svc.UserChanged += () => eventCount++;
+
+            await svc.LogoutAsync();
+            Assert.Equal(1, eventCount);
         }
     }
 }
