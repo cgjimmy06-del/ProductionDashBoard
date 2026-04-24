@@ -59,7 +59,8 @@
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="編輯">
+                                            ToolTip="編輯"
+                                            Foreground="{DynamicResource SecondaryBrush}">
                                         <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
                                     </Button>
                                     <Button Style="{StaticResource GridEditButtonStyle}"

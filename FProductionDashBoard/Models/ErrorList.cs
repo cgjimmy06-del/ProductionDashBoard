@@ -12,10 +12,11 @@ namespace FProductionDashBoard.Models
     {
         public int ErrorId { get; set; } // 代理PK
         public string ErrorCode { get; set; } = string.Empty;   // UNIQUE
-        public string? Category { get; set; }
-        public int? Severity { get; set; }
+        public int? TypeId { get; set; } = 1;
+        public int Severity { get; set; } = 0;
         public DateTime? CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
+        public ListType? Type { get; set; } // 對應 ListType
         public ICollection<ErrorTranslation> Translations { get; set; } = new List<ErrorTranslation>(); // 對應多筆翻譯
     }
 
@@ -39,12 +40,15 @@ namespace FProductionDashBoard.Models
             builder.Property(e => e.ErrorId).HasColumnName("error_id").ValueGeneratedOnAdd();
 
             builder.Property(e => e.ErrorCode).HasColumnName("error_code");
-            builder.Property(e => e.Category).HasColumnName("category");
+            builder.Property(e => e.TypeId).HasColumnName("type_id");
             builder.Property(e => e.Severity).HasColumnName("severity");
             builder.Property(e => e.CreateAt).HasColumnName("create_at").HasDefaultValueSql("GETDATE()"); ;
             builder.Property(e => e.UpdateAt).HasColumnName("update_at").HasDefaultValueSql("GETDATE()"); ;
 
             builder.HasIndex(e => e.ErrorCode).IsUnique(); // 保證 error_code 唯一
+            builder.HasOne(t => t.Type)
+                   .WithMany(e => e.ErrorLists)
+                   .HasForeignKey(t => t.TypeId);
         }
     }
     public class ErrorTranslationConfiguration : IEntityTypeConfiguration<ErrorTranslation>

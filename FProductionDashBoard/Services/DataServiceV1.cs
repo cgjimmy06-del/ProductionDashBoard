@@ -158,7 +158,7 @@ namespace FProductionDashBoard.Services.V1
             {
                 ErrorCode = er.ErrorCode,
                 Message = er.Message,
-                Category = er.Category
+                TypeId = er.TypeId
             }).ToList();
         }
         public async Task<List<TimeSlotLookup>> GetTimeSlotsAsync()
@@ -553,6 +553,12 @@ namespace FProductionDashBoard.Services.V1
                 throw new InvalidOperationException("ErrorList repository connection failed");
             return await ErrorListRep.GetAllWithTranslationsAsync();
         }
+        public async Task<List<ListType>> GetListTypesAsync()
+        {
+            if (!await ErrorListRep.CheckConnectionAsync())
+                throw new InvalidOperationException("Material repository connection failed");
+            return await ErrorListRep.GetListTypesAsync();
+        }
 
         public async Task AddErrorListAsync(ErrorListFormDto dto)
         {
@@ -561,7 +567,7 @@ namespace FProductionDashBoard.Services.V1
             var error = new ErrorList
             {
                 ErrorCode = dto.ErrorCode,
-                Category = dto.Category,
+                TypeId = dto.TypeId,
                 Severity = dto.Severity
             };
             var translations = new List<ErrorTranslation>();

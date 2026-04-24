@@ -1,180 +1,73 @@
-using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Printing;
-using System.Reflection;
-using System.Resources;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FProductionDashBoard.Services
 {
-    public enum RoleId
+    // 與 DB permission_id 對應，int 值不可任意更改
+    public static class PermissionId
     {
-        [Description("未登入")] // [LocalizedDescription("RoleId_Admin", typeof(EnumResources))]
-        None = -1,
-        [Description("管理員")]
-        Admin = 0, // (ALL) (自動操作)
-        [Description("訪客")]
-        Viewer = 1, // (僅 view) (測試資料)
-        [Description("工程師")]
-        Engineer = 2, // (異常排除與系統設定)
-        [Description("現場主管")]
-        Supervisor = 3, // (線長、組長)
-        [Description("生管")]
-        Scheduler = 4, // 排單人員
-        [Description("操作員")]
-        Operator = 5, // (調試與生產)
-        [Description("品檢員")]
-        Inspector = 6, // (首件、巡檢)
-    }
-    public enum AuthPermission
-    {
-        /// <summary>
-        /// (主頁) 僅查看 Read
-        /// </summary>
-        View = 1,
-        /// <summary>
-        /// (主頁) 設定 insert, update
-        /// </summary>
-        Edit = 2,
-        /// <summary>
-        /// (主頁) 設定 delete
-        /// </summary>
-        Delete = 3,
-        /// <summary>
-        /// (主頁) 環境設定 排版
-        /// </summary>
-        Setting = 4,
-        /// <summary>
-        /// (現場看板) 可選擇生產程式
-        /// </summary>
-        Order = 5,
-        /// <summary>
-        /// (現場看板) 操作物料
-        /// </summary>
-        OperateMaterial = 6,
-        /// <summary>
-        /// (現場看板) 操作品檢
-        /// </summary>
-        OperateInspection = 7,
-        /// <summary>
-        /// (現場看板) 操作調試 - 含設備測試 (Test連動)
-        /// </summary>
-        OperateTuning = 8,
-        /// <summary>
-        /// (現場看板) 可排單 - 生管
-        /// </summary>
-        Schedule = 9,
-        /// <summary>
-        /// (主頁) 特殊操作 (後台 維護 權限)
-        /// </summary>
-        Special = 10,
-        /// <summary>
-        /// (主頁) 測試排除 (設備 連線)
-        /// </summary>
-        Test = 11,
-    }
-    public class AuthRole
-    {
-        public RoleId Id { get; set; } = RoleId.Viewer;
-        public List<AuthPermission> Permissions { get; set; } = new();
-        public string Name => GetEnumDescription(Id);
-        private string GetEnumDescription(Enum value)
-        {
-            FieldInfo? field = value.GetType().GetField(value.ToString());
-
-            // 取得該欄位上的 DescriptionAttribute
-            DescriptionAttribute? attribute = field?.GetCustomAttribute<DescriptionAttribute>();
-
-            // 如果有設定 Description 就回傳內容，否則回傳原本的 Enum 名稱 (ToString)
-            return attribute?.Description ?? value.ToString();
-        }
+        public const int View = 1;
+        public const int Edit = 2;
+        public const int Delete = 3;
+        public const int Setting = 4;
+        public const int Order = 5;
+        public const int OperateMaterial = 6;
+        public const int OperateInspection = 7;
+        public const int OperateTuning = 8;
+        public const int Schedule = 9;
+        public const int Special = 10;
+        public const int Test = 11;
     }
 
     public class AuthorizationService
     {
-        public List<AuthRole> RolesList { get; set; } = []; // 由此映射，外部僅需知道其角色
-        private HashSet<AuthPermission> _userPermissions;
-        public AuthorizationService(UiModels.UserInfo nuser) // 之後直接由此注入 RolesList 或是UsersList 已存在每位員工的permissions
+        private readonly Repositories.IRolePermissionRepository _rolePermissionRepo;
+        private HashSet<int> _userPermissions = [];
+
+        public UiModels.UserInfo? CurrentUser { get; private set; }
+        public bool IsLoggedIn => CurrentUser is not null && CurrentUser.UserId != "visitor";
+
+        public event Action? UserChanged;
+
+        public AuthorizationService(Repositories.IRolePermissionRepository rolePermissionRepo)
         {
-            GetRolesList();
-
-            if (!Enum.IsDefined(typeof(RoleId), nuser.RoleId)) nuser.RoleId = 1; // 如果角色編號定義異常，則為訪客
-
-            var permissions = RolesList.First(r => r.Id == (RoleId)nuser.RoleId).Permissions;
-            _userPermissions = [.. permissions];
-        }
-        public bool HasPermission(AuthPermission permission) =>
-            _userPermissions.Contains(permission);
-        public void UpdateUser(UiModels.UserInfo nuser)
-        {
-            if (!Enum.IsDefined(typeof(RoleId), nuser.RoleId)) nuser.RoleId = 1; // 如果角色編號定義異常，則為訪客
-
-            var permissions = RolesList.First(r => r.Id == (RoleId)nuser.RoleId).Permissions;
-            _userPermissions = [.. permissions];
+            _rolePermissionRepo = rolePermissionRepo;
         }
 
-        private void GetRolesList() // 後續規劃由清單建立，可於UI設定權限 (DI取代此函式)
+        public async Task InitializeAsync(UiModels.UserInfo user)
         {
-            RolesList.Add(new AuthRole() {
-                Id = RoleId.None
-            });
-            RolesList.Add(new AuthRole() {
-                Id = RoleId.Admin,
-                Permissions = new List<AuthPermission>() {
-                    AuthPermission.View, AuthPermission.Edit, AuthPermission.Delete, AuthPermission.Setting,
-                    AuthPermission.Order, AuthPermission.OperateMaterial, AuthPermission.OperateInspection,
-                    AuthPermission.OperateTuning, AuthPermission.Schedule, AuthPermission.Special, AuthPermission.Test
-                }});
-            RolesList.Add(new AuthRole() {
-                Id = RoleId.Viewer,
-                Permissions = new List<AuthPermission>() {
-                    AuthPermission.View,
+            CurrentUser = user;
+
+            // 訪客不需連線，直接套用預設唯讀權限
+            if (user.UserId == "visitor") _userPermissions = [PermissionId.View];
+            else
+            {
+                try
+                {
+                    var roles = await _rolePermissionRepo.GetAllRolesAsync();
+                    var role = roles.FirstOrDefault(r => r.RoleId == user.RoleId);
+                    _userPermissions = role?.RolePermissions
+                        .Select(rp => rp.PermissionId)
+                        .ToHashSet() ?? [];
                 }
-            });
-            RolesList.Add(new AuthRole() {
-                Id = RoleId.Engineer,
-                Permissions = new List<AuthPermission>() {
-                    AuthPermission.View, AuthPermission.Edit, AuthPermission.Setting,
-                    AuthPermission.Order, AuthPermission.OperateMaterial, AuthPermission.OperateInspection,
-                    AuthPermission.OperateTuning, AuthPermission.Schedule,
+                catch
+                {
+                    // 連線失敗時降為訪客離線模式
+                    CurrentUser = new UiModels.UserInfo { UserId = "visitor", Name = "訪客", RoleId = 1, Id = 2 };
+                    _userPermissions = [PermissionId.View];
                 }
-            });
-            RolesList.Add(new AuthRole() {
-                Id = RoleId.Supervisor,
-                Permissions = new List<AuthPermission>() {
-                    AuthPermission.View, AuthPermission.Setting,
-                    AuthPermission.Order, AuthPermission.OperateMaterial, AuthPermission.OperateInspection,
-                    AuthPermission.OperateTuning,
-                }
-            });
-            RolesList.Add(new AuthRole() {
-                Id = RoleId.Scheduler,
-                Permissions = new List<AuthPermission>() {
-                    AuthPermission.View,
-                    AuthPermission.Order, AuthPermission.Schedule,
-                }
-            });
-            RolesList.Add(new AuthRole() {
-                Id = RoleId.Operator,
-                Permissions = new List<AuthPermission>() {
-                    AuthPermission.View,
-                    AuthPermission.Order, AuthPermission.OperateMaterial,
-                    AuthPermission.OperateTuning,
-                }
-            });
-            RolesList.Add(new AuthRole() {
-                Id = RoleId.Inspector,
-                Permissions = new List<AuthPermission>() {
-                    AuthPermission.View,
-                    AuthPermission.OperateInspection,
-                }
-            });
+            }
+            UserChanged?.Invoke(); // 呼叫端
         }
+
+        public async Task LogoutAsync()
+        {
+            var visitor = new UiModels.UserInfo { UserId = "visitor", Name = "訪客", RoleId = 1, Id = 2 };
+            await InitializeAsync(visitor);
+        }
+
+        public bool HasPermission(int permissionId) => _userPermissions.Contains(permissionId);
     }
 }
