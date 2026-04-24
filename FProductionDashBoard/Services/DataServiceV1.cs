@@ -158,7 +158,7 @@ namespace FProductionDashBoard.Services.V1
             {
                 ErrorCode = er.ErrorCode,
                 Message = er.Message,
-                Category = er.Category
+                TypeId = er.TypeId
             }).ToList();
         }
         public async Task<List<TimeSlotLookup>> GetTimeSlotsAsync()
@@ -561,7 +561,7 @@ namespace FProductionDashBoard.Services.V1
             var error = new ErrorList
             {
                 ErrorCode = dto.ErrorCode,
-                Category = dto.Category,
+                TypeId = dto.TypeId,
                 Severity = dto.Severity
             };
             var translations = new List<ErrorTranslation>();

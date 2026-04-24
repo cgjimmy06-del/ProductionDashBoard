@@ -43,11 +43,11 @@
                       SelectionMode="Single"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ErrorCode" Binding="{Binding ErrorCode}" Width="*"
+                    <DataGridTextColumn Header="編號" Binding="{Binding ErrorCode}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*"
+                    <DataGridTextColumn Header="類型" Binding="{Binding TypeId}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="Severity" Binding="{Binding Severity}" Width="70"
+                    <DataGridTextColumn Header="優先級" Binding="{Binding Severity}" Width="70"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTextColumn Header="翻譯數量" Binding="{Binding Translations.Count}" Width="70"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
@@ -105,21 +105,21 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Margin="4">
-                            <TextBlock Text="ErrorCode *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="ErrorCode *"
+                            <TextBlock Text="編號 *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="編號 *"
                                      IsEnabled="{Binding IsNewMode}"
                                      Text="{Binding FormErrorCode, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Margin="4">
-                            <TextBlock Text="Category" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Category"
-                                     Text="{Binding FormCategory, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Text="類型" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="類型"
+                                     Text="{Binding FormTypeId, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2" Margin="4">
-                            <TextBlock Text="Severity" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <ComboBox materialDesign:HintAssist.Hint="Severity"
+                            <TextBlock Text="優先級" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <ComboBox materialDesign:HintAssist.Hint="優先級"
                                       ItemsSource="{Binding SeverityItems}"
                                       SelectedItem="{Binding FormSeverity}"/>
                         </StackPanel>
