@@ -75,7 +75,8 @@ namespace FProductionDashBoard.ViewModels
         // 菜單列
 
         // 狀態列
-        public IAsyncRelayCommand LogoutCommand { get; }
+        public IAsyncRelayCommand LoginCommand { get; } // 登入事件
+        public IAsyncRelayCommand LogoutCommand { get; } // 登出事件
 
         // 工具列
         public IRelayCommand TestCommand { get; }
@@ -122,7 +123,9 @@ namespace FProductionDashBoard.ViewModels
             TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
                 () => _authService.HasPermission(Services.PermissionId.Test));
 
-            // 設定元件事件 (帳號)
+            // 設定元件事件 (帳號) 
+            LoginCommand = new AsyncRelayCommand(() => _authService.InitializeAsync(
+                new UiModels.UserInfo { UserId = "admin", Name = "管理員", RoleId = 0, Id = 1 })); // 管理員測試 ***
             LogoutCommand = new AsyncRelayCommand(() => _authService.LogoutAsync(),
                 () => _authService.IsLoggedIn);
 
