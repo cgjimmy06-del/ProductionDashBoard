@@ -165,6 +165,15 @@
   <data name="DeviceRoutineInsDialog" xml:space="preserve">
     <value>Result For Current Routine Inspection</value>
   </data>
+  <data name="DialogBaseConfirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="DialogBaseDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DialogBaseSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
   <data name="InsFirstAbnormal" xml:space="preserve">
     <value>First Inspection Abnormal, please report according to procedure!</value>
   </data>
