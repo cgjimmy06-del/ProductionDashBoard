@@ -49,7 +49,7 @@ namespace FProductionDashBoard.ViewModels
             CurrentUser = $"{Properties.Resources.ComStrUser}: {getinfo.CurrentUser.Name}";
             CurrentProduct = $"{Properties.Resources.ComStrProduct}: {getinfo.CurrentProduct.Name}";
 
-            var categories = new List<int> { 1, 2 };
+            var categories = new List<int> { 1, 2 }; // 魔術數字 可能會有異常
             ErrorCodes = new ObservableCollection<ErrorInfo>(sqlerrorslist.Where(e => categories.Contains(e.TypeId ?? 1)));
             SelectionCode = (ErrorCodes.FirstOrDefault() ?? new()).ErrorCode;
 

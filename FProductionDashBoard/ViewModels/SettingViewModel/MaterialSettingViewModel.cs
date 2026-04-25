@@ -31,10 +31,11 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                var types = await _dataService.GetMaterialTypesAsync();
-                MaterialTypes.Clear();
-                foreach (var t in types) MaterialTypes.Add(t);
-
+                if (!MaterialTypes.Any())
+                {
+                    var types = await _dataService.GetMaterialTypesAsync();
+                    foreach (var t in types) MaterialTypes.Add(t);
+                }
                 var list = await _dataService.GetAllMaterialsAsync();
                 MaterialList.Clear();
                 foreach (var m in list) MaterialList.Add(m);
@@ -132,7 +133,7 @@ namespace FProductionDashBoard.ViewModels
             FormName = "";
             FormBrand = null;
             FormSpecification = null;
-            FormTypeId = null;
+            FormTypeId = 0;
             FormDescription = null;
             FormMinimumStock = 0;
             FormQuantityInStock = 0;

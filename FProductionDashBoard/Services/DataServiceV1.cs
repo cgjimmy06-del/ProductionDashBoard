@@ -325,11 +325,14 @@ namespace FProductionDashBoard.Services.V1
             if (!(await InspectionRecordRep.CheckConnectionAsync()))
                 throw new InvalidOperationException("InspectionRecordRep repository connection failed");
 
+            // 搜尋已結束的時段
             var endedSlots = timeSlotLookups.Where(slot =>
             {
                 var (_, slotEnd) = GetSlotBounds(slot);
                 return slotEnd <= DateTime.Now;
             });
+
+            // 確認每個結束時段是否有紀錄，沒有紀錄則上傳逾時紀錄
             foreach (var slot in endedSlots)
             {
                 bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, slot.TimeSlotId, BusinessDay);
