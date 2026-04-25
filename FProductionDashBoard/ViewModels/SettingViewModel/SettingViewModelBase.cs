@@ -46,7 +46,8 @@ namespace FProductionDashBoard.ViewModels
 
         private async Task ConfirmAndSaveAsync()
         {
-            if (!ShowConfirm($"{Properties.Resources.DialogBaseConfirm}{Properties.Resources.DialogBaseSave}?")) return;
+            if (!ShowConfirm($"{Properties.Resources.DialogBaseConfirm}{Properties.Resources.DialogBaseSave}?")) 
+                return;
             await SaveAsync();
         }
         protected bool ShowConfirm(string message)
