@@ -219,7 +219,7 @@
                         </ItemsControl.Resources>
                     </ItemsControl>-->
                     <!-- 使用者自訂卡片區塊 -->
-                    <ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding Card1}" />
+                    <ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding MainCard}" />
 
                 </Grid>
                 <!-- GridSplitter -->

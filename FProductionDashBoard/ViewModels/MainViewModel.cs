@@ -33,7 +33,8 @@ namespace FProductionDashBoard.ViewModels
 
         public ObservableCollection<object> Cards { get; set; } = new();
         [ObservableProperty]
-        public object? card1; // 須重構
+        public object? mainCard; // 主視窗中的主卡片
+        private DeviceCardContainerViewModel? _deviceContainer;
 
         #region  -- DI注入資源 --
         private readonly IDataService _dataService;
@@ -86,6 +87,7 @@ namespace FProductionDashBoard.ViewModels
         // 主視覺視窗
 
         private int _syncTickCounter = 0;
+        private int _missedCheckCounter = 0;
         private bool _isSyncing = false;
 
         public MainViewModel(LogService log, IDataService dataservice, AuthorizationService auth,
@@ -107,21 +109,7 @@ namespace FProductionDashBoard.ViewModels
             // 建立 DispatcherTimer 每秒更新一次時間，此方法位於 "UI 執行緒" 需確認是否移至 "執行緒池"
             DefaultTimer = new DispatcherTimer();
             DefaultTimer.Interval = TimeSpan.FromSeconds(1);
-            DefaultTimer.Tick += async (s, e) =>
-            {
-                CurrentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
-                if (DateTime.Now.AddDays(-1) > _dataService.BusinessDay)
-                    _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
-
-                _syncTickCounter++;
-                if (_syncTickCounter >= 30)
-                {
-                    _syncTickCounter = 0;
-
-                    // 加入逾時未巡檢 (需含try catch)
-                    await SyncAndLogAsync();
-                }
-            };
+            DefaultTimer.Tick += async (s, e) => await OnTimerTickAsync();
             DefaultTimer.Start();
 
             InitializeCommand = new AsyncRelayCommand(LoadAllListsAsync);
@@ -144,6 +132,9 @@ namespace FProductionDashBoard.ViewModels
             // (訂閱端) 使用者變更事件，刷新命令狀態與使用者顯示 (若 _authService 在執行緒池)
             _authService.UserChanged += () => System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
+                if (!_authService.IsLoggedIn) // 若登出則執行對應事件
+                    _deviceContainer = null;
+
                 SwitchModeCommand.NotifyCanExecuteChanged();
                 TestCommand.NotifyCanExecuteChanged();
                 LogoutCommand.NotifyCanExecuteChanged();
@@ -186,8 +177,8 @@ namespace FProductionDashBoard.ViewModels
                 $"Roles:[{CommonLists.RolesList.Count}]");
 
             await SyncAndLogAsync();
+            await CheckMissedInspectionsAsync();
         }
-
         private async Task<List<T>> FetchListAsync<T>(Func<Task<List<T>>> fetch)
         {
             try { return await fetch(); }
@@ -197,6 +188,55 @@ namespace FProductionDashBoard.ViewModels
                 return [];
             }
         }
+        // Timer Tick 自動偵測邏輯
+        private async Task OnTimerTickAsync()
+        {
+            CurrentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+            if (DateTime.Now.AddDays(-1) > _dataService.BusinessDay)
+                _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
+
+            _syncTickCounter++;
+            if (_syncTickCounter >= 30)
+            {
+                _syncTickCounter = 0;
+                await SyncAndLogAsync();
+            }
+
+            _missedCheckCounter++;
+            if (_missedCheckCounter >= 300)
+            {
+                _missedCheckCounter = 0;
+                await CheckMissedInspectionsAsync();
+            }
+        }
+        // 未巡檢偵測與插入 -- 巡檢狀態更新 (若離線狀態延至下個工作日，則前日未插入之資料將會遺漏) ** 
+        private async Task CheckMissedInspectionsAsync()
+        {
+            var activeDevices = _deviceContainer?.Devices;
+            if (activeDevices == null || !activeDevices.Any()) return;
+            if (CommonLists.TimeSlotsList.Count == 0) return;
+
+            foreach (var card in activeDevices)
+            {
+                try
+                {
+                    await _dataService.CheckAndInsertMissedInspectionAsync(
+                        CommonLists.TimeSlotsList, card.Info.Id);
+
+                    await card.UpdateTimeSlotsStatusAsync(); // 更新每台設備的巡檢狀態
+                }
+                catch (InvalidOperationException)
+                {
+                    _log.AddLog("逾時補填/狀態更新略過：資料庫連線失敗", LogLevel.Warning);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _log.AddLog($"逾時補填失敗 [{card.Info.Name}]: {ex.Message}", LogLevel.Error);
+                }
+            }
+        }
+        // 同步暫存資料
         private async Task SyncAndLogAsync()
         {
             if (_isSyncing) return;
@@ -224,16 +264,16 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Operation:
-                    var newvm = new DeviceCardContainerViewModel(_log, _dataService, _authService,
-                        CurrentUser!, CommonLists);
-                    Card1 = newvm;
+                    _deviceContainer ??= new DeviceCardContainerViewModel(
+                        _log, _dataService, _authService, CurrentUser!, CommonLists);
+                    MainCard = _deviceContainer;
                     break;
 
                 case NavMode.View:
                     break;
 
                 case NavMode.List:
-                    Card1 = new SettingViewModel(_log, _dataService, _authService);
+                    MainCard = new SettingViewModel(_log, _dataService, _authService);
                     break;
 
                 default:
