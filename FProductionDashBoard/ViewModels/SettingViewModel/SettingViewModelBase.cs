@@ -27,14 +27,14 @@ namespace FProductionDashBoard.ViewModels
 
             LoadCommand = new AsyncRelayCommand(LoadAsync);
             NewCommand = new RelayCommand(OpenNewForm);
-            SaveCommand = new AsyncRelayCommand(SaveAsync);
+            SaveCommand = new AsyncRelayCommand(ConfirmAndSaveAsync);
             CancelCommand = new RelayCommand(CloseForm);
         }
 
         protected abstract Task LoadAsync();
         protected abstract void OpenNewForm();
         protected abstract Task SaveAsync();
-
+        
         protected void CloseForm()
         {
             IsFormVisible = false;
@@ -42,7 +42,19 @@ namespace FProductionDashBoard.ViewModels
             FormErrorString = null;
             FormSuccessString = null;
         }
-
         protected abstract void ClearForm();
+
+        private async Task ConfirmAndSaveAsync()
+        {
+            if (!ShowConfirm($"{Properties.Resources.DialogBaseConfirm}{Properties.Resources.DialogBaseSave}?")) 
+                return;
+            await SaveAsync();
+        }
+        protected bool ShowConfirm(string message)
+        {
+            var vm = new DialogBaseViewModel<bool>(message);
+            new DialogWindow(vm).ShowDialog();
+            return vm.IsConfirmed;
+        }
     }
 }

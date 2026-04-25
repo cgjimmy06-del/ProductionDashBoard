@@ -231,11 +231,6 @@ namespace FProductionDashBoard.ViewModels
         }
         private void OperationChange()
         {
-            //var vm = new DialogBaseViewModel<string>(Properties.Resources.DeviceOperationDialog);
-            //var window = new DialogWindow(vm);
-            //window.ShowDialog(); 
-            //if (vm.IsConfirmed)
-            //{ var result = vm.Result; }
             Info.Status++;
             if (Info.Status > 2) Info.Status = -1;
             _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Processing);

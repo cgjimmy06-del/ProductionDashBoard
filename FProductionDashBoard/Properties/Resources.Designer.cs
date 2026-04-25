@@ -205,6 +205,33 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Confirm 的當地語系化字串。
+        /// </summary>
+        internal static string DialogBaseConfirm {
+            get {
+                return ResourceManager.GetString("DialogBaseConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Delete 的當地語系化字串。
+        /// </summary>
+        internal static string DialogBaseDelete {
+            get {
+                return ResourceManager.GetString("DialogBaseDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Save 的當地語系化字串。
+        /// </summary>
+        internal static string DialogBaseSave {
+            get {
+                return ResourceManager.GetString("DialogBaseSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 First Inspection Abnormal, please report according to procedure! 的當地語系化字串。
         /// </summary>
         internal static string InsFirstAbnormal {
