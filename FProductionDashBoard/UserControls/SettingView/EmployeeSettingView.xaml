@@ -29,9 +29,10 @@
 
             <Button Grid.Row="0" HorizontalAlignment="Right" Margin="8,6"
                     Command="{Binding NewCommand}"
+                    ToolTip="{DynamicResource NewButtonTooltip}"
                     Style="{StaticResource FunctionButtonStyle}">
                 <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
-                                         VerticalAlignment="Center" 
+                                         VerticalAlignment="Center"
                                          HorizontalAlignment="Center"/>
             </Button>
 
@@ -43,31 +44,31 @@
                       SelectionMode="Single"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="卡號" Binding="{Binding CardId}" Width="*"
+                    <DataGridTextColumn Header="{DynamicResource EmployeeCardIdDataGridHeader}" Binding="{Binding CardId}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="職號" Binding="{Binding UserId}" Width="*"
+                    <DataGridTextColumn Header="{DynamicResource EmployeeUserIdDataGridHeader}" Binding="{Binding UserId}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="姓名" Binding="{Binding Name}" Width="*"
+                    <DataGridTextColumn Header="{DynamicResource EmployeeNameDataGridHeader}" Binding="{Binding Name}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="角色" Binding="{Binding RoleId}" Width="100"
+                    <DataGridTextColumn Header="{DynamicResource EmployeeRoleDataGridHeader}" Binding="{Binding RoleId}" Width="100"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTemplateColumn Header="操作" Width="80">
+                    <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="編輯"
+                                            ToolTip="{DynamicResource SettingEditTooltip}"
                                             Foreground="{DynamicResource SecondaryBrush}">
                                         <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
                                     </Button>
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="刪除"
+                                            ToolTip="{DynamicResource SettingDeleteTooltip}"
                                             Foreground="{DynamicResource ErrorBrush}">
                                         <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
                                     </Button>
@@ -118,7 +119,7 @@
                     </StackPanel>
 
                     <StackPanel Grid.Row="0" Grid.Column="1" Margin="4">
-                        <TextBlock Text="姓名 *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource EmployeeNameLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <TextBox materialDesign:HintAssist.Hint="姓名 *"
                                  Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
@@ -127,10 +128,10 @@
                         <TextBlock Foreground="{DynamicResource TextPrimaryBrush}">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignCaptionTextBlock}">
-                                    <Setter Property="Text" Value="密碼 *"/>
+                                    <Setter Property="Text" Value="{DynamicResource EmployeePasswordLabel}"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsEditMode}" Value="True">
-                                            <Setter Property="Text" Value="密碼 (留空不修改)"/>
+                                            <Setter Property="Text" Value="{DynamicResource EmployeePasswordEditLabel}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -142,10 +143,10 @@
                                 <TextBlock>
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
-                                            <Setter Property="Text" Value="密碼 *"/>
+                                            <Setter Property="Text" Value="{DynamicResource EmployeePasswordLabel}"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsEditMode}" Value="True">
-                                                    <Setter Property="Text" Value="密碼 (留空不修改)"/>
+                                                    <Setter Property="Text" Value="{DynamicResource EmployeePasswordEditLabel}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -156,7 +157,7 @@
                     </StackPanel>
 
                     <StackPanel Grid.Row="0" Grid.Column="3" Margin="4">
-                        <TextBlock Text="角色 *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource EmployeeRoleLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <ComboBox materialDesign:HintAssist.Hint="角色 *"
                                   ItemsSource="{Binding RoleItems}"
                                   SelectedValuePath="RoleId"
@@ -165,7 +166,7 @@
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Grid.Column="0" Margin="4">
-                        <TextBlock Text="卡號" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource EmployeeCardIdDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <TextBox materialDesign:HintAssist.Hint="卡號"
                                  Text="{Binding FormCardId, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
@@ -177,7 +178,7 @@
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Grid.Column="2" Margin="4">
-                        <TextBlock Text="部門" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource EmployeeDepartmentLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <TextBox materialDesign:HintAssist.Hint="部門"
                                  Text="{Binding FormDepartmentId, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
@@ -198,9 +199,9 @@
                             Foreground="{DynamicResource PrimaryBrush}"
                             BorderBrush="{DynamicResource PrimaryBrush}"
                             Command="{Binding CancelCommand}"
-                            Content="取消"/>
+                            Content="{DynamicResource CancelButton}"/>
                     <Button Command="{Binding SaveCommand}"
-                            Content="儲存"/>
+                            Content="{DynamicResource SaveButton}"/>
                 </StackPanel>
             </StackPanel>
             </ScrollViewer>

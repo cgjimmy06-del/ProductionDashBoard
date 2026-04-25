@@ -29,9 +29,10 @@
 
             <Button Grid.Row="0" HorizontalAlignment="Right" Margin="8,6"
                     Command="{Binding NewCommand}"
+                    ToolTip="{DynamicResource NewButtonTooltip}"
                     Style="{StaticResource FunctionButtonStyle}">
                 <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
-                                         VerticalAlignment="Center" 
+                                         VerticalAlignment="Center"
                                          HorizontalAlignment="Center"/>
             </Button>
 
@@ -43,29 +44,29 @@
                       SelectionMode="Single"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="編號" Binding="{Binding ErrorCode}" Width="*"
+                    <DataGridTextColumn Header="{DynamicResource SettingCodeDataGridHeader}" Binding="{Binding ErrorCode}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="類型" Binding="{Binding Type.Remark}" Width="*"
+                    <DataGridTextColumn Header="{DynamicResource SettingTypeDataGridHeader}" Binding="{Binding Type.Remark}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="優先級" Binding="{Binding Severity}" Width="70"
+                    <DataGridTextColumn Header="{DynamicResource ErrorListSeverityDataGridHeader}" Binding="{Binding Severity}" Width="70"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="翻譯數量" Binding="{Binding Translations.Count}" Width="70"
+                    <DataGridTextColumn Header="{DynamicResource ErrorListTransCountDataGridHeader}" Binding="{Binding Translations.Count}" Width="70"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTemplateColumn Header="操作" Width="80">
+                    <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="編輯"
+                                            ToolTip="{DynamicResource SettingEditTooltip}"
                                             Foreground="{DynamicResource SecondaryBrush}">
                                         <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
                                     </Button>
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="刪除"
+                                            ToolTip="{DynamicResource SettingDeleteTooltip}"
                                             Foreground="{DynamicResource ErrorBrush}">
                                         <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
                                     </Button>
@@ -107,14 +108,14 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Margin="4">
-                            <TextBlock Text="編號 *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="{DynamicResource SettingCodeRequiredLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <TextBox materialDesign:HintAssist.Hint="編號 *"
                                      IsEnabled="{Binding IsNewMode}"
                                      Text="{Binding FormErrorCode, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Margin="4">
-                            <TextBlock Text="類型" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="{DynamicResource SettingTypeDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <ComboBox x:Name="TypeComboBox"
                                       materialDesign:HintAssist.Hint="類型"
                                       ItemsSource="{Binding ListTypes}"
@@ -130,14 +131,14 @@
                                     Foreground="{DynamicResource TextSecondaryBrush}"/>
 
                         <StackPanel Grid.Column="3" Margin="4">
-                            <TextBlock Text="優先級" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="{DynamicResource ErrorListSeverityDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <ComboBox materialDesign:HintAssist.Hint="優先級"
                                       ItemsSource="{Binding SeverityItems}"
                                       SelectedItem="{Binding FormSeverity}"/>
                         </StackPanel>
                     </Grid>
 
-                    <!-- 翻譯欄位 -->
+                    <!-- 翻譯欄位（語言標籤保留硬編碼，非語言資源替換範圍） -->
                     <StackPanel Margin="4,2">
                         <TextBlock Text="zh-TW 中文" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <TextBox materialDesign:HintAssist.Hint="請輸入中文訊息"
@@ -171,9 +172,9 @@
                                 Foreground="{DynamicResource PrimaryBrush}"
                                 BorderBrush="{DynamicResource PrimaryBrush}"
                                 Command="{Binding CancelCommand}"
-                                Content="取消"/>
+                                Content="{DynamicResource CancelButton}"/>
                         <Button Command="{Binding SaveCommand}"
-                                Content="儲存"/>
+                                Content="{DynamicResource SaveButton}"/>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

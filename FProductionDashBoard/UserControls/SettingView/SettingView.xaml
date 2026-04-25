@@ -9,7 +9,7 @@
              d:DesignHeight="600" d:DesignWidth="800">
 
     <TabControl Style="{StaticResource MaterialDesignFilledTabControl}" Margin="4">
-        
+
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
@@ -17,7 +17,7 @@
                                              Width="20" Height="20"
                                              VerticalAlignment="Center"
                                              Margin="0,0,6,0"/>
-                    <TextBlock Text="設備管理" VerticalAlignment="Center"
+                    <TextBlock Text="{DynamicResource SettingTabEquipment}" VerticalAlignment="Center"
                                Style="{StaticResource MaterialDesignBody1TextBlock}"/>
                 </StackPanel>
             </TabItem.Header>
@@ -31,7 +31,7 @@
                                              Width="20" Height="20"
                                              VerticalAlignment="Center"
                                              Margin="0,0,6,0"/>
-                    <TextBlock Text="員工管理" VerticalAlignment="Center"
+                    <TextBlock Text="{DynamicResource SettingTabEmployee}" VerticalAlignment="Center"
                                Style="{StaticResource MaterialDesignBody1TextBlock}"/>
                 </StackPanel>
             </TabItem.Header>
@@ -45,7 +45,7 @@
                                              Width="20" Height="20"
                                              VerticalAlignment="Center"
                                              Margin="0,0,6,0"/>
-                    <TextBlock Text="材料管理" VerticalAlignment="Center"
+                    <TextBlock Text="{DynamicResource SettingTabMaterial}" VerticalAlignment="Center"
                                Style="{StaticResource MaterialDesignBody1TextBlock}"/>
                 </StackPanel>
             </TabItem.Header>
@@ -59,7 +59,7 @@
                                              Width="20" Height="20"
                                              VerticalAlignment="Center"
                                              Margin="0,0,6,0"/>
-                    <TextBlock Text="錯誤清單" VerticalAlignment="Center"
+                    <TextBlock Text="{DynamicResource SettingTabErrorList}" VerticalAlignment="Center"
                                Style="{StaticResource MaterialDesignBody1TextBlock}"/>
                 </StackPanel>
             </TabItem.Header>
@@ -73,7 +73,7 @@
                                              Width="20" Height="20"
                                              VerticalAlignment="Center"
                                              Margin="0,0,6,0"/>
-                    <TextBlock Text="巡檢時段" VerticalAlignment="Center"
+                    <TextBlock Text="{DynamicResource SettingTabTimeSlot}" VerticalAlignment="Center"
                                Style="{StaticResource MaterialDesignBody1TextBlock}"/>
                 </StackPanel>
             </TabItem.Header>
@@ -87,7 +87,7 @@
                                              Width="20" Height="20"
                                              VerticalAlignment="Center"
                                              Margin="0,0,6,0"/>
-                    <TextBlock Text="角色權限" VerticalAlignment="Center"
+                    <TextBlock Text="{DynamicResource SettingTabRolePermission}" VerticalAlignment="Center"
                                Style="{StaticResource MaterialDesignBody1TextBlock}"/>
                 </StackPanel>
             </TabItem.Header>

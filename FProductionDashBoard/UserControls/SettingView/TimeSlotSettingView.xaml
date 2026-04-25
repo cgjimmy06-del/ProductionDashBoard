@@ -29,9 +29,10 @@
 
             <Button Grid.Row="0" HorizontalAlignment="Right" Margin="8,6"
                     Command="{Binding NewCommand}"
+                    ToolTip="{DynamicResource NewButtonTooltip}"
                     Style="{StaticResource FunctionButtonStyle}">
                 <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
-                                         VerticalAlignment="Center" 
+                                         VerticalAlignment="Center"
                                          HorizontalAlignment="Center"/>
             </Button>
 
@@ -45,28 +46,28 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding TimeSlotId}" Width="50"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="開始時間" Binding="{Binding StartAt, Converter={StaticResource TimeSpanToHhmmConverter}}" Width="*"
+                    <DataGridTextColumn Header="{DynamicResource TimeSlotStartTimeDataGridHeader}" Binding="{Binding StartAt, Converter={StaticResource TimeSpanToHhmmConverter}}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="結束時間" Binding="{Binding EndAt, Converter={StaticResource TimeSpanToHhmmConverter}}" Width="*"
+                    <DataGridTextColumn Header="{DynamicResource TimeSlotEndTimeDataGridHeader}" Binding="{Binding EndAt, Converter={StaticResource TimeSpanToHhmmConverter}}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridCheckBoxColumn Header="跨日" Binding="{Binding IsCrossDay}" Width="60"/>
-                    <DataGridTextColumn Header="標籤" Binding="{Binding Label}" Width="2*"
+                    <DataGridCheckBoxColumn Header="{DynamicResource TimeSlotCrossDayDataGridHeader}" Binding="{Binding IsCrossDay}" Width="60"/>
+                    <DataGridTextColumn Header="{DynamicResource TimeSlotLabelDataGridHeader}" Binding="{Binding Label}" Width="2*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTemplateColumn Header="操作" Width="80">
+                    <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="編輯"
+                                            ToolTip="{DynamicResource SettingEditTooltip}"
                                             Foreground="{DynamicResource SecondaryBrush}">
                                         <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
                                     </Button>
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="刪除"
+                                            ToolTip="{DynamicResource SettingDeleteTooltip}"
                                             Foreground="{DynamicResource ErrorBrush}">
                                         <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
                                     </Button>
@@ -116,7 +117,7 @@
 
                         <!-- StartAt -->
                         <StackPanel Grid.Column="1" Margin="4">
-                            <TextBlock Text="開始時間" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="{DynamicResource TimeSlotStartTimeDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <StackPanel Orientation="Horizontal">
                                 <ComboBox ItemsSource="{Binding HourItems}"
                                           SelectedItem="{Binding FormStartHour}"
@@ -132,7 +133,7 @@
 
                         <!-- EndAt -->
                         <StackPanel Grid.Column="2" Margin="4">
-                            <TextBlock Text="結束時間" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="{DynamicResource TimeSlotEndTimeDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <StackPanel Orientation="Horizontal">
                                 <ComboBox ItemsSource="{Binding HourItems}"
                                           SelectedItem="{Binding FormEndHour}"
@@ -145,7 +146,7 @@
                                           materialDesign:HintAssist.Hint="分"/>
                             </StackPanel>
                         </StackPanel>
-                        
+
                         <StackPanel Grid.Column="3" Margin="4" Orientation="Horizontal" VerticalAlignment="Bottom">
                             <CheckBox IsChecked="{Binding FormIsCrossDay}"
                                       Content="跨日 (IsCrossDay)"
@@ -154,7 +155,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <!-- Row 1: IsCrossDay / Label -->
+                    <!-- Row 1: Label -->
                     <Grid Margin="0,4,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -162,7 +163,7 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Margin="4">
-                            <TextBlock Text="標籤 (自動產生)" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="{DynamicResource TimeSlotLabelAutoFormLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <TextBox Text="{Binding ComputedLabel, Mode=OneWay}"
                                      IsEnabled="False"/>
                         </StackPanel>
@@ -183,9 +184,9 @@
                                 Foreground="{DynamicResource PrimaryBrush}"
                                 BorderBrush="{DynamicResource PrimaryBrush}"
                                 Command="{Binding CancelCommand}"
-                                Content="取消"/>
+                                Content="{DynamicResource CancelButton}"/>
                         <Button Command="{Binding SaveCommand}"
-                                Content="儲存"/>
+                                Content="{DynamicResource SaveButton}"/>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
