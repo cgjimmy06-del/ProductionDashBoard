@@ -167,8 +167,10 @@ namespace FProductionDashBoard.ViewModels
             } else Application.Current.Resources.MergedDictionaries.Add(dict);
 
             // 切換 .resx (後端訊息)
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo(SelectedLanguage);
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(SelectedLanguage);
+            var currentCulture = new CultureInfo(SelectedLanguage);
+            CultureInfo.DefaultThreadCurrentUICulture = currentCulture;
+            Thread.CurrentThread.CurrentUICulture = currentCulture;
+            //Thread.CurrentThread.CurrentCulture = currentCulture;
         }
         private void themeChange() // 主題切換
         {
