@@ -1,4 +1,5 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿using FProductionDashBoard.Models;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -124,6 +125,16 @@ namespace FProductionDashBoard
             => value is TimeSpan ts ? ts.ToString(@"hh\:mm") : "";
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
+    }
+    public class TranslationZhTwConverter : IValueConverter
+    {
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is not IEnumerable<ErrorTranslation> translations) return null;
+            return translations.FirstOrDefault(t => t.LanguageCode == "zh-TW")?.Message;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
     }
     public class EnumToBooleanConverter : IValueConverter
     {

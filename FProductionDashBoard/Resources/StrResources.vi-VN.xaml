@@ -106,6 +106,7 @@
     <sys:String x:Key="MaterialCurrStockDataGridHeader">Tồn kho hiện tại</sys:String>
     <!-- Error list setting -->
     <sys:String x:Key="ErrorListSeverityDataGridHeader">Độ ưu tiên</sys:String>
+    <sys:String x:Key="ErrorListTranslationDataGridHeader">Bản dịch</sys:String>
     <sys:String x:Key="ErrorListTransCountDataGridHeader">Số bản dịch</sys:String>
     <!-- Time slot setting -->
     <sys:String x:Key="TimeSlotStartTimeDataGridHeader">Giờ bắt đầu</sys:String>

@@ -50,6 +50,10 @@
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTextColumn Header="{DynamicResource ErrorListSeverityDataGridHeader}" Binding="{Binding Severity}" Width="70"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="{DynamicResource ErrorListTranslationDataGridHeader}"
+                                        Binding="{Binding Translations, Converter={StaticResource TranslationZhTwConverter}}"
+                                        Width="*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTextColumn Header="{DynamicResource ErrorListTransCountDataGridHeader}" Binding="{Binding Translations.Count}" Width="70"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
