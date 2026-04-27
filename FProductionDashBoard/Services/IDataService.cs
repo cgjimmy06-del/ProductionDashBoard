@@ -63,11 +63,11 @@ namespace FProductionDashBoard.Services
         /// </summary>
         public Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId);
         /// <summary>
-        /// 新增帶點紀錄 (還不可離線暫存)
+        /// 新增帶點紀錄 (支援離線暫存)
         /// </summary>
         public Task<int> AddTeachingRecordAsync(int equipmentId, int employeeId, int durationSec, string? product);
         /// <summary>
-        /// 新增調品質紀錄 (還不可離線暫存)
+        /// 新增調品質紀錄 (支援離線暫存)
         /// </summary>
         public Task<int> AddOffsetRecordAsync(int equipmentId, int employeeId, int durationSec, string? product);
 

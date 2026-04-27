@@ -4,7 +4,8 @@ namespace FProductionDashBoard.Services.Offline
     {
         AddReplacement,
         AddFirstInspection,
-        AddRoutineInspection
+        AddRoutineInspection,
+        AddTuning
     }
 
     public class PendingOperation

@@ -59,17 +59,28 @@ namespace FProductionDashBoard.Services.V1
             //Debug.WriteLine($"{devs}");
             //foreach (var (ErrorCode, Message, Category) in devs) { Debug.WriteLine($"{ErrorCode} - {Message}"); }
 
-            var roles = (await RolePermissionRep.GetAllRolesAsync()).ToList();
-            foreach (var nrole in roles)
+            //var roles = (await RolePermissionRep.GetAllRolesAsync()).ToList();
+            //foreach (var nrole in roles)
+            //{
+            //    Debug.WriteLine($"nrole.Name = {nrole.Name}");
+            //    foreach (var npermission in nrole.RolePermissions)
+            //    { Debug.WriteLine($"permission = {npermission.PermissionId}"); }
+            //}
+
+            try
             {
-                Debug.WriteLine($"nrole.Name = {nrole.Name}");
-                foreach (var npermission in nrole.RolePermissions)
-                { Debug.WriteLine($"permission = {npermission.PermissionId}"); }
+                await AddTeachingRecordAsync(1, 1, 600, "AAA");
+                //await AddOffsetRecordAsync(1, 1, 60, "BBB");
             }
-
-            //await AddTeachingRecordAsync(1, 1, 600, "AAA");
-            //await AddOffsetRecordAsync(1, 1, 60, "BBB");
-
+            catch (OfflineOperationQueuedException )
+            {
+                Debug.WriteLine($"帶點紀錄已暫存，待連線恢復後自動上傳");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"帶點紀錄上傳異常");
+                Debug.WriteLine($"TeachingRecord Ex: {ex.Message}");
+            }
             //await CheckAndInsertMissedInspectionAsync(timeslots, 1, 1);
             // 插入
 
@@ -385,25 +396,20 @@ namespace FProductionDashBoard.Services.V1
                     throw new DatabaseConnectionException("新增帶點紀錄時資料庫發生錯誤。", ex);
                 }
             }
-            else return 0; // 有離線之後拿掉 (記得改interface的註解)
-            //var payload = new FirstInspectionPayload
-            //{
-            //    EquipmentId = equipmentId,
-            //    EmployeeId = employeeId,
-            //    Result = result,
-            //    Product = product,
-            //    ErrorCode = errorCode,
-            //    Description = description,
-            //    OperatedAt = DateTime.Now
-            //};
-            //var op = new PendingOperation
-            //{
-            //    OperationType = PendingOperationType.AddFirstInspection,
-            //    PayloadJson = JsonSerializer.Serialize(payload)
-            //};
-            //_ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
 
-            //throw new OfflineOperationQueuedException(op.Id);
+            var op = new PendingOperation
+            {
+                OperationType = PendingOperationType.AddTuning,
+                PayloadJson = JsonSerializer.Serialize(new TuningPayload
+                {
+                    TuningType = TuningType.Teaching,
+                    EquipmentId = equipmentId, EmployeeId = employeeId,
+                    DurationSec = durationSec, Product = product,
+                    OperatedAt = DateTime.Now
+                })
+            };
+            _ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
+            throw new OfflineOperationQueuedException(op.Id);
         }
         public async Task<int> AddOffsetRecordAsync(int equipmentId, int employeeId, int durationSec, string? product)
         {
@@ -419,25 +425,20 @@ namespace FProductionDashBoard.Services.V1
                     throw new DatabaseConnectionException("新增調品質紀錄時資料庫發生錯誤。", ex);
                 }
             }
-            else return 0; // 有離線之後拿掉 (記得改interface的註解)
-            //var payload = new FirstInspectionPayload
-            //{
-            //    EquipmentId = equipmentId,
-            //    EmployeeId = employeeId,
-            //    Result = result,
-            //    Product = product,
-            //    ErrorCode = errorCode,
-            //    Description = description,
-            //    OperatedAt = DateTime.Now
-            //};
-            //var op = new PendingOperation
-            //{
-            //    OperationType = PendingOperationType.AddFirstInspection,
-            //    PayloadJson = JsonSerializer.Serialize(payload)
-            //};
-            //_ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
 
-            //throw new OfflineOperationQueuedException(op.Id);
+            var op = new PendingOperation
+            {
+                OperationType = PendingOperationType.AddTuning,
+                PayloadJson = JsonSerializer.Serialize(new TuningPayload
+                {
+                    TuningType = TuningType.Offset,
+                    EquipmentId = equipmentId, EmployeeId = employeeId,
+                    DurationSec = durationSec, Product = product,
+                    OperatedAt = DateTime.Now
+                })
+            };
+            _ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
+            throw new OfflineOperationQueuedException(op.Id);
         }
 
         #endregion
