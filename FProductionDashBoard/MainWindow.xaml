@@ -136,9 +136,9 @@
                                     Converter={StaticResource BooleanToVisibilityConverter},
                                     ConverterParameter='Invert'}"
                             Style="{StaticResource MaterialDesignFlatButton}"
-                            Foreground="{DynamicResource TextSecondaryBrush}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"
                             Padding="4,2" VerticalAlignment="Center"
-                            ToolTip="登入">
+                            ToolTip="Log In">
                         <materialDesign:PackIcon Kind="Login" Width="16" Height="16"/>
                     </Button>
                     <Button Grid.Column="4"
@@ -146,9 +146,9 @@
                             Visibility="{Binding IsLoggedIn, 
                                     Converter={StaticResource BooleanToVisibilityConverter}}"
                             Style="{StaticResource MaterialDesignFlatButton}"
-                            Foreground="{DynamicResource TextSecondaryBrush}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"
                             Padding="4,2" VerticalAlignment="Center"
-                            ToolTip="登出">
+                            ToolTip="Log Out">
                         <materialDesign:PackIcon Kind="Logout" Width="16" Height="16"/>
                     </Button>
                 </Grid>

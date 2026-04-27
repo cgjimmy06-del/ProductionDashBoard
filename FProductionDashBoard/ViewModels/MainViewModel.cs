@@ -124,10 +124,8 @@ namespace FProductionDashBoard.ViewModels
                 () => _authService.HasPermission(Services.PermissionId.Test));
 
             // 設定元件事件 (帳號) 
-            LoginCommand = new AsyncRelayCommand(() => _authService.InitializeAsync(
-                new UiModels.UserInfo { UserId = "admin", Name = "管理員", RoleId = 0, Id = 1 })); // 管理員測試 ***
-            LogoutCommand = new AsyncRelayCommand(() => _authService.LogoutAsync(),
-                () => _authService.IsLoggedIn);
+            LoginCommand = new AsyncRelayCommand(LoginAsync);
+            LogoutCommand = new AsyncRelayCommand(() => _authService.LogoutAsync());
 
             // 設定元件事件 (訊息視窗)
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
@@ -151,7 +149,7 @@ namespace FProductionDashBoard.ViewModels
 
         }
 
-        // 載入初始化 待翻譯log 並加上errorlog
+        #region -- 載入初始化 與 計時器 -- (待翻譯log 並加上errorlog)
         public async Task LoadAllListsAsync()
         {
             var t1 = FetchListAsync(() => _dataService.GetDevicesAsync());
@@ -256,6 +254,17 @@ namespace FProductionDashBoard.ViewModels
             finally
             { _isSyncing = false; }
         }
+        #endregion
+
+        // 工具列 與 狀態列 事件
+        private async Task LoginAsync()
+        {
+            var loginWindow = new LoginWindow();
+            if (loginWindow.ShowDialog() != true) { return; }
+
+            await _authService.InitializeAsync(loginWindow.User);
+        }
+
         // 導覽列事件
         public void SwitchMode(NavMode mode)
         {
