@@ -29,6 +29,7 @@
 
             <Button Grid.Row="0" HorizontalAlignment="Right" Margin="8,6"
                     Command="{Binding NewCommand}"
+                    ToolTip="{DynamicResource NewButtonTooltip}"
                     Style="{StaticResource FunctionButtonStyle}">
                 <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
                                          VerticalAlignment="Center"
@@ -43,13 +44,13 @@
                       SelectionMode="Single"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="角色 ID" Binding="{Binding RoleId}" Width="60"
+                    <DataGridTextColumn Header="{DynamicResource RoleIdDataGridHeader}" Binding="{Binding RoleId}" Width="60"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="角色名稱" Binding="{Binding Name}" Width="100"
+                    <DataGridTextColumn Header="{DynamicResource RoleNameDataGridHeader}" Binding="{Binding Name}" Width="100"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="描述" Binding="{Binding Description}" Width="200"
+                    <DataGridTextColumn Header="{DynamicResource SettingDescriptionDataGridHeader}" Binding="{Binding Description}" Width="200"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTemplateColumn Header="權限" Width="*">
+                    <DataGridTemplateColumn Header="{DynamicResource RolePermissionDataGridHeader}" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <ItemsControl ItemsSource="{Binding RolePermissions}" Margin="4,2">
@@ -71,21 +72,21 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="操作" Width="80">
+                    <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="編輯"
+                                            ToolTip="{DynamicResource SettingEditTooltip}"
                                             Foreground="{DynamicResource SecondaryBrush}">
                                         <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
                                     </Button>
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="刪除"
+                                            ToolTip="{DynamicResource SettingDeleteTooltip}"
                                             Foreground="{DynamicResource ErrorBrush}">
                                         <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
                                     </Button>
@@ -126,30 +127,30 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Margin="4">
-                            <TextBlock Text="角色 ID" Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                            <TextBlock Text="{DynamicResource RoleIdDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <TextBox Text="{Binding FormRoleId}" IsReadOnly="True"
                                      Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Margin="4">
-                            <TextBlock Text="角色名稱 *" Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                            <TextBlock Text="{DynamicResource RoleNameLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="角色名稱 *"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource RoleNameLabel}"
                                      Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2" Margin="4">
-                            <TextBlock Text="描述" Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                            <TextBlock Text="{DynamicResource SettingDescriptionDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="描述"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingDescriptionDataGridHeader}"
                                      Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
 
                     <!-- 權限勾選 -->
                     <StackPanel Margin="4,8,4,4">
-                        <TextBlock Text="權限" Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                        <TextBlock Text="{DynamicResource RolePermissionDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                    Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
                         <ItemsControl ItemsSource="{Binding PermissionItems}">
                             <ItemsControl.ItemsPanel>
@@ -182,9 +183,9 @@
                                 Foreground="{DynamicResource PrimaryBrush}"
                                 BorderBrush="{DynamicResource PrimaryBrush}"
                                 Command="{Binding CancelCommand}"
-                                Content="取消"/>
+                                Content="{DynamicResource CancelButton}"/>
                         <Button Command="{Binding SaveCommand}"
-                                Content="儲存"/>
+                                Content="{DynamicResource SaveButton}"/>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

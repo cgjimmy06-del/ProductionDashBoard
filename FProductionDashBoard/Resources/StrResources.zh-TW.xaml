@@ -21,6 +21,8 @@
     <sys:String x:Key="ErrorLogButtonTooltip">切換至錯誤訊息視窗</sys:String>
     <sys:String x:Key="LargeFontButtonTooltip">放大字體</sys:String>
     <sys:String x:Key="LogSaveButtonTooltip">儲存當前訊息紀錄(含異常)</sys:String>
+    <sys:String x:Key="LogInButtonTooltip">登入</sys:String>
+    <sys:String x:Key="LogOutButtonTooltip">登出</sys:String>
     <!--#endregion-->
     <!--#region device card container 設備卡片操作區 -->
     <sys:String x:Key="FirstInsAllButtonTooltip">所有設備統一做首件</sys:String>
@@ -39,6 +41,8 @@
     <!--#region dialog window 彈出視窗 -->
     <sys:String x:Key="ConfirmButton">確認</sys:String>
     <sys:String x:Key="CancelButton">取消</sys:String>
+    <sys:String x:Key="SaveButton">儲存</sys:String>
+    <sys:String x:Key="NewButtonTooltip">新增</sys:String>
     <!--#endregion-->
     <!--#region inspection dialog 檢驗視窗 -->
     <sys:String x:Key="NormalRadioButton">正常</sys:String>
@@ -60,6 +64,61 @@
     <sys:String x:Key="UploadButtonTooltip">上載清單至已載入</sys:String>
     <sys:String x:Key="DownloadButtonTooltip">儲存清單到檔案</sys:String>
     <!--#endregion-->
-    
-    
+    <!--#region setting view 設定視窗 -->
+    <!-- Tab names -->
+    <sys:String x:Key="SettingTabEquipment">設備管理</sys:String>
+    <sys:String x:Key="SettingTabEmployee">員工管理</sys:String>
+    <sys:String x:Key="SettingTabMaterial">材料管理</sys:String>
+    <sys:String x:Key="SettingTabErrorList">錯誤清單</sys:String>
+    <sys:String x:Key="SettingTabTimeSlot">巡檢時段</sys:String>
+    <sys:String x:Key="SettingTabRolePermission">角色權限</sys:String>
+    <!-- Common headers / tooltips -->
+    <sys:String x:Key="SettingActionDataGridHeader">操作</sys:String>
+    <sys:String x:Key="SettingEditTooltip">編輯</sys:String>
+    <sys:String x:Key="SettingDeleteTooltip">刪除</sys:String>
+    <sys:String x:Key="SettingCodeDataGridHeader">編號</sys:String>
+    <sys:String x:Key="SettingCodeRequiredLabel">編號 *</sys:String>
+    <sys:String x:Key="SettingNameDataGridHeader">名稱</sys:String>
+    <sys:String x:Key="SettingNameRequiredLabel">名稱 *</sys:String>
+    <sys:String x:Key="SettingTypeDataGridHeader">類型</sys:String>
+    <sys:String x:Key="SettingDescriptionDataGridHeader">描述</sys:String>
+    <sys:String x:Key="SettingNoteLabel">備註</sys:String>
+    <!-- Employee setting 員工設定 -->
+    <sys:String x:Key="EmployeeCardIdDataGridHeader">卡號</sys:String>
+    <sys:String x:Key="EmployeeUserIdDataGridHeader">職號</sys:String>
+    <sys:String x:Key="EmployeeNameDataGridHeader">姓名</sys:String>
+    <sys:String x:Key="EmployeeRoleDataGridHeader">角色</sys:String>
+    <sys:String x:Key="EmployeeUserIdLabel">職號 *</sys:String>
+    <sys:String x:Key="EmployeeNameLabel">姓名 *</sys:String>
+    <sys:String x:Key="EmployeePasswordLabel">密碼 *</sys:String>
+    <sys:String x:Key="EmployeePasswordEditLabel">密碼 (留空不修改)</sys:String>
+    <sys:String x:Key="EmployeeRoleLabel">角色 *</sys:String>
+    <sys:String x:Key="EmployeeDepartmentLabel">部門</sys:String>
+    <!-- Equipment setting 設備設定 -->
+    <sys:String x:Key="EquipmentFactoryDataGridHeader">廠區</sys:String>
+    <sys:String x:Key="EquipmentBuildingDataGridHeader">棟別</sys:String>
+    <sys:String x:Key="EquipmentFloorDataGridHeader">樓層</sys:String>
+    <sys:String x:Key="EquipmentTypeLabel">設備類型</sys:String>
+    <!-- Material setting 材料設定 -->
+    <sys:String x:Key="MaterialBrandDataGridHeader">廠牌</sys:String>
+    <sys:String x:Key="MaterialSpecLabel">規格</sys:String>
+    <sys:String x:Key="MaterialMinStockDataGridHeader">最低庫存</sys:String>
+    <sys:String x:Key="MaterialCurrStockDataGridHeader">目前庫存</sys:String>
+    <!-- Error list setting 錯誤清單設定 -->
+    <sys:String x:Key="ErrorListSeverityDataGridHeader">優先級</sys:String>
+    <sys:String x:Key="ErrorListTransCountDataGridHeader">翻譯數量</sys:String>
+    <!-- Time slot setting 巡檢時段設定 -->
+    <sys:String x:Key="TimeSlotStartTimeDataGridHeader">開始時間</sys:String>
+    <sys:String x:Key="TimeSlotEndTimeDataGridHeader">結束時間</sys:String>
+    <sys:String x:Key="TimeSlotCrossDayDataGridHeader">跨日</sys:String>
+    <sys:String x:Key="TimeSlotLabelDataGridHeader">標籤</sys:String>
+    <sys:String x:Key="TimeSlotIsCrossDayCheckbox">跨夜</sys:String>
+    <sys:String x:Key="TimeSlotLabelAutoFormLabel">標籤 (自動產生)</sys:String>
+    <!-- Role permission setting 角色權限設定 -->
+    <sys:String x:Key="RoleIdDataGridHeader">角色 ID</sys:String>
+    <sys:String x:Key="RoleNameDataGridHeader">角色名稱</sys:String>
+    <sys:String x:Key="RolePermissionDataGridHeader">權限</sys:String>
+    <sys:String x:Key="RoleNameLabel">角色名稱 *</sys:String>
+    <!--#endregion-->
+
 </ResourceDictionary>

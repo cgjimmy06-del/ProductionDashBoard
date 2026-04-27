@@ -76,6 +76,8 @@ namespace FProductionDashBoard.ViewModels
         [RelayCommand]
         private async Task Delete(Material item)
         {
+            if (!ShowConfirm($"{Properties.Resources.DialogBaseConfirm}{Properties.Resources.DialogBaseDelete}?"))
+                return;
             try
             {
                 await _dataService.DeleteMaterialAsync(item.MaterialId);
@@ -84,7 +86,7 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"刪除材料失敗: {ex.Message}", LogLevel.Error);
+                _log.AddLog($"刪除材料失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
             }
         }
 

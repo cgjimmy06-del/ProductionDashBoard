@@ -181,6 +181,18 @@
     <value>Result For Current Routine Inspection</value>
     <comment>設備卡片: 巡檢視窗</comment>
   </data>
+  <data name="DialogBaseConfirm" xml:space="preserve">
+    <value>Confirm</value>
+    <comment>基礎彈出視窗: 確認執行</comment>
+  </data>
+  <data name="DialogBaseDelete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>基礎彈出視窗: 刪除</comment>
+  </data>
+  <data name="DialogBaseSave" xml:space="preserve">
+    <value>Save</value>
+    <comment>基礎彈出視窗: 儲存</comment>
+  </data>
   <data name="InsFirstAbnormal" xml:space="preserve">
     <value>First Inspection Abnormal, please report according to procedure!</value>
     <comment>品質檢驗: 首件-檢驗異常</comment>

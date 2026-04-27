@@ -13,22 +13,24 @@
     <sys:String x:Key="VisitorButton">Khách</sys:String>
     <!--#endregion-->
     <!--#region Main Window 主視窗 (含導覽列/訊息視窗) -->
-    <sys:String x:Key="HomeNavButton">Home</sys:String>
-    <sys:String x:Key="OperationNavButton">On-Site Operation</sys:String>
-    <sys:String x:Key="ViewNavButton">Chart</sys:String>
-    <sys:String x:Key="ListManagementNavButton">List Management</sys:String>
-    <sys:String x:Key="PinButtonTooltip">Pin the messages to the last</sys:String>
-    <sys:String x:Key="ErrorLogButtonTooltip">Show error log</sys:String>
-    <sys:String x:Key="LargeFontButtonTooltip">Make the text bigger</sys:String>
-    <sys:String x:Key="LogSaveButtonTooltip">Save current logs and errorlogs</sys:String>
+    <sys:String x:Key="HomeNavButton">Trang chủ</sys:String>
+    <sys:String x:Key="OperationNavButton">Bảng vận hành</sys:String>
+    <sys:String x:Key="ViewNavButton">Biểu đồ</sys:String>
+    <sys:String x:Key="ListManagementNavButton">Quản lý danh sách</sys:String>
+    <sys:String x:Key="PinButtonTooltip">Ghim tin nhắn về cuối</sys:String>
+    <sys:String x:Key="ErrorLogButtonTooltip">Xem nhật ký lỗi</sys:String>
+    <sys:String x:Key="LargeFontButtonTooltip">Phóng to chữ</sys:String>
+    <sys:String x:Key="LogSaveButtonTooltip">Lưu nhật ký hiện tại</sys:String>
+    <sys:String x:Key="LogInButtonTooltip">Đăng nhập</sys:String>
+    <sys:String x:Key="LogOutButtonTooltip">Đăng xuất</sys:String>
     <!--#endregion-->
     <!--#region device card container 設備卡片操作區 -->
-    <sys:String x:Key="FirstInsAllButtonTooltip">Do first inspection for all devices</sys:String>
-    <sys:String x:Key="RoutineInsAllButtonTooltip">Do routine inspection for all devices</sys:String>
-    <sys:String x:Key="AddDeviceButtonTooltip">Add new device card to the block</sys:String>
-    <sys:String x:Key="FastUploadButtonTooltip">Fast upload default list to device block</sys:String>
-    <sys:String x:Key="FastDownloadButtonTooltip">Fast download list to default file</sys:String>
-    <sys:String x:Key="DeleteDevicesButtonTooltip">Delete device cards</sys:String>
+    <sys:String x:Key="FirstInsAllButtonTooltip">Kiểm tra đầu tất cả thiết bị</sys:String>
+    <sys:String x:Key="RoutineInsAllButtonTooltip">Tuần tra tất cả thiết bị</sys:String>
+    <sys:String x:Key="AddDeviceButtonTooltip">Thêm thẻ thiết bị vào bảng</sys:String>
+    <sys:String x:Key="FastUploadButtonTooltip">Tải nhanh danh sách mặc định</sys:String>
+    <sys:String x:Key="FastDownloadButtonTooltip">Lưu nhanh danh sách vào tệp</sys:String>
+    <sys:String x:Key="DeleteDevicesButtonTooltip">Xóa thẻ thiết bị</sys:String>
     <!--#endregion-->
     <!--#region device card 設備卡片 -->
     <sys:String x:Key="MetarialChangeButton">Vật liệu</sys:String>
@@ -39,6 +41,8 @@
     <!--#region dialog window 彈出視窗 -->
     <sys:String x:Key="ConfirmButton">Xác nhận</sys:String>
     <sys:String x:Key="CancelButton">Hủy</sys:String>
+    <sys:String x:Key="SaveButton">Lưu</sys:String>
+    <sys:String x:Key="NewButtonTooltip">Thêm mới</sys:String>
     <!--#endregion-->
     <!--#region inspection dialog 檢驗視窗 -->
     <sys:String x:Key="NormalRadioButton">Bình thường</sys:String>
@@ -55,11 +59,66 @@
     <sys:String x:Key="LoadedDataGridHeader">Loaded</sys:String>
     <!--#endregion-->
     <!--#region dcard manage dialog 設備卡片新增視窗 -->
-    <sys:String x:Key="AddToSelectedButtonTooltip">Move selected devices to loaded list</sys:String>
-    <sys:String x:Key="RemoveSelectedButtonTooltip">Remove Selected devices from loaded list</sys:String>
-    <sys:String x:Key="UploadButtonTooltip">Upload list to loaded</sys:String>
-    <sys:String x:Key="DownloadButtonTooltip">Download list to file</sys:String>
+    <sys:String x:Key="AddToSelectedButtonTooltip">Thêm thiết bị đã chọn vào danh sách</sys:String>
+    <sys:String x:Key="RemoveSelectedButtonTooltip">Xóa thiết bị đã chọn khỏi danh sách</sys:String>
+    <sys:String x:Key="UploadButtonTooltip">Tải danh sách lên</sys:String>
+    <sys:String x:Key="DownloadButtonTooltip">Lưu danh sách vào tệp</sys:String>
     <!--#endregion-->
-
+    <!--#region setting view 設定視窗 -->
+    <!-- Tab names -->
+    <sys:String x:Key="SettingTabEquipment">Thiết bị</sys:String>
+    <sys:String x:Key="SettingTabEmployee">Nhân viên</sys:String>
+    <sys:String x:Key="SettingTabMaterial">Vật liệu</sys:String>
+    <sys:String x:Key="SettingTabErrorList">Danh sách lỗi</sys:String>
+    <sys:String x:Key="SettingTabTimeSlot">Ca kiểm tra</sys:String>
+    <sys:String x:Key="SettingTabRolePermission">Vai trò &amp; Quyền</sys:String>
+    <!-- Common headers / tooltips -->
+    <sys:String x:Key="SettingActionDataGridHeader">Thao tác</sys:String>
+    <sys:String x:Key="SettingEditTooltip">Chỉnh sửa</sys:String>
+    <sys:String x:Key="SettingDeleteTooltip">Xóa</sys:String>
+    <sys:String x:Key="SettingCodeDataGridHeader">Mã</sys:String>
+    <sys:String x:Key="SettingCodeRequiredLabel">Mã *</sys:String>
+    <sys:String x:Key="SettingNameDataGridHeader">Tên</sys:String>
+    <sys:String x:Key="SettingNameRequiredLabel">Tên *</sys:String>
+    <sys:String x:Key="SettingTypeDataGridHeader">Loại</sys:String>
+    <sys:String x:Key="SettingDescriptionDataGridHeader">Mô tả</sys:String>
+    <sys:String x:Key="SettingNoteLabel">Ghi chú</sys:String>
+    <!-- Employee setting -->
+    <sys:String x:Key="EmployeeCardIdDataGridHeader">Mã thẻ</sys:String>
+    <sys:String x:Key="EmployeeUserIdDataGridHeader">Mã nhân viên</sys:String>
+    <sys:String x:Key="EmployeeNameDataGridHeader">Họ và tên</sys:String>
+    <sys:String x:Key="EmployeeRoleDataGridHeader">Vai trò</sys:String>
+    <sys:String x:Key="EmployeeUserIdLabel">Mã nhân viên *</sys:String>
+    <sys:String x:Key="EmployeeNameLabel">Họ và tên *</sys:String>
+    <sys:String x:Key="EmployeePasswordLabel">Mật khẩu *</sys:String>
+    <sys:String x:Key="EmployeePasswordEditLabel">Mật khẩu (để trống giữ nguyên)</sys:String>
+    <sys:String x:Key="EmployeeRoleLabel">Vai trò *</sys:String>
+    <sys:String x:Key="EmployeeDepartmentLabel">Phòng ban</sys:String>
+    <!-- Equipment setting -->
+    <sys:String x:Key="EquipmentFactoryDataGridHeader">Khu vực</sys:String>
+    <sys:String x:Key="EquipmentBuildingDataGridHeader">Tòa nhà</sys:String>
+    <sys:String x:Key="EquipmentFloorDataGridHeader">Tầng</sys:String>
+    <sys:String x:Key="EquipmentTypeLabel">Loại thiết bị</sys:String>
+    <!-- Material setting -->
+    <sys:String x:Key="MaterialBrandDataGridHeader">Thương hiệu</sys:String>
+    <sys:String x:Key="MaterialSpecLabel">Thông số</sys:String>
+    <sys:String x:Key="MaterialMinStockDataGridHeader">Tồn kho tối thiểu</sys:String>
+    <sys:String x:Key="MaterialCurrStockDataGridHeader">Tồn kho hiện tại</sys:String>
+    <!-- Error list setting -->
+    <sys:String x:Key="ErrorListSeverityDataGridHeader">Độ ưu tiên</sys:String>
+    <sys:String x:Key="ErrorListTransCountDataGridHeader">Số bản dịch</sys:String>
+    <!-- Time slot setting -->
+    <sys:String x:Key="TimeSlotStartTimeDataGridHeader">Giờ bắt đầu</sys:String>
+    <sys:String x:Key="TimeSlotEndTimeDataGridHeader">Giờ kết thúc</sys:String>
+    <sys:String x:Key="TimeSlotCrossDayDataGridHeader">Qua ngày</sys:String>
+    <sys:String x:Key="TimeSlotLabelDataGridHeader">Nhãn</sys:String>
+    <sys:String x:Key="TimeSlotIsCrossDayCheckbox">Qua đêm</sys:String>
+    <sys:String x:Key="TimeSlotLabelAutoFormLabel">Nhãn (tự động)</sys:String>
+    <!-- Role permission setting -->
+    <sys:String x:Key="RoleIdDataGridHeader">ID vai trò</sys:String>
+    <sys:String x:Key="RoleNameDataGridHeader">Tên vai trò</sys:String>
+    <sys:String x:Key="RolePermissionDataGridHeader">Quyền</sys:String>
+    <sys:String x:Key="RoleNameLabel">Tên vai trò *</sys:String>
+    <!--#endregion-->
 
 </ResourceDictionary>

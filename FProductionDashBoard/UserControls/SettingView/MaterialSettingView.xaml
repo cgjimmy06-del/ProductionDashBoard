@@ -29,9 +29,10 @@
 
             <Button Grid.Row="0" HorizontalAlignment="Right" Margin="8,6"
                     Command="{Binding NewCommand}"
+                    ToolTip="{DynamicResource NewButtonTooltip}"
                     Style="{StaticResource FunctionButtonStyle}">
                 <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
-                                         VerticalAlignment="Center" 
+                                         VerticalAlignment="Center"
                                          HorizontalAlignment="Center"/>
             </Button>
 
@@ -43,35 +44,35 @@
                       SelectionMode="Single"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="編號" Binding="{Binding MaterialCode}" Width="Auto"
+                    <DataGridTextColumn Header="{DynamicResource SettingCodeDataGridHeader}" Binding="{Binding MaterialCode}" Width="Auto"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="名稱" Binding="{Binding Name}" Width="2*"
+                    <DataGridTextColumn Header="{DynamicResource SettingNameDataGridHeader}" Binding="{Binding Name}" Width="2*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="廠牌" Binding="{Binding Brand}" Width="*"
+                    <DataGridTextColumn Header="{DynamicResource MaterialBrandDataGridHeader}" Binding="{Binding Brand}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="類型" Binding="{Binding Type.Name}" Width="80"
+                    <DataGridTextColumn Header="{DynamicResource SettingTypeDataGridHeader}" Binding="{Binding Type.Name}" Width="80"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="最低庫存" Binding="{Binding MinimumStock}" Width="70"
+                    <DataGridTextColumn Header="{DynamicResource MaterialMinStockDataGridHeader}" Binding="{Binding MinimumStock}" Width="70"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="目前庫存" Binding="{Binding QuantityInStock}" Width="70"
+                    <DataGridTextColumn Header="{DynamicResource MaterialCurrStockDataGridHeader}" Binding="{Binding QuantityInStock}" Width="70"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="描述" Binding="{Binding Description}" Width="*"
+                    <DataGridTextColumn Header="{DynamicResource SettingDescriptionDataGridHeader}" Binding="{Binding Description}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTemplateColumn Header="操作" Width="80">
+                    <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="編輯"
+                                            ToolTip="{DynamicResource SettingEditTooltip}"
                                             Foreground="{DynamicResource SecondaryBrush}">
                                         <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
                                     </Button>
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="刪除"
+                                            ToolTip="{DynamicResource SettingDeleteTooltip}"
                                             Foreground="{DynamicResource ErrorBrush}">
                                         <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
                                     </Button>
@@ -117,53 +118,52 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel Grid.Row="0" Grid.Column="0" Margin="4">
-                            <TextBlock Text="編號 *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="編號 *"
+                            <TextBlock Text="{DynamicResource SettingCodeRequiredLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingCodeRequiredLabel}"
                                      Text="{Binding FormMaterialCode, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="0" Grid.Column="1" Margin="4">
-                            <TextBlock Text="名稱 *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="名稱 *"
+                            <TextBlock Text="{DynamicResource SettingNameRequiredLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingNameRequiredLabel}"
                                      Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="0" Grid.Column="2" Margin="4">
-                            <TextBlock Text="廠牌" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="廠牌"
+                            <TextBlock Text="{DynamicResource MaterialBrandDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource MaterialBrandDataGridHeader}"
                                      Text="{Binding FormBrand, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="0" Grid.Column="3" Margin="4">
-                            <TextBlock Text="規格" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="規格"
+                            <TextBlock Text="{DynamicResource MaterialSpecLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource MaterialSpecLabel}"
                                      Text="{Binding FormSpecification, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Grid.Column="0" Margin="4">
-                            <TextBlock Text="類型" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <ComboBox materialDesign:HintAssist.Hint="類型"
-                                      ItemsSource="{Binding MaterialTypes}"
+                            <TextBlock Text="{DynamicResource SettingTypeDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <ComboBox ItemsSource="{Binding MaterialTypes}"
                                       SelectedValuePath="TypeId"
                                       DisplayMemberPath="Name"
                                       SelectedValue="{Binding FormTypeId}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Grid.Column="1" Margin="4">
-                            <TextBlock Text="最低庫存" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="最低庫存"
+                            <TextBlock Text="{DynamicResource MaterialMinStockDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource MaterialMinStockDataGridHeader}"
                                      Text="{Binding FormMinimumStock, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Grid.Column="2" Margin="4">
-                            <TextBlock Text="目前庫存" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="目前庫存"
+                            <TextBlock Text="{DynamicResource MaterialCurrStockDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource MaterialCurrStockDataGridHeader}"
                                      Text="{Binding FormQuantityInStock, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
-                        
+
                         <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="4">
-                            <TextBlock Text="備註" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="按鈕顯示內容"
+                            <TextBlock Text="{DynamicResource SettingNoteLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingNoteLabel}"
                                      Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
@@ -183,9 +183,9 @@
                                 Foreground="{DynamicResource PrimaryBrush}"
                                 BorderBrush="{DynamicResource PrimaryBrush}"
                                 Command="{Binding CancelCommand}"
-                                Content="取消"/>
+                                Content="{DynamicResource CancelButton}"/>
                         <Button Command="{Binding SaveCommand}"
-                                Content="儲存"/>
+                                Content="{DynamicResource SaveButton}"/>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

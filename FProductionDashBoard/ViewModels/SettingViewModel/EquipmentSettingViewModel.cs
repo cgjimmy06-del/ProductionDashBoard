@@ -81,6 +81,8 @@ namespace FProductionDashBoard.ViewModels
         [RelayCommand]
         private async Task Delete(Equipment item)
         {
+            if (!ShowConfirm($"{Properties.Resources.DialogBaseConfirm}{Properties.Resources.DialogBaseDelete}?"))
+                return;
             try
             {
                 await _dataService.DeleteEquipmentAsync(item.Id);
@@ -89,7 +91,7 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"刪除設備失敗: {ex.Message}", LogLevel.Error);
+                _log.AddLog($"刪除設備失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
             }
         }
 

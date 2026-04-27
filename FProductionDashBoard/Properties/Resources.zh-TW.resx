@@ -165,6 +165,15 @@
   <data name="DeviceRoutineInsDialog" xml:space="preserve">
     <value>本次巡檢結果</value>
   </data>
+  <data name="DialogBaseConfirm" xml:space="preserve">
+    <value>確認執行</value>
+  </data>
+  <data name="DialogBaseDelete" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="DialogBaseSave" xml:space="preserve">
+    <value>儲存</value>
+  </data>
   <data name="InsFirstAbnormal" xml:space="preserve">
     <value>首件異常，請依流程通報!</value>
   </data>
