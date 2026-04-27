@@ -82,7 +82,11 @@ namespace FProductionDashBoard
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is bool b)
+            {
+                if (parameter?.ToString() == "Invert")
+                    b = !b;
                 return b ? Visibility.Visible : Visibility.Collapsed;
+            }
             return Visibility.Collapsed;
         }
 
