@@ -122,12 +122,12 @@
                                 <ComboBox ItemsSource="{Binding HourItems}"
                                           SelectedItem="{Binding FormStartHour}"
                                           Width="70"
-                                          materialDesign:HintAssist.Hint="時"/>
+                                          materialDesign:HintAssist.Hint="hr"/>
                                 <TextBlock Text=":" VerticalAlignment="Center" Margin="4,0" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 <ComboBox ItemsSource="{Binding MinuteItems}"
                                           SelectedItem="{Binding FormStartMinute}"
                                           Width="60"
-                                          materialDesign:HintAssist.Hint="分"/>
+                                          materialDesign:HintAssist.Hint="min"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -138,18 +138,18 @@
                                 <ComboBox ItemsSource="{Binding HourItems}"
                                           SelectedItem="{Binding FormEndHour}"
                                           Width="70"
-                                          materialDesign:HintAssist.Hint="時"/>
+                                          materialDesign:HintAssist.Hint="hr"/>
                                 <TextBlock Text=":" VerticalAlignment="Center" Margin="4,0" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 <ComboBox ItemsSource="{Binding MinuteItems}"
                                           SelectedItem="{Binding FormEndMinute}"
                                           Width="60"
-                                          materialDesign:HintAssist.Hint="分"/>
+                                          materialDesign:HintAssist.Hint="min"/>
                             </StackPanel>
                         </StackPanel>
 
                         <StackPanel Grid.Column="3" Margin="4" Orientation="Horizontal" VerticalAlignment="Bottom">
                             <CheckBox IsChecked="{Binding FormIsCrossDay}"
-                                      Content="跨日 (IsCrossDay)"
+                                      Content="{DynamicResource TimeSlotIsCrossDayCheckbox}"
                                       Foreground="{DynamicResource TextPrimaryBrush}"
                                       VerticalAlignment="Center"/>
                         </StackPanel>

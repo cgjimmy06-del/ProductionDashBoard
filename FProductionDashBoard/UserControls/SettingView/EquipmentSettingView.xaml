@@ -122,14 +122,14 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Grid.Column="0" Margin="4">
-                        <TextBlock Text="Code *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="Code *"
+                            <TextBlock Text="{DynamicResource SettingCodeRequiredLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingCodeRequiredLabel}"
                                  Text="{Binding FormCode, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Row="0" Grid.Column="1" Margin="4">
-                        <TextBlock Text="Name *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="Name *"
+                            <TextBlock Text="{DynamicResource SettingNameRequiredLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingNameRequiredLabel}"
                                  Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
@@ -147,8 +147,7 @@
 
                     <StackPanel Grid.Row="1" Grid.Column="0" Margin="4">
                         <TextBlock Text="{DynamicResource EquipmentTypeLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <ComboBox materialDesign:HintAssist.Hint="設備類型"
-                                  ItemsSource="{Binding EquipmentTypes}"
+                        <ComboBox ItemsSource="{Binding EquipmentTypes}"
                                   SelectedValuePath="TypeId"
                                   DisplayMemberPath="Name"
                                   SelectedValue="{Binding FormTypeId}"/>
@@ -156,25 +155,25 @@
 
                     <StackPanel Grid.Row="1" Grid.Column="1" Margin="4">
                         <TextBlock Text="{DynamicResource EquipmentFactoryDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="廠區"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource EquipmentFactoryDataGridHeader}"
                                  Text="{Binding FormFactory, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Grid.Column="2" Margin="4">
                         <TextBlock Text="{DynamicResource EquipmentBuildingDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="棟別"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource EquipmentBuildingDataGridHeader}"
                                  Text="{Binding FormBuilding, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Grid.Column="3" Margin="4">
                         <TextBlock Text="{DynamicResource EquipmentFloorDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="樓層"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource EquipmentFloorDataGridHeader}"
                                  Text="{Binding FormFloor, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="4">
                         <TextBlock Text="{DynamicResource SettingNoteLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="備註"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingNoteLabel}"
                                  Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                 </Grid>

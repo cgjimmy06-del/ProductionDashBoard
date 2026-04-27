@@ -109,7 +109,7 @@
 
                         <StackPanel Grid.Column="0" Margin="4">
                             <TextBlock Text="{DynamicResource SettingCodeRequiredLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="編號 *"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingCodeRequiredLabel}"
                                      IsEnabled="{Binding IsNewMode}"
                                      Text="{Binding FormErrorCode, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
@@ -117,7 +117,6 @@
                         <StackPanel Grid.Column="1" Margin="4">
                             <TextBlock Text="{DynamicResource SettingTypeDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <ComboBox x:Name="TypeComboBox"
-                                      materialDesign:HintAssist.Hint="類型"
                                       ItemsSource="{Binding ListTypes}"
                                       SelectedValuePath="TypeId"
                                       DisplayMemberPath="Name"
@@ -132,8 +131,7 @@
 
                         <StackPanel Grid.Column="3" Margin="4">
                             <TextBlock Text="{DynamicResource ErrorListSeverityDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <ComboBox materialDesign:HintAssist.Hint="優先級"
-                                      ItemsSource="{Binding SeverityItems}"
+                            <ComboBox ItemsSource="{Binding SeverityItems}"
                                       SelectedItem="{Binding FormSeverity}"/>
                         </StackPanel>
                     </Grid>

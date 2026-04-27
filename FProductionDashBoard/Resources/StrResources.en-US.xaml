@@ -86,6 +86,7 @@
     <sys:String x:Key="EmployeeUserIdDataGridHeader">Staff ID</sys:String>
     <sys:String x:Key="EmployeeNameDataGridHeader">Full Name</sys:String>
     <sys:String x:Key="EmployeeRoleDataGridHeader">Role</sys:String>
+    <sys:String x:Key="EmployeeUserIdLabel">Staff ID *</sys:String>
     <sys:String x:Key="EmployeeNameLabel">Full Name *</sys:String>
     <sys:String x:Key="EmployeePasswordLabel">Password *</sys:String>
     <sys:String x:Key="EmployeePasswordEditLabel">Password (blank = keep)</sys:String>
@@ -109,6 +110,7 @@
     <sys:String x:Key="TimeSlotEndTimeDataGridHeader">End Time</sys:String>
     <sys:String x:Key="TimeSlotCrossDayDataGridHeader">Cross Day</sys:String>
     <sys:String x:Key="TimeSlotLabelDataGridHeader">Label</sys:String>
+    <sys:String x:Key="TimeSlotIsCrossDayCheckbox">Overnight</sys:String>
     <sys:String x:Key="TimeSlotLabelAutoFormLabel">Label (auto-generated)</sys:String>
     <!-- Role permission setting -->
     <sys:String x:Key="RoleIdDataGridHeader">Role ID</sys:String>

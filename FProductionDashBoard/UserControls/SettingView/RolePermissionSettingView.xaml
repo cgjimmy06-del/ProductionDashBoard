@@ -136,14 +136,14 @@
                         <StackPanel Grid.Column="1" Margin="4">
                             <TextBlock Text="{DynamicResource RoleNameLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="角色名稱 *"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource RoleNameLabel}"
                                      Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2" Margin="4">
                             <TextBlock Text="{DynamicResource SettingDescriptionDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="描述"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingDescriptionDataGridHeader}"
                                      Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>

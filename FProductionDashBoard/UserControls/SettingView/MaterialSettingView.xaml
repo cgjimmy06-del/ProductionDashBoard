@@ -119,32 +119,31 @@
 
                         <StackPanel Grid.Row="0" Grid.Column="0" Margin="4">
                             <TextBlock Text="{DynamicResource SettingCodeRequiredLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="編號 *"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingCodeRequiredLabel}"
                                      Text="{Binding FormMaterialCode, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="0" Grid.Column="1" Margin="4">
                             <TextBlock Text="{DynamicResource SettingNameRequiredLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="名稱 *"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingNameRequiredLabel}"
                                      Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="0" Grid.Column="2" Margin="4">
                             <TextBlock Text="{DynamicResource MaterialBrandDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="廠牌"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource MaterialBrandDataGridHeader}"
                                      Text="{Binding FormBrand, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="0" Grid.Column="3" Margin="4">
                             <TextBlock Text="{DynamicResource MaterialSpecLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="規格"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource MaterialSpecLabel}"
                                      Text="{Binding FormSpecification, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Grid.Column="0" Margin="4">
                             <TextBlock Text="{DynamicResource SettingTypeDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <ComboBox materialDesign:HintAssist.Hint="類型"
-                                      ItemsSource="{Binding MaterialTypes}"
+                            <ComboBox ItemsSource="{Binding MaterialTypes}"
                                       SelectedValuePath="TypeId"
                                       DisplayMemberPath="Name"
                                       SelectedValue="{Binding FormTypeId}"/>
@@ -152,19 +151,19 @@
 
                         <StackPanel Grid.Row="1" Grid.Column="1" Margin="4">
                             <TextBlock Text="{DynamicResource MaterialMinStockDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="最低庫存"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource MaterialMinStockDataGridHeader}"
                                      Text="{Binding FormMinimumStock, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Grid.Column="2" Margin="4">
                             <TextBlock Text="{DynamicResource MaterialCurrStockDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="目前庫存"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource MaterialCurrStockDataGridHeader}"
                                      Text="{Binding FormQuantityInStock, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="4">
                             <TextBlock Text="{DynamicResource SettingNoteLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="備註"
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingNoteLabel}"
                                      Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>

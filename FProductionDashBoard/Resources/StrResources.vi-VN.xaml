@@ -86,6 +86,7 @@
     <sys:String x:Key="EmployeeUserIdDataGridHeader">Mã nhân viên</sys:String>
     <sys:String x:Key="EmployeeNameDataGridHeader">Họ và tên</sys:String>
     <sys:String x:Key="EmployeeRoleDataGridHeader">Vai trò</sys:String>
+    <sys:String x:Key="EmployeeUserIdLabel">Mã nhân viên *</sys:String>
     <sys:String x:Key="EmployeeNameLabel">Họ và tên *</sys:String>
     <sys:String x:Key="EmployeePasswordLabel">Mật khẩu *</sys:String>
     <sys:String x:Key="EmployeePasswordEditLabel">Mật khẩu (để trống giữ nguyên)</sys:String>
@@ -109,6 +110,7 @@
     <sys:String x:Key="TimeSlotEndTimeDataGridHeader">Giờ kết thúc</sys:String>
     <sys:String x:Key="TimeSlotCrossDayDataGridHeader">Qua ngày</sys:String>
     <sys:String x:Key="TimeSlotLabelDataGridHeader">Nhãn</sys:String>
+    <sys:String x:Key="TimeSlotIsCrossDayCheckbox">Qua đêm</sys:String>
     <sys:String x:Key="TimeSlotLabelAutoFormLabel">Nhãn (tự động)</sys:String>
     <!-- Role permission setting -->
     <sys:String x:Key="RoleIdDataGridHeader">ID vai trò</sys:String>

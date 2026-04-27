@@ -86,6 +86,7 @@
     <sys:String x:Key="EmployeeUserIdDataGridHeader">職號</sys:String>
     <sys:String x:Key="EmployeeNameDataGridHeader">姓名</sys:String>
     <sys:String x:Key="EmployeeRoleDataGridHeader">角色</sys:String>
+    <sys:String x:Key="EmployeeUserIdLabel">職號 *</sys:String>
     <sys:String x:Key="EmployeeNameLabel">姓名 *</sys:String>
     <sys:String x:Key="EmployeePasswordLabel">密碼 *</sys:String>
     <sys:String x:Key="EmployeePasswordEditLabel">密碼 (留空不修改)</sys:String>
@@ -109,6 +110,7 @@
     <sys:String x:Key="TimeSlotEndTimeDataGridHeader">結束時間</sys:String>
     <sys:String x:Key="TimeSlotCrossDayDataGridHeader">跨日</sys:String>
     <sys:String x:Key="TimeSlotLabelDataGridHeader">標籤</sys:String>
+    <sys:String x:Key="TimeSlotIsCrossDayCheckbox">跨夜</sys:String>
     <sys:String x:Key="TimeSlotLabelAutoFormLabel">標籤 (自動產生)</sys:String>
     <!-- Role permission setting 角色權限設定 -->
     <sys:String x:Key="RoleIdDataGridHeader">角色 ID</sys:String>
