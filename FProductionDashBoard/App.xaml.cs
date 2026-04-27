@@ -69,7 +69,7 @@ namespace FProductionDashBoard
             services.AddTransient<IPendingOperationHandler, ReplacementSyncHandler>();
             services.AddTransient<IPendingOperationHandler, FirstInspectionSyncHandler>();
             services.AddTransient<IPendingOperationHandler, RoutineInspectionSyncHandler>();
-            //services.AddTransient<IPendingOperationHandler, TuningRecordSyncHandler>();
+            services.AddTransient<IPendingOperationHandler, TuningSyncHandler>();
 
             // 註冊 Service
             services.AddScoped<Services.IDataService, Services.V1.DataService>();
