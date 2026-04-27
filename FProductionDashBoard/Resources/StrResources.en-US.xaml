@@ -21,6 +21,8 @@
     <sys:String x:Key="ErrorLogButtonTooltip">Show error log</sys:String>
     <sys:String x:Key="LargeFontButtonTooltip">Make the text bigger</sys:String>
     <sys:String x:Key="LogSaveButtonTooltip">Save current logs and errorlogs</sys:String>
+    <sys:String x:Key="LogInButtonTooltip">Log In</sys:String>
+    <sys:String x:Key="LogOutButtonTooltip">Log Out</sys:String>
     <!--#endregion-->
     <!--#region device card container 設備卡片操作區 -->
     <sys:String x:Key="FirstInsAllButtonTooltip">Do first inspection for all devices</sys:String>
