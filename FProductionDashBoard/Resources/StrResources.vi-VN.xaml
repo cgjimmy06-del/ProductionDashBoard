@@ -120,5 +120,12 @@
     <sys:String x:Key="RolePermissionDataGridHeader">Quyền</sys:String>
     <sys:String x:Key="RoleNameLabel">Tên vai trò *</sys:String>
     <!--#endregion-->
+    <!--#region loading window -->
+    <sys:String x:Key="LoadingProcessingMessage">Đang xử lý, vui lòng chờ...</sys:String>
+    <sys:String x:Key="LoadingCountdownSuffix">giây cho đến khi tự đăng xuất</sys:String>
+    <sys:String x:Key="LoadingCardReaderMessage">Vui lòng quét thẻ của bạn</sys:String>
+    <sys:String x:Key="LoadingCancelButton">Hủy</sys:String>
+    <sys:String x:Key="LoadingExtendButton">Gia hạn phiên</sys:String>
+    <!--#endregion-->
 
 </ResourceDictionary>
