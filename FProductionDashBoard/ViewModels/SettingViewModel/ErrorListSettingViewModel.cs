@@ -54,9 +54,35 @@ namespace FProductionDashBoard.ViewModels
             EditingId = null;
             IsNewMode = true;
             ClearForm();
+            SuggestErrorCode();
             FormErrorString = null;
             FormSuccessString = null;
             IsFormVisible = true;
+        }
+
+        partial void OnFormTypeIdChanged(int? value) => SuggestErrorCode();
+
+        private void SuggestErrorCode()
+        {
+            if (!IsNewMode) return;
+            var type = ListTypes.FirstOrDefault(t => t.TypeId == FormTypeId);
+            if (type == null) return;
+
+            string prefix = type.Name;
+            int digitLen = 8 - prefix.Length;
+            if (digitLen <= 0) return;
+
+            int maxNum = ErrorItems
+                .Where(e => e.ErrorCode.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                .Select(e =>
+                {
+                    var suffix = e.ErrorCode[prefix.Length..];
+                    return int.TryParse(suffix, out int n) ? n : 0;
+                })
+                .DefaultIfEmpty(0)
+                .Max();
+
+            FormErrorCode = prefix + (maxNum + 1).ToString().PadLeft(digitLen, '0');
         }
 
         [RelayCommand]
