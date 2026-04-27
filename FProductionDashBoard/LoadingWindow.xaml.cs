@@ -1,74 +1,68 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Animation;
-using System.Windows.Shapes;
+using FProductionDashBoard.ViewModels;
 
 namespace FProductionDashBoard
 {
-    /// <summary>
-    /// Window1.xaml 的互動邏輯
-    /// </summary>
     public partial class LoadingWindow : Window
     {
-        public LoadingWindow()
+        public LoadingWindow() : this(new LoadingViewModel()) { }
+
+        public LoadingWindow(LoadingViewModel vm)
         {
             InitializeComponent();
+            DataContext = vm;
             Owner = Application.Current.MainWindow;
-            Opacity = 0; // 初始透明度設為 0
+            Opacity = 0;
+            vm.CloseRequested += (_, _) => Dispatcher.Invoke(Close);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        { 
-            // 建立淡入動畫
-            var fadeIn = new DoubleAnimation 
-            { 
-                From = 0, To = 1, Duration = TimeSpan.FromSeconds(1), 
-                // 1 秒淡入
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut } 
-            }; 
-            // 套用到視窗的 Opacity 屬性
-                this.BeginAnimation(Window.OpacityProperty, fadeIn);
+        {
+            if (DataContext is LoadingViewModel vm && vm.IsSpinning)
+                StartSpinAnimation();
+
+            var fadeIn = new DoubleAnimation
+            {
+                From = 0, To = 1, Duration = TimeSpan.FromSeconds(1),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+            this.BeginAnimation(Window.OpacityProperty, fadeIn);
+        }
+
+        private void StartSpinAnimation()
+        {
+            var rotation = (RotateTransform)LoadingIcon.RenderTransform;
+            var spin = new DoubleAnimation(0, 360, TimeSpan.FromSeconds(1))
+            {
+                RepeatBehavior = RepeatBehavior.Forever
+            };
+            rotation.BeginAnimation(RotateTransform.AngleProperty, spin);
         }
 
         private bool _isClosing = false;
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            // 如果已經在淡出，就不要再阻止
             if (_isClosing) return;
 
-            // 阻止立即關閉，先播放淡出動畫
             e.Cancel = true;
             _isClosing = true;
 
-            var fadeOut = new DoubleAnimation 
-            { 
-                From = this.Opacity, 
-                To = 0, 
-                Duration = TimeSpan.FromSeconds(1), 
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn } 
-            }; 
-            fadeOut.Completed += (s, _) => 
+            var fadeOut = new DoubleAnimation
             {
-                // 動畫完成後再真正關閉視窗
-                // 使用 Dispatcher.BeginInvoke 來避免再次觸發 Closing
-                Dispatcher.BeginInvoke(new Action(() => {
-                    _isClosing = false; 
-                    base.Close(); // 這次會真正關閉
-                }));
-                }; 
-
-            this.BeginAnimation(Window.OpacityProperty, fadeOut); 
+                From = this.Opacity,
+                To = 0,
+                Duration = TimeSpan.FromSeconds(1),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+            };
+            fadeOut.Completed += (s, _) =>
+            {
+                // _isClosing 保持 true，讓下一次 Window_Closing 直接 return 不攔截
+                Dispatcher.BeginInvoke(new Action(() => base.Close()));
+            };
+            this.BeginAnimation(Window.OpacityProperty, fadeOut);
         }
     }
-
 }

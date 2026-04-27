@@ -61,9 +61,13 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private bool isErrorMode = false; // 訊息視窗是否切換至異常訊息
         [ObservableProperty]
-        private int progressValue = 0; // 進度數值
+        private int progressValue = 0;
         [ObservableProperty]
-        private string progressString = Properties.Resources.MainProgressIdle; // 進度訊息
+        private string progressString = Properties.Resources.MainProgressIdle;
+        [ObservableProperty]
+        private bool isProgressIndeterminate = false;
+        [ObservableProperty]
+        private bool isProgressVisible = false;
         [ObservableProperty]
         private NavMode currentNavMode = NavMode.Home; // 當前導覽列模式
         #endregion
@@ -264,7 +268,14 @@ namespace FProductionDashBoard.ViewModels
 
             await _authService.InitializeAsync(loginWindow.User);
         }
-
+        private void SetProgress(string message, bool visible = true, bool indeterminate = false, int value = 0)
+        {
+            ProgressString = message;
+            IsProgressVisible = visible;
+            IsProgressIndeterminate = indeterminate;
+            ProgressValue = value;
+        }
+        private void ClearProgress() => SetProgress(Properties.Resources.MainProgressIdle, visible: false);
         // 導覽列事件
         public void SwitchMode(NavMode mode)
         {
@@ -303,7 +314,7 @@ namespace FProductionDashBoard.ViewModels
             //PropertyChanged += (s, e) => {
             //    if (e.PropertyName == nameof(IsErrorMode)) OnPropertyChanged(nameof(CurrentLogs)); };
         }
-        private async Task SaveLogsAsync() // 用於儲存訊息時非同步追蹤 (尚未建立按鈕鎖定)
+        private async Task SaveLogsAsync()
         {
             try
             {
