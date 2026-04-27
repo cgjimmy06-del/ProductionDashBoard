@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FProductionDashBoard.Models;
+using FProductionDashBoard.Services;
+using FProductionDashBoard.Services.Exceptions;
 using FProductionDashBoard.Services.Offline;
 using FProductionDashBoard.UiModels;
-using FProductionDashBoard.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -21,7 +23,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -252,7 +253,7 @@ namespace FProductionDashBoard.ViewModels
                 // TODO: 根據 result.SyncedCount / result.FailedCount 決定 log 輸出時機
                 if (result?.SyncedCount > 0)
                 	_log.AddLog($"已重新連線: 上傳{result?.SyncedCount}筆暫存資料");
-            	if (result?.FailedCount > 0)
+            	if (result?.FailedCount > 0) // 無效，因為離線永遠回傳0
                 	_log.AddLog($"連線失敗: {result?.FailedCount}筆資料等待上傳", LogLevel.Warning);
             }
             finally
@@ -344,25 +345,40 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                Debug.WriteLine($"連線狀態: {_dataService.EquipmentRep.CheckConnection()}");
-                await _dataService.Demo();
+                await _dataService.AddTeachingRecordAsync(1, 1, 600, "AAA");
+                //await AddOffsetRecordAsync(1, 1, 60, "BBB");
             }
-            catch (SqlException sqlex)
+            catch (OfflineOperationQueuedException)
             {
-                Debug.WriteLine($"SqlException: {sqlex.Message}");
-            }
-            catch (TaskCanceledException taskex)
-            {
-                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
-            }
-            catch(AggregateException aggEx) 
-            {
-                Debug.WriteLine($"TaskCanceledException: {aggEx.Message}");
+                _log.AddLog("帶點紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception: {ex.Message}");
+                _log.AddLog("帶點紀錄上傳異常");
+                _log.AddErrorLog($"Tuning Record: {ex.Message}");
             }
+
+            //try
+            //{
+            //    Debug.WriteLine($"連線狀態: {_dataService.EquipmentRep.CheckConnection()}");
+            //    await _dataService.Demo();
+            //}
+            //catch (SqlException sqlex)
+            //{
+            //    Debug.WriteLine($"SqlException: {sqlex.Message}");
+            //}
+            //catch (TaskCanceledException taskex)
+            //{
+            //    Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
+            //}
+            //catch(AggregateException aggEx) 
+            //{
+            //    Debug.WriteLine($"TaskCanceledException: {aggEx.Message}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine($"Exception: {ex.Message}");
+            //}
         }
 
     }

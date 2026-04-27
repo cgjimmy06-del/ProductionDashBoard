@@ -33,7 +33,7 @@ namespace FProductionDashBoard.Services
         public IRolePermissionRepository RolePermissionRep { get; }
 
         /// <summary>
-        /// 新增物料更換紀錄 (可離線暫存)
+        /// 新增物料更換紀錄 (支援離線暫存)
         /// </summary>
         public Task<int> AddReplacementRecordAsync(int equipmentId, int employeeId, List<(int materialId, int quantity)> materialDetails);
         /// <summary>
@@ -45,12 +45,12 @@ namespace FProductionDashBoard.Services
         /// </summary>
         public int? GetCurrentTimeSlotId(List<TimeSlotLookup> timeslots);
         /// <summary>
-        /// 新增首件紀錄 (可離線暫存)
+        /// 新增首件紀錄 (支援離線暫存)
         /// </summary>
         public Task<int> AddFirstInspectionAsync(int equipmentId, int employeeId, bool result,
             string? product, string? errorCode = null, string? description = null);
         /// <summary>
-        /// 新增巡檢紀錄 (可離線暫存)
+        /// 新增巡檢紀錄 (支援離線暫存)
         /// </summary>
         public Task<int> AddRoutineInspectionAsync(int equipmentId, int employeeId, bool result,
             int timeSlotId, string? product, string? errorCode = null, string? description = null);
@@ -63,11 +63,11 @@ namespace FProductionDashBoard.Services
         /// </summary>
         public Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId);
         /// <summary>
-        /// 新增帶點紀錄 (還不可離線暫存)
+        /// 新增帶點紀錄 (支援離線暫存)
         /// </summary>
         public Task<int> AddTeachingRecordAsync(int equipmentId, int employeeId, int durationSec, string? product);
         /// <summary>
-        /// 新增調品質紀錄 (還不可離線暫存)
+        /// 新增調品質紀錄 (支援離線暫存)
         /// </summary>
         public Task<int> AddOffsetRecordAsync(int equipmentId, int employeeId, int durationSec, string? product);
 
