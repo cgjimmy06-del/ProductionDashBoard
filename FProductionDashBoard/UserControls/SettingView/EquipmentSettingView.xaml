@@ -29,9 +29,10 @@
 
             <Button Grid.Row="0" HorizontalAlignment="Right" Margin="8,6"
                     Command="{Binding NewCommand}"
+                    ToolTip="{DynamicResource NewButtonTooltip}"
                     Style="{StaticResource FunctionButtonStyle}">
                 <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
-                                         VerticalAlignment="Center" 
+                                         VerticalAlignment="Center"
                                          HorizontalAlignment="Center"/>
             </Button>
 
@@ -43,39 +44,39 @@
                       SelectionMode="Single"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="編號" Binding="{Binding Code}" Width="Auto"
+                    <DataGridTextColumn Header="{DynamicResource SettingCodeDataGridHeader}" Binding="{Binding Code}" Width="Auto"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="名稱" Binding="{Binding Name}" Width="*"
+                    <DataGridTextColumn Header="{DynamicResource SettingNameDataGridHeader}" Binding="{Binding Name}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTextColumn Header="IP" Binding="{Binding Ip}" Width="Auto"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTextColumn Header="Port" Binding="{Binding Port}" Width="50"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="廠區" Binding="{Binding Factory}" Width="40"
+                    <DataGridTextColumn Header="{DynamicResource EquipmentFactoryDataGridHeader}" Binding="{Binding Factory}" Width="40"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="棟別" Binding="{Binding Building}" Width="40"
+                    <DataGridTextColumn Header="{DynamicResource EquipmentBuildingDataGridHeader}" Binding="{Binding Building}" Width="40"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="樓層" Binding="{Binding Floor}" Width="40"
+                    <DataGridTextColumn Header="{DynamicResource EquipmentFloorDataGridHeader}" Binding="{Binding Floor}" Width="40"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="類型" Binding="{Binding Type.Name}" Width="80"
+                    <DataGridTextColumn Header="{DynamicResource SettingTypeDataGridHeader}" Binding="{Binding Type.Name}" Width="80"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="描述" Binding="{Binding Description}" Width="1.5*"
+                    <DataGridTextColumn Header="{DynamicResource SettingDescriptionDataGridHeader}" Binding="{Binding Description}" Width="1.5*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTemplateColumn Header="操作" Width="80">
+                    <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="編輯"
+                                            ToolTip="{DynamicResource SettingEditTooltip}"
                                             Foreground="{DynamicResource SecondaryBrush}">
                                         <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
                                     </Button>
                                     <Button Style="{StaticResource GridEditButtonStyle}"
                                             Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip="刪除"
+                                            ToolTip="{DynamicResource SettingDeleteTooltip}"
                                             Foreground="{DynamicResource ErrorBrush}">
                                         <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
                                     </Button>
@@ -121,14 +122,14 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Grid.Column="0" Margin="4">
-                        <TextBlock Text="Code *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="Code *"
+                            <TextBlock Text="{DynamicResource SettingCodeRequiredLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingCodeRequiredLabel}"
                                  Text="{Binding FormCode, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Row="0" Grid.Column="1" Margin="4">
-                        <TextBlock Text="Name *" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="Name *"
+                            <TextBlock Text="{DynamicResource SettingNameRequiredLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingNameRequiredLabel}"
                                  Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
@@ -145,35 +146,34 @@
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Grid.Column="0" Margin="4">
-                        <TextBlock Text="設備類型" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <ComboBox materialDesign:HintAssist.Hint="設備類型"
-                                  ItemsSource="{Binding EquipmentTypes}"
+                        <TextBlock Text="{DynamicResource EquipmentTypeLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <ComboBox ItemsSource="{Binding EquipmentTypes}"
                                   SelectedValuePath="TypeId"
                                   DisplayMemberPath="Name"
                                   SelectedValue="{Binding FormTypeId}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Grid.Column="1" Margin="4">
-                        <TextBlock Text="廠區" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="廠區"
+                        <TextBlock Text="{DynamicResource EquipmentFactoryDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource EquipmentFactoryDataGridHeader}"
                                  Text="{Binding FormFactory, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Grid.Column="2" Margin="4">
-                        <TextBlock Text="棟別" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="棟別"
+                        <TextBlock Text="{DynamicResource EquipmentBuildingDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource EquipmentBuildingDataGridHeader}"
                                  Text="{Binding FormBuilding, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Grid.Column="3" Margin="4">
-                        <TextBlock Text="樓層" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="樓層"
+                        <TextBlock Text="{DynamicResource EquipmentFloorDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource EquipmentFloorDataGridHeader}"
                                  Text="{Binding FormFloor, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="4">
-                        <TextBlock Text="備註" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="備註"
+                        <TextBlock Text="{DynamicResource SettingNoteLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SettingNoteLabel}"
                                  Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                 </Grid>
@@ -193,9 +193,9 @@
                             Foreground="{DynamicResource PrimaryBrush}"
                             BorderBrush="{DynamicResource PrimaryBrush}"
                             Command="{Binding CancelCommand}"
-                            Content="取消"/>
+                            Content="{DynamicResource CancelButton}"/>
                     <Button Command="{Binding SaveCommand}"
-                            Content="儲存"/>
+                            Content="{DynamicResource SaveButton}"/>
                 </StackPanel>
             </StackPanel>
             </ScrollViewer>

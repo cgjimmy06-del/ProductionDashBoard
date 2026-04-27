@@ -39,6 +39,8 @@
     <!--#region dialog window 彈出視窗 -->
     <sys:String x:Key="ConfirmButton">Confirm</sys:String>
     <sys:String x:Key="CancelButton">Cancel</sys:String>
+    <sys:String x:Key="SaveButton">Save</sys:String>
+    <sys:String x:Key="NewButtonTooltip">Add New</sys:String>
     <!--#endregion-->
     <!--#region inspection dialog 檢驗視窗 -->
     <sys:String x:Key="NormalRadioButton">Pass</sys:String>
@@ -59,6 +61,62 @@
     <sys:String x:Key="RemoveSelectedButtonTooltip">Remove Selected devices from loaded list</sys:String>
     <sys:String x:Key="UploadButtonTooltip">Upload list to loaded</sys:String>
     <sys:String x:Key="DownloadButtonTooltip">Download list to file</sys:String>
+    <!--#endregion-->
+    <!--#region setting view 設定視窗 -->
+    <!-- Tab names -->
+    <sys:String x:Key="SettingTabEquipment">Equipment</sys:String>
+    <sys:String x:Key="SettingTabEmployee">Employee</sys:String>
+    <sys:String x:Key="SettingTabMaterial">Material</sys:String>
+    <sys:String x:Key="SettingTabErrorList">Error List</sys:String>
+    <sys:String x:Key="SettingTabTimeSlot">Time Slot</sys:String>
+    <sys:String x:Key="SettingTabRolePermission">Role &amp; Permission</sys:String>
+    <!-- Common headers / tooltips -->
+    <sys:String x:Key="SettingActionDataGridHeader">Action</sys:String>
+    <sys:String x:Key="SettingEditTooltip">Edit</sys:String>
+    <sys:String x:Key="SettingDeleteTooltip">Delete</sys:String>
+    <sys:String x:Key="SettingCodeDataGridHeader">Code</sys:String>
+    <sys:String x:Key="SettingCodeRequiredLabel">Code *</sys:String>
+    <sys:String x:Key="SettingNameDataGridHeader">Name</sys:String>
+    <sys:String x:Key="SettingNameRequiredLabel">Name *</sys:String>
+    <sys:String x:Key="SettingTypeDataGridHeader">Type</sys:String>
+    <sys:String x:Key="SettingDescriptionDataGridHeader">Description</sys:String>
+    <sys:String x:Key="SettingNoteLabel">Note</sys:String>
+    <!-- Employee setting -->
+    <sys:String x:Key="EmployeeCardIdDataGridHeader">Card ID</sys:String>
+    <sys:String x:Key="EmployeeUserIdDataGridHeader">Staff ID</sys:String>
+    <sys:String x:Key="EmployeeNameDataGridHeader">Full Name</sys:String>
+    <sys:String x:Key="EmployeeRoleDataGridHeader">Role</sys:String>
+    <sys:String x:Key="EmployeeUserIdLabel">Staff ID *</sys:String>
+    <sys:String x:Key="EmployeeNameLabel">Full Name *</sys:String>
+    <sys:String x:Key="EmployeePasswordLabel">Password *</sys:String>
+    <sys:String x:Key="EmployeePasswordEditLabel">Password (blank = keep)</sys:String>
+    <sys:String x:Key="EmployeeRoleLabel">Role *</sys:String>
+    <sys:String x:Key="EmployeeDepartmentLabel">Department</sys:String>
+    <!-- Equipment setting -->
+    <sys:String x:Key="EquipmentFactoryDataGridHeader">Factory</sys:String>
+    <sys:String x:Key="EquipmentBuildingDataGridHeader">Building</sys:String>
+    <sys:String x:Key="EquipmentFloorDataGridHeader">Floor</sys:String>
+    <sys:String x:Key="EquipmentTypeLabel">Equipment Type</sys:String>
+    <!-- Material setting -->
+    <sys:String x:Key="MaterialBrandDataGridHeader">Brand</sys:String>
+    <sys:String x:Key="MaterialSpecLabel">Specification</sys:String>
+    <sys:String x:Key="MaterialMinStockDataGridHeader">Min Stock</sys:String>
+    <sys:String x:Key="MaterialCurrStockDataGridHeader">Current Stock</sys:String>
+    <!-- Error list setting -->
+    <sys:String x:Key="ErrorListSeverityDataGridHeader">Severity</sys:String>
+    <sys:String x:Key="ErrorListTransCountDataGridHeader">Translations</sys:String>
+    <!-- Time slot setting -->
+    <sys:String x:Key="TimeSlotStartTimeDataGridHeader">Start Time</sys:String>
+    <sys:String x:Key="TimeSlotEndTimeDataGridHeader">End Time</sys:String>
+    <sys:String x:Key="TimeSlotCrossDayDataGridHeader">Cross Day</sys:String>
+    <sys:String x:Key="TimeSlotLabelDataGridHeader">Label</sys:String>
+    <sys:String x:Key="TimeSlotIsCrossDayCheckbox">Overnight</sys:String>
+    <sys:String x:Key="TimeSlotLabelAutoFormLabel">Label (auto-generated)</sys:String>
+    <!-- Role permission setting -->
+    <sys:String x:Key="RoleIdDataGridHeader">Role ID</sys:String>
+    <sys:String x:Key="RoleNameDataGridHeader">Role Name</sys:String>
+    <sys:String x:Key="RolePermissionDataGridHeader">Permission</sys:String>
+    <sys:String x:Key="RoleNameLabel">Role Name *</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>
