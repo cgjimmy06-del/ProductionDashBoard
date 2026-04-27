@@ -120,5 +120,12 @@
     <sys:String x:Key="RolePermissionDataGridHeader">權限</sys:String>
     <sys:String x:Key="RoleNameLabel">角色名稱 *</sys:String>
     <!--#endregion-->
+    <!--#region loading window 載入視窗 -->
+    <sys:String x:Key="LoadingProcessingMessage">處理中，請稍後...</sys:String>
+    <sys:String x:Key="LoadingCountdownSuffix">秒後自動登出</sys:String>
+    <sys:String x:Key="LoadingCardReaderMessage">請刷您的識別卡</sys:String>
+    <sys:String x:Key="LoadingCancelButton">取消</sys:String>
+    <sys:String x:Key="LoadingExtendButton">延長登入</sys:String>
+    <!--#endregion-->
 
 </ResourceDictionary>
