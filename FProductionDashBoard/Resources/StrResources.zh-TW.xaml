@@ -106,6 +106,7 @@
     <sys:String x:Key="MaterialCurrStockDataGridHeader">目前庫存</sys:String>
     <!-- Error list setting 錯誤清單設定 -->
     <sys:String x:Key="ErrorListSeverityDataGridHeader">優先級</sys:String>
+    <sys:String x:Key="ErrorListTranslationDataGridHeader">翻譯</sys:String>
     <sys:String x:Key="ErrorListTransCountDataGridHeader">翻譯數量</sys:String>
     <!-- Time slot setting 巡檢時段設定 -->
     <sys:String x:Key="TimeSlotStartTimeDataGridHeader">開始時間</sys:String>

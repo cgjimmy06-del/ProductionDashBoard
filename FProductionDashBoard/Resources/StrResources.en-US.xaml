@@ -106,6 +106,7 @@
     <sys:String x:Key="MaterialCurrStockDataGridHeader">Current Stock</sys:String>
     <!-- Error list setting -->
     <sys:String x:Key="ErrorListSeverityDataGridHeader">Severity</sys:String>
+    <sys:String x:Key="ErrorListTranslationDataGridHeader">Translation</sys:String>
     <sys:String x:Key="ErrorListTransCountDataGridHeader">Translations</sys:String>
     <!-- Time slot setting -->
     <sys:String x:Key="TimeSlotStartTimeDataGridHeader">Start Time</sys:String>
