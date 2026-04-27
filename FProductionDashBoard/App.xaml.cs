@@ -58,6 +58,7 @@ namespace FProductionDashBoard
             services.AddScoped<Repositories.IMaterialReplacementRepository, Repositories.MaterialReplacementRepository>();
             services.AddScoped<Repositories.ITimeSlotLookupRepository, Repositories.TimeSlotLookupRepository>();
             services.AddScoped<Repositories.IInspectionRecordRepository, Repositories.InspectionRecordRepository>();
+            services.AddScoped<Repositories.ITuningRecordRepository, Repositories.TuningRecordRepository>();
             services.AddScoped<Repositories.IRolePermissionRepository, Repositories.RolePermissionRepository>();
 
             // 離線暫存服務
@@ -68,6 +69,7 @@ namespace FProductionDashBoard
             services.AddTransient<IPendingOperationHandler, ReplacementSyncHandler>();
             services.AddTransient<IPendingOperationHandler, FirstInspectionSyncHandler>();
             services.AddTransient<IPendingOperationHandler, RoutineInspectionSyncHandler>();
+            //services.AddTransient<IPendingOperationHandler, TuningRecordSyncHandler>();
 
             // 註冊 Service
             services.AddScoped<Services.IDataService, Services.V1.DataService>();
