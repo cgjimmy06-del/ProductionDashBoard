@@ -62,6 +62,14 @@ namespace FProductionDashBoard.Services
         /// 檢查當前時段是否有巡檢紀錄，若沒有則補一筆「未巡檢」紀錄 (不可離線暫存，若進到下個工作日仍無法上傳則不能更新未巡檢紀錄)
         /// </summary>
         public Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId);
+        /// <summary>
+        /// 新增帶點紀錄 (還不可離線暫存)
+        /// </summary>
+        public Task<int> AddTeachingRecordAsync(int equipmentId, int employeeId, int durationSec, string? product);
+        /// <summary>
+        /// 新增調品質紀錄 (還不可離線暫存)
+        /// </summary>
+        public Task<int> AddOffsetRecordAsync(int equipmentId, int employeeId, int durationSec, string? product);
 
         // ─── 設定：設備 CRUD ─────────────────────────────────────────────────────────
         public Task<List<Equipment>> GetAllEquipmentAsync();

@@ -28,6 +28,7 @@ namespace FProductionDashBoard.Services.V1
         public IMaterialReplacementRepository MaterialReplacementRep { get; }
         public ITimeSlotLookupRepository TimeSlotLookupRep { get; }
         public IInspectionRecordRepository InspectionRecordRep { get; }
+        public ITuningRecordRepository TuningRecordRep { get; }
         public IRolePermissionRepository RolePermissionRep { get; }
 
         private readonly IOfflineCacheService _offlineCache;
@@ -35,7 +36,7 @@ namespace FProductionDashBoard.Services.V1
         public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep,
             IErrorListRepository errorListRep, IMaterialReplacementRepository materialReplacementRep,
             IInspectionRecordRepository inspectionRecordRep, ITimeSlotLookupRepository timeSlotLookupRep,
-            IOfflineCacheService offlineCache, IRolePermissionRepository rolePermissionRep)
+            IOfflineCacheService offlineCache, IRolePermissionRepository rolePermissionRep, ITuningRecordRepository tuningRecordRep)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
@@ -46,6 +47,7 @@ namespace FProductionDashBoard.Services.V1
             TimeSlotLookupRep = timeSlotLookupRep;
             _offlineCache = offlineCache;
             RolePermissionRep = rolePermissionRep;
+            TuningRecordRep = tuningRecordRep;
         }
 
         #region 測試用
@@ -64,6 +66,9 @@ namespace FProductionDashBoard.Services.V1
                 foreach (var npermission in nrole.RolePermissions)
                 { Debug.WriteLine($"permission = {npermission.PermissionId}"); }
             }
+
+            //await AddTeachingRecordAsync(1, 1, 600, "AAA");
+            //await AddOffsetRecordAsync(1, 1, 60, "BBB");
 
             //await CheckAndInsertMissedInspectionAsync(timeslots, 1, 1);
             // 插入
@@ -352,7 +357,6 @@ namespace FProductionDashBoard.Services.V1
                 }
             }
         }
-
         // 跨日邏輯: 跨整點 EndAt + 1；跨日 StartAt, EndAt + 1
         private (DateTime slotStart, DateTime slotEnd) GetSlotBounds(TimeSlotLookup slot)
         {
@@ -365,6 +369,75 @@ namespace FProductionDashBoard.Services.V1
                     slotStart = slotStart.AddDays(1);
             }
             return (slotStart, slotEnd);
+        }
+
+        public async Task<int> AddTeachingRecordAsync(int equipmentId, int employeeId, int durationSec, string? product)
+        {
+            if (await TuningRecordRep.CheckConnectionAsync())
+            {
+                try
+                {
+                    return await TuningRecordRep.AddTuningRecordAsync(
+                        TuningType.Teaching, equipmentId, employeeId, durationSec, product);
+                }
+                catch (SqlException ex)
+                {
+                    throw new DatabaseConnectionException("新增帶點紀錄時資料庫發生錯誤。", ex);
+                }
+            }
+            else return 0; // 有離線之後拿掉 (記得改interface的註解)
+            //var payload = new FirstInspectionPayload
+            //{
+            //    EquipmentId = equipmentId,
+            //    EmployeeId = employeeId,
+            //    Result = result,
+            //    Product = product,
+            //    ErrorCode = errorCode,
+            //    Description = description,
+            //    OperatedAt = DateTime.Now
+            //};
+            //var op = new PendingOperation
+            //{
+            //    OperationType = PendingOperationType.AddFirstInspection,
+            //    PayloadJson = JsonSerializer.Serialize(payload)
+            //};
+            //_ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
+
+            //throw new OfflineOperationQueuedException(op.Id);
+        }
+        public async Task<int> AddOffsetRecordAsync(int equipmentId, int employeeId, int durationSec, string? product)
+        {
+            if (await TuningRecordRep.CheckConnectionAsync())
+            {
+                try
+                {
+                    return await TuningRecordRep.AddTuningRecordAsync(
+                        TuningType.Offset, equipmentId, employeeId, durationSec, product);
+                }
+                catch (SqlException ex)
+                {
+                    throw new DatabaseConnectionException("新增調品質紀錄時資料庫發生錯誤。", ex);
+                }
+            }
+            else return 0; // 有離線之後拿掉 (記得改interface的註解)
+            //var payload = new FirstInspectionPayload
+            //{
+            //    EquipmentId = equipmentId,
+            //    EmployeeId = employeeId,
+            //    Result = result,
+            //    Product = product,
+            //    ErrorCode = errorCode,
+            //    Description = description,
+            //    OperatedAt = DateTime.Now
+            //};
+            //var op = new PendingOperation
+            //{
+            //    OperationType = PendingOperationType.AddFirstInspection,
+            //    PayloadJson = JsonSerializer.Serialize(payload)
+            //};
+            //_ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
+
+            //throw new OfflineOperationQueuedException(op.Id);
         }
 
         #endregion
