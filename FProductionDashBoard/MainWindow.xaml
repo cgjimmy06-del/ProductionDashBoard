@@ -108,7 +108,10 @@
 
             <StatusBarItem>
                 <ProgressBar Style="{StaticResource MaterialDesignLinearProgressBar}"
-                            Width="120"  Height="10" Value="{Binding ProgressValue}"
+                             Width="120" Height="10"
+                             Value="{Binding ProgressValue}"
+                             IsIndeterminate="{Binding IsProgressIndeterminate}"
+                             Visibility="{Binding IsProgressVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                              VerticalAlignment="Center"/>
             </StatusBarItem>
             <StatusBarItem>
