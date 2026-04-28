@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -56,11 +57,21 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private int currentAction = (int)UserAction.Producing; // 調試狀態
 
+        // 調試計時
+        [ObservableProperty]
+        private bool isTuning = false;
+        [ObservableProperty]
+        private string tuningStatusText = string.Empty;
+        private TuningType _activeTuningType;
+        private int _tuningElapsedSeconds;
+        private DispatcherTimer? _tuningTimer;
+
         // 介面邏輯
         public ICommand MaterialsChangeCommand { get; }
         public ICommand FirstInspectionCommand { get; }
         public ICommand RoutineInspectionCommand { get; }
         public ICommand OperationCommand { get; }
+        public ICommand EndTuningCommand { get; }
 
 #pragma warning disable CS8618 // 退出建構函式時，不可為 Null 的欄位必須包含非 Null 值。請考慮新增 'required' 修飾元，或將欄位宣告為可以為 Null。
         public DeviceCardViewModel() { }
@@ -80,7 +91,8 @@ namespace FProductionDashBoard.ViewModels
             MaterialsChangeCommand = new AsyncRelayCommand(MaterialsChange);
             FirstInspectionCommand = new AsyncRelayCommand(FirstArticleInspection);
             RoutineInspectionCommand = new AsyncRelayCommand(RoutineInspection);
-            OperationCommand = new RelayCommand(OperationChange);
+            OperationCommand = new AsyncRelayCommand(OperationChangeAsync);
+            EndTuningCommand = new AsyncRelayCommand(EndTuningAsync);
 
             // 巡檢用計時
             checkTimer = new DispatcherTimer();
@@ -229,16 +241,75 @@ namespace FProductionDashBoard.ViewModels
                 }
             }
         }
-        private void OperationChange()
+        private async Task OperationChangeAsync()
         {
-            Info.Status++;
-            if (Info.Status > 2) Info.Status = -1;
-            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Processing);
-            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Info);
-            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Warning);
-            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Error);
-            _log.AddLog($"設備 {Info.Name} 設備調試狀態更新:", LogLevel.Success);
-            _log.AddErrorLog($"設備 {Info.Name} 設備調試狀態更新:");
+            var vm = new TuningDialogViewModel(
+                $"{Properties.Resources.ComStrDevice}: {Info.Name}",
+                $"{Properties.Resources.ComStrUser}: {CurrentUser.Name}",
+                $"{Properties.Resources.ComStrProduct}: {CurrentProduct.Name}");
+            var uc = new TuningDialog { DataContext = vm };
+            var window = new DialogWindow(vm, uc);
+            window.ShowDialog();
+
+            if (!vm.IsConfirmed || vm.Result == null) return;
+
+            _activeTuningType = vm.Result.TuningType;
+            _tuningElapsedSeconds = 0;
+            IsTuning = true;
+            UpdateTuningText();
+
+            _tuningTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            _tuningTimer.Tick += (_, _) => { _tuningElapsedSeconds++; UpdateTuningText(); };
+            _tuningTimer.Start();
+            await Task.CompletedTask;
+        }
+
+        private async Task EndTuningAsync()
+        {
+            if (!IsTuning) return;
+
+            var confirmMsg = _activeTuningType == TuningType.Teaching
+                ? Properties.Resources.TuningEndConfirmTeaching
+                : Properties.Resources.TuningEndConfirmOffset;
+
+            var confirmVm = new DialogBaseViewModel<object>(confirmMsg);
+            var confirmWindow = new DialogWindow(confirmVm, new UserControl());
+            confirmWindow.ShowDialog();
+            if (!confirmVm.IsConfirmed) return;
+
+            _tuningTimer?.Stop();
+            IsTuning = false;
+            int elapsed = _tuningElapsedSeconds;
+
+            try
+            {
+                if (_activeTuningType == TuningType.Teaching)
+                    await _dataService.AddTeachingRecordAsync(Info.Id, CurrentUser.Id, elapsed, CurrentProduct?.Name);
+                else
+                    await _dataService.AddOffsetRecordAsync(Info.Id, CurrentUser.Id, elapsed, CurrentProduct?.Name);
+
+                var elapsedStr = TimeSpan.FromSeconds(elapsed);
+                _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
+                    $"調試紀錄上傳完成（{_activeTuningType}，{elapsedStr:hh\\:mm\\:ss}）", LogLevel.Success);
+            }
+            catch (OfflineOperationQueuedException)
+            {
+                _log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
+                    $"調試紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+            }
+            catch (Exception ex)
+            {
+                _log.AddErrorLog($"EndTuning Ex: {ex.Message}");
+            }
+        }
+
+        private void UpdateTuningText()
+        {
+            var label = _activeTuningType == TuningType.Teaching
+                ? Properties.Resources.TuningInProgressTeaching
+                : Properties.Resources.TuningInProgressOffset;
+            var ts = TimeSpan.FromSeconds(_tuningElapsedSeconds);
+            TuningStatusText = $"{label} {ts:hh\\:mm\\:ss}";
         }
 
     }

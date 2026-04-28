@@ -37,6 +37,9 @@
     <sys:String x:Key="FirstInspectionButton">Kiểm tra đầu</sys:String>
     <sys:String x:Key="RoutineInspectionButton">Tuần tra</sys:String>
     <sys:String x:Key="OperationButton">Điều chỉnh</sys:String>
+    <sys:String x:Key="TuningTeachingButton">Teaching</sys:String>
+    <sys:String x:Key="TuningOffsetButton">Offset</sys:String>
+    <sys:String x:Key="TuningClickToEnd">Nhấn bất kỳ để kết thúc</sys:String>
     <!--#endregion-->
     <!--#region dialog window 彈出視窗 -->
     <sys:String x:Key="ConfirmButton">Xác nhận</sys:String>

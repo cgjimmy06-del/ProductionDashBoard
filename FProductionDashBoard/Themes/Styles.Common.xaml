@@ -285,6 +285,22 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <Style x:Key="TuningOverlayButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="#CCEEEEEE"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="12">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <Style x:Key="MaterialSelectionButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="Height" Value="50"/>

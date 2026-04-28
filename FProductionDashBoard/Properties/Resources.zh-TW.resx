@@ -228,4 +228,19 @@
   <data name="MaterialNonSelectionError" xml:space="preserve">
     <value>請至少選擇一項!</value>
   </data>
+  <data name="TuningDialogTitle" xml:space="preserve">
+    <value>選擇調試操作</value>
+  </data>
+  <data name="TuningInProgressTeaching" xml:space="preserve">
+    <value>帶點中...</value>
+  </data>
+  <data name="TuningInProgressOffset" xml:space="preserve">
+    <value>調品質中...</value>
+  </data>
+  <data name="TuningEndConfirmTeaching" xml:space="preserve">
+    <value>確認結束帶點？</value>
+  </data>
+  <data name="TuningEndConfirmOffset" xml:space="preserve">
+    <value>確認結束調品質？</value>
+  </data>
 </root>
