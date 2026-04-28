@@ -26,7 +26,7 @@ using System.Windows.Threading;
 
 namespace FProductionDashBoard.ViewModels
 {
-    public enum NavMode { Home, Operation, List, View }
+    public enum NavMode { Home, Operation, List, Equipment, View }
     public partial class MainViewModel : ObservableObject
     {
         public string AppVersion { get; }
@@ -331,6 +331,9 @@ namespace FProductionDashBoard.ViewModels
 
                 case NavMode.List:
                     MainCard = new SettingViewModel(_log, _dataService, _authService);
+                    break;
+
+                case NavMode.Equipment:
                     break;
 
                 default:

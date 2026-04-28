@@ -76,7 +76,7 @@ namespace FProductionDashBoard.ViewModels
         [RelayCommand]
         private async Task Delete(Material item)
         {
-            if (!ShowConfirm($"{Properties.Resources.DialogBaseConfirm}{Properties.Resources.DialogBaseDelete}?"))
+            if (!ShowConfirm($"{Properties.Resources.DialogBaseConfirm} {Properties.Resources.DialogBaseDelete}?"))
                 return;
             try
             {
