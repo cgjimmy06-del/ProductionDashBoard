@@ -75,6 +75,7 @@ namespace FProductionDashBoard
             services.AddScoped<Services.IDataService, Services.V1.DataService>();
             services.AddScoped<Services.LogService>();
             services.AddSingleton<Services.AuthorizationService>();
+            services.AddSingleton<Services.ICardReaderService, Services.CardReaderService>();
 
             // 註冊 ViewModel
             services.AddScoped<ViewModels.MainViewModel>();

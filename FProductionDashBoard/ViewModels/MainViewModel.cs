@@ -40,6 +40,7 @@ namespace FProductionDashBoard.ViewModels
         #region  -- DI注入資源 --
         private readonly IDataService _dataService;
         private readonly IOfflineSyncService _syncService;
+        private readonly ICardReaderService _cardReaderService;
         public LogService _log { get; } // public 是為了Window的顯示
         private AuthorizationService _authService { get; }
         public UserInfo? SystemUser => _authService.CurrentUser;
@@ -98,7 +99,7 @@ namespace FProductionDashBoard.ViewModels
         private bool _isSyncing = false;
 
         public MainViewModel(LogService log, IDataService dataservice, AuthorizationService auth,
-            IOfflineSyncService syncService)
+            IOfflineSyncService syncService, ICardReaderService cardReaderService)
         {
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(
@@ -109,6 +110,9 @@ namespace FProductionDashBoard.ViewModels
             _dataService = dataservice;
             _authService = auth;
             _syncService = syncService;
+            _cardReaderService = cardReaderService;
+            _cardReaderService.CardRead += OnCardRead;
+            _cardReaderService.Start();
 
             // 定義工作起始時間 (於 DispatcherTimer 偵測更新)
             _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
@@ -374,6 +378,13 @@ namespace FProductionDashBoard.ViewModels
                 _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogs");
                 _log.AddErrorLog($"SaveLogs Ex: {ex.ToString()}");
             }
+        }
+
+        // 讀卡機事件（Phase 1：記錄 log；Phase 2 加入登入/換手邏輯）
+        private void OnCardRead(object? sender, string cardId)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+                _log.AddLog($"[CardReader] {cardId}"));
         }
 
         // 測試
