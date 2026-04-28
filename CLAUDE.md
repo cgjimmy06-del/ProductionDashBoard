@@ -110,6 +110,22 @@ FProductionDashBoard/ 	# 視窗元件
 
 
 
+\### 建立新 Dialog（彈出操作視窗）
+
+遇到「新增彈出視窗」、「新增操作 Dialog」等需求時，調用 memory `feedback_dialog_view_flow.md` 的 5 步 SOP。
+
+\- 核心規則：選項按鈕只反色更新選擇狀態，**不直接觸發確認**，必須由 DialogWindow 的確認按鈕輸出 Result
+
+\- 語言資源分兩處：ViewModel 程式碼用 `.resx`，XAML DynamicResource 用 `StrResources.*.xaml`
+
+
+
+\### 新增 Setting CRUD Tab
+
+遇到「新增設定頁籤」、「新增 CRUD 管理介面」等需求時，調用 memory `feedback_setting_view_flow.md` 的 8 步 SOP。
+
+
+
 \### 建立新業務邏輯服務
 
 

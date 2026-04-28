@@ -168,9 +168,9 @@ namespace FProductionDashBoard.ViewModels
 
             // 切換 .resx (後端訊息)
             var currentCulture = new CultureInfo(SelectedLanguage);
+            Properties.Resources.Culture = currentCulture;
             CultureInfo.DefaultThreadCurrentUICulture = currentCulture;
             Thread.CurrentThread.CurrentUICulture = currentCulture;
-            //Thread.CurrentThread.CurrentCulture = currentCulture;
         }
         private void themeChange() // 主題切換
         {
