@@ -300,6 +300,7 @@ namespace FProductionDashBoard.ViewModels
             var loginWindow = new LoginWindow();
             if (loginWindow.ShowDialog() != true) { return; }
 
+            _logInOutCounter = 0;
             await _authService.InitializeAsync(loginWindow.User);
         }
         private void SetProgress(string message, bool visible = true, bool indeterminate = false, int value = 0)
