@@ -43,6 +43,9 @@
             <DataTemplate DataType="{x:Type localvm:SettingViewModel}">
                 <localuc:SettingView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type localvm:HardwareViewModel}">
+                <localuc:HardwareView />
+            </DataTemplate>
 
         </ResourceDictionary>
     </Window.Resources>
