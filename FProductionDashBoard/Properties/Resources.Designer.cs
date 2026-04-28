@@ -392,5 +392,50 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("MaterialNonSelectionError", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   查詢類似 Select Tuning Operation 的當地語系化字串。
+        /// </summary>
+        internal static string TuningDialogTitle {
+            get {
+                return ResourceManager.GetString("TuningDialogTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查詢類似 Teaching... 的當地語系化字串。
+        /// </summary>
+        internal static string TuningInProgressTeaching {
+            get {
+                return ResourceManager.GetString("TuningInProgressTeaching", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查詢類似 Offset... 的當地語系化字串。
+        /// </summary>
+        internal static string TuningInProgressOffset {
+            get {
+                return ResourceManager.GetString("TuningInProgressOffset", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查詢類似 Confirm end Teaching? 的當地語系化字串。
+        /// </summary>
+        internal static string TuningEndConfirmTeaching {
+            get {
+                return ResourceManager.GetString("TuningEndConfirmTeaching", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查詢類似 Confirm end Offset? 的當地語系化字串。
+        /// </summary>
+        internal static string TuningEndConfirmOffset {
+            get {
+                return ResourceManager.GetString("TuningEndConfirmOffset", resourceCulture);
+            }
+        }
     }
 }

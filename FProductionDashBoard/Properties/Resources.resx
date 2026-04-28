@@ -265,4 +265,24 @@
     <value>Please select at least one item!</value>
     <comment>物料視窗: 錯誤訊息(dialog error string)</comment>
   </data>
+  <data name="TuningDialogTitle" xml:space="preserve">
+    <value>Select Tuning Operation</value>
+    <comment>調試視窗: 標題</comment>
+  </data>
+  <data name="TuningInProgressTeaching" xml:space="preserve">
+    <value>Teaching...</value>
+    <comment>調試卡片覆蓋層: 帶點進行中文字</comment>
+  </data>
+  <data name="TuningInProgressOffset" xml:space="preserve">
+    <value>Offset...</value>
+    <comment>調試卡片覆蓋層: 調品質進行中文字</comment>
+  </data>
+  <data name="TuningEndConfirmTeaching" xml:space="preserve">
+    <value>Confirm end Teaching?</value>
+    <comment>調試結束確認: 帶點</comment>
+  </data>
+  <data name="TuningEndConfirmOffset" xml:space="preserve">
+    <value>Confirm end Offset?</value>
+    <comment>調試結束確認: 調品質</comment>
+  </data>
 </root>

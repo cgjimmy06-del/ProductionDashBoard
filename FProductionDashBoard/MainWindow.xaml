@@ -171,6 +171,18 @@
                     Background="{DynamicResource PrimaryBackgroundBrush}"
                     Width="{Binding IsCollapsedNav, Converter={StaticResource CollapseWidthConverter}}">
                 <StackPanel Margin="0">
+                    <!-- 登入資訊 (待優化) -->
+                    <StackPanel Background="{DynamicResource PrimaryBrush}"
+                            Orientation="Vertical" HorizontalAlignment="Stretch">
+                        <materialDesign:PackIcon Background="{DynamicResource PrimaryBrush}"
+                                                 Foreground="{DynamicResource TextLightBrush}"
+                                                 HorizontalAlignment="Center"
+                                                 Kind="Account" Margin="0,0,0,0"
+                                                 Width="150" Height="150"/>
+                        <TextBlock d:Text="訪客" Foreground="{DynamicResource TextLightBrush}" 
+                                   Text="{Binding CurrentUser.Name}" 
+                                   FontSize="20" HorizontalAlignment="Center"/>
+                    </StackPanel>
                     <!-- 收合按鈕"☰" -->
                     <RadioButton Style="{StaticResource NavButtonStyle}"
                             Command="{Binding CollapseNavCommand}">
@@ -213,6 +225,7 @@
                         </StackPanel>
                     </RadioButton>
                     <!-- 加入:系統設定(主題、語言、預設參數) -->
+                    <!-- 收合按鈕 -->
                 </StackPanel>
             </Border>
 
