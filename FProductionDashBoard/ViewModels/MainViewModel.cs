@@ -268,7 +268,7 @@ namespace FProductionDashBoard.ViewModels
                 }
             }
         }
-        // 閒置過久 -- 逾時登出
+        // 閒置過久 -- 逾時登出 (目前為10分鐘詢問一次，並未真正從閒置開始計時，待優化) **
         private async Task CheckLogOutForLongIdle()
         {
             if (!IsLoggedIn) return;
