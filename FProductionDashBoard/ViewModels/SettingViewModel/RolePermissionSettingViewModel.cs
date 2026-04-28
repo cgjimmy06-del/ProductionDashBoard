@@ -73,7 +73,7 @@ namespace FProductionDashBoard.ViewModels
         [RelayCommand]
         private async Task Delete(Models.Role item)
         {
-            if (!ShowConfirm($"{Properties.Resources.DialogBaseConfirm}{Properties.Resources.DialogBaseDelete}?"))
+            if (!ShowConfirm($"{Properties.Resources.DialogBaseConfirm} {Properties.Resources.DialogBaseDelete}?"))
                 return;
             try
             {
