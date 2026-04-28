@@ -125,6 +125,14 @@
     <sys:String x:Key="RolePermissionDataGridHeader">Permission</sys:String>
     <sys:String x:Key="RoleNameLabel">Role Name *</sys:String>
     <!--#endregion-->
+    <!--#region hardware view -->
+    <sys:String x:Key="HardwareTabCardReader">Card Reader</sys:String>
+    <sys:String x:Key="CardReaderRefreshTooltip">Refresh available COM ports</sys:String>
+    <sys:String x:Key="CardReaderAddTooltip">Add card reader</sys:String>
+    <sys:String x:Key="CardReaderTestTooltip">Test connection</sys:String>
+    <sys:String x:Key="CardReaderApplyTooltip">Apply and reconnect</sys:String>
+    <sys:String x:Key="CardReaderDeleteTooltip">Remove card reader</sys:String>
+    <!--#endregion-->
     <!--#region loading window -->
     <sys:String x:Key="LoadingProcessingMessage">Processing, please wait...</sys:String>
     <sys:String x:Key="LoadingCountdownSuffix">seconds until auto logout</sys:String>

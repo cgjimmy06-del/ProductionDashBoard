@@ -41,6 +41,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly IDataService _dataService;
         private readonly IOfflineSyncService _syncService;
         private readonly ICardReaderService _cardReaderService;
+        private readonly MultiCardReaderService _multiCardReaderService;
         public LogService _log { get; } // public 是為了Window的顯示
         private AuthorizationService _authService { get; }
         public UserInfo? SystemUser => _authService.CurrentUser;
@@ -99,7 +100,8 @@ namespace FProductionDashBoard.ViewModels
         private bool _isSyncing = false;
 
         public MainViewModel(LogService log, IDataService dataservice, AuthorizationService auth,
-            IOfflineSyncService syncService, ICardReaderService cardReaderService)
+            IOfflineSyncService syncService, ICardReaderService cardReaderService,
+            MultiCardReaderService multiCardReaderService)
         {
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(
@@ -111,8 +113,8 @@ namespace FProductionDashBoard.ViewModels
             _authService = auth;
             _syncService = syncService;
             _cardReaderService = cardReaderService;
+            _multiCardReaderService = multiCardReaderService;
             _cardReaderService.CardRead += OnCardRead;
-            _cardReaderService.Start();
 
             // 定義工作起始時間 (於 DispatcherTimer 偵測更新)
             _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
@@ -338,6 +340,7 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Equipment:
+                    MainCard = new HardwareViewModel(_multiCardReaderService);
                     break;
 
                 default:
@@ -380,11 +383,28 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
-        // 讀卡機事件（Phase 1：記錄 log；Phase 2 加入登入/換手邏輯）
-        private void OnCardRead(object? sender, string cardId)
+        // 讀卡機事件：記錄 log + 自動登入/換手
+        private async void OnCardRead(object? sender, Services.CardReadEventArgs e)
         {
-            Application.Current.Dispatcher.Invoke(() =>
-                _log.AddLog($"[CardReader] {cardId}"));
+            try
+            {
+                _log.AddLog($"[CardReader:{e.PortName}] {e.CardId}");
+
+                var user = CommonLists.UsersList.FirstOrDefault(u => u.CardId == e.CardId);
+                if (user == null)
+                {
+                    _log.AddLog($"[CardReader] 未識別卡號: {e.CardId}", LogLevel.Warning);
+                    return;
+                }
+                if (_authService.CurrentUser?.CardId == e.CardId) return;
+
+                await _authService.InitializeAsync(user);
+                _log.AddLog($"[CardReader] 登入: {user.Name}", LogLevel.Success);
+            }
+            catch (Exception ex)
+            {
+                _log.AddLog($"[CardReader] 處理失敗: {ex.Message}", LogLevel.Error);
+            }
         }
 
         // 測試

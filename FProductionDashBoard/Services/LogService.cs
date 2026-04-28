@@ -114,7 +114,7 @@ namespace FProductionDashBoard.Services
         }
         public void AddErrorLog(string message)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 var resources = Application.Current.Resources;
                 var entry = new LogEntry

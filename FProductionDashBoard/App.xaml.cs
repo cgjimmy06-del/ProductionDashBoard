@@ -75,7 +75,9 @@ namespace FProductionDashBoard
             services.AddScoped<Services.IDataService, Services.V1.DataService>();
             services.AddScoped<Services.LogService>();
             services.AddSingleton<Services.AuthorizationService>();
-            services.AddSingleton<Services.ICardReaderService, Services.CardReaderService>();
+            services.AddSingleton<Services.MultiCardReaderService>();
+            services.AddSingleton<Services.ICardReaderService>(sp =>
+                sp.GetRequiredService<Services.MultiCardReaderService>());
 
             // 註冊 ViewModel
             services.AddScoped<ViewModels.MainViewModel>();
@@ -86,6 +88,10 @@ namespace FProductionDashBoard
             _serviceProvider = services.BuildServiceProvider();
             var authService = _serviceProvider.GetRequiredService<Services.AuthorizationService>();
             await authService.InitializeAsync(user);
+
+            // 預設啟動一台讀卡機（COM3，與 Phase 1 相同）
+            _serviceProvider.GetRequiredService<Services.MultiCardReaderService>()
+                .AddReader("COM3", 115200);
 
             // 取代在 App.xaml 中的 StartupUri
             ShutdownMode = ShutdownMode.OnMainWindowClose; //「被設定為 MainWindow 之介面關閉則結束」

@@ -5,17 +5,22 @@ namespace FProductionDashBoard.Services
 {
     public class CardReaderService : ICardReaderService, IDisposable
     {
-        // Phase 2: 改為從 Settings 讀取
-        private const string PortName = "COM3";
-        private const int BaudRate = 115200;
+        public string PortName { get; private set; }
+        public int BaudRate { get; private set; }
 
         private SerialPort? _port;
         private string _buffer = string.Empty;
         private string? _lastCardId;
         private readonly object _lock = new();
 
-        public event EventHandler<string>? CardRead;
+        public event EventHandler<CardReadEventArgs>? CardRead;
         public bool IsConnected => _port?.IsOpen == true;
+
+        public CardReaderService(string portName = "COM3", int baudRate = 115200)
+        {
+            PortName = portName;
+            BaudRate = baudRate;
+        }
 
         public void Start()
         {
@@ -40,6 +45,14 @@ namespace FProductionDashBoard.Services
             _port.Dispose();
             _port = null;
         }
+        public void Restart(string portName, int baudRate)
+        {
+            PortName = portName;
+            BaudRate = baudRate;
+            Stop();
+            Start();
+        }
+        public void ResetLastCard() { lock (_lock) { _lastCardId = null; } }
         public void Dispose() => Stop();
 
         private void OnDataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -56,7 +69,7 @@ namespace FProductionDashBoard.Services
                 if (cardId != null && cardId != _lastCardId)
                 {
                     _lastCardId = cardId;
-                    CardRead?.Invoke(this, cardId);
+                    CardRead?.Invoke(this, new CardReadEventArgs(cardId, PortName));
                 }
             }
             catch (Exception ex)
@@ -65,10 +78,6 @@ namespace FProductionDashBoard.Services
             }
         }
 
-        /// <summary>
-        /// 從累積 buffer 中提取一筆卡號（以 CR 或 LF 分隔）。
-        /// buffer 會在提取後就地更新，未完成的資料保留。
-        /// </summary>
         public static string? TryExtractCardId(ref string buffer)
         {
             int idx = buffer.IndexOfAny(new[] { '\r', '\n' });
