@@ -26,7 +26,7 @@ using System.Windows.Threading;
 
 namespace FProductionDashBoard.ViewModels
 {
-    public enum NavMode { Home, Operation, List, Equipment, View }
+    public enum NavMode { Home, Operation, View, List, Equipment, Order }
     public partial class MainViewModel : ObservableObject
     {
         public string AppVersion { get; }
@@ -300,6 +300,7 @@ namespace FProductionDashBoard.ViewModels
             var loginWindow = new LoginWindow();
             if (loginWindow.ShowDialog() != true) { return; }
 
+            _logInOutCounter = 0;
             await _authService.InitializeAsync(loginWindow.User);
         }
         private void SetProgress(string message, bool visible = true, bool indeterminate = false, int value = 0)
@@ -334,6 +335,9 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Equipment:
+                    break;
+
+                case NavMode.Order:
                     break;
 
                 default:

@@ -18,6 +18,7 @@
     <sys:String x:Key="ViewNavButton">圖表</sys:String>
     <sys:String x:Key="ListManagementNavButton">清單管理</sys:String>
     <sys:String x:Key="EquipmentNavButton">設備管理</sys:String>
+    <sys:String x:Key="OrderManagementNavButton">排單管理</sys:String>
     <sys:String x:Key="PinButtonTooltip">釘選訊息至最新</sys:String>
     <sys:String x:Key="ErrorLogButtonTooltip">切換至錯誤訊息視窗</sys:String>
     <sys:String x:Key="LargeFontButtonTooltip">放大字體</sys:String>
