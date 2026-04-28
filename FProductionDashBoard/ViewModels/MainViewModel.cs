@@ -94,6 +94,7 @@ namespace FProductionDashBoard.ViewModels
 
         private int _syncTickCounter = 0;
         private int _missedCheckCounter = 0;
+        private int _logInOutCounter = 0;
         private bool _isSyncing = false;
 
         public MainViewModel(LogService log, IDataService dataservice, AuthorizationService auth,
@@ -194,6 +195,7 @@ namespace FProductionDashBoard.ViewModels
                 return [];
             }
         }
+
         // Timer Tick 自動偵測邏輯
         private async Task OnTimerTickAsync()
         {
@@ -214,6 +216,30 @@ namespace FProductionDashBoard.ViewModels
                 _missedCheckCounter = 0;
                 await CheckMissedInspectionsAsync();
             }
+
+            _logInOutCounter++;
+            if (_logInOutCounter >= 600)
+            {
+                _logInOutCounter = 0;
+                await CheckLogOutForLongIdle();
+            }
+        }
+        // 同步暫存資料
+        private async Task SyncAndLogAsync()
+        {
+            if (_isSyncing) return;
+            _isSyncing = true;
+            try
+            {
+                var result = await _syncService.SyncPendingAsync();
+                // TODO: 根據 result.SyncedCount / result.FailedCount 決定 log 輸出時機
+                if (result?.SyncedCount > 0)
+                    _log.AddLog($"已重新連線: 上傳{result?.SyncedCount}筆暫存資料");
+                if (result?.FailedCount > 0) // 無效，因為離線永遠回傳0
+                    _log.AddLog($"連線失敗: {result?.FailedCount}筆資料等待上傳", LogLevel.Warning);
+            }
+            finally
+            { _isSyncing = false; }
         }
         // 未巡檢偵測與插入 -- 巡檢狀態更新 (若離線狀態延至下個工作日，則前日未插入之資料將會遺漏) ** 
         private async Task CheckMissedInspectionsAsync()
@@ -242,23 +268,30 @@ namespace FProductionDashBoard.ViewModels
                 }
             }
         }
-        // 同步暫存資料
-        private async Task SyncAndLogAsync()
+        // 閒置過久 -- 逾時登出 (目前為10分鐘詢問一次，並未真正從閒置開始計時，待優化) **
+        private async Task CheckLogOutForLongIdle()
         {
-            if (_isSyncing) return;
-            _isSyncing = true;
-            try
+            if (!IsLoggedIn) return;
+
+            bool isExtendLogin = false;
+            var vm = new LoadingViewModel
             {
-                var result = await _syncService.SyncPendingAsync();
-                // TODO: 根據 result.SyncedCount / result.FailedCount 決定 log 輸出時機
-                if (result?.SyncedCount > 0)
-                	_log.AddLog($"已重新連線: 上傳{result?.SyncedCount}筆暫存資料");
-            	if (result?.FailedCount > 0) // 無效，因為離線永遠回傳0
-                	_log.AddLog($"連線失敗: {result?.FailedCount}筆資料等待上傳", LogLevel.Warning);
-            }
-            finally
-            { _isSyncing = false; }
+                Mode = LoadingMode.LogoutCountdown,
+                Message = "閒置逾時警告",
+                CountdownSeconds = 10
+            };
+            vm.SessionExtended += (_, _) => {
+                isExtendLogin = true;
+                _log.AddLog("已延長，歡迎回來", LogLevel.Success); 
+            };
+            var win = new LoadingWindow(vm);
+            vm.StartCountdown();
+            win.ShowDialog();
+
+            if (!isExtendLogin)
+                await _authService.LogoutAsync();
         }
+
         #endregion
 
         // 工具列 與 狀態列 事件
@@ -345,39 +378,39 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                await _dataService.AddTeachingRecordAsync(1, 1, 600, "AAA");
-                //await AddOffsetRecordAsync(1, 1, 60, "BBB");
+                Debug.WriteLine($"連線狀態: {_dataService.EquipmentRep.CheckConnection()}");
+                await _dataService.Demo();
             }
-            catch (OfflineOperationQueuedException)
+            catch (SqlException sqlex)
             {
-                _log.AddLog("帶點紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                Debug.WriteLine($"SqlException: {sqlex.Message}");
+            }
+            catch (TaskCanceledException taskex)
+            {
+                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
+            }
+            catch (AggregateException aggEx)
+            {
+                Debug.WriteLine($"TaskCanceledException: {aggEx.Message}");
             }
             catch (Exception ex)
             {
-                _log.AddLog("帶點紀錄上傳異常");
-                _log.AddErrorLog($"Tuning Record: {ex.Message}");
+                Debug.WriteLine($"Exception: {ex.Message}");
             }
 
             //try
             //{
-            //    Debug.WriteLine($"連線狀態: {_dataService.EquipmentRep.CheckConnection()}");
-            //    await _dataService.Demo();
+            //    await _dataService.AddTeachingRecordAsync(1, 1, 600, "AAA");
+            //    //await AddOffsetRecordAsync(1, 1, 60, "BBB");
             //}
-            //catch (SqlException sqlex)
+            //catch (OfflineOperationQueuedException)
             //{
-            //    Debug.WriteLine($"SqlException: {sqlex.Message}");
-            //}
-            //catch (TaskCanceledException taskex)
-            //{
-            //    Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
-            //}
-            //catch(AggregateException aggEx) 
-            //{
-            //    Debug.WriteLine($"TaskCanceledException: {aggEx.Message}");
+            //    _log.AddLog("帶點紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
             //}
             //catch (Exception ex)
             //{
-            //    Debug.WriteLine($"Exception: {ex.Message}");
+            //    _log.AddLog("帶點紀錄上傳異常");
+            //    _log.AddErrorLog($"Tuning Record: {ex.Message}");
             //}
         }
 
