@@ -134,6 +134,25 @@
 
             </StackPanel>
 
+            <!-- 調試計時覆蓋層 -->
+            <Button Grid.Column="0" Grid.ColumnSpan="2"
+                    Style="{StaticResource TuningOverlayButtonStyle}"
+                    Command="{Binding EndTuningCommand}"
+                    Visibility="{Binding IsTuning, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Panel.ZIndex="10">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="{Binding TuningStatusText}"
+                               FontSize="18" FontWeight="Bold"
+                               Foreground="#333333"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource TuningClickToEnd}"
+                               FontSize="12"
+                               Foreground="#555555"
+                               HorizontalAlignment="Center"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Button>
+
         </Grid>
     </Border>
 </UserControl>

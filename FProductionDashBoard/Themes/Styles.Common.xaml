@@ -11,9 +11,9 @@
     <!-- 縮放 -->
     <Storyboard x:Key="PressDownStoryboard">
         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                         To="0.97" Duration="0:0:0.1"/>
+                         To="0.99" Duration="0:0:0.1"/>
         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                         To="0.97" Duration="0:0:0.1"/>
+                         To="0.99" Duration="0:0:0.1"/>
     </Storyboard>
     <Storyboard x:Key="ReleaseStoryboard">
         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
@@ -285,6 +285,22 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <Style x:Key="TuningOverlayButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="#CCEEEEEE"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="12">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <Style x:Key="MaterialSelectionButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="Height" Value="50"/>
@@ -305,7 +321,7 @@
                 <Setter Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
                 <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
             </Trigger>
-            <!-- 按下 -->
+            <!-- 選中狀態 -->
             <DataTrigger Binding="{Binding IsSelected}" Value="True">
                 <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
                 <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>

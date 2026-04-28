@@ -204,7 +204,7 @@ namespace FProductionDashBoard.ViewModels
                 _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
 
             _syncTickCounter++;
-            if (_syncTickCounter >= 30)
+            if (_syncTickCounter >= 60)
             {
                 _syncTickCounter = 0;
                 await SyncAndLogAsync();

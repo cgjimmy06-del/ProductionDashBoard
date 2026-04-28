@@ -37,6 +37,9 @@
     <sys:String x:Key="FirstInspectionButton">首件</sys:String>
     <sys:String x:Key="RoutineInspectionButton">巡檢</sys:String>
     <sys:String x:Key="OperationButton">調試</sys:String>
+    <sys:String x:Key="TuningTeachingButton">帶點</sys:String>
+    <sys:String x:Key="TuningOffsetButton">調品質</sys:String>
+    <sys:String x:Key="TuningClickToEnd">點擊任意處結束</sys:String>
     <!--#endregion-->
     <!--#region dialog window 彈出視窗 -->
     <sys:String x:Key="ConfirmButton">確認</sys:String>

@@ -41,8 +41,13 @@ namespace FProductionDashBoard.Repositories
 
         public async Task<bool> CheckConnectionAsync()
         {
-            await using var ctx = _factory.CreateDbContext();
-            return await ctx.Database.CanConnectAsync();
+            using var cts = new CancellationTokenSource(2000);
+            try
+            {
+                await using var ctx = _factory.CreateDbContext();
+                return await ctx.Database.CanConnectAsync(cts.Token);
+            }
+            catch (OperationCanceledException) { return false; }
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
