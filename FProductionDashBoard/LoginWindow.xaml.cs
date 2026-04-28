@@ -27,7 +27,7 @@ namespace FProductionDashBoard
             InitializeComponent();
 
             var vm = new ViewModels.LoginViewModel();
-            vm.loadDefault(); //載入預設
+            DataContext = vm;
             // 登入成功後事件
             vm.OnLoginSuccess = (server, user) =>
             {
@@ -35,7 +35,7 @@ namespace FProductionDashBoard
                 User = user;
                 DialogResult = true;
             };
-            DataContext = vm;
+            vm.loadDefault(); //載入預設
         }
     }
 }
