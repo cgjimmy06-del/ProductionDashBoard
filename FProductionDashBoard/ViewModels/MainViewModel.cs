@@ -73,6 +73,8 @@ namespace FProductionDashBoard.ViewModels
         private bool isProgressVisible = false;
         [ObservableProperty]
         private NavMode currentNavMode = NavMode.Home; // 當前導覽列模式
+        public bool IsCardReaderConnected => _multiCardReaderService.IsConnected;
+        public string CardReaderStatusTooltip => BuildCardReaderTooltip();
         #endregion
 
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
@@ -206,6 +208,8 @@ namespace FProductionDashBoard.ViewModels
         private async Task OnTimerTickAsync()
         {
             CurrentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+            OnPropertyChanged(nameof(IsCardReaderConnected));
+            OnPropertyChanged(nameof(CardReaderStatusTooltip));
             if (DateTime.Now.AddDays(-1) > _dataService.BusinessDay)
                 _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
 
@@ -229,6 +233,15 @@ namespace FProductionDashBoard.ViewModels
                 _logInOutCounter = 0;
                 await CheckLogOutForLongIdle();
             }
+        }
+        private string BuildCardReaderTooltip()
+        {
+            var sb = new StringBuilder("讀卡機狀態\n");
+            if (!_multiCardReaderService.Readers.Any())
+                return sb.Append("（未設定讀卡機）").ToString();
+            foreach (var r in _multiCardReaderService.Readers)
+                sb.AppendLine($"{(r.IsConnected ? "●" : "○")} {r.PortName}  {r.BaudRate}  {(r.IsConnected ? "已連線" : "離線")}");
+            return sb.ToString().TrimEnd();
         }
         // 同步暫存資料
         private async Task SyncAndLogAsync()
