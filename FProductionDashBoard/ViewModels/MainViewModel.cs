@@ -64,15 +64,18 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private bool isErrorMode = false; // 訊息視窗是否切換至異常訊息
         [ObservableProperty]
-        private int progressValue = 0;
+        private int progressValue = 0; // 進度調數值
         [ObservableProperty]
-        private string progressString = Properties.Resources.MainProgressIdle;
+        private string progressString = Properties.Resources.MainProgressIdle; // 進度條說明
         [ObservableProperty]
-        private bool isProgressIndeterminate = false;
+        private bool isProgressIndeterminate = false; // 進度條循環
         [ObservableProperty]
-        private bool isProgressVisible = false;
+        private bool isProgressVisible = false; // 進度條顯示
         [ObservableProperty]
         private NavMode currentNavMode = NavMode.Home; // 當前導覽列模式
+        public bool IsCardReaderConnected => _multiCardReaderService.IsConnected; //讀卡機連線狀態
+        public string CardReaderStatusTooltip => BuildCardReaderTooltip(); //讀卡機訊息
+        public bool IsNetConnected; // DB / WEBAPI 連線狀態 (尚未接入)
         #endregion
 
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
@@ -209,6 +212,10 @@ namespace FProductionDashBoard.ViewModels
             if (DateTime.Now.AddDays(-1) > _dataService.BusinessDay)
                 _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
 
+            // 狀態更新 (讀卡機)
+            OnPropertyChanged(nameof(IsCardReaderConnected));
+            OnPropertyChanged(nameof(CardReaderStatusTooltip));
+
             _syncTickCounter++;
             if (_syncTickCounter >= 60)
             {
@@ -247,7 +254,7 @@ namespace FProductionDashBoard.ViewModels
             finally
             { _isSyncing = false; }
         }
-        // 未巡檢偵測與插入 -- 巡檢狀態更新 (若離線狀態延至下個工作日，則前日未插入之資料將會遺漏) ** 
+        // 未巡檢偵測與插入 -- 巡檢狀態更新 (5分鐘檢查) (若離線狀態延至下個工作日，則前日未插入之資料將會遺漏) ** 
         private async Task CheckMissedInspectionsAsync()
         {
             var activeDevices = _deviceContainer?.Devices;
@@ -301,6 +308,15 @@ namespace FProductionDashBoard.ViewModels
         #endregion
 
         // 工具列 與 狀態列 事件
+        private string BuildCardReaderTooltip()
+        {
+            var sb = new StringBuilder("讀卡機狀態\n");
+            if (!_multiCardReaderService.Readers.Any())
+                return sb.Append("（未設定讀卡機）").ToString();
+            foreach (var r in _multiCardReaderService.Readers)
+                sb.AppendLine($"{(r.IsConnected ? "●" : "○")} {r.PortName}  {r.BaudRate}  {(r.IsConnected ? "已連線" : "離線")}");
+            return sb.ToString().TrimEnd();
+        }
         private async Task LoginAsync()
         {
             var loginWindow = new LoginWindow();
