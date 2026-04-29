@@ -79,17 +79,21 @@ namespace FProductionDashBoard
             services.AddSingleton<Services.ICardReaderService>(sp =>
                 sp.GetRequiredService<Services.MultiCardReaderService>());
 
+            // 註冊 WebApi 服務
+            services.AddHttpClient<Services.WebApi.IErpApiService, Services.WebApi.ErpApiService>(client =>
+            {
+                client.BaseAddress = new Uri("http://ssty-erpapp01.sporting.fusheng.com/Fusheng.WHD.ERP.Common/");
+                client.Timeout = TimeSpan.FromSeconds(5);
+            });
+
             // 註冊 ViewModel
             services.AddScoped<ViewModels.MainViewModel>();
-
-            // 註冊 MainWindow 的 InitializeComponent()可能沒有正確執行，致 XAML 裡的 UI 元件沒有完整載入
-            // services.AddScoped<MainWindow>();
 
             _serviceProvider = services.BuildServiceProvider();
             var authService = _serviceProvider.GetRequiredService<Services.AuthorizationService>();
             await authService.InitializeAsync(user);
 
-            // 預設啟動一台讀卡機（COM3，與 Phase 1 相同）
+            // 預設啟動一台讀卡機 (以最後連線的設備為準)
             _serviceProvider.GetRequiredService<Services.MultiCardReaderService>()
                 .AddReader(FProductionDashBoard.Properties.Settings.Default.ReaderPort,
                            FProductionDashBoard.Properties.Settings.Default.ReaderBaud);
