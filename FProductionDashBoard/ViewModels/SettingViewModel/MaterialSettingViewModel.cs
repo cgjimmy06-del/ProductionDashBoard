@@ -24,8 +24,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private int formMinimumStock = 0;
         [ObservableProperty] private int formQuantityInStock = 0;
 
-        public MaterialSettingViewModel(LogService log, IDataService dataService)
-            : base(log, dataService) { }
+        public MaterialSettingViewModel(DashboardCoreServices core)
+            : base(core) { }
 
         protected override async Task LoadAsync()
         {
@@ -33,17 +33,17 @@ namespace FProductionDashBoard.ViewModels
             {
                 if (!MaterialTypes.Any())
                 {
-                    var types = await _dataService.GetMaterialTypesAsync();
+                    var types = await _core.Data.GetMaterialTypesAsync();
                     foreach (var t in types) MaterialTypes.Add(t);
                 }
-                var list = await _dataService.GetAllMaterialsAsync();
+                var list = await _core.Data.GetAllMaterialsAsync();
                 MaterialList.Clear();
                 foreach (var m in list) MaterialList.Add(m);
             }
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"載入材料清單失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"載入材料清單失敗: {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -80,13 +80,13 @@ namespace FProductionDashBoard.ViewModels
                 return;
             try
             {
-                await _dataService.DeleteMaterialAsync(item.MaterialId);
+                await _core.Data.DeleteMaterialAsync(item.MaterialId);
                 MaterialList.Remove(item);
             }
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"刪除材料失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"刪除材料失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -111,9 +111,9 @@ namespace FProductionDashBoard.ViewModels
                 };
 
                 if (EditingId == null)
-                    await _dataService.AddMaterialAsync(dto);
+                    await _core.Data.AddMaterialAsync(dto);
                 else
-                    await _dataService.UpdateMaterialAsync(dto);
+                    await _core.Data.UpdateMaterialAsync(dto);
 
                 FormSuccessString = EditingId == null ? "新增成功" : "更新成功";
                 FormErrorString = null;
@@ -124,7 +124,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 FormErrorString = ex.Message;
                 FormSuccessString = null;
-                _log.AddLog($"儲存材料失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"儲存材料失敗: {ex.Message}", LogLevel.Error);
             }
         }
 

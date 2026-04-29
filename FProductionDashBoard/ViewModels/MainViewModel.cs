@@ -38,16 +38,15 @@ namespace FProductionDashBoard.ViewModels
         private DeviceCardContainerViewModel? _deviceContainer;
 
         #region  -- DI注入資源 --
-        private readonly IDataService _dataService;
+        private readonly DashboardCoreServices _core;
         private readonly IOfflineSyncService _syncService;
         private readonly ICardReaderService _cardReaderService;
         private readonly MultiCardReaderService _multiCardReaderService;
         private readonly Services.WebApi.IErpApiService _erpApiService;
-        public LogService _log { get; } // public 是為了Window的顯示
-        private AuthorizationService _authService { get; }
-        public UserInfo? SystemUser => _authService.CurrentUser;
-        public UserInfo? CurrentUser => _authService.CurrentUser;
-        public bool IsLoggedIn => _authService.IsLoggedIn;
+        public LogService _log => _core.Log; // public 是為了Window的顯示
+        public UserInfo? SystemUser => _core.Authorization.CurrentUser;
+        public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
+        public bool IsLoggedIn => _core.Authorization.IsLoggedIn;
         #endregion
         #region -- 介面邏輯 --
         [ObservableProperty]
@@ -79,7 +78,7 @@ namespace FProductionDashBoard.ViewModels
         public bool IsNetConnected; // DB / WEBAPI 連線狀態 (尚未接入)
         #endregion
 
-        public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
+        public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _core.Log.ErrorLogs : _core.Log.Logs;
         public ListsFromSql CommonLists = new();
 
         public ICommand InitializeCommand { get; }
@@ -101,20 +100,18 @@ namespace FProductionDashBoard.ViewModels
         private int _syncTickCounter = 0;
         private int _missedCheckCounter = 0;
         private int _logInOutCounter = 0;
-        private bool _isSyncing = false;
+        private int _isSyncing = 0;
 
-        public MainViewModel(LogService log, IDataService dataservice, AuthorizationService auth,
-            IOfflineSyncService syncService, ICardReaderService cardReaderService,
-            MultiCardReaderService multiCardReaderService, Services.WebApi.IErpApiService erpApiService)
+        public MainViewModel(DashboardCoreServices core, IOfflineSyncService syncService,
+            ICardReaderService cardReaderService, MultiCardReaderService multiCardReaderService,
+            Services.WebApi.IErpApiService erpApiService)
         {
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(
                 Assembly.GetExecutingAssembly().Location).FileVersion ?? "Unknown";
 
             // DI注入 Repository
-            _log = log;
-            _dataService = dataservice;
-            _authService = auth;
+            _core = core;
             _syncService = syncService;
             _cardReaderService = cardReaderService;
             _multiCardReaderService = multiCardReaderService;
@@ -122,7 +119,7 @@ namespace FProductionDashBoard.ViewModels
             _cardReaderService.CardRead += OnCardRead;
 
             // 定義工作起始時間 (於 DispatcherTimer 偵測更新)
-            _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
+            _core.Data.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
 
             // 建立 DispatcherTimer 每秒更新一次時間，此方法位於 "UI 執行緒" 需確認是否移至 "執行緒池"
             DefaultTimer = new DispatcherTimer();
@@ -134,11 +131,11 @@ namespace FProductionDashBoard.ViewModels
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
             SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode,
-                (NavMode) => _authService.HasPermission(Services.PermissionId.View));
+                (NavMode) => _core.Authorization.HasPermission(Services.PermissionId.View));
 
             //  設定元件事件 (工具列)
             TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
-                () => _authService.HasPermission(Services.PermissionId.Test));
+                () => _core.Authorization.HasPermission(Services.PermissionId.Test));
 
             // 設定元件事件 (帳號) 
             LoginCommand = new AsyncRelayCommand(LoginAsync);
@@ -148,9 +145,9 @@ namespace FProductionDashBoard.ViewModels
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
 
             // (訂閱端) 使用者變更事件，刷新命令狀態與使用者顯示 (若 _authService 在執行緒池)
-            _authService.UserChanged += () => System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            _core.Authorization.UserChanged += () => System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
-                if (!_authService.IsLoggedIn) // 若登出則執行對應事件
+                if (!_core.Authorization.IsLoggedIn) // 若登出則執行對應事件
                     _deviceContainer = null;
 
                 SwitchModeCommand.NotifyCanExecuteChanged();
@@ -169,12 +166,12 @@ namespace FProductionDashBoard.ViewModels
         #region -- 載入初始化 與 計時器 -- (待翻譯log 並加上errorlog)
         public async Task LoadAllListsAsync()
         {
-            var t1 = FetchListAsync(() => _dataService.GetDevicesAsync());
-            var t2 = FetchListAsync(() => _dataService.GetUsersAsync());
-            var t3 = FetchListAsync(() => _dataService.GetMaterialsAsync());
-            var t4 = FetchListAsync(() => _dataService.GetErrorsAsync(Properties.Settings.Default.CultureCode));
-            var t5 = FetchListAsync(() => _dataService.GetTimeSlotsAsync());
-            var t6 = FetchListAsync(() => _dataService.GetAllRolesAsync());
+            var t1 = FetchListAsync(() => _core.Data.GetDevicesAsync());
+            var t2 = FetchListAsync(() => _core.Data.GetUsersAsync());
+            var t3 = FetchListAsync(() => _core.Data.GetMaterialsAsync());
+            var t4 = FetchListAsync(() => _core.Data.GetErrorsAsync(Properties.Settings.Default.CultureCode));
+            var t5 = FetchListAsync(() => _core.Data.GetTimeSlotsAsync());
+            var t6 = FetchListAsync(() => _core.Data.GetAllRolesAsync());
             await Task.WhenAll(t1, t2, t3, t4, t5, t6);
 
             CommonLists = new ListsFromSql
@@ -186,7 +183,7 @@ namespace FProductionDashBoard.ViewModels
                 TimeSlotsList = t5.Result,
                 RolesList    = t6.Result
             };
-            _log.AddLog($"已載入清單: " +
+            _core.Log.AddLog($"已載入清單: " +
                 $"Devices:[{CommonLists.DevicesList.Count}]-" +
                 $"Users:[{CommonLists.UsersList.Count}]-" +
                 $"Materials:[{CommonLists.MaterialsList.Count}]-" +
@@ -202,7 +199,7 @@ namespace FProductionDashBoard.ViewModels
             try { return await fetch(); }
             catch (Exception ex)
             {
-                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error);
                 return [];
             }
         }
@@ -211,8 +208,8 @@ namespace FProductionDashBoard.ViewModels
         private async Task OnTimerTickAsync()
         {
             CurrentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
-            if (DateTime.Now.AddDays(-1) > _dataService.BusinessDay)
-                _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
+            if (DateTime.Now.AddDays(-1) > _core.Data.BusinessDay)
+                _core.Data.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
 
             // 狀態更新 (讀卡機)
             OnPropertyChanged(nameof(IsCardReaderConnected));
@@ -222,14 +219,14 @@ namespace FProductionDashBoard.ViewModels
             if (_syncTickCounter >= 60)
             {
                 _syncTickCounter = 0;
-                await SyncAndLogAsync();
+                _ = Task.Run(SyncAndLogAsync);
             }
 
             _missedCheckCounter++;
             if (_missedCheckCounter >= 300)
             {
                 _missedCheckCounter = 0;
-                await CheckMissedInspectionsAsync();
+                _ = Task.Run(CheckMissedInspectionsAsync);
             }
 
             _logInOutCounter++;
@@ -242,19 +239,18 @@ namespace FProductionDashBoard.ViewModels
         // 同步暫存資料
         private async Task SyncAndLogAsync()
         {
-            if (_isSyncing) return;
-            _isSyncing = true;
+            if (Interlocked.CompareExchange(ref _isSyncing, 1, 0) != 0) return;
             try
             {
                 var result = await _syncService.SyncPendingAsync();
                 // TODO: 根據 result.SyncedCount / result.FailedCount 決定 log 輸出時機
                 if (result?.SyncedCount > 0)
-                    _log.AddLog($"已重新連線: 上傳{result?.SyncedCount}筆暫存資料");
+                    _core.Log.AddLog($"已重新連線: 上傳{result?.SyncedCount}筆暫存資料");
                 if (result?.FailedCount > 0) // 無效，因為離線永遠回傳0
-                    _log.AddLog($"連線失敗: {result?.FailedCount}筆資料等待上傳", LogLevel.Warning);
+                    _core.Log.AddLog($"連線失敗: {result?.FailedCount}筆資料等待上傳", LogLevel.Warning);
             }
             finally
-            { _isSyncing = false; }
+            { Interlocked.Exchange(ref _isSyncing, 0); }
         }
         // 未巡檢偵測與插入 -- 巡檢狀態更新 (5分鐘檢查) (若離線狀態延至下個工作日，則前日未插入之資料將會遺漏) ** 
         private async Task CheckMissedInspectionsAsync()
@@ -263,23 +259,24 @@ namespace FProductionDashBoard.ViewModels
             if (activeDevices == null || !activeDevices.Any()) return;
             if (CommonLists.TimeSlotsList.Count == 0) return;
 
-            foreach (var card in activeDevices)
+            var deviceSnapshot = activeDevices.ToList();
+            foreach (var card in deviceSnapshot)
             {
                 try
                 {
-                    await _dataService.CheckAndInsertMissedInspectionAsync(
+                    await _core.Data.CheckAndInsertMissedInspectionAsync(
                         CommonLists.TimeSlotsList, card.Info.Id);
 
                     await card.UpdateTimeSlotsStatusAsync(); // 更新每台設備的巡檢狀態
                 }
                 catch (InvalidOperationException)
                 {
-                    _log.AddLog("逾時補填/狀態更新略過：資料庫連線失敗", LogLevel.Warning);
+                    _core.Log.AddLog("逾時補填/狀態更新略過：資料庫連線失敗", LogLevel.Warning);
                     break;
                 }
                 catch (Exception ex)
                 {
-                    _log.AddLog($"逾時補填失敗 [{card.Info.Name}]: {ex.Message}", LogLevel.Error);
+                    _core.Log.AddLog($"逾時補填失敗 [{card.Info.Name}]: {ex.Message}", LogLevel.Error);
                 }
             }
         }
@@ -297,14 +294,14 @@ namespace FProductionDashBoard.ViewModels
             };
             vm.SessionExtended += (_, _) => {
                 isExtendLogin = true;
-                _log.AddLog("已延長，歡迎回來", LogLevel.Success); 
+                _core.Log.AddLog("已延長，歡迎回來", LogLevel.Success);
             };
             var win = new LoadingWindow(vm);
             vm.StartCountdown();
             win.ShowDialog();
 
             if (!isExtendLogin)
-                await _authService.LogoutAsync();
+                await _core.Authorization.LogoutAsync();
         }
 
         #endregion
@@ -325,11 +322,11 @@ namespace FProductionDashBoard.ViewModels
             if (loginWindow.ShowDialog() != true) { return; }
 
             _logInOutCounter = 0;
-            await _authService.InitializeAsync(loginWindow.User);
+            await _core.Authorization.InitializeAsync(loginWindow.User);
         }
         private async Task LogoutAsync()
         {
-            await _authService.LogoutAsync();
+            await _core.Authorization.LogoutAsync();
             _cardReaderService.ResetLastCard();
         }
         private void SetProgress(string message, bool visible = true, bool indeterminate = false, int value = 0)
@@ -351,8 +348,7 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Operation:
-                    _deviceContainer ??= new DeviceCardContainerViewModel(
-                        _log, _dataService, _authService, CurrentUser!, CommonLists);
+                    _deviceContainer ??= new DeviceCardContainerViewModel(_core, CurrentUser!, CommonLists);
                     MainCard = _deviceContainer;
                     break;
 
@@ -360,7 +356,7 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.List:
-                    MainCard = new SettingViewModel(_log, _dataService, _authService);
+                    MainCard = new SettingViewModel(_core);
                     break;
 
                 case NavMode.Equipment:
@@ -378,7 +374,7 @@ namespace FProductionDashBoard.ViewModels
         // 訊息窗事件
         partial void OnIsErrorModeChanged(bool value)
         {
-            if (value && _log.IsNewErrorLog) _log.IsNewErrorLog = false;
+            if (value && _core.Log.IsNewErrorLog) _core.Log.IsNewErrorLog = false;
 
             OnPropertyChanged(nameof(CurrentLogs));
             // 取代此函式 (不需判斷PropertyName)
@@ -391,22 +387,22 @@ namespace FProductionDashBoard.ViewModels
             {
                 ProgressString = Properties.Resources.MainProgressSaving;
 
-                await _log.SaveAllLogsToFileAsync();
+                await _core.Log.SaveAllLogsToFileAsync();
 
                 ProgressString = Properties.Resources.MainProgressSuccess;
             }
             catch (AggregateException ex)
             {
                 ProgressString = Properties.Resources.MainProgressStopped;
-                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogs");
-                _log.AddErrorLog($"SaveLogs Aggre.Ex: {ex.ToString()}");
+                _core.Log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogs");
+                _core.Log.AddErrorLog($"SaveLogs Aggre.Ex: {ex.ToString()}");
             }
             catch (Exception ex)
             {
                 // 最外層保護，抓所有未預期的錯誤
                 ProgressString = Properties.Resources.MainProgressStopped;
-                _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogs");
-                _log.AddErrorLog($"SaveLogs Ex: {ex.ToString()}");
+                _core.Log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogs");
+                _core.Log.AddErrorLog($"SaveLogs Ex: {ex.ToString()}");
             }
         }
 
@@ -415,15 +411,16 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                _log.AddLog($"[CardReader:{e.PortName}] {e.CardId}");
+                _core.Log.AddLog($"[CardReader:{e.PortName}] {e.CardId}");
 
-                var user = CommonLists.UsersList.FirstOrDefault(u => u.CardId == e.CardId);
+                var snapshot = CommonLists.UsersList.ToList();
+                var user = snapshot.FirstOrDefault(u => u.CardId == e.CardId);
 
                 if (user != null)
                 {
-                    if (_authService.CurrentUser?.CardId == e.CardId) return;
-                    await _authService.InitializeAsync(user);
-                    _log.AddLog($"[CardReader] 登入: {user.Name}", LogLevel.Success);
+                    if (_core.Authorization.CurrentUser?.CardId == e.CardId) return;
+                    await _core.Authorization.InitializeAsync(user);
+                    _core.Log.AddLog($"[CardReader] 登入: {user.Name}", LogLevel.Success);
                     return;
                 }
 
@@ -431,11 +428,11 @@ namespace FProductionDashBoard.ViewModels
                 var emp = await _erpApiService.GetEmpInfoByCardAsync("FUS", e.CardId);
                 if (emp == null)
                 {
-                    _log.AddLog($"[CardReader] 未識別卡號: {e.CardId}", LogLevel.Warning);
+                    _core.Log.AddLog($"[CardReader] 未識別卡號: {e.CardId}", LogLevel.Warning);
                     return;
                 }
 
-                var existingUser = CommonLists.UsersList.FirstOrDefault(u => u.UserId == emp.EmpNo);
+                var existingUser = snapshot.FirstOrDefault(u => u.UserId == emp.EmpNo);
                 if (existingUser == null)
                     await HandleAddNewEmployeeAsync(emp, e.CardId);
                 else
@@ -443,7 +440,7 @@ namespace FProductionDashBoard.ViewModels
             }
             catch (Exception ex)
             {
-                _log.AddLog($"[CardReader] 處理失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"[CardReader] 處理失敗: {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -470,9 +467,10 @@ namespace FProductionDashBoard.ViewModels
                 Password = "0000",
                 RoleId = 1
             };
-            await _dataService.AddEmployeeAsync(dto);
-            CommonLists.UsersList = await _dataService.GetUsersAsync();
-            _log.AddLog($"[CardReader] 已新增員工: {emp.Name}，請重新刷卡登入", LogLevel.Success);
+            await _core.Data.AddEmployeeAsync(dto);
+            var newList = await _core.Data.GetUsersAsync();
+            await Application.Current.Dispatcher.InvokeAsync(() => CommonLists.UsersList = newList);
+            _core.Log.AddLog($"[CardReader] 已新增員工: {emp.Name}，請重新刷卡登入", LogLevel.Success);
             _cardReaderService.ResetLastCard();
         }
         private async Task HandleUpdateCardIdAsync(UiModels.UserInfo existingUser, string cardId)
@@ -500,9 +498,9 @@ namespace FProductionDashBoard.ViewModels
                 Email = existingUser.Email,
                 DepartmentId = existingUser.DepartmentId
             };
-            await _dataService.UpdateEmployeeAsync(dto);
-            existingUser.CardId = cardId;
-            _log.AddLog($"[CardReader] 更新卡號: {existingUser.Name}，請重新刷卡登入", LogLevel.Success);
+            await _core.Data.UpdateEmployeeAsync(dto);
+            await Application.Current.Dispatcher.InvokeAsync(() => existingUser.CardId = cardId);
+            _core.Log.AddLog($"[CardReader] 更新卡號: {existingUser.Name}，請重新刷卡登入", LogLevel.Success);
             _cardReaderService.ResetLastCard();
         }
 
@@ -511,8 +509,8 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                Debug.WriteLine($"連線狀態: {_dataService.EquipmentRep.CheckConnection()}");
-                await _dataService.Demo();
+                Debug.WriteLine($"連線狀態: {_core.Data.EquipmentRep.CheckConnection()}");
+                await _core.Data.Demo();
             }
             catch (SqlException sqlex)
             {

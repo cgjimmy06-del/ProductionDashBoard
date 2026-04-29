@@ -27,8 +27,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string? formDepartmentId;
         [ObservableProperty] private string? formDescription;
 
-        public EquipmentSettingViewModel(LogService log, IDataService dataService)
-            : base(log, dataService) { }
+        public EquipmentSettingViewModel(DashboardCoreServices core)
+            : base(core) { }
 
         protected override async Task LoadAsync()
         {
@@ -36,17 +36,17 @@ namespace FProductionDashBoard.ViewModels
             {
                 if (!EquipmentTypes.Any())
                 {
-                    var types = await _dataService.GetEquipmentTypesAsync();
+                    var types = await _core.Data.GetEquipmentTypesAsync();
                     foreach (var t in types) EquipmentTypes.Add(t);
                 }
-                var list = await _dataService.GetAllEquipmentAsync();
+                var list = await _core.Data.GetAllEquipmentAsync();
                 EquipmentList.Clear();
                 foreach (var e in list) EquipmentList.Add(e);
             }
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"載入設備清單失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"載入設備清單失敗: {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -85,13 +85,13 @@ namespace FProductionDashBoard.ViewModels
                 return;
             try
             {
-                await _dataService.DeleteEquipmentAsync(item.Id);
+                await _core.Data.DeleteEquipmentAsync(item.Id);
                 EquipmentList.Remove(item);
             }
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"刪除設備失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"刪除設備失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -121,9 +121,9 @@ namespace FProductionDashBoard.ViewModels
                 };
 
                 if (EditingId == null)
-                    await _dataService.AddEquipmentAsync(dto);
+                    await _core.Data.AddEquipmentAsync(dto);
                 else
-                    await _dataService.UpdateEquipmentAsync(dto);
+                    await _core.Data.UpdateEquipmentAsync(dto);
 
                 FormSuccessString = EditingId == null ? "新增成功" : "更新成功";
                 FormErrorString = null;
@@ -134,7 +134,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 FormErrorString = ex.Message;
                 FormSuccessString = null;
-                _log.AddLog($"儲存設備失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"儲存設備失敗: {ex.Message}", LogLevel.Error);
             }
         }
 
