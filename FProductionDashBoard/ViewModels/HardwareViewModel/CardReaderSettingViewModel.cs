@@ -40,8 +40,8 @@ namespace FProductionDashBoard.ViewModels
 
         private void AddReader()
         {
-            var defaultPort = AvailablePorts.FirstOrDefault() ?? "COM3";
-            var reader = _multi.AddReader(defaultPort, 115200);
+            var defaultPort = AvailablePorts.FirstOrDefault() ?? Properties.Settings.Default.ReaderPort;
+            var reader = _multi.AddReader(defaultPort, Properties.Settings.Default.ReaderBaud);
             Readers.Add(CreateEntry(reader));
         }
 

@@ -91,7 +91,8 @@ namespace FProductionDashBoard
 
             // 預設啟動一台讀卡機（COM3，與 Phase 1 相同）
             _serviceProvider.GetRequiredService<Services.MultiCardReaderService>()
-                .AddReader("COM3", 115200);
+                .AddReader(FProductionDashBoard.Properties.Settings.Default.ReaderPort,
+                           FProductionDashBoard.Properties.Settings.Default.ReaderBaud);
 
             // 取代在 App.xaml 中的 StartupUri
             ShutdownMode = ShutdownMode.OnMainWindowClose; //「被設定為 MainWindow 之介面關閉則結束」
