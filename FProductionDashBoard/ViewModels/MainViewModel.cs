@@ -169,7 +169,7 @@ namespace FProductionDashBoard.ViewModels
 
         }
 
-        #region -- 載入初始化 與 計時器 -- (待翻譯log 並加上errorlog)
+        #region -- 載入初始化 與 計時器 --
         public async Task LoadAllListsAsync()
         {
             IsNetConnected = true;
