@@ -25,6 +25,7 @@
     <sys:String x:Key="LogSaveButtonTooltip">Lưu nhật ký hiện tại</sys:String>
     <sys:String x:Key="LogInButtonTooltip">Đăng nhập</sys:String>
     <sys:String x:Key="LogOutButtonTooltip">Đăng xuất</sys:String>
+    <sys:String x:Key="ReloadButtonTooltip">Tải lại danh sách từ cơ sở dữ liệu</sys:String>
     <!--#endregion-->
     <!--#region device card container 設備卡片操作區 -->
     <sys:String x:Key="FirstInsAllButtonTooltip">Kiểm tra đầu tất cả thiết bị</sys:String>

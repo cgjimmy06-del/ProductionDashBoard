@@ -20,15 +20,15 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string formName = "";
         [ObservableProperty] private string? formDescription;
 
-        public RolePermissionSettingViewModel(LogService log, IDataService dataService)
-            : base(log, dataService) { }
+        public RolePermissionSettingViewModel(DashboardCoreServices core)
+            : base(core) { }
 
         protected override async Task LoadAsync()
         {
             try
             {
-                var roles = await _dataService.GetAllRolesAsync();
-                var perms = await _dataService.GetAllPermissionsAsync();
+                var roles = await _core.Data.GetAllRolesAsync();
+                var perms = await _core.Data.GetAllPermissionsAsync();
 
                 RoleList.Clear();
                 foreach (var r in roles) RoleList.Add(r);
@@ -39,7 +39,7 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"載入角色權限清單失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"載入角色權限清單失敗: {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -77,13 +77,13 @@ namespace FProductionDashBoard.ViewModels
                 return;
             try
             {
-                await _dataService.DeleteRoleAsync(item.RoleId);
+                await _core.Data.DeleteRoleAsync(item.RoleId);
                 RoleList.Remove(item);
             }
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"刪除角色失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"刪除角色失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -107,9 +107,9 @@ namespace FProductionDashBoard.ViewModels
                 };
 
                 if (EditingId == null)
-                    await _dataService.AddRoleAsync(dto);
+                    await _core.Data.AddRoleAsync(dto);
                 else
-                    await _dataService.UpdateRoleAsync(dto);
+                    await _core.Data.UpdateRoleAsync(dto);
 
                 FormSuccessString = EditingId == null ? "新增成功" : "更新成功";
                 FormErrorString = null;
@@ -120,7 +120,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 FormErrorString = ex.Message;
                 FormSuccessString = null;
-                _log.AddLog($"儲存角色失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"儲存角色失敗: {ex.Message}", LogLevel.Error);
             }
         }
 

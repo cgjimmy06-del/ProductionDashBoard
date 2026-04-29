@@ -26,8 +26,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string? formMessageEnUs;
         [ObservableProperty] private string? formMessageViVn;
 
-        public ErrorListSettingViewModel(LogService log, IDataService dataService)
-            : base(log, dataService) { }
+        public ErrorListSettingViewModel(DashboardCoreServices core)
+            : base(core) { }
 
         protected override async Task LoadAsync()
         {
@@ -35,17 +35,17 @@ namespace FProductionDashBoard.ViewModels
             {
                 if (!ListTypes.Any())
                 {
-                    var types = await _dataService.GetListTypesAsync();
+                    var types = await _core.Data.GetListTypesAsync();
                     foreach (var t in types) ListTypes.Add(t);
                 }
-                var list = await _dataService.GetAllErrorListsAsync();
+                var list = await _core.Data.GetAllErrorListsAsync();
                 ErrorItems.Clear();
                 foreach (var e in list) ErrorItems.Add(e);
             }
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"載入錯誤清單失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"載入錯誤清單失敗: {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -108,13 +108,13 @@ namespace FProductionDashBoard.ViewModels
                 return;
             try
             {
-                await _dataService.DeleteErrorListAsync(item.ErrorId);
+                await _core.Data.DeleteErrorListAsync(item.ErrorId);
                 ErrorItems.Remove(item);
             }
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"刪除錯誤代碼失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"刪除錯誤代碼失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -137,9 +137,9 @@ namespace FProductionDashBoard.ViewModels
                 };
 
                 if (EditingId == null)
-                    await _dataService.AddErrorListAsync(dto);
+                    await _core.Data.AddErrorListAsync(dto);
                 else
-                    await _dataService.UpdateErrorListAsync(dto);
+                    await _core.Data.UpdateErrorListAsync(dto);
 
                 FormSuccessString = EditingId == null ? "新增成功" : "更新成功";
                 FormErrorString = null;
@@ -150,7 +150,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 FormErrorString = ex.Message;
                 FormSuccessString = null;
-                _log.AddLog($"儲存錯誤代碼失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"儲存錯誤代碼失敗: {ex.Message}", LogLevel.Error);
             }
         }
 

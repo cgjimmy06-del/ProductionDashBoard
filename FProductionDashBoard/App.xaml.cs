@@ -1,5 +1,6 @@
 ﻿using FProductionDashBoard.Services.Offline;
 using FProductionDashBoard.Services.Offline.Handlers;
+using FProductionDashBoard.Services.WebApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -80,11 +81,16 @@ namespace FProductionDashBoard
                 sp.GetRequiredService<Services.MultiCardReaderService>());
 
             // 註冊 WebApi 服務
+            var factoryArea = config[$"EriApi:{selectedServer}"] ?? selectedServer;
+            services.Configure<ErpApiOptions>(opt => opt.FactoryArea = factoryArea);
             services.AddHttpClient<Services.WebApi.IErpApiService, Services.WebApi.ErpApiService>(client =>
             {
                 client.BaseAddress = new Uri("http://ssty-erpapp01.sporting.fusheng.com/Fusheng.WHD.ERP.Common/");
                 client.Timeout = TimeSpan.FromSeconds(5);
             });
+
+            // 註冊 Facade
+            services.AddScoped<Services.DashboardCoreServices>();
 
             // 註冊 ViewModel
             services.AddScoped<ViewModels.MainViewModel>();
