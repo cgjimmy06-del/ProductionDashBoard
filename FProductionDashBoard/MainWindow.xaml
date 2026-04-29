@@ -122,8 +122,12 @@
                                VerticalAlignment="Center" Margin="0,0,5,0"/>
             </StatusBarItem>
             <!-- 讀卡機狀態 -->
+            <StatusBarItem>
+                <TextBlock Text="[Reader" d:Text="[Reader"
+                               VerticalAlignment="Center" Margin="5,0,0,0"/>
+            </StatusBarItem>
             <StatusBarItem ToolTip="{Binding CardReaderStatusTooltip}">
-                <Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="4,0">
+                <Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="0">
                     <Ellipse.Style>
                         <Style TargetType="Ellipse">
                             <Setter Property="Fill" Value="{DynamicResource TextDisabledBrush}"/>
@@ -140,7 +144,38 @@
                 </Ellipse>
             </StatusBarItem>
             <!-- 網路連線狀態 -->
-            
+            <StatusBarItem>
+                <TextBlock Text="] [Net" d:Text="] [Net"
+                               VerticalAlignment="Center" Margin="0"/>
+            </StatusBarItem>
+            <StatusBarItem ToolTip="{Binding NetStatusTooltip}">
+                <Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="0">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="{DynamicResource TextDisabledBrush}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsNetConnected}" Value="True">
+                                    <Setter Property="Fill" Value="{DynamicResource SuccessBrush}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsNetConnected}" Value="False">
+                                    <Setter Property="Fill" Value="{DynamicResource IdleBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="]" d:Text="]"
+                               VerticalAlignment="Center" Margin="0"/>
+            </StatusBarItem>
+            <Button  Command="{Binding InitializeCommand}" 
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"
+                            Padding="4,2" VerticalAlignment="Center"
+                            ToolTip="{DynamicResource ReloadButtonTooltip}">
+                <materialDesign:PackIcon Kind="Reload" Width="16" Height="16"/>
+            </Button>
             <!-- StatusBar 右邊區域 -->
             <StatusBarItem HorizontalAlignment="Right">
                 <Grid>

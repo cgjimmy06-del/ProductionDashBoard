@@ -77,7 +77,9 @@ namespace FProductionDashBoard.ViewModels
         public bool IsCardReaderConnected => _multiCardReaderService.IsConnected; //讀卡機連線狀態
         public string CardReaderStatusTooltip => BuildCardReaderTooltip(); //讀卡機訊息
         [ObservableProperty]
-        public bool isNetConnected; // DB / WEBAPI 連線狀態 (尚未接入)
+        public bool isNetConnected = false; // DB / WEBAPI 連線狀態 (由 Reload CommonList 檢查連線)
+        [ObservableProperty]
+        public string netStatusTooltip = ""; // 連線狀態訊息
         #endregion
 
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
@@ -170,6 +172,10 @@ namespace FProductionDashBoard.ViewModels
         #region -- 載入初始化 與 計時器 -- (待翻譯log 並加上errorlog)
         public async Task LoadAllListsAsync()
         {
+            IsNetConnected = true;
+            var sb = new StringBuilder("最後更新時間:\n");
+            NetStatusTooltip = sb.Append(DateTime.Now.ToString("yyyy/MM/dd HH:mm")).ToString().TrimEnd();
+
             var t1 = FetchListAsync(() => _dataService.GetDevicesAsync());
             var t2 = FetchListAsync(() => _dataService.GetUsersAsync());
             var t3 = FetchListAsync(() => _dataService.GetMaterialsAsync());
@@ -194,15 +200,15 @@ namespace FProductionDashBoard.ViewModels
                 $"Errors:[{CommonLists.ErrorsList.Count}]-" +
                 $"TimeSlots:[{CommonLists.TimeSlotsList.Count}]-" +
                 $"Roles:[{CommonLists.RolesList.Count}]");
-
-            await SyncAndLogAsync();
-            await CheckMissedInspectionsAsync();
+            //await SyncAndLogAsync();
+            //await CheckMissedInspectionsAsync();
         }
         private async Task<List<T>> FetchListAsync<T>(Func<Task<List<T>>> fetch)
         {
             try { return await fetch(); }
             catch (Exception ex)
             {
+                IsNetConnected = false;
                 _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error);
                 return [];
             }
@@ -240,7 +246,7 @@ namespace FProductionDashBoard.ViewModels
                 await CheckLogOutForLongIdle();
             }
         }
-        // 同步暫存資料
+        // 同步暫存資料  (1分鐘檢查)
         private async Task SyncAndLogAsync()
         {
             if (_isSyncing) return;
