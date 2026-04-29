@@ -79,6 +79,13 @@ namespace FProductionDashBoard
             services.AddSingleton<Services.ICardReaderService>(sp =>
                 sp.GetRequiredService<Services.MultiCardReaderService>());
 
+            // 註冊 WebApi 服務
+            services.AddHttpClient<Services.WebApi.IErpApiService, Services.WebApi.ErpApiService>(client =>
+            {
+                client.BaseAddress = new Uri("http://ssty-erpapp01/Fu.WHD.ERP.Common/");
+                client.Timeout = TimeSpan.FromSeconds(10);
+            });
+
             // 註冊 ViewModel
             services.AddScoped<ViewModels.MainViewModel>();
 

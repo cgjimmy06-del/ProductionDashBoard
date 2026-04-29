@@ -42,6 +42,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly IOfflineSyncService _syncService;
         private readonly ICardReaderService _cardReaderService;
         private readonly MultiCardReaderService _multiCardReaderService;
+        private readonly Services.WebApi.IErpApiService _erpApiService;
         public LogService _log { get; } // public 是為了Window的顯示
         private AuthorizationService _authService { get; }
         public UserInfo? SystemUser => _authService.CurrentUser;
@@ -104,7 +105,7 @@ namespace FProductionDashBoard.ViewModels
 
         public MainViewModel(LogService log, IDataService dataservice, AuthorizationService auth,
             IOfflineSyncService syncService, ICardReaderService cardReaderService,
-            MultiCardReaderService multiCardReaderService)
+            MultiCardReaderService multiCardReaderService, Services.WebApi.IErpApiService erpApiService)
         {
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(
@@ -117,6 +118,7 @@ namespace FProductionDashBoard.ViewModels
             _syncService = syncService;
             _cardReaderService = cardReaderService;
             _multiCardReaderService = multiCardReaderService;
+            _erpApiService = erpApiService;
             _cardReaderService.CardRead += OnCardRead;
 
             // 定義工作起始時間 (於 DispatcherTimer 偵測更新)
@@ -408,7 +410,7 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
-        // 讀卡機事件：記錄 log + 自動登入/換手
+        // 讀卡機事件：記錄 log + 自動登入/換手 / ERP 查詢新增或更新卡號
         private async void OnCardRead(object? sender, Services.CardReadEventArgs e)
         {
             try
@@ -416,20 +418,88 @@ namespace FProductionDashBoard.ViewModels
                 _log.AddLog($"[CardReader:{e.PortName}] {e.CardId}");
 
                 var user = CommonLists.UsersList.FirstOrDefault(u => u.CardId == e.CardId);
-                if (user == null)
+
+                if (user != null)
+                {
+                    if (_authService.CurrentUser?.CardId == e.CardId) return;
+                    await _authService.InitializeAsync(user);
+                    _log.AddLog($"[CardReader] 登入: {user.Name}", LogLevel.Success);
+                    return;
+                }
+
+                // 未在 UsersList 找到 → 查詢 ERP
+                var emp = await _erpApiService.GetEmpInfoByCardAsync("F1", e.CardId);
+                if (emp == null)
                 {
                     _log.AddLog($"[CardReader] 未識別卡號: {e.CardId}", LogLevel.Warning);
                     return;
                 }
-                if (_authService.CurrentUser?.CardId == e.CardId) return;
 
-                await _authService.InitializeAsync(user);
-                _log.AddLog($"[CardReader] 登入: {user.Name}", LogLevel.Success);
+                var existingUser = CommonLists.UsersList.FirstOrDefault(u => u.UserId == emp.EmpNo);
+                if (existingUser == null)
+                    await HandleAddNewEmployeeAsync(emp, e.CardId);
+                else
+                    await HandleUpdateCardIdAsync(existingUser, e.CardId);
             }
             catch (Exception ex)
             {
                 _log.AddLog($"[CardReader] 處理失敗: {ex.Message}", LogLevel.Error);
             }
+        }
+
+        private async Task HandleAddNewEmployeeAsync(Dtos.EmpInfoDto emp, string cardId)
+        {
+            var msg = $"查詢到 ERP 員工資訊\n\n員工編號：{emp.EmpNo}\n姓名：{emp.Name}\n卡號：{cardId}\n\n是否新增至系統？\n（預設訪客權限，密碼 0000）";
+
+            bool confirmed = await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                var vm = new DialogBaseViewModel<object>(msg);
+                new DialogWindow(vm).ShowDialog();
+                return vm.IsConfirmed;
+            });
+
+            if (!confirmed) return;
+
+            var dto = new Dtos.EmployeeFormDto
+            {
+                UserId = emp.EmpNo,
+                Name = emp.Name,
+                CardId = cardId,
+                Password = "0000",
+                RoleId = 1
+            };
+            await _dataService.AddEmployeeAsync(dto);
+            CommonLists.UsersList = await _dataService.GetUsersAsync();
+            _log.AddLog($"[CardReader] 新增員工: {emp.Name}", LogLevel.Success);
+        }
+
+        private async Task HandleUpdateCardIdAsync(UiModels.UserInfo existingUser, string cardId)
+        {
+            var msg = $"系統已有此員工\n\n員工編號：{existingUser.UserId}\n姓名：{existingUser.Name}\n\n新卡號：{cardId}\n\n是否更新卡號至資料庫？";
+
+            bool confirmed = await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                var vm = new DialogBaseViewModel<object>(msg);
+                new DialogWindow(vm).ShowDialog();
+                return vm.IsConfirmed;
+            });
+
+            if (!confirmed) return;
+
+            var dto = new Dtos.EmployeeFormDto
+            {
+                Id = existingUser.Id,
+                UserId = existingUser.UserId,
+                Name = existingUser.Name,
+                CardId = cardId,
+                Password = "",
+                RoleId = existingUser.RoleId,
+                Email = existingUser.Email,
+                DepartmentId = existingUser.DepartmentId
+            };
+            await _dataService.UpdateEmployeeAsync(dto);
+            existingUser.CardId = cardId;
+            _log.AddLog($"[CardReader] 更新卡號: {existingUser.Name}", LogLevel.Success);
         }
 
         // 測試
