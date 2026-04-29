@@ -25,8 +25,8 @@ namespace FProductionDashBoard.ViewModels
 
         public bool IsEditMode => EditingId != null;
 
-        public EmployeeSettingViewModel(LogService log, IDataService dataService)
-            : base(log, dataService) { }
+        public EmployeeSettingViewModel(DashboardCoreServices core)
+            : base(core) { }
 
         partial void OnEditingIdChanged(int? value) => OnPropertyChanged(nameof(IsEditMode));
 
@@ -36,17 +36,17 @@ namespace FProductionDashBoard.ViewModels
             {
                 if (!RoleItems.Any())
                 {
-                    var roles = await _dataService.GetAllRolesAsync();
+                    var roles = await _core.Data.GetAllRolesAsync();
                     foreach (var r in roles) RoleItems.Add(r);
                 }
-                var employees = await _dataService.GetAllEmployeesAsync();
+                var employees = await _core.Data.GetAllEmployeesAsync();
                 EmployeeList.Clear();
                 foreach (var e in employees) EmployeeList.Add(e);
             }
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"載入員工清單失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"載入員工清單失敗: {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -82,13 +82,13 @@ namespace FProductionDashBoard.ViewModels
                 return;
             try
             {
-                await _dataService.DeleteEmployeeAsync(item.EmployeeId);
+                await _core.Data.DeleteEmployeeAsync(item.EmployeeId);
                 EmployeeList.Remove(item);
             }
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"刪除員工失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"刪除員工失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -116,9 +116,9 @@ namespace FProductionDashBoard.ViewModels
                 };
 
                 if (EditingId == null)
-                    await _dataService.AddEmployeeAsync(dto);
+                    await _core.Data.AddEmployeeAsync(dto);
                 else
-                    await _dataService.UpdateEmployeeAsync(dto);
+                    await _core.Data.UpdateEmployeeAsync(dto);
 
                 FormSuccessString = EditingId == null ? "新增成功" : "更新成功";
                 FormErrorString = null;
@@ -129,7 +129,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 FormErrorString = ex.Message;
                 FormSuccessString = null;
-                _log.AddLog($"儲存員工失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"儲存員工失敗: {ex.Message}", LogLevel.Error);
             }
         }
 

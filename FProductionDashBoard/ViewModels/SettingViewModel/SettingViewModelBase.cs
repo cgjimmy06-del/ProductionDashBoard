@@ -8,8 +8,7 @@ namespace FProductionDashBoard.ViewModels
 {
     public abstract partial class SettingViewModelBase : ObservableObject
     {
-        protected readonly LogService _log;
-        protected readonly IDataService _dataService;
+        protected readonly DashboardCoreServices _core;
 
         [ObservableProperty] private string? formErrorString;
         [ObservableProperty] private string? formSuccessString;
@@ -20,10 +19,9 @@ namespace FProductionDashBoard.ViewModels
         public ICommand SaveCommand { get; protected set; }
         public ICommand CancelCommand { get; protected set; }
 
-        protected SettingViewModelBase(LogService log, IDataService dataService)
+        protected SettingViewModelBase(DashboardCoreServices core)
         {
-            _log = log;
-            _dataService = dataService;
+            _core = core;
 
             LoadCommand = new AsyncRelayCommand(LoadAsync);
             NewCommand = new RelayCommand(OpenNewForm);

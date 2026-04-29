@@ -89,6 +89,9 @@ namespace FProductionDashBoard
                 client.Timeout = TimeSpan.FromSeconds(5);
             });
 
+            // 註冊 Facade
+            services.AddScoped<Services.DashboardCoreServices>();
+
             // 註冊 ViewModel
             services.AddScoped<ViewModels.MainViewModel>();
 

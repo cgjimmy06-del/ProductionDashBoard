@@ -30,8 +30,8 @@ namespace FProductionDashBoard.ViewModels
         public string ComputedLabel =>
             $"{FormStartHour:D2}:{FormStartMinute:D2}-{FormEndHour:D2}:{FormEndMinute:D2}";
 
-        public TimeSlotSettingViewModel(LogService log, IDataService dataService)
-            : base(log, dataService) { }
+        public TimeSlotSettingViewModel(DashboardCoreServices core)
+            : base(core) { }
 
         partial void OnFormStartHourChanged(int value) => OnPropertyChanged(nameof(ComputedLabel));
         partial void OnFormStartMinuteChanged(int value) => OnPropertyChanged(nameof(ComputedLabel));
@@ -42,7 +42,7 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                var list = await _dataService.GetTimeSlotsAsync();
+                var list = await _core.Data.GetTimeSlotsAsync();
                 TimeSlotList.Clear();
                 foreach (var s in list) TimeSlotList.Add(s);
                 NextTimeSlotId = TimeSlotList.Count > 0 ? TimeSlotList.Max(s => s.TimeSlotId) + 1 : 1;
@@ -51,7 +51,7 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"載入巡檢時段失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"載入巡檢時段失敗: {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -89,7 +89,7 @@ namespace FProductionDashBoard.ViewModels
                 return;
             try
             {
-                await _dataService.DeleteTimeSlotAsync(item.TimeSlotId);
+                await _core.Data.DeleteTimeSlotAsync(item.TimeSlotId);
                 TimeSlotList.Remove(item);
                 NextTimeSlotId = TimeSlotList.Count > 0 ? TimeSlotList.Max(s => s.TimeSlotId) + 1 : 1;
                 OnPropertyChanged(nameof(NextTimeSlotId));
@@ -97,7 +97,7 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _log.AddLog($"刪除巡檢時段失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"刪除巡檢時段失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
             }
         }
 
@@ -124,9 +124,9 @@ namespace FProductionDashBoard.ViewModels
                 };
 
                 if (EditingId == null)
-                    await _dataService.AddTimeSlotAsync(dto);
+                    await _core.Data.AddTimeSlotAsync(dto);
                 else
-                    await _dataService.UpdateTimeSlotAsync(dto);
+                    await _core.Data.UpdateTimeSlotAsync(dto);
 
                 FormSuccessString = EditingId == null ? "新增成功" : "更新成功";
                 FormErrorString = null;
@@ -137,7 +137,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 FormErrorString = ex.Message;
                 FormSuccessString = null;
-                _log.AddLog($"儲存巡檢時段失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"儲存巡檢時段失敗: {ex.Message}", LogLevel.Error);
             }
         }
 
