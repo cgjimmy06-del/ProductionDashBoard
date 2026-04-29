@@ -108,7 +108,7 @@
         <StatusBar DockPanel.Dock="Bottom"
                    Background="{DynamicResource MaterialDesignPaper}"
                    Foreground="{DynamicResource MaterialDesignBody}">
-
+            <!-- 進度條訊息 -->
             <StatusBarItem>
                 <ProgressBar Style="{StaticResource MaterialDesignLinearProgressBar}"
                              Width="120" Height="10" Margin="5,0"
@@ -121,6 +121,7 @@
                 <TextBlock Text="{Binding ProgressString}" d:Text="Idle"
                                VerticalAlignment="Center" Margin="0,0,5,0"/>
             </StatusBarItem>
+            <!-- 讀卡機狀態 -->
             <StatusBarItem ToolTip="{Binding CardReaderStatusTooltip}">
                 <Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="4,0">
                     <Ellipse.Style>
@@ -138,6 +139,9 @@
                     </Ellipse.Style>
                 </Ellipse>
             </StatusBarItem>
+            <!-- 網路連線狀態 -->
+            
+            <!-- StatusBar 右邊區域 -->
             <StatusBarItem HorizontalAlignment="Right">
                 <Grid>
                     <Grid.ColumnDefinitions>

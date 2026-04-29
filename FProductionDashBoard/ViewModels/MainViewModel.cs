@@ -76,7 +76,8 @@ namespace FProductionDashBoard.ViewModels
         private NavMode currentNavMode = NavMode.Home; // 當前導覽列模式
         public bool IsCardReaderConnected => _multiCardReaderService.IsConnected; //讀卡機連線狀態
         public string CardReaderStatusTooltip => BuildCardReaderTooltip(); //讀卡機訊息
-        public bool IsNetConnected; // DB / WEBAPI 連線狀態 (尚未接入)
+        [ObservableProperty]
+        public bool isNetConnected; // DB / WEBAPI 連線狀態 (尚未接入)
         #endregion
 
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
@@ -214,7 +215,7 @@ namespace FProductionDashBoard.ViewModels
             if (DateTime.Now.AddDays(-1) > _dataService.BusinessDay)
                 _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
 
-            // 狀態更新 (讀卡機)
+            // 狀態列 狀態更新
             OnPropertyChanged(nameof(IsCardReaderConnected));
             OnPropertyChanged(nameof(CardReaderStatusTooltip));
 
@@ -415,8 +416,7 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                _log.AddLog($"[CardReader:{e.PortName}] {e.CardId}");
-
+                // _log.AddLog($"[CardReader:{e.PortName}] {e.CardId}");
                 var user = CommonLists.UsersList.FirstOrDefault(u => u.CardId == e.CardId);
 
                 if (user != null)
@@ -428,7 +428,7 @@ namespace FProductionDashBoard.ViewModels
                 }
 
                 // 未在 UsersList 找到 → 查詢 ERP
-                var emp = await _erpApiService.GetEmpInfoByCardAsync("FUS", e.CardId);
+                var emp = await _erpApiService.GetEmpInfoByCardAsync(e.CardId);
                 if (emp == null)
                 {
                     _log.AddLog($"[CardReader] 未識別卡號: {e.CardId}", LogLevel.Warning);

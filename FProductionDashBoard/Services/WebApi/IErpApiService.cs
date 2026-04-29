@@ -4,5 +4,5 @@ namespace FProductionDashBoard.Services.WebApi;
 
 public interface IErpApiService
 {
-    Task<EmpInfoDto?> GetEmpInfoByCardAsync(string factoryArea, string empCardNumber);
+    Task<EmpInfoDto?> GetEmpInfoByCardAsync(string empCardNumber);
 }
