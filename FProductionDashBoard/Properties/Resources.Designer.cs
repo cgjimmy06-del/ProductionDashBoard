@@ -437,5 +437,17 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("TuningInProgressTeaching", resourceCulture);
             }
         }
+
+        internal static string LoadingInitMessage {
+            get {
+                return ResourceManager.GetString("LoadingInitMessage", resourceCulture);
+            }
+        }
+
+        internal static string TuningCardConfirm {
+            get {
+                return ResourceManager.GetString("TuningCardConfirm", resourceCulture);
+            }
+        }
     }
 }

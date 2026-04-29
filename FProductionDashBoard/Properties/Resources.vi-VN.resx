@@ -243,4 +243,10 @@
   <data name="TuningEndConfirmOffset" xml:space="preserve">
     <value>Xác nhận kết thúc Offset?</value>
   </data>
+  <data name="LoadingInitMessage" xml:space="preserve">
+    <value>Đang tải, vui lòng chờ…</value>
+  </data>
+  <data name="TuningCardConfirm" xml:space="preserve">
+    <value>Quẹt thẻ để xác nhận kết thúc điều chỉnh</value>
+  </data>
 </root>

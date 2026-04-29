@@ -26,7 +26,7 @@ namespace FProductionDashBoard
 
             var fadeIn = new DoubleAnimation
             {
-                From = 0, To = 1, Duration = TimeSpan.FromSeconds(1),
+                From = 0, To = 1, Duration = TimeSpan.FromMilliseconds(150),
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
             };
             this.BeginAnimation(Window.OpacityProperty, fadeIn);
@@ -54,7 +54,7 @@ namespace FProductionDashBoard
             {
                 From = this.Opacity,
                 To = 0,
-                Duration = TimeSpan.FromSeconds(1),
+                Duration = TimeSpan.FromMilliseconds(100),
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
             };
             fadeOut.Completed += (s, _) =>

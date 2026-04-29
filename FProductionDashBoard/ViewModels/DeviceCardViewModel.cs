@@ -258,14 +258,30 @@ namespace FProductionDashBoard.ViewModels
         {
             if (!IsTuning) return;
 
-            var confirmMsg = _activeTuningType == TuningType.Teaching
-                ? Properties.Resources.TuningEndConfirmTeaching
-                : Properties.Resources.TuningEndConfirmOffset;
+            var tcs = new TaskCompletionSource<bool>();
+            var loadingVm = new LoadingViewModel
+            {
+                Mode = LoadingMode.CardReader,
+                Message = Properties.Resources.TuningCardConfirm,
+                CanCancel = true
+            };
 
-            var confirmVm = new DialogBaseViewModel<object>(confirmMsg);
-            var confirmWindow = new DialogWindow(confirmVm, new UserControl());
-            confirmWindow.ShowDialog();
-            if (!confirmVm.IsConfirmed) return;
+            void OnCardConfirm(object? s, CardReadEventArgs e)
+            {
+                if (e.CardId == CurrentUser.CardId)
+                    Application.Current.Dispatcher.Invoke(() => tcs.TrySetResult(true));
+            }
+
+            loadingVm.CloseRequested += (_, _) => tcs.TrySetResult(false);
+            _core.CardReader.CardRead += OnCardConfirm;
+
+            var loadingWin = new LoadingWindow(loadingVm);
+            loadingWin.Show();
+            bool confirmed = await tcs.Task;
+            _core.CardReader.CardRead -= OnCardConfirm;
+            loadingWin.Close();
+
+            if (!confirmed) return;
 
             _tuningTimer?.Stop();
             IsTuning = false;
