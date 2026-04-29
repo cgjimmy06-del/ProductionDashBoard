@@ -18,6 +18,7 @@
     <sys:String x:Key="ViewNavButton">圖表</sys:String>
     <sys:String x:Key="ListManagementNavButton">清單管理</sys:String>
     <sys:String x:Key="EquipmentNavButton">設備管理</sys:String>
+    <sys:String x:Key="OrderManagementNavButton">排單管理</sys:String>
     <sys:String x:Key="PinButtonTooltip">釘選訊息至最新</sys:String>
     <sys:String x:Key="ErrorLogButtonTooltip">切換至錯誤訊息視窗</sys:String>
     <sys:String x:Key="LargeFontButtonTooltip">放大字體</sys:String>
@@ -124,6 +125,14 @@
     <sys:String x:Key="RoleNameDataGridHeader">角色名稱</sys:String>
     <sys:String x:Key="RolePermissionDataGridHeader">權限</sys:String>
     <sys:String x:Key="RoleNameLabel">角色名稱 *</sys:String>
+    <!--#endregion-->
+    <!--#region hardware view 硬體設定視窗 -->
+    <sys:String x:Key="HardwareTabCardReader">讀卡機</sys:String>
+    <sys:String x:Key="CardReaderRefreshTooltip">重整可用 COM port</sys:String>
+    <sys:String x:Key="CardReaderAddTooltip">新增讀卡機</sys:String>
+    <sys:String x:Key="CardReaderTestTooltip">測試連線</sys:String>
+    <sys:String x:Key="CardReaderApplyTooltip">套用設定並重連</sys:String>
+    <sys:String x:Key="CardReaderDeleteTooltip">移除讀卡機</sys:String>
     <!--#endregion-->
     <!--#region loading window 載入視窗 -->
     <sys:String x:Key="LoadingProcessingMessage">處理中，請稍後...</sys:String>

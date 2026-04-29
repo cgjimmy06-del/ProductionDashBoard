@@ -26,7 +26,7 @@ using System.Windows.Threading;
 
 namespace FProductionDashBoard.ViewModels
 {
-    public enum NavMode { Home, Operation, List, Equipment, View }
+    public enum NavMode { Home, Operation, View, List, Equipment, Order }
     public partial class MainViewModel : ObservableObject
     {
         public string AppVersion { get; }
@@ -40,6 +40,8 @@ namespace FProductionDashBoard.ViewModels
         #region  -- DI注入資源 --
         private readonly IDataService _dataService;
         private readonly IOfflineSyncService _syncService;
+        private readonly ICardReaderService _cardReaderService;
+        private readonly MultiCardReaderService _multiCardReaderService;
         public LogService _log { get; } // public 是為了Window的顯示
         private AuthorizationService _authService { get; }
         public UserInfo? SystemUser => _authService.CurrentUser;
@@ -62,15 +64,18 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private bool isErrorMode = false; // 訊息視窗是否切換至異常訊息
         [ObservableProperty]
-        private int progressValue = 0;
+        private int progressValue = 0; // 進度調數值
         [ObservableProperty]
-        private string progressString = Properties.Resources.MainProgressIdle;
+        private string progressString = Properties.Resources.MainProgressIdle; // 進度條說明
         [ObservableProperty]
-        private bool isProgressIndeterminate = false;
+        private bool isProgressIndeterminate = false; // 進度條循環
         [ObservableProperty]
-        private bool isProgressVisible = false;
+        private bool isProgressVisible = false; // 進度條顯示
         [ObservableProperty]
         private NavMode currentNavMode = NavMode.Home; // 當前導覽列模式
+        public bool IsCardReaderConnected => _multiCardReaderService.IsConnected; //讀卡機連線狀態
+        public string CardReaderStatusTooltip => BuildCardReaderTooltip(); //讀卡機訊息
+        public bool IsNetConnected; // DB / WEBAPI 連線狀態 (尚未接入)
         #endregion
 
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _log.ErrorLogs : _log.Logs;
@@ -98,7 +103,8 @@ namespace FProductionDashBoard.ViewModels
         private bool _isSyncing = false;
 
         public MainViewModel(LogService log, IDataService dataservice, AuthorizationService auth,
-            IOfflineSyncService syncService)
+            IOfflineSyncService syncService, ICardReaderService cardReaderService,
+            MultiCardReaderService multiCardReaderService)
         {
             // 讀取 FileVersion
             AppVersion = FileVersionInfo.GetVersionInfo(
@@ -109,6 +115,9 @@ namespace FProductionDashBoard.ViewModels
             _dataService = dataservice;
             _authService = auth;
             _syncService = syncService;
+            _cardReaderService = cardReaderService;
+            _multiCardReaderService = multiCardReaderService;
+            _cardReaderService.CardRead += OnCardRead;
 
             // 定義工作起始時間 (於 DispatcherTimer 偵測更新)
             _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
@@ -131,7 +140,7 @@ namespace FProductionDashBoard.ViewModels
 
             // 設定元件事件 (帳號) 
             LoginCommand = new AsyncRelayCommand(LoginAsync);
-            LogoutCommand = new AsyncRelayCommand(() => _authService.LogoutAsync());
+            LogoutCommand = new AsyncRelayCommand(LogoutAsync);
 
             // 設定元件事件 (訊息視窗)
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
@@ -203,6 +212,10 @@ namespace FProductionDashBoard.ViewModels
             if (DateTime.Now.AddDays(-1) > _dataService.BusinessDay)
                 _dataService.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
 
+            // 狀態更新 (讀卡機)
+            OnPropertyChanged(nameof(IsCardReaderConnected));
+            OnPropertyChanged(nameof(CardReaderStatusTooltip));
+
             _syncTickCounter++;
             if (_syncTickCounter >= 60)
             {
@@ -241,7 +254,7 @@ namespace FProductionDashBoard.ViewModels
             finally
             { _isSyncing = false; }
         }
-        // 未巡檢偵測與插入 -- 巡檢狀態更新 (若離線狀態延至下個工作日，則前日未插入之資料將會遺漏) ** 
+        // 未巡檢偵測與插入 -- 巡檢狀態更新 (5分鐘檢查) (若離線狀態延至下個工作日，則前日未插入之資料將會遺漏) ** 
         private async Task CheckMissedInspectionsAsync()
         {
             var activeDevices = _deviceContainer?.Devices;
@@ -295,12 +308,27 @@ namespace FProductionDashBoard.ViewModels
         #endregion
 
         // 工具列 與 狀態列 事件
+        private string BuildCardReaderTooltip()
+        {
+            var sb = new StringBuilder("讀卡機狀態\n");
+            if (!_multiCardReaderService.Readers.Any())
+                return sb.Append("（未設定讀卡機）").ToString();
+            foreach (var r in _multiCardReaderService.Readers)
+                sb.AppendLine($"{(r.IsConnected ? "●" : "○")} {r.PortName}  {r.BaudRate}  {(r.IsConnected ? "已連線" : "離線")}");
+            return sb.ToString().TrimEnd();
+        }
         private async Task LoginAsync()
         {
             var loginWindow = new LoginWindow();
             if (loginWindow.ShowDialog() != true) { return; }
 
+            _logInOutCounter = 0;
             await _authService.InitializeAsync(loginWindow.User);
+        }
+        private async Task LogoutAsync()
+        {
+            await _authService.LogoutAsync();
+            _cardReaderService.ResetLastCard();
         }
         private void SetProgress(string message, bool visible = true, bool indeterminate = false, int value = 0)
         {
@@ -334,6 +362,10 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Equipment:
+                    MainCard = new HardwareViewModel(_multiCardReaderService);
+                    break;
+
+                case NavMode.Order:
                     break;
 
                 default:
@@ -373,6 +405,30 @@ namespace FProductionDashBoard.ViewModels
                 ProgressString = Properties.Resources.MainProgressStopped;
                 _log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogs");
                 _log.AddErrorLog($"SaveLogs Ex: {ex.ToString()}");
+            }
+        }
+
+        // 讀卡機事件：記錄 log + 自動登入/換手
+        private async void OnCardRead(object? sender, Services.CardReadEventArgs e)
+        {
+            try
+            {
+                _log.AddLog($"[CardReader:{e.PortName}] {e.CardId}");
+
+                var user = CommonLists.UsersList.FirstOrDefault(u => u.CardId == e.CardId);
+                if (user == null)
+                {
+                    _log.AddLog($"[CardReader] 未識別卡號: {e.CardId}", LogLevel.Warning);
+                    return;
+                }
+                if (_authService.CurrentUser?.CardId == e.CardId) return;
+
+                await _authService.InitializeAsync(user);
+                _log.AddLog($"[CardReader] 登入: {user.Name}", LogLevel.Success);
+            }
+            catch (Exception ex)
+            {
+                _log.AddLog($"[CardReader] 處理失敗: {ex.Message}", LogLevel.Error);
             }
         }
 

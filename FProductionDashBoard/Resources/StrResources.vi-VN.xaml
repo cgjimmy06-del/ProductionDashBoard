@@ -18,6 +18,7 @@
     <sys:String x:Key="ViewNavButton">Biểu đồ</sys:String>
     <sys:String x:Key="ListManagementNavButton">Quản lý danh sách</sys:String>
     <sys:String x:Key="EquipmentNavButton">Quản lý thiết bị</sys:String>
+    <sys:String x:Key="OrderManagementNavButton">Quản lý đơn hàng</sys:String>
     <sys:String x:Key="PinButtonTooltip">Ghim tin nhắn về cuối</sys:String>
     <sys:String x:Key="ErrorLogButtonTooltip">Xem nhật ký lỗi</sys:String>
     <sys:String x:Key="LargeFontButtonTooltip">Phóng to chữ</sys:String>
@@ -124,6 +125,14 @@
     <sys:String x:Key="RoleNameDataGridHeader">Tên vai trò</sys:String>
     <sys:String x:Key="RolePermissionDataGridHeader">Quyền</sys:String>
     <sys:String x:Key="RoleNameLabel">Tên vai trò *</sys:String>
+    <!--#endregion-->
+    <!--#region hardware view -->
+    <sys:String x:Key="HardwareTabCardReader">Đầu đọc thẻ</sys:String>
+    <sys:String x:Key="CardReaderRefreshTooltip">Làm mới cổng COM</sys:String>
+    <sys:String x:Key="CardReaderAddTooltip">Thêm đầu đọc thẻ</sys:String>
+    <sys:String x:Key="CardReaderTestTooltip">Kiểm tra kết nối</sys:String>
+    <sys:String x:Key="CardReaderApplyTooltip">Áp dụng và kết nối lại</sys:String>
+    <sys:String x:Key="CardReaderDeleteTooltip">Xóa đầu đọc thẻ</sys:String>
     <!--#endregion-->
     <!--#region loading window -->
     <sys:String x:Key="LoadingProcessingMessage">Đang xử lý, vui lòng chờ...</sys:String>

@@ -94,5 +94,29 @@ namespace FProductionDashBoard.Properties {
                 this["Password"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("COM3")]
+        public string ReaderPort {
+            get {
+                return ((string)(this["ReaderPort"]));
+            }
+            set {
+                this["ReaderPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("115200")]
+        public int ReaderBaud {
+            get {
+                return ((int)(this["ReaderBaud"]));
+            }
+            set {
+                this["ReaderBaud"] = value;
+            }
+        }
     }
 }

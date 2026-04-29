@@ -43,6 +43,9 @@
             <DataTemplate DataType="{x:Type localvm:SettingViewModel}">
                 <localuc:SettingView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type localvm:HardwareViewModel}">
+                <localuc:HardwareView />
+            </DataTemplate>
 
         </ResourceDictionary>
     </Window.Resources>
@@ -117,6 +120,23 @@
             <StatusBarItem>
                 <TextBlock Text="{Binding ProgressString}" d:Text="Idle"
                                VerticalAlignment="Center" Margin="0,0,5,0"/>
+            </StatusBarItem>
+            <StatusBarItem ToolTip="{Binding CardReaderStatusTooltip}">
+                <Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="4,0">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="{DynamicResource TextDisabledBrush}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCardReaderConnected}" Value="True">
+                                    <Setter Property="Fill" Value="{DynamicResource SuccessBrush}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsCardReaderConnected}" Value="False">
+                                    <Setter Property="Fill" Value="{DynamicResource IdleBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
                 <Grid>
@@ -243,8 +263,17 @@
                                        VerticalAlignment="Center"/>
                         </StackPanel>
                     </RadioButton>
+                    <RadioButton Style="{StaticResource NavButtonStyle}"
+                                 Command="{Binding SwitchModeCommand}" 
+                                 CommandParameter="{x:Static localvm:NavMode.Order}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon Kind="OrderBoolAscendingVariant" Margin="0,0,5,0"
+                                                     Width="30" Height="30"/>
+                            <TextBlock Text="{DynamicResource OrderManagementNavButton}" 
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton>
                     <!-- 加入:系統設定(主題、語言、預設參數) -->
-                    <!-- 收合按鈕 -->
                 </StackPanel>
             </Border>
 
