@@ -28,6 +28,8 @@ namespace FProductionDashBoard.ViewModels
     public partial class LoginViewModel : ObservableObject
     {
         public string AppVersion { get; }
+        private readonly UiModels.UserInfo _visitorLogin =
+            new UiModels.UserInfo { UserId = "visitor", Name = "訪客", RoleId = 1, Id = 2 };
 
         // 樣式主題
         private readonly PaletteHelper _paletteHelper = new PaletteHelper();
@@ -77,9 +79,9 @@ namespace FProductionDashBoard.ViewModels
                 param ??= "";
                 if (param == "Normal") // 正常登入
                 { }
-                else if (param == "Visitor") // 訪客登入 (後續刷卡擴充)
+                else if (param == "Visitor") // 訪客登入
                 {
-                    UserId = "visitor";
+                    UserId = _visitorLogin.UserId;
                     Password = "0000";
                 }
                 logInEvent(param);
@@ -98,10 +100,9 @@ namespace FProductionDashBoard.ViewModels
             if (UserId == "" || Password == "")
             { Errorinfo = Properties.Resources.LogInFillOutError; return; }
 
-            UserInfo? user = new UserInfo { 
-                UserId = "visitor", Name = "訪客", RoleId = 1, Id = 2}; // 預設 loginSource = "Visitor"
+            UserInfo? user = _visitorLogin; // 預設 loginSource = "Visitor"
             
-            if (loginSource == "Normal")
+            if (loginSource == "Normal") // 只有常規登入要經過資料庫驗證
             {
                 if (!LoginDapper.checkConnection(SelectedServer))
                 { Errorinfo = Properties.Resources.LogInConnectionError; return; }

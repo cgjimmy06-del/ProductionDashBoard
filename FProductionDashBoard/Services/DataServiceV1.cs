@@ -9,6 +9,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -60,12 +61,13 @@ namespace FProductionDashBoard.Services.V1
             //foreach (var (ErrorCode, Message, Category) in devs) { Debug.WriteLine($"{ErrorCode} - {Message}"); }
 
             var roles = (await RolePermissionRep.GetAllRolesAsync()).ToList();
-            foreach (var nrole in roles)
-            {
-                Debug.WriteLine($"nrole.Name = {nrole.Name}");
-                foreach (var npermission in nrole.RolePermissions)
-                { Debug.WriteLine($"permission = {npermission.PermissionId}"); }
-            }
+            Debug.WriteLine($"roles.Count = {roles.Count}");
+            //foreach (var nrole in roles)
+            //{
+            //    Debug.WriteLine($"nrole.Name = {nrole.Name}");
+            //    foreach (var npermission in nrole.RolePermissions)
+            //    { Debug.WriteLine($"permission = {npermission.PermissionId}"); }
+            //}
 
             //await CheckAndInsertMissedInspectionAsync(timeslots, 1, 1);
             // 插入
