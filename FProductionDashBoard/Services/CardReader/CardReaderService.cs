@@ -41,7 +41,8 @@ namespace FProductionDashBoard.Services
         {
             if (_port == null) return;
             _port.DataReceived -= OnDataReceived;
-            try { if (_port.IsOpen) _port.Close(); } catch { }
+            try { if (_port.IsOpen) _port.Close(); } catch(Exception ex) { 
+                Debug.WriteLine($"[CardReader] Failed to close {PortName}: {ex.Message}" ); }
             _port.Dispose();
             _port = null;
         }

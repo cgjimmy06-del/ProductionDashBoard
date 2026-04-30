@@ -27,20 +27,6 @@
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
-                    <materialDesign:PackIcon Kind="AccountGroup"
-                                             Width="20" Height="20"
-                                             VerticalAlignment="Center"
-                                             Margin="0,0,6,0"/>
-                    <TextBlock Text="{DynamicResource SettingTabEmployee}" VerticalAlignment="Center"
-                               Style="{StaticResource MaterialDesignBody1TextBlock}"/>
-                </StackPanel>
-            </TabItem.Header>
-            <localuc:EmployeeSettingView DataContext="{Binding Employee}"/>
-        </TabItem>
-
-        <TabItem>
-            <TabItem.Header>
-                <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="Layers"
                                              Width="20" Height="20"
                                              VerticalAlignment="Center"
@@ -80,6 +66,20 @@
             <localuc:TimeSlotSettingView DataContext="{Binding TimeSlot}"/>
         </TabItem>
 
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Margin="4,0">
+                    <materialDesign:PackIcon Kind="AccountGroup"
+                                             Width="20" Height="20"
+                                             VerticalAlignment="Center"
+                                             Margin="0,0,6,0"/>
+                    <TextBlock Text="{DynamicResource SettingTabEmployee}" VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </StackPanel>
+            </TabItem.Header>
+            <localuc:EmployeeSettingView DataContext="{Binding Employee}"/>
+        </TabItem>
+        
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">

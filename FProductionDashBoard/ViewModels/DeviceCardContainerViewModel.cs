@@ -38,8 +38,8 @@ namespace FProductionDashBoard.ViewModels
             _core = core;
             commonLists = getlists;
 
-            FirstArticleInsAllCommand = new RelayCommand(() => FirstArticleInsAll());
-            RoutineInsAllCommand = new RelayCommand(() => RoutineInsAll());
+            FirstArticleInsAllCommand = new AsyncRelayCommand(() => FirstArticleInsAll());
+            RoutineInsAllCommand = new AsyncRelayCommand(() => RoutineInsAll());
 
             AddDevicesCommand = new AsyncRelayCommand(() => AddDeviceCard());
             FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
@@ -49,7 +49,7 @@ namespace FProductionDashBoard.ViewModels
             _core.Authorization.UserChanged += () => OnPropertyChanged(nameof(CurrentUser));
         }
         // 待翻譯
-        private async void FirstArticleInsAll()
+        private async Task FirstArticleInsAll()
         {
             if (!Devices.Any()) return;
 
@@ -69,7 +69,7 @@ namespace FProductionDashBoard.ViewModels
                     {
                         idevice.FirstInspectionStatus = result.IsNormal;
 
-                        await _core.Data.AddFirstInspectionAsync(idevice.Info.Id, idevice.CurrentUser.Id, result.IsNormal,
+                        await _core.Data.AddFirstInspectionAsync(idevice.Info.Id, CurrentUser!.Id, result.IsNormal,
                         idevice.CurrentProduct.Name, result.ErrorCode, result.Description);
 
                         _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
@@ -98,7 +98,7 @@ namespace FProductionDashBoard.ViewModels
                 }
             }
         }
-        private async void RoutineInsAll()
+        private async Task RoutineInsAll()
         {
             if (!Devices.Any()) return;
 
@@ -123,7 +123,7 @@ namespace FProductionDashBoard.ViewModels
                 {
                     try
                     {
-                        await _core.Data.AddRoutineInspectionAsync(idevice.Info.Id, idevice.CurrentUser.Id, result.IsNormal,
+                        await _core.Data.AddRoutineInspectionAsync(idevice.Info.Id, CurrentUser!.Id, result.IsNormal,
                             currentTimeSlot ?? 1, idevice.CurrentProduct.Name, result.ErrorCode, result.Description);
                         await idevice.UpdateTimeSlotsStatusAsync();
 
@@ -153,7 +153,7 @@ namespace FProductionDashBoard.ViewModels
 
         private async Task AddDeviceCard()
         {
-            var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile,
+            var vm = new AddDeviceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile,
                                                     commonLists.DevicesList, [.. Devices]); // [.. X] = X.ToList()
             var uc = new AddDeviceDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);

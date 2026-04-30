@@ -76,9 +76,9 @@ namespace FProductionDashBoard.ViewModels
         public bool IsCardReaderConnected => _multiCardReaderService.IsConnected; //讀卡機連線狀態
         public string CardReaderStatusTooltip => BuildCardReaderTooltip(); //讀卡機訊息
         [ObservableProperty]
-        public bool isNetConnected = false; // DB / WEBAPI 連線狀態 (由 Reload CommonList 檢查連線)
+        private bool isNetConnected = false; // DB / WEBAPI 連線狀態 (由 Reload CommonList 檢查連線)
         [ObservableProperty]
-        public string netStatusTooltip = ""; // 連線狀態訊息
+        private string netStatusTooltip = ""; // 連線狀態訊息
         #endregion
 
         public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _core.Log.ErrorLogs : _core.Log.Logs;
@@ -268,6 +268,10 @@ namespace FProductionDashBoard.ViewModels
                     _core.Log.AddLog($"已重新連線: 上傳{result?.SyncedCount}筆暫存資料");
                 if (result?.FailedCount > 0) // 無效，因為離線永遠回傳0
                     _core.Log.AddLog($"連線失敗: {result?.FailedCount}筆資料等待上傳", LogLevel.Warning);
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog($"同步暫存異常: {ex.Message}", LogLevel.Error);
             }
             finally
             { Interlocked.Exchange(ref _isSyncing, 0); }
