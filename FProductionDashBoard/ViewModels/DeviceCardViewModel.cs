@@ -110,6 +110,7 @@ namespace FProductionDashBoard.ViewModels
         // 操作員按鈕
         private async Task MaterialsChangeAsync() // 待翻譯
         {
+            CurrentUser = _core.Authorization.CurrentUser!;
             var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this, _commonLists.MaterialsList);
             var uc = new MaterialsDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
@@ -125,7 +126,6 @@ namespace FProductionDashBoard.ViewModels
                     foreach (var mdetial in result.Selections)
                         selectDetials.Add((mdetial.Id, mdetial.SelectedCount));
 
-                    CurrentUser = _core.Authorization.CurrentUser!;
                     await _core.Data.AddReplacementRecordAsync(Info.Id, CurrentUser.Id, selectDetials);
 
                     _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
@@ -146,6 +146,7 @@ namespace FProductionDashBoard.ViewModels
         }
         private async Task FirstArticleInspectionAsync() // 待翻譯
         {
+            CurrentUser = _core.Authorization.CurrentUser!;
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, this, _commonLists.ErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
@@ -158,7 +159,6 @@ namespace FProductionDashBoard.ViewModels
                     var result = vm.Result ?? new();
                     FirstInspectionStatus = result.IsNormal;
 
-                    CurrentUser = _core.Authorization.CurrentUser!;
                     await _core.Data.AddFirstInspectionAsync(Info.Id, CurrentUser.Id, result.IsNormal,
                         CurrentProduct.Name, result.ErrorCode, result.Description);
 
@@ -188,6 +188,7 @@ namespace FProductionDashBoard.ViewModels
         }
         private async Task RoutineInspectionAsync() // 待翻譯
         {
+            CurrentUser = _core.Authorization.CurrentUser!;
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, this, _commonLists.ErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
@@ -206,7 +207,6 @@ namespace FProductionDashBoard.ViewModels
                         return;
                     }
 
-                    CurrentUser = _core.Authorization.CurrentUser!;
                     await _core.Data.AddRoutineInspectionAsync(Info.Id, CurrentUser.Id, result.IsNormal, currentTimeSlot ?? 1,
                         CurrentProduct.Name, result.ErrorCode, result.Description);
                     await UpdateTimeSlotsStatusAsync();

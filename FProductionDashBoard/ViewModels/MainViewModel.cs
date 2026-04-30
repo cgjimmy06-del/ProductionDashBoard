@@ -177,9 +177,9 @@ namespace FProductionDashBoard.ViewModels
                 Message = Properties.Resources.LoadingInitMessage,
                 CanCancel = false
             };
-            var loadingWin = new LoadingWindow(loadingVm);
-            //Application.Current.MainWindow.IsEnabled = false;
+            var loadingWin = new LoadingWindow(loadingVm); //Application.Current.MainWindow.IsEnabled = false;
             loadingWin.Show();
+
             try
             {
                 IsNetConnected = true;
