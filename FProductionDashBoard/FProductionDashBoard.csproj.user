@@ -11,16 +11,7 @@
     <Compile Update="LoadingWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="UserControls\AddDeviceDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="UserControls\DeviceCardContainer.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="UserControls\InspectionDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="UserControls\MaterialsDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

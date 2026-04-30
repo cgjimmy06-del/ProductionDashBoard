@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FProductionDashBoard.UiModels;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.Services.Exceptions;
+using FProductionDashBoard.UiModels;
 using FProductionDashBoard.UserControls;
 using Microsoft.Data.SqlClient;
 using System;
@@ -18,39 +19,37 @@ namespace FProductionDashBoard.ViewModels
     public partial class DeviceCardContainerViewModel : ObservableObject
     {
         private string defaultDevicesFile = "defaultdevices.json"; // 預設設備檔案
-        private readonly ListsFormSql commonLists;
+        private readonly ListsFromSql commonLists;
         public ObservableCollection<DeviceCardViewModel> Devices { get; } =
             new ObservableCollection<DeviceCardViewModel>();
 
-        private readonly LogService _log;
-        private readonly IDataService _dataService;
-        private readonly AuthorizationService _authService;
-        public UserInfo CurrentUser { get; }
+        private readonly DashboardCoreServices _core;
+        public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
 
         public ICommand FirstArticleInsAllCommand { get; }
         public ICommand RoutineInsAllCommand { get; }
         public ICommand AddDevicesCommand { get; }
         public ICommand FastDownloadDevicesCommand { get; }
         public ICommand FastUploadDevicesCommand { get; }
+        public ICommand DeleteDevicesCommand { get; }
 
-        public DeviceCardContainerViewModel(LogService log, IDataService dataservice, AuthorizationService authservice,
-            UserInfo currentuser, ListsFormSql getlists)
+        public DeviceCardContainerViewModel(DashboardCoreServices core, ListsFromSql getlists)
         {
-            _log = log;
-            _dataService = dataservice;
-            _authService = authservice;
-            CurrentUser = currentuser;
+            _core = core;
             commonLists = getlists;
 
-            FirstArticleInsAllCommand = new RelayCommand(() => FirstArticleInsAll());
-            RoutineInsAllCommand = new RelayCommand(() => RoutineInsAll());
+            FirstArticleInsAllCommand = new AsyncRelayCommand(() => FirstArticleInsAll());
+            RoutineInsAllCommand = new AsyncRelayCommand(() => RoutineInsAll());
 
             AddDevicesCommand = new AsyncRelayCommand(() => AddDeviceCard());
             FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
             FastUploadDevicesCommand = new AsyncRelayCommand(() => FastUploadDevices());
+            DeleteDevicesCommand = new RelayCommand(() => DeleteDevices());
+
+            _core.Authorization.UserChanged += () => OnPropertyChanged(nameof(CurrentUser));
         }
         // 待翻譯
-        private async void FirstArticleInsAll()
+        private async Task FirstArticleInsAll()
         {
             if (!Devices.Any()) return;
 
@@ -62,26 +61,44 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                try
-                {
-                    var result = vm.Result ?? new();
+                var result = vm.Result ?? new();
 
-                    foreach (var idevice in Devices)
+                foreach (var idevice in Devices)
+                {
+                    try
                     {
-                        await _dataService.AddFirstInspectionAsync(idevice.Info.Id, idevice.CurrentUser.Id, result.IsNormal,
+                        idevice.FirstInspectionStatus = result.IsNormal;
+
+                        await _core.Data.AddFirstInspectionAsync(idevice.Info.Id, CurrentUser!.Id, result.IsNormal,
                         idevice.CurrentProduct.Name, result.ErrorCode, result.Description);
 
-                        idevice.FirstInspectionStatus = result.IsNormal;
+                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                        $"首件紀錄上傳完成");
                     }
-                }
-                catch (Exception ex)
-                {
-                    _log.AddLog("首件紀錄上傳異常 (批次)");
-                    _log.AddErrorLog($"FirstArticleInspection: {ex.Message}");
+                    catch (OfflineOperationQueuedException)
+                    {
+                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                            $"首件紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                    }
+                    catch (BusinessRuleException ex)
+                    {
+                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                        $"業務規則異常", LogLevel.Error);
+                        _core.Log.AddErrorLog($"FirstInspection BusinessRuleEx: {ex.Message}");
+                        idevice.FirstInspectionStatus = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                            $"首件紀錄上傳異常");
+                        _core.Log.AddErrorLog($"FirstInspection Ex: {ex.Message}");
+                        idevice.FirstInspectionStatus = false;
+                    }
+
                 }
             }
         }
-        private async void RoutineInsAll()
+        private async Task RoutineInsAll()
         {
             if (!Devices.Any()) return;
 
@@ -93,40 +110,50 @@ namespace FProductionDashBoard.ViewModels
 
             if (vm.IsConfirmed)
             {
-                try
+                var result = vm.Result ?? new();
+
+                var currentTimeSlot = _core.Data.GetCurrentTimeSlotId(commonLists.TimeSlotsList);
+                if (currentTimeSlot == null)
                 {
-                    var result = vm.Result ?? new();
+                    _core.Log.AddLog("目前不在任何巡檢時段內");
+                    return;
+                }
 
-                    var currentTimeSlot = await _dataService.GetCurrentTimeSlotIdAsync();
-                    if (currentTimeSlot == null)
+                foreach (var idevice in Devices)
+                {
+                    try
                     {
-                        _log.AddLog("目前不在任何巡檢時段內");
-                        return;
-                    }
-
-                    foreach (var idevice in Devices)
-                    {
-                        await _dataService.AddRoutineInspectionAsync(idevice.Info.Id, idevice.CurrentUser.Id, result.IsNormal,
+                        await _core.Data.AddRoutineInspectionAsync(idevice.Info.Id, CurrentUser!.Id, result.IsNormal,
                             currentTimeSlot ?? 1, idevice.CurrentProduct.Name, result.ErrorCode, result.Description);
                         await idevice.UpdateTimeSlotsStatusAsync();
+
+                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                        $"巡檢紀錄上傳完成");
                     }
-                }
-                catch(SqlException sqlex)
-                {
-                    _log.AddLog("巡檢紀錄上傳異常 (批次)");
-                    _log.AddErrorLog($"RoutineInspection: {sqlex.Message}");
-                }
-                catch (Exception ex)
-                {
-                    _log.AddLog("巡檢紀錄上傳異常 (批次)");
-                    _log.AddErrorLog($"RoutineInspection: {ex.Message}");
+                    catch (OfflineOperationQueuedException)
+                    {
+                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                            $"巡檢紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                    }
+                    catch (BusinessRuleException ex)
+                    {
+                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                            $"業務規則異常", LogLevel.Error);
+                        _core.Log.AddErrorLog($"RoutineInspection BusinessRuleEx: {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
+                            $"巡檢紀錄上傳異常");
+                        _core.Log.AddErrorLog($"RoutineInspection Ex: {ex.Message}");
+                    }
                 }
             }
         }
 
         private async Task AddDeviceCard()
         {
-            var vm = new AddDeivceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile,
+            var vm = new AddDeviceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile,
                                                     commonLists.DevicesList, [.. Devices]); // [.. X] = X.ToList()
             var uc = new AddDeviceDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
@@ -137,17 +164,17 @@ namespace FProductionDashBoard.ViewModels
                 var result = vm.Result ?? new();
                 foreach (var iselection in result.Selections)
                 {
-                    var idevice = new DeviceCardViewModel(_log, _dataService, _authService, iselection, CurrentUser, commonLists);
+                    var idevice = new DeviceCardViewModel(_core, iselection, CurrentUser!, commonLists);
                     await idevice.UpdateTimeSlotsStatusAsync();
                     Devices.Add(idevice);
-                    _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
+                    _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
                 }
             }
         }
         private void FastDownloadDevices()
         {
             JsonDataService.Save(Devices.Select(s => s.Info), defaultDevicesFile);
-            _log.AddLog($"{Properties.Resources.ComStrDownloaded}: {defaultDevicesFile}", LogLevel.Info);
+            _core.Log.AddLog($"{Properties.Resources.ComStrDownloaded}: {defaultDevicesFile}", LogLevel.Info);
         }
         private async Task FastUploadDevices()
         {
@@ -159,12 +186,15 @@ namespace FProductionDashBoard.ViewModels
             }
             foreach (var iselection in result)
             {
-                var idevice = new DeviceCardViewModel(_log, _dataService, _authService, iselection, CurrentUser, commonLists);
+                var idevice = new DeviceCardViewModel(_core, iselection, CurrentUser!, commonLists);
                 await idevice.UpdateTimeSlotsStatusAsync();
                 Devices.Add(idevice);
-                _log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
+                _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
             }
         }
-
+        private void DeleteDevices()
+        {
+            if (Devices.Any()) Devices.Clear();
+        }
     }
 }

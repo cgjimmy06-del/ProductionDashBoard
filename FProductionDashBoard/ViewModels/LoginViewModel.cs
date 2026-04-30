@@ -28,6 +28,8 @@ namespace FProductionDashBoard.ViewModels
     public partial class LoginViewModel : ObservableObject
     {
         public string AppVersion { get; }
+        private readonly UiModels.UserInfo _visitorLogin =
+            new UiModels.UserInfo { UserId = "visitor", Name = "訪客", RoleId = 1, Id = 2 };
 
         // 樣式主題
         private readonly PaletteHelper _paletteHelper = new PaletteHelper();
@@ -77,9 +79,9 @@ namespace FProductionDashBoard.ViewModels
                 param ??= "";
                 if (param == "Normal") // 正常登入
                 { }
-                else if (param == "Visitor") // 訪客登入 (後續刷卡擴充)
+                else if (param == "Visitor") // 訪客登入
                 {
-                    UserId = "visitor";
+                    UserId = _visitorLogin.UserId;
                     Password = "0000";
                 }
                 logInEvent(param);
@@ -98,11 +100,16 @@ namespace FProductionDashBoard.ViewModels
             if (UserId == "" || Password == "")
             { Errorinfo = Properties.Resources.LogInFillOutError; return; }
 
-            if (!LoginService.checkConnection(SelectedServer))
-            { Errorinfo = Properties.Resources.LogInConnectionError; return; }
+            UserInfo? user = _visitorLogin; // 預設 loginSource = "Visitor"
+            
+            if (loginSource == "Normal") // 只有常規登入要經過資料庫驗證
+            {
+                if (!LoginDapper.checkConnection(SelectedServer))
+                { Errorinfo = Properties.Resources.LogInConnectionError; return; }
+                // 之後password透過EncryptionService加密後儲存
+                user = LoginDapper.validateUser(SelectedServer, UserId, Password);
+            }
 
-            // 之後password透過EncryptionService加密後儲存
-            var user = LoginService.validateUser(SelectedServer, UserId, Password);
             if (user != null)
             {
                 if (loginSource != "Normal") { UserId = ""; Password = ""; } // 避免記憶 非常規登入資訊
@@ -161,8 +168,10 @@ namespace FProductionDashBoard.ViewModels
             } else Application.Current.Resources.MergedDictionaries.Add(dict);
 
             // 切換 .resx (後端訊息)
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo(SelectedLanguage);
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(SelectedLanguage);
+            var currentCulture = new CultureInfo(SelectedLanguage);
+            Properties.Resources.Culture = currentCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = currentCulture;
+            Thread.CurrentThread.CurrentUICulture = currentCulture;
         }
         private void themeChange() // 主題切換
         {

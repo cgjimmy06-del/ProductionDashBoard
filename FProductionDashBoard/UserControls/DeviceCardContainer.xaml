@@ -18,7 +18,7 @@
 
         <!-- 統一操作區 -->
         <Border Grid.Row="0" Margin="2" Padding="2" Height="50"
-                                        BorderBrush="Gray" BorderThickness="0">
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0">
             <StackPanel Orientation="Horizontal" Margin="2"
                                                 HorizontalAlignment="Center">
                 <Button Height="40" Width="80" Margin="5,0"
@@ -50,7 +50,7 @@
         </ScrollViewer>
         <!-- 卡片新增操作區(在此固定) -->
         <Border Grid.Row="2" Margin="2" Padding="2" Height="50"
-                                        BorderBrush="Gray" BorderThickness="0">
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0">
             <StackPanel Orientation="Horizontal" Margin="2"
                                                 HorizontalAlignment="Center">
                 <Button Height="40" Width="80" Margin="5,0"
@@ -78,6 +78,12 @@
                         <materialDesign:PackIcon Kind="FileDownload"
                                                      Width="30" Height="30"/>
                     </StackPanel>
+                </Button>
+                <Button Height="40" Width="80" Margin="5,0"
+                                            Command="{Binding DeleteDevicesCommand}"
+                                            ToolTip="{DynamicResource DeleteDevicesButtonTooltip}">
+                    <materialDesign:PackIcon Kind="Delete"
+                                                     Width="30" Height="30"/>
                 </Button>
             </StackPanel>
         </Border>

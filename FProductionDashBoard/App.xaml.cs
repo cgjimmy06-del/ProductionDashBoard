@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FProductionDashBoard.Services.Offline;
+using FProductionDashBoard.Services.Offline.Handlers;
+using FProductionDashBoard.Services.WebApi;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
@@ -16,7 +19,7 @@ namespace FProductionDashBoard
     {
         private ServiceProvider? _serviceProvider;
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             ShutdownMode = ShutdownMode.OnExplicitShutdown; //「明確呼叫 Shutdown() 才結束」
@@ -56,22 +59,50 @@ namespace FProductionDashBoard
             services.AddScoped<Repositories.IMaterialReplacementRepository, Repositories.MaterialReplacementRepository>();
             services.AddScoped<Repositories.ITimeSlotLookupRepository, Repositories.TimeSlotLookupRepository>();
             services.AddScoped<Repositories.IInspectionRecordRepository, Repositories.InspectionRecordRepository>();
+            services.AddScoped<Repositories.ITuningRecordRepository, Repositories.TuningRecordRepository>();
+            services.AddScoped<Repositories.IRolePermissionRepository, Repositories.RolePermissionRepository>();
 
-            // 註冊 資訊
-            services.AddSingleton(user);
+            // 離線暫存服務
+            services.AddDbContext<Repositories.LocalDbContext>(opt =>
+                opt.UseSqlite("Data Source=Settings/local_cache.db"), ServiceLifetime.Singleton);
+            services.AddSingleton<IOfflineCacheService, OfflineCacheService>();
+            services.AddSingleton<IOfflineSyncService, OfflineSyncService>();
+            services.AddTransient<IPendingOperationHandler, ReplacementSyncHandler>();
+            services.AddTransient<IPendingOperationHandler, FirstInspectionSyncHandler>();
+            services.AddTransient<IPendingOperationHandler, RoutineInspectionSyncHandler>();
+            services.AddTransient<IPendingOperationHandler, TuningSyncHandler>();
 
             // 註冊 Service
             services.AddScoped<Services.IDataService, Services.V1.DataService>();
             services.AddScoped<Services.LogService>();
-            services.AddScoped<Services.AuthorizationService>();
+            services.AddSingleton<Services.AuthorizationService>();
+            services.AddSingleton<Services.MultiCardReaderService>();
+            services.AddSingleton<Services.ICardReaderService>(sp =>
+                sp.GetRequiredService<Services.MultiCardReaderService>());
+
+            // 註冊 WebApi 服務
+            var factoryArea = config[$"EriApi:{selectedServer}"] ?? selectedServer;
+            services.Configure<ErpApiOptions>(opt => opt.FactoryArea = factoryArea);
+            services.AddHttpClient<Services.WebApi.IErpApiService, Services.WebApi.ErpApiService>(client =>
+            {
+                client.BaseAddress = new Uri("http://ssty-erpapp01.sporting.fusheng.com/Fusheng.WHD.ERP.Common/");
+                client.Timeout = TimeSpan.FromSeconds(5);
+            });
+
+            // 註冊 Facade
+            services.AddScoped<Services.DashboardCoreServices>();
 
             // 註冊 ViewModel
             services.AddScoped<ViewModels.MainViewModel>();
 
-            // 註冊 MainWindow 的 InitializeComponent()可能沒有正確執行，致 XAML 裡的 UI 元件沒有完整載入
-            // services.AddScoped<MainWindow>();
-
             _serviceProvider = services.BuildServiceProvider();
+            var authService = _serviceProvider.GetRequiredService<Services.AuthorizationService>();
+            await authService.InitializeAsync(user);
+
+            // 預設啟動一台讀卡機 (以最後連線的設備為準)
+            _serviceProvider.GetRequiredService<Services.MultiCardReaderService>()
+                .AddReader(FProductionDashBoard.Properties.Settings.Default.ReaderPort,
+                           FProductionDashBoard.Properties.Settings.Default.ReaderBaud);
 
             // 取代在 App.xaml 中的 StartupUri
             ShutdownMode = ShutdownMode.OnMainWindowClose; //「被設定為 MainWindow 之介面關閉則結束」

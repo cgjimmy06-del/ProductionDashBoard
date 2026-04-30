@@ -1,0 +1,342 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <!-- 此xaml為各種元件設計樣式 -->
+    <!-- 用於所有主要元件之預設及具名樣式 -->
+    <!-- 如 button、textbox、textblock 等 -->
+
+    <!-- 全域樣式 -->
+    <!--#region 動畫樣式 -->
+    <!-- 縮放 -->
+    <Storyboard x:Key="PressDownStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                         To="0.99" Duration="0:0:0.1"/>
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                         To="0.99" Duration="0:0:0.1"/>
+    </Storyboard>
+    <Storyboard x:Key="ReleaseStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                         To="1" Duration="0:0:0.1"/>
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                         To="1" Duration="0:0:0.1"/>
+    </Storyboard>
+    <!-- 透明度 -->
+    <Storyboard x:Key="FadeInStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                     To="1" Duration="0:0:0.2"/>
+    </Storyboard>
+    <Storyboard x:Key="FadeOutStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                     To="0.7" Duration="0:0:0.2"/>
+    </Storyboard>
+    <!-- 顏色 (Hover狀態) -->
+    <Storyboard x:Key="HoverColorStoryboard">
+        <ColorAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                    To="LightBlue" Duration="0:0:0.2"/>
+    </Storyboard>
+    <!-- 位移 (滑動) -->
+    <Storyboard x:Key="PressMoveStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
+                     To="2" Duration="0:0:0.1"/>
+    </Storyboard>
+    <Storyboard x:Key="ReleaseMoveStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
+                     To="0" Duration="0:0:0.1"/>
+    </Storyboard>
+    <!-- 旋轉 -->
+    <Storyboard x:Key="RotateIconStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(RotateTransform.Angle)"
+                     To="360" Duration="0:0:0.5" RepeatBehavior="1x"/>
+    </Storyboard>
+    <!-- 組合動畫 -->
+    <Storyboard x:Key="HoverCombinedStoryboard">
+        <!--<BeginStoryboard Storyboard="{StaticResource PressDownStoryboard}"/>
+        <BeginStoryboard Storyboard="{StaticResource FadeInStoryboard}"/>
+        <BeginStoryboard Storyboard="{StaticResource HoverColorStoryboard}"/>-->
+    </Storyboard>
+
+    <!--#endregion-->
+
+    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+    </Style>
+    <Style TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignOutlinedComboBox}">
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+    <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
+        <Setter Property="materialDesign:HintAssist.IsFloating" Value="False"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Padding" Value="4"/>
+        <!--<Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>-->
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style TargetType="PasswordBox" BasedOn="{StaticResource MaterialDesignOutlinedPasswordBox}">
+        <Setter Property="materialDesign:HintAssist.IsFloating" Value="False"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Padding" Value="4"/>
+        <!--<Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>-->
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+    </Style>
+    <Style TargetType="DataGrid" BasedOn="{StaticResource MaterialDesignDataGrid}">
+        <Setter Property="AutoGenerateColumns" Value="False"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="SelectionMode" Value="Extended"/>
+        <Setter Property="SelectionUnit" Value="FullRow"/>
+        <Setter Property="RowHeight" Value="25"/>
+        <Setter Property="ColumnHeaderHeight" Value="25"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}"/>
+        <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
+        <Setter Property="RowBackground" Value="{DynamicResource MaterialDesignPaper}"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ColumnHeaderStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                    <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="CenterTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+    </Style>
+    <Style TargetType="TabItem">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="MinWidth" Value="140"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Padding="0" Margin="0" BorderThickness="0.5">
+                        <ContentPresenter ContentSource="Header"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- 滑鼠移入效果 -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource PrimaryLightBrush}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+                        </Trigger>
+                        <!-- 選中效果 -->
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource SelectedBrush}"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SelectedBrush}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 具名樣式 -->
+    <Style x:Key="NavButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Padding" Value="5,0"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="0"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Style.Triggers>
+            <!-- 滑鼠移入 -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryLightBrush}"/>
+            </Trigger>
+            <!-- 按下 -->
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            </Trigger>
+            <!-- 選中狀態 -->
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SelectedBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource SelectedBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="FunctionButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="5"/>
+        <Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Style.Triggers>
+            <!-- 滑鼠移入 -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SecondaryLightBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+            </Trigger>
+            <!-- 按下 -->
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="FunctionToggleButtonStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignFlatToggleButton}">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="5"/>
+        <!--<Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>-->
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Style.Triggers>
+            <!-- 滑鼠移入 -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SecondaryLightBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+            </Trigger>
+            <!-- 按下 -->
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            </Trigger>
+            <!-- 選中狀態 -->
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="ConfirmButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Width" Value="100"/>
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="5"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Style.Triggers>
+            <!-- 滑鼠移入 -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+            </Trigger>
+            <!-- 按下 -->
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="DeviceMainButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Width" Value="90"/>
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="5"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Style.Triggers>
+            <!-- 滑鼠移入 -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+            </Trigger>
+            <!-- 按下 -->
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="TuningOverlayButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="#CCEEEEEE"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="12">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="MaterialSelectionButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="3"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Style.Triggers>
+            <!-- 滑鼠移入 -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+            </Trigger>
+            <!-- 按下 -->
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+            </Trigger>
+            <!-- 選中狀態 -->
+            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="EllipsisTextBlock" TargetType="TextBlock">
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+        <Setter Property="TextTrimming" Value="WordEllipsis"/>
+        <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+    </Style>
+    <Style x:Key="GridEditButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Margin" Value="5,0"/>
+    </Style>
+    
+</ResourceDictionary>

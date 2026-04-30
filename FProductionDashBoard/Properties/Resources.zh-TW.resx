@@ -165,6 +165,15 @@
   <data name="DeviceRoutineInsDialog" xml:space="preserve">
     <value>本次巡檢結果</value>
   </data>
+  <data name="DialogBaseConfirm" xml:space="preserve">
+    <value>確認執行</value>
+  </data>
+  <data name="DialogBaseDelete" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="DialogBaseSave" xml:space="preserve">
+    <value>儲存</value>
+  </data>
   <data name="InsFirstAbnormal" xml:space="preserve">
     <value>首件異常，請依流程通報!</value>
   </data>
@@ -218,5 +227,29 @@
   </data>
   <data name="MaterialNonSelectionError" xml:space="preserve">
     <value>請至少選擇一項!</value>
+  </data>
+  <data name="TuningDialogTitle" xml:space="preserve">
+    <value>選擇調試操作</value>
+  </data>
+  <data name="TuningInProgressTeaching" xml:space="preserve">
+    <value>帶點中...</value>
+  </data>
+  <data name="TuningInProgressOffset" xml:space="preserve">
+    <value>調品質中...</value>
+  </data>
+  <data name="TuningEndConfirmTeaching" xml:space="preserve">
+    <value>確認結束帶點？</value>
+  </data>
+  <data name="TuningEndConfirmOffset" xml:space="preserve">
+    <value>確認結束調品質？</value>
+  </data>
+  <data name="LoadingInitMessage" xml:space="preserve">
+    <value>載入中，請稍候…</value>
+  </data>
+  <data name="TuningCardConfirm" xml:space="preserve">
+    <value>請刷卡確認結束調試</value>
+  </data>
+  <data name="ComStrSystemUser" xml:space="preserve">
+    <value>系統登入人員</value>
   </data>
 </root>

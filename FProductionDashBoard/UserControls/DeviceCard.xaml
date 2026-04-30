@@ -44,7 +44,6 @@
                 <EventTrigger RoutedEvent="PreviewMouseUp">
                     <BeginStoryboard Storyboard="{StaticResource ReleaseStoryboard}"/>
                 </EventTrigger>
-
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
@@ -78,13 +77,14 @@
                            FontWeight="Bold" FontSize="30" Cursor="Hand"
                            TextDecorations="Underline"/>
 
-                <!-- 資訊列 --> <!-- language -->
+                <!-- 資訊列 -->
+                <!-- language -->
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <TextBlock d:Text="default 123"
-                               Text="{Binding CurrentProduct.Name, StringFormat=: {0}}"/>
-                    
-                    <TextBlock d:Text="yun"
-                               Text="{Binding CurrentUser.Name, StringFormat=: {0}}"/>
+                    <TextBlock d:Text="default 123" Margin="5,0"
+                               Text="{Binding CurrentProduct.Name, StringFormat=:Pruduct: {0}}"/>
+
+                    <TextBlock d:Text="yun" Margin="5,0"
+                               Text="{Binding CurrentUser.Name, StringFormat=:User: {0}}"/>
                     <!--<TextBlock Text="產量: 1200 件" 
                                Foreground="{DynamicResource SecondaryHueMidBrush}"/>-->
                 </StackPanel>
@@ -101,8 +101,9 @@
                             Content="{DynamicResource FirstInspectionButton}"
                             Command="{Binding FirstInspectionCommand}"
                             Background="{Binding FirstInspectionStatus, 
-                                    Converter={StaticResource BoolToColorConverter}}"
-                            Foreground="White"/>
+                                    Converter={StaticResource BoolToColorConverter},
+                                    ConverterParameter='NoError'}">
+                    </Button>
 
                     <Button Margin="5"
                             Style="{DynamicResource DeviceMainButtonStyle}"
@@ -132,6 +133,25 @@
                 </ItemsControl>
 
             </StackPanel>
+
+            <!-- 調試計時覆蓋層 -->
+            <Button Grid.Column="0" Grid.ColumnSpan="2"
+                    Style="{StaticResource TuningOverlayButtonStyle}"
+                    Command="{Binding EndTuningCommand}"
+                    Visibility="{Binding IsTuning, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Panel.ZIndex="10">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="{Binding TuningStatusText}"
+                               FontSize="18" FontWeight="Bold"
+                               Foreground="#333333"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource TuningClickToEnd}"
+                               FontSize="12"
+                               Foreground="#555555"
+                               HorizontalAlignment="Center"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Button>
 
         </Grid>
     </Border>

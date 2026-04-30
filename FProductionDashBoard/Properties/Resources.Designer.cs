@@ -124,6 +124,15 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 System User 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrSystemUser {
+            get {
+                return ResourceManager.GetString("ComStrSystemUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Time Slot 的當地語系化字串。
         /// </summary>
         internal static string ComStrTimeSlot {
@@ -205,6 +214,33 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Confirm 的當地語系化字串。
+        /// </summary>
+        internal static string DialogBaseConfirm {
+            get {
+                return ResourceManager.GetString("DialogBaseConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Delete 的當地語系化字串。
+        /// </summary>
+        internal static string DialogBaseDelete {
+            get {
+                return ResourceManager.GetString("DialogBaseDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Save 的當地語系化字串。
+        /// </summary>
+        internal static string DialogBaseSave {
+            get {
+                return ResourceManager.GetString("DialogBaseSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 First Inspection Abnormal, please report according to procedure! 的當地語系化字串。
         /// </summary>
         internal static string InsFirstAbnormal {
@@ -273,6 +309,15 @@ namespace FProductionDashBoard.Properties {
         internal static string InsRoutineUpdateLight {
             get {
                 return ResourceManager.GetString("InsRoutineUpdateLight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Loading, please wait… 的當地語系化字串。
+        /// </summary>
+        internal static string LoadingInitMessage {
+            get {
+                return ResourceManager.GetString("LoadingInitMessage", resourceCulture);
             }
         }
         
@@ -363,6 +408,60 @@ namespace FProductionDashBoard.Properties {
         internal static string MaterialNonSelectionError {
             get {
                 return ResourceManager.GetString("MaterialNonSelectionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Swipe card to confirm end of tuning 的當地語系化字串。
+        /// </summary>
+        internal static string TuningCardConfirm {
+            get {
+                return ResourceManager.GetString("TuningCardConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Select Tuning Operation 的當地語系化字串。
+        /// </summary>
+        internal static string TuningDialogTitle {
+            get {
+                return ResourceManager.GetString("TuningDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Confirm end Offset? 的當地語系化字串。
+        /// </summary>
+        internal static string TuningEndConfirmOffset {
+            get {
+                return ResourceManager.GetString("TuningEndConfirmOffset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Confirm end Teaching? 的當地語系化字串。
+        /// </summary>
+        internal static string TuningEndConfirmTeaching {
+            get {
+                return ResourceManager.GetString("TuningEndConfirmTeaching", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Offset... 的當地語系化字串。
+        /// </summary>
+        internal static string TuningInProgressOffset {
+            get {
+                return ResourceManager.GetString("TuningInProgressOffset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Teaching... 的當地語系化字串。
+        /// </summary>
+        internal static string TuningInProgressTeaching {
+            get {
+                return ResourceManager.GetString("TuningInProgressTeaching", resourceCulture);
             }
         }
     }

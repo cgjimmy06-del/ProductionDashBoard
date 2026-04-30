@@ -25,6 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.24" />
+	  <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
 	  <Resource Include="appIcon.ico" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Dapper" Version="2.1.72" />
@@ -37,6 +39,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

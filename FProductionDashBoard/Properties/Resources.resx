@@ -181,6 +181,18 @@
     <value>Result For Current Routine Inspection</value>
     <comment>設備卡片: 巡檢視窗</comment>
   </data>
+  <data name="DialogBaseConfirm" xml:space="preserve">
+    <value>Confirm</value>
+    <comment>基礎彈出視窗: 確認執行</comment>
+  </data>
+  <data name="DialogBaseDelete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>基礎彈出視窗: 刪除</comment>
+  </data>
+  <data name="DialogBaseSave" xml:space="preserve">
+    <value>Save</value>
+    <comment>基礎彈出視窗: 儲存</comment>
+  </data>
   <data name="InsFirstAbnormal" xml:space="preserve">
     <value>First Inspection Abnormal, please report according to procedure!</value>
     <comment>品質檢驗: 首件-檢驗異常</comment>
@@ -252,5 +264,35 @@
   <data name="MaterialNonSelectionError" xml:space="preserve">
     <value>Please select at least one item!</value>
     <comment>物料視窗: 錯誤訊息(dialog error string)</comment>
+  </data>
+  <data name="TuningDialogTitle" xml:space="preserve">
+    <value>Select Tuning Operation</value>
+    <comment>調試視窗: 標題</comment>
+  </data>
+  <data name="TuningInProgressTeaching" xml:space="preserve">
+    <value>Teaching...</value>
+    <comment>調試卡片覆蓋層: 帶點進行中文字</comment>
+  </data>
+  <data name="TuningInProgressOffset" xml:space="preserve">
+    <value>Offset...</value>
+    <comment>調試卡片覆蓋層: 調品質進行中文字</comment>
+  </data>
+  <data name="TuningEndConfirmTeaching" xml:space="preserve">
+    <value>Confirm end Teaching?</value>
+    <comment>調試結束確認: 帶點</comment>
+  </data>
+  <data name="TuningEndConfirmOffset" xml:space="preserve">
+    <value>Confirm end Offset?</value>
+    <comment>調試結束確認: 調品質</comment>
+  </data>
+  <data name="LoadingInitMessage" xml:space="preserve">
+    <value>Loading, please wait…</value>
+  </data>
+  <data name="TuningCardConfirm" xml:space="preserve">
+    <value>Swipe card to confirm end of tuning</value>
+  </data>
+  <data name="ComStrSystemUser" xml:space="preserve">
+    <value>System User</value>
+    <comment>共用字串: 系統初始登入人員</comment>
   </data>
 </root>

@@ -1,4 +1,5 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿using FProductionDashBoard.Models;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,8 +20,13 @@ namespace FProductionDashBoard
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool isOn = (bool)value;
+            
+            if (parameter?.ToString() == "NoError")
+            { return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["PrimaryBrush"]; }
+
             if (parameter?.ToString() == "Invert")
                 isOn = !isOn;
+
             return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["ErrorBrush"];
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -62,12 +68,26 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { throw new NotImplementedException(); }
     }
+    public class StringHasValueToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var str = value as string;
+            return string.IsNullOrEmpty(str) ? Visibility.Collapsed : Visibility.Visible;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        { throw new NotImplementedException(); }
+    }
     public class BooleanToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is bool b)
+            {
+                if (parameter?.ToString() == "Invert")
+                    b = !b;
                 return b ? Visibility.Visible : Visibility.Collapsed;
+            }
             return Visibility.Collapsed;
         }
 
@@ -98,6 +118,23 @@ namespace FProductionDashBoard
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { throw new NotImplementedException(); }
+    }
+    public class TimeSpanToHhmmConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => value is TimeSpan ts ? ts.ToString(@"hh\:mm") : "";
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+    public class TranslationZhTwConverter : IValueConverter
+    {
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is not IEnumerable<ErrorTranslation> translations) return null;
+            return translations.FirstOrDefault(t => t.LanguageCode == "zh-TW")?.Message;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
     }
     public class EnumToBooleanConverter : IValueConverter
     {

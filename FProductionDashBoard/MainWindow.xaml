@@ -11,8 +11,8 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource MaterialDesignWindow}"
-        Title="{Binding AppVersion, StringFormat=ProductionDashBoard -- V{0}}" 
-        Height="600" Width="1000" Icon="appIcon.ico">
+        Title="{Binding AppVersion, StringFormat=ProductionDashBoard -- V{0}}"
+        Height="800" Width="1280" Icon="appIcon.ico">
     <!-- window載入事件 -->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -40,13 +40,20 @@
             <DataTemplate DataType="{x:Type localvm:DeviceCardContainerViewModel}">
                 <localuc:DeviceCardContainer />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type localvm:SettingViewModel}">
+                <localuc:SettingView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type localvm:HardwareViewModel}">
+                <localuc:HardwareView />
+            </DataTemplate>
 
         </ResourceDictionary>
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
         <!-- Menu 區域 -->
-        <Menu DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignPaper}">
+        <Menu DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignPaper}"
+              Foreground="{DynamicResource MaterialDesignBody}">
             <MenuItem Header="_檔案">
                 <MenuItem.Icon>
                     <materialDesign:PackIcon Kind="File" Width="20" Height="20"/>
@@ -68,29 +75,30 @@
         </Menu>
 
         <!-- ToolBar 區域 -->
-        <ToolBarTray DockPanel.Dock="Top">
-            <ToolBar>
-                <Button ToolTip="新增">
+        <ToolBarTray DockPanel.Dock="Top" Background="{DynamicResource PrimaryBackgroundBrush}">
+            <ToolBar Background="{DynamicResource PrimaryBackgroundBrush}">
+                <Button ToolTip="新增" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="Add" Width="20" Height="20"/>
                 </Button>
-                <Button ToolTip="開啟">
+                <Button ToolTip="開啟" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="FolderOpen" Width="20" Height="20"/>
                 </Button>
-                <Button ToolTip="儲存">
+                <Button ToolTip="儲存" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
                 </Button>
                 <Separator/>
-                <Button ToolTip="剪下">
+                <Button ToolTip="剪下" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="ContentCut" Width="20" Height="20"/>
                 </Button>
-                <Button ToolTip="複製">
+                <Button ToolTip="複製" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20"/>
                 </Button>
-                <Button ToolTip="貼上">
+                <Button ToolTip="貼上" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="ContentPaste" Width="20" Height="20"/>
                 </Button>
                 <Separator/>
-                <Button ToolTip="測試" Command="{Binding TestCommand}">
+                <Button ToolTip="測試" Foreground="{DynamicResource TextPrimaryBrush}"
+                        Command="{Binding TestCommand}">
                     <materialDesign:PackIcon Kind="AbTesting" Width="20" Height="20"/>
                 </Button>
             </ToolBar>
@@ -100,29 +108,111 @@
         <StatusBar DockPanel.Dock="Bottom"
                    Background="{DynamicResource MaterialDesignPaper}"
                    Foreground="{DynamicResource MaterialDesignBody}">
-
+            <!-- 進度條訊息 -->
             <StatusBarItem>
                 <ProgressBar Style="{StaticResource MaterialDesignLinearProgressBar}"
-                            Width="120"  Height="10" Value="{Binding ProgressValue}"
+                             Width="120" Height="10" Margin="5,0"
+                             Value="{Binding ProgressValue}"
+                             IsIndeterminate="{Binding IsProgressIndeterminate}"
+                             Visibility="{Binding IsProgressVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                              VerticalAlignment="Center"/>
             </StatusBarItem>
             <StatusBarItem>
                 <TextBlock Text="{Binding ProgressString}" d:Text="Idle"
-                               VerticalAlignment="Center" Margin="5,0,8,0"/>
+                               VerticalAlignment="Center" Margin="0,0,5,0"/>
             </StatusBarItem>
+            <!-- 讀卡機狀態 -->
+            <StatusBarItem>
+                <TextBlock Text="[Reader" d:Text="[Reader"
+                               VerticalAlignment="Center" Margin="5,0,0,0"/>
+            </StatusBarItem>
+            <StatusBarItem ToolTip="{Binding CardReaderStatusTooltip}">
+                <Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="0">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="{DynamicResource TextDisabledBrush}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCardReaderConnected}" Value="True">
+                                    <Setter Property="Fill" Value="{DynamicResource SuccessBrush}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsCardReaderConnected}" Value="False">
+                                    <Setter Property="Fill" Value="{DynamicResource IdleBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+            </StatusBarItem>
+            <!-- 網路連線狀態 -->
+            <StatusBarItem>
+                <TextBlock Text="] [Net" d:Text="] [Net"
+                               VerticalAlignment="Center" Margin="0"/>
+            </StatusBarItem>
+            <StatusBarItem ToolTip="{Binding NetStatusTooltip}">
+                <Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="0">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="{DynamicResource TextDisabledBrush}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsNetConnected}" Value="True">
+                                    <Setter Property="Fill" Value="{DynamicResource SuccessBrush}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsNetConnected}" Value="False">
+                                    <Setter Property="Fill" Value="{DynamicResource IdleBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="]" d:Text="]"
+                               VerticalAlignment="Center" Margin="0"/>
+            </StatusBarItem>
+            <Button  Command="{Binding InitializeCommand}" 
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"
+                            Padding="4,2" VerticalAlignment="Center"
+                            ToolTip="{DynamicResource ReloadButtonTooltip}">
+                <materialDesign:PackIcon Kind="Reload" Width="16" Height="16"/>
+            </Button>
+            <!-- StatusBar 右邊區域 -->
             <StatusBarItem HorizontalAlignment="Right">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="20" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" d:Text="welcome 使用者"
-                        Text="{Binding SystemUser.Name, StringFormat=Welcome! {0}}" 
+                    <TextBlock Grid.Column="0" d:Text="系統登入人員 使用者"
+                        Text="{Binding SystemUser}"
                                VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <TextBlock Grid.Column="2" d:Text="xxxx/xx/xx xx:xx"
                         Text="{Binding CurrentTime}"
                                VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Button Grid.Column="4"
+                            Command="{Binding LoginCommand}"
+                            Visibility="{Binding IsLoggedIn, 
+                                    Converter={StaticResource BooleanToVisibilityConverter},
+                                    ConverterParameter='Invert'}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"
+                            Padding="4,2" VerticalAlignment="Center"
+                            ToolTip="{DynamicResource LogInButtonTooltip}">
+                        <materialDesign:PackIcon Kind="Login" Width="16" Height="16"/>
+                    </Button>
+                    <Button Grid.Column="4"
+                            Command="{Binding LogoutCommand}"
+                            Visibility="{Binding IsLoggedIn, 
+                                    Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"
+                            Padding="4,2" VerticalAlignment="Center"
+                            ToolTip="{DynamicResource LogOutButtonTooltip}">
+                        <materialDesign:PackIcon Kind="Logout" Width="16" Height="16"/>
+                    </Button>
                 </Grid>
             </StatusBarItem>
         </StatusBar>
@@ -140,9 +230,31 @@
                     Background="{DynamicResource PrimaryBackgroundBrush}"
                     Width="{Binding IsCollapsedNav, Converter={StaticResource CollapseWidthConverter}}">
                 <StackPanel Margin="0">
+                    <!-- 登入資訊 (待優化) -->
+                    <StackPanel Background="{DynamicResource PrimaryBrush}"
+                            Orientation="Vertical" HorizontalAlignment="Stretch">
+                        <materialDesign:PackIcon Background="{DynamicResource PrimaryBrush}"
+                                                 Foreground="{DynamicResource TextLightBrush}"
+                                                 HorizontalAlignment="Center"
+                                                 Kind="Account" Margin="0"
+                                                 Width="100" Height="100"/>
+                        <TextBlock d:Text="訪客" Foreground="{DynamicResource TextLightBrush}" 
+                                   Text="{Binding CurrentUser.Name}" Margin="5"
+                                   FontSize="16" HorizontalAlignment="Center"/>
+                    </StackPanel>
                     <!-- 收合按鈕"☰" -->
                     <RadioButton Style="{StaticResource NavButtonStyle}"
                             Command="{Binding CollapseNavCommand}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon Kind="Menu" Margin="0,0,5,0"
+                                                     Width="30" Height="30"/>
+                            <TextBlock VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <!-- 導覽內容 -->
+                    <RadioButton Style="{StaticResource NavButtonStyle}"
+                                 Command="{Binding SwitchModeCommand}" 
+                                 CommandParameter="{x:Static localvm:NavMode.Home}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                             <materialDesign:PackIcon Kind="Home" Margin="0,0,5,0"
                                                      Width="30" Height="30"/>
@@ -150,7 +262,6 @@
                                        VerticalAlignment="Center"/>
                         </StackPanel>
                     </RadioButton>
-                    <!-- 導覽內容 -->
                     <RadioButton Style="{StaticResource NavButtonStyle}"
                                  Command="{Binding SwitchModeCommand}" 
                                  CommandParameter="{x:Static localvm:NavMode.Operation}">
@@ -173,14 +284,35 @@
                     </RadioButton>
                     <RadioButton Style="{StaticResource NavButtonStyle}"
                                  Command="{Binding SwitchModeCommand}" 
-                                 CommandParameter="{x:Static localvm:NavMode.Setting}">
+                                 CommandParameter="{x:Static localvm:NavMode.List}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                            <materialDesign:PackIcon Kind="Cog" Margin="0,0,5,0"
+                            <materialDesign:PackIcon Kind="ListBox" Margin="0,0,5,0"
                                                      Width="30" Height="30"/>
-                            <TextBlock Text="{DynamicResource SettingNavButton}" 
+                            <TextBlock Text="{DynamicResource ListManagementNavButton}" 
                                        VerticalAlignment="Center"/>
                         </StackPanel>
                     </RadioButton>
+                    <RadioButton Style="{StaticResource NavButtonStyle}"
+                                 Command="{Binding SwitchModeCommand}" 
+                                 CommandParameter="{x:Static localvm:NavMode.Equipment}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon Kind="RobotIndustrial" Margin="0,0,5,0"
+                                                     Width="30" Height="30"/>
+                            <TextBlock Text="{DynamicResource EquipmentNavButton}" 
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource NavButtonStyle}"
+                                 Command="{Binding SwitchModeCommand}" 
+                                 CommandParameter="{x:Static localvm:NavMode.Order}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon Kind="OrderBoolAscendingVariant" Margin="0,0,5,0"
+                                                     Width="30" Height="30"/>
+                            <TextBlock Text="{DynamicResource OrderManagementNavButton}" 
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <!-- 加入:系統設定(主題、語言、預設參數) -->
                 </StackPanel>
             </Border>
 
@@ -202,7 +334,7 @@
                         </ItemsControl.Resources>
                     </ItemsControl>-->
                     <!-- 使用者自訂卡片區塊 -->
-                    <ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding Card1}" />
+                    <ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding MainCard}" />
 
                 </Grid>
                 <!-- GridSplitter -->
@@ -212,9 +344,9 @@
                           Height="5"
                           ResizeDirection="Rows"
                           ResizeBehavior="PreviousAndNext"
-                          Background="Gray"/>
+                          Background="{DynamicResource BorderBrush}"/>
                 <!-- 狀態訊息區 -->
-                <Border Grid.Row="2" BorderBrush="Gray" 
+                <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1" Margin="5" Padding="5">
                     <Grid>
                         <Grid.ColumnDefinitions>

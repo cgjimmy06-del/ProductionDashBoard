@@ -1,4 +1,5 @@
-﻿using FProductionDashBoard.Models;
+using FProductionDashBoard.Dtos;
+using FProductionDashBoard.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,25 +11,24 @@ namespace FProductionDashBoard.Repositories
 {
     public class ErrorListRepository : Repository<ErrorList, MesDbContext>, IErrorListRepository
     {
-        public ErrorListRepository(MesDbContext context) : base(context)
+        public ErrorListRepository(IDbContextFactory<MesDbContext> factory) : base(factory)
         {
         }
 
         public async Task AddErrorAsync(ErrorList newError, List<ErrorTranslation> errortranslations)
         {
-            var existingError = await _context.ErrorLists
+            await using var ctx = _factory.CreateDbContext();
+            var existingError = await ctx.ErrorLists
                 .Include(e => e.Translations)
                 .FirstOrDefaultAsync(e => e.ErrorCode == newError.ErrorCode);
 
             if (existingError == null)
             {
-                // 不存在，新增 ErrorList 與翻譯
                 newError.Translations = errortranslations;
-                _context.ErrorLists.Add(newError);
+                ctx.ErrorLists.Add(newError);
             }
             else
             {
-                // 已存在 ErrorCode，檢查翻譯
                 foreach (var translation in errortranslations)
                 {
                     var existsTranslation = existingError.Translations
@@ -37,7 +37,6 @@ namespace FProductionDashBoard.Repositories
                     if (existsTranslation != null) continue;
                     else
                     {
-                        // 翻譯不存在 → 新增翻譯
                         existingError.Translations.Add(new ErrorTranslation
                         {
                             LanguageCode = translation.LanguageCode,
@@ -45,138 +44,131 @@ namespace FProductionDashBoard.Repositories
                         });
                     }
                 }
-                _context.ErrorLists.Update(existingError);
+                ctx.ErrorLists.Update(existingError);
             }
 
-            await _context.SaveChangesAsync();
+            await ctx.SaveChangesAsync();
         }
+
         public async Task UpdateTranslationAsync(string errorCode, string languageCode, string newMessage)
         {
-            // 先查詢指定 errorCode 的 ErrorList 與翻譯
-            var error = await _context.ErrorLists
+            await using var ctx = _factory.CreateDbContext();
+            var error = await ctx.ErrorLists
                 .Include(e => e.Translations)
                 .FirstOrDefaultAsync(e => e.ErrorCode == errorCode);
 
             if (error == null)
-            {
                 throw new InvalidOperationException($"ErrorCode {errorCode} 不存在");
-            }
 
-            // 找到指定語言的翻譯
             var translation = error.Translations
                 .FirstOrDefault(t => t.LanguageCode == languageCode);
 
             if (translation == null)
-            {
-                throw new InvalidOperationException(
-                    $"ErrorCode {errorCode} 的語言 {languageCode} 翻譯不存在");
-            }
+                throw new InvalidOperationException($"ErrorCode {errorCode} 的語言 {languageCode} 翻譯不存在");
 
-            // 更新訊息
             translation.Message = newMessage;
             translation.UpdateAt = DateTime.Now;
 
-            _context.ErrorTranslations.Update(translation);
-            await _context.SaveChangesAsync();
+            ctx.ErrorTranslations.Update(translation);
+            await ctx.SaveChangesAsync();
         }
+
         public async Task DeleteTranslationAsync(string errorCode, string languageCode)
         {
-            var error = await _context.ErrorLists
+            await using var ctx = _factory.CreateDbContext();
+            var error = await ctx.ErrorLists
                 .Include(e => e.Translations)
                 .FirstOrDefaultAsync(e => e.ErrorCode == errorCode);
 
             if (error == null)
-            {
                 throw new InvalidOperationException($"ErrorCode {errorCode} 不存在");
-            }
 
             var translation = error.Translations
                 .FirstOrDefault(t => t.LanguageCode == languageCode);
 
             if (translation == null)
-            {
-                throw new InvalidOperationException(
-                    $"ErrorCode {errorCode} 的語言 {languageCode} 翻譯不存在");
-            }
+                throw new InvalidOperationException($"ErrorCode {errorCode} 的語言 {languageCode} 翻譯不存在");
 
-            _context.ErrorTranslations.Remove(translation);
-            await _context.SaveChangesAsync();
+            ctx.ErrorTranslations.Remove(translation);
+            await ctx.SaveChangesAsync();
         }
+
         public async Task DeleteErrorAsync(string errorCode)
         {
-            var error = await _context.ErrorLists
+            await using var ctx = _factory.CreateDbContext();
+            var error = await ctx.ErrorLists
                 .Include(e => e.Translations)
                 .FirstOrDefaultAsync(e => e.ErrorCode == errorCode);
 
             if (error == null)
-            {
                 throw new InvalidOperationException($"ErrorCode {errorCode} 不存在");
-            }
 
-            // EF Core 會自動刪除子集合 (Translations)，前提是有設定外鍵關聯的 Cascade Delete
-            _context.ErrorLists.Remove(error);
-            await _context.SaveChangesAsync();
+            ctx.ErrorLists.Remove(error);
+            await ctx.SaveChangesAsync();
         }
 
-        // 查詢單一錯誤訊息 (指定 代碼及語言)
         public async Task<string?> GetMessageAsync(string errorCode, string languageCode)
         {
-            return await _context.ErrorLists
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.ErrorLists
                         .Where(e => e.ErrorCode == errorCode)
                         .SelectMany(e => e.Translations)
                         .Where(t => t.LanguageCode == languageCode)
                         .Select(t => t.Message)
                         .FirstOrDefaultAsync();
         }
-        // 查詢所有錯誤訊息 (指定 語言)
-        public async Task<List<(string ErrorCode, string Message, string Category)>> GetMessagesAsync(string languageCode)
+
+        public async Task<List<(string ErrorCode, string Message, int TypeId)>> GetMessagesAsync(string languageCode)
         {
-            return await _context.ErrorLists
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.ErrorLists
                 .Select(e => new
                 {
                     e.ErrorCode,
                     Translation = e.Translations.FirstOrDefault(t => t.LanguageCode == languageCode),
-                    e.Category
+                    e.TypeId
                 })
             .Where(x => x.Translation != null)
-            .Select(x => new ValueTuple<string, string, string>(x.ErrorCode, 
-                    x.Translation!.Message ?? "Unknown!", x.Category ?? "Unknown!"))
+            .Select(x => new ValueTuple<string, string, int>(x.ErrorCode,
+                    x.Translation!.Message ?? "Unknown!", x.TypeId ?? 1))
             .ToListAsync();
         }
-        // 查詢所有錯誤訊息 (指定 語言，將OTHER排至最後，使用者清單用) -- 評估放至service
-        public async Task<List<(string ErrorCode, string Message, string Category)>> GetMessagesWithOtherAsync(string languageCode)
+
+        public async Task<List<(string ErrorCode, string Message, int TypeId)>> GetMessagesWithOtherAsync(string languageCode)
         {
-            var results = await _context.ErrorLists
+            await using var ctx = _factory.CreateDbContext();
+            var results = await ctx.ErrorLists
                 .Select(e => new
                 {
                     e.ErrorCode,
                     Translation = e.Translations.FirstOrDefault(t => t.LanguageCode == languageCode),
-                    e.Category
+                    e.TypeId
                 })
                 .Where(x => x.Translation != null)
-                .Select(x => new ValueTuple<string, string, string>(x.ErrorCode, 
-                    x.Translation!.Message ?? "Unknown!", x.Category ?? "Unknown!"))
+                .Select(x => new ValueTuple<string, string, int>(x.ErrorCode,
+                    x.Translation!.Message ?? "Unknown!", x.TypeId ?? 1))
                 .ToListAsync();
 
-            // 排序：先把不是 OTHER 的排前面，OTHER 永遠在最後
             return results
                 .OrderBy(r => r.Item1 == "OTHER" ? 1 : 0)
-                .ThenBy(r => r.Item1) // 其他錯誤代碼依字母排序 (可選)
+                .ThenBy(r => r.Item1)
                 .ToList();
         }
-        // 查詢錯誤代碼所有翻譯 (指定 代碼)
+
         public async Task<List<(string LanguageCode, string Message)>> GetTranslationsAsync(string errorCode)
         {
-            return await _context.ErrorLists
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.ErrorLists
                 .Where(e => e.ErrorCode == errorCode)
                 .SelectMany(e => e.Translations)
                 .Select(t => new ValueTuple<string, string>(t.LanguageCode, t.Message ?? ""))
                 .ToListAsync();
         }
-        // 查詢所有錯誤代碼與翻譯
+
         public async Task<List<(string ErrorCode, List<(string LanguageCode, string Message)>)>> GetAllErrorsWithTranslationsAsync()
         {
-            return await _context.ErrorLists
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.ErrorLists
                 .Include(e => e.Translations)
                 .Select(e => new ValueTuple<string, List<(string, string)>>(
                     e.ErrorCode,
@@ -186,6 +178,56 @@ namespace FProductionDashBoard.Repositories
                 ))
                 .ToListAsync();
         }
-        
+
+        public async Task<List<ErrorList>> GetAllWithTranslationsAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.ErrorLists
+                .Include(e => e.Translations)
+                .Include(e => e.Type)
+                .ToListAsync();
+        }
+        public async Task<List<ListType>> GetListTypesAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Set<ListType>().ToListAsync();
+        }
+
+        public async Task UpdateErrorListAsync(ErrorListFormDto dto)
+        {
+            await using var ctx = _factory.CreateDbContext();
+            var entity = await ctx.ErrorLists
+                .Include(e => e.Translations)
+                .FirstOrDefaultAsync(e => e.ErrorId == dto.Id!.Value)
+                ?? throw new InvalidOperationException($"ErrorList id={dto.Id} not found");
+            entity.TypeId = dto.TypeId;
+            entity.Severity = dto.Severity;
+            entity.UpdateAt = DateTime.Now;
+            var langMessages = new[] {
+                ("zh-TW", dto.MessageZhTw),
+                ("en-US", dto.MessageEnUs),
+                ("vi-VN", dto.MessageViVn)
+            };
+            foreach (var (lang, message) in langMessages)
+            {
+                if (string.IsNullOrWhiteSpace(message)) continue;
+                var existing = entity.Translations.FirstOrDefault(t => t.LanguageCode == lang);
+                if (existing != null)
+                {
+                    existing.Message = message;
+                    existing.UpdateAt = DateTime.Now;
+                }
+                else
+                {
+                    entity.Translations.Add(new ErrorTranslation
+                    {
+                        ErrorCode = entity.ErrorCode,
+                        LanguageCode = lang,
+                        Message = message
+                    });
+                }
+            }
+            await ctx.SaveChangesAsync();
+        }
     }
 }

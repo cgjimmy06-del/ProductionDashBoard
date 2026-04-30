@@ -1,0 +1,209 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.EmployeeSettingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="800">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" MaxHeight="320" />
+        </Grid.RowDefinitions>
+
+        <!-- DataGrid -->
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Button Grid.Row="0" HorizontalAlignment="Right" Margin="8,6"
+                    Command="{Binding NewCommand}"
+                    ToolTip="{DynamicResource NewButtonTooltip}"
+                    Style="{StaticResource FunctionButtonStyle}">
+                <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"/>
+            </Button>
+
+            <DataGrid Grid.Row="1" Margin="8,0,8,4"
+                      ItemsSource="{Binding EmployeeList}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      SelectionMode="Single"
+                      materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{DynamicResource EmployeeCardIdDataGridHeader}" Binding="{Binding CardId}" Width="*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="{DynamicResource EmployeeUserIdDataGridHeader}" Binding="{Binding UserId}" Width="*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="{DynamicResource EmployeeNameDataGridHeader}" Binding="{Binding Name}" Width="*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="{DynamicResource EmployeeRoleDataGridHeader}" Binding="{Binding RoleId}" Width="100"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Style="{StaticResource GridEditButtonStyle}"
+                                            Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="{DynamicResource SettingEditTooltip}"
+                                            Foreground="{DynamicResource SecondaryBrush}">
+                                        <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
+                                    </Button>
+                                    <Button Style="{StaticResource GridEditButtonStyle}"
+                                            Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="{DynamicResource SettingDeleteTooltip}"
+                                            Foreground="{DynamicResource ErrorBrush}">
+                                        <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <!-- GridSplitter -->
+        <GridSplitter Grid.Row="1" Height="4" HorizontalAlignment="Stretch"
+                      Background="{DynamicResource MaterialDesignDivider}"
+                      Visibility="{Binding IsFormVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        <!-- Form Panel -->
+        <Border Grid.Row="2"
+                Visibility="{Binding IsFormVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Padding="12,8" BorderThickness="0,1,0,0"
+                BorderBrush="{DynamicResource MaterialDesignDivider}"
+                Background="{DynamicResource PrimaryBackgroundBrush}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <TextBlock Text="{Binding EditingId, StringFormat=編輯員工 (ID: {0}),
+                           TargetNullValue=新增員工}"
+                           Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
+                           Margin="0,0,0,8"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="4">
+                            <TextBlock Text="{DynamicResource EmployeeUserIdLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource EmployeeUserIdLabel}"
+                                 Text="{Binding FormUserId, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="4">
+                        <TextBlock Text="{DynamicResource EmployeeNameLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource EmployeeNameLabel}"
+                                 Text="{Binding FormName, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="2" Margin="4">
+                        <TextBlock Foreground="{DynamicResource TextPrimaryBrush}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignCaptionTextBlock}">
+                                    <Setter Property="Text" Value="{DynamicResource EmployeePasswordLabel}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                            <Setter Property="Text" Value="{DynamicResource EmployeePasswordEditLabel}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <PasswordBox x:Name="PwdBox"
+                                     PasswordChanged="PwdBox_PasswordChanged">
+                            <materialDesign:HintAssist.Hint>
+                                <TextBlock>
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="{DynamicResource EmployeePasswordLabel}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                                    <Setter Property="Text" Value="{DynamicResource EmployeePasswordEditLabel}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </materialDesign:HintAssist.Hint>
+                        </PasswordBox>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="3" Margin="4">
+                        <TextBlock Text="{DynamicResource EmployeeRoleLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <ComboBox ItemsSource="{Binding RoleItems}"
+                                  SelectedValuePath="RoleId"
+                                  DisplayMemberPath="Name"
+                                  SelectedValue="{Binding FormRoleId}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Grid.Column="0" Margin="4">
+                        <TextBlock Text="{DynamicResource EmployeeCardIdDataGridHeader}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource EmployeeCardIdDataGridHeader}"
+                                 Text="{Binding FormCardId, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="4">
+                        <TextBlock Text="Email" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox materialDesign:HintAssist.Hint="Email"
+                                 Text="{Binding FormEmail, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Grid.Column="2" Margin="4">
+                        <TextBlock Text="{DynamicResource EmployeeDepartmentLabel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource EmployeeDepartmentLabel}"
+                                 Text="{Binding FormDepartmentId, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Error / Success messages -->
+                <TextBlock Text="{Binding FormErrorString}" Margin="4,4,4,0"
+                           Foreground="{DynamicResource ErrorBrush}"
+                           Visibility="{Binding FormErrorString, Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
+                <TextBlock Text="{Binding FormSuccessString}" Margin="4,4,4,0"
+                           Foreground="{DynamicResource SuccessBrush}"
+                           Visibility="{Binding FormSuccessString, Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
+
+                <!-- Buttons -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,4,4">
+                    <Button Margin="0,0,8,0"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Foreground="{DynamicResource PrimaryBrush}"
+                            BorderBrush="{DynamicResource PrimaryBrush}"
+                            Command="{Binding CancelCommand}"
+                            Content="{DynamicResource CancelButton}"/>
+                    <Button Command="{Binding SaveCommand}"
+                            Content="{DynamicResource SaveButton}"/>
+                </StackPanel>
+            </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

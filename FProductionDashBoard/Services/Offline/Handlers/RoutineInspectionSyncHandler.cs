@@ -1,0 +1,25 @@
+using FProductionDashBoard.Models;
+using FProductionDashBoard.Repositories;
+using FProductionDashBoard.Services.Offline.Payloads;
+using System.Text.Json;
+
+namespace FProductionDashBoard.Services.Offline.Handlers
+{
+    public class RoutineInspectionSyncHandler : IPendingOperationHandler
+    {
+        private readonly IInspectionRecordRepository _repo;
+
+        public PendingOperationType OperationType => PendingOperationType.AddRoutineInspection;
+
+        public RoutineInspectionSyncHandler(IInspectionRecordRepository repo) => _repo = repo;
+
+        public async Task HandleAsync(PendingOperation op)
+        {
+            var payload = JsonSerializer.Deserialize<RoutineInspectionPayload>(op.PayloadJson)!;
+            await _repo.AddInspectionRecordAsync(
+                InspectionType.Routine, payload.EquipmentId, payload.EmployeeId,
+                payload.Result, payload.TimeSlotId, payload.Product, payload.ErrorCode, payload.Description,
+                operatedAt: payload.OperatedAt);
+        }
+    }
+}

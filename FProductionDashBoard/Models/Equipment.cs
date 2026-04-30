@@ -46,8 +46,8 @@ namespace FProductionDashBoard.Models
             builder.Property(e => e.TypeId).HasColumnName("type_id");
             builder.Property(e => e.DepartmentId).HasColumnName("department_id");
             builder.Property(e => e.Description).HasColumnName("description");
-            builder.Property(e => e.CreateAt).HasColumnName("created_at").HasDefaultValueSql("GETDATE()"); ;
-            builder.Property(e => e.UpdateAt).HasColumnName("updated_at").HasDefaultValueSql("GETDATE()"); ;
+            builder.Property(e => e.CreateAt).HasColumnName("created_at").HasDefaultValueSql("GETDATE()");
+            builder.Property(e => e.UpdateAt).HasColumnName("updated_at").HasDefaultValueSql("GETDATE()");
 
             // 設定 關聯：Type (1) ↔ Equipments (多)
             builder.HasOne(m => m.Type)

@@ -1,0 +1,49 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.TuningDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" Height="Auto" Width="400"
+             d:DesignHeight="200" d:DesignWidth="400" d:Background="White">
+
+    <StackPanel Margin="20,5">
+        <!-- 當前操作資訊 -->
+        <TextBlock Margin="0,0,0,10" d:Text="機台"
+                   Text="{Binding CurrentDevice}"/>
+        <TextBlock Margin="0,0,0,10" d:Text="操作人員"
+                   Text="{Binding CurrentUser}"/>
+        <TextBlock Margin="0,0,0,20" d:Text="產品"
+                   Text="{Binding CurrentProduct}"/>
+
+        <!-- 選擇按鈕 -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" 
+                    Margin="0,0,0,10" Height="40">
+            <Button Content="{DynamicResource TuningTeachingButton}"
+                    Command="{Binding TeachingCommand}"
+                    Margin="20,0" Width="100">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding TuningMode}" Value="1">
+                                <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Content="{DynamicResource TuningOffsetButton}"
+                    Command="{Binding OffsetCommand}"
+                    Margin="20,0" Width="100">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding TuningMode}" Value="2">
+                                <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
