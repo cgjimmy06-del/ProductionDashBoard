@@ -107,13 +107,13 @@
             <!-- 上下載操作 -->
             <StackPanel VerticalAlignment="Center">
                 <Button Margin="5" Height="40" Width="40" Padding="2"
-                        Command="{Binding UploadDeivcesCommand}"
+                        Command="{Binding UploadDevicesCommand}"
                         ToolTip="{DynamicResource UploadButtonTooltip}">
                     <materialDesign:PackIcon Kind="FileUpload"
                                              Width="30" Height="30"/>
                 </Button>
                 <Button Margin="5" Height="40" Width="40" Padding="2"
-                        Command="{Binding DownloadDeivcesCommand}"
+                        Command="{Binding DownloadDevicesCommand}"
                         ToolTip="{DynamicResource DownloadButtonTooltip}">
                     <materialDesign:PackIcon Kind="FileDownload"
                                              Width="30" Height="30"/>

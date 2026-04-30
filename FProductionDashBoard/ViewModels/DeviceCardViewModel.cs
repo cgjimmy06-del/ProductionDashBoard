@@ -69,11 +69,11 @@ namespace FProductionDashBoard.ViewModels
         public ICommand OperationCommand { get; }
         public ICommand EndTuningCommand { get; }
 
-        public DeviceCardViewModel(DashboardCoreServices core, DeviceInfo info, UserInfo currentuser, ListsFromSql getLists)
+        public DeviceCardViewModel(DashboardCoreServices core, DeviceInfo info, UserInfo currentUser, ListsFromSql getLists)
         {
             _core = core;
             Info = info;
-            CurrentUser = currentuser;
+            CurrentUser = currentUser;
             _commonLists = getLists;
 
             for (int i = 0; i < getLists.TimeSlotsList.Count; i++) { TimeSlotsStatus.Add(-1); }
@@ -273,7 +273,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 if (e.CardId == CurrentUser.CardId)
                 {
-                    Application.Current.Dispatcher.Invoke(() => {
+                    Application.Current.Dispatcher.BeginInvoke(() => {
                         confirmed = true;
                         loadingWin.Close();
                     });
