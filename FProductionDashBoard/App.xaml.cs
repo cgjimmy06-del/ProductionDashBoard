@@ -25,10 +25,11 @@ namespace FProductionDashBoard
             try
             {
                 ShutdownMode = ShutdownMode.OnExplicitShutdown; //「明確呼叫 Shutdown() 才結束」
-                                                                // 建立 SplashScreen，false 手動控制關閉
+
+                // 建立 SplashScreen，false 手動控制關閉
                 SplashScreen splash = new SplashScreen((string)Application.Current.Resources["LoginLogoPath"]);
                 splash.Show(false);
-
+                
                 // 登入畫面 + 取得資訊
                 var loginWindow = new LoginWindow();
                 splash.Close(TimeSpan.FromSeconds(0.5)); // login載入完成後關閉
@@ -41,11 +42,9 @@ namespace FProductionDashBoard
 
                 Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Settings"));
 
-                // 讀取設定檔
+                // 讀取設定檔 // 重用登入階段已讀取的 config（避免 ClickOnce 路徑不穩定造成二次讀取失敗）
                 var services = new ServiceCollection();
-                var config = new ConfigurationBuilder()
-                    .SetBasePath(AppContext.BaseDirectory)
-                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
+                var config = Services.LoginDapper.GetCachedConfig();
 
                 services.AddSingleton(config);
 

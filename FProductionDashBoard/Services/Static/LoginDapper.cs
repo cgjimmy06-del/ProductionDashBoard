@@ -15,13 +15,22 @@ namespace FProductionDashBoard.Services
 {
     public static class LoginDapper // 一般登入驗證 (純 Dapper 操作)
     {
-        public static bool checkConnection(string serverKey)
+        private static IConfiguration? _cachedConfig;
+
+        internal static IConfiguration GetCachedConfig()
+            => _cachedConfig ?? throw new InvalidOperationException("Config not initialized. Call checkConnection first.");
+        private static IConfiguration BuildConfig()
         {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
+            if (_cachedConfig != null) return _cachedConfig;
+            _cachedConfig = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
-
+            return _cachedConfig;
+        }
+        public static bool checkConnection(string serverKey)
+        {
+            var config = BuildConfig();
             var connStr = config.GetConnectionString($"{serverKey}_MESDashboard");
             using var conn = new SqlConnection(connStr);
 
@@ -44,11 +53,7 @@ namespace FProductionDashBoard.Services
         }
         public static UiModels.UserInfo? validateUser(string serverKey, string userid, string password)
         {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-
+            var config = BuildConfig();
             var connStr = config.GetConnectionString($"{serverKey}_MESDashboard");
             var sqlStr = "SELECT employee_id, card_id, user_id, name, role_id, email FROM employee " +
                 "WHERE user_id=@Userid AND password=@Password";
