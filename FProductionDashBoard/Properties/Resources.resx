@@ -285,4 +285,14 @@
     <value>Confirm end Offset?</value>
     <comment>調試結束確認: 調品質</comment>
   </data>
+  <data name="LoadingInitMessage" xml:space="preserve">
+    <value>Loading, please wait…</value>
+  </data>
+  <data name="TuningCardConfirm" xml:space="preserve">
+    <value>Swipe card to confirm end of tuning</value>
+  </data>
+  <data name="ComStrSystemUser" xml:space="preserve">
+    <value>System User</value>
+    <comment>共用字串: 系統初始登入人員</comment>
+  </data>
 </root>

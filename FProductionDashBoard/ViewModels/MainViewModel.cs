@@ -40,11 +40,11 @@ namespace FProductionDashBoard.ViewModels
         #region  -- DI注入資源 --
         private readonly DashboardCoreServices _core;
         private readonly IOfflineSyncService _syncService;
-        private readonly ICardReaderService _cardReaderService;
         private readonly MultiCardReaderService _multiCardReaderService;
         private readonly Services.WebApi.IErpApiService _erpApiService;
         public LogService _log => _core.Log; // public 是為了Window的顯示
-        public UserInfo? SystemUser => _core.Authorization.CurrentUser;
+        [ObservableProperty]
+        public string? systemUser;
         public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
         public bool IsLoggedIn => _core.Authorization.IsLoggedIn;
         #endregion
@@ -106,7 +106,7 @@ namespace FProductionDashBoard.ViewModels
         private int _isSyncing = 0;
 
         public MainViewModel(DashboardCoreServices core, IOfflineSyncService syncService,
-            ICardReaderService cardReaderService, MultiCardReaderService multiCardReaderService,
+            MultiCardReaderService multiCardReaderService,
             Services.WebApi.IErpApiService erpApiService)
         {
             // 讀取 FileVersion
@@ -116,10 +116,9 @@ namespace FProductionDashBoard.ViewModels
             // DI注入 Repository
             _core = core;
             _syncService = syncService;
-            _cardReaderService = cardReaderService;
             _multiCardReaderService = multiCardReaderService;
             _erpApiService = erpApiService;
-            _cardReaderService.CardRead += OnCardRead;
+            _core.CardReader.CardRead += OnCardRead;
 
             // 定義工作起始時間 (於 DispatcherTimer 偵測更新)
             _core.Data.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
@@ -148,7 +147,10 @@ namespace FProductionDashBoard.ViewModels
             SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
 
             // (訂閱端) 使用者變更事件，刷新命令狀態與使用者顯示 (若 _authService 在執行緒池)
-            _core.Authorization.UserChanged += () => System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            SystemUser = $"{Properties.Resources.ComStrSystemUser}: {_core.Authorization.CurrentUser!.Name}";
+
+            _core.Authorization.UserChanged += () =>
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
                 if (!_core.Authorization.IsLoggedIn) // 若登出則執行對應事件
                     _deviceContainer = null;
@@ -156,7 +158,6 @@ namespace FProductionDashBoard.ViewModels
                 SwitchModeCommand.NotifyCanExecuteChanged();
                 TestCommand.NotifyCanExecuteChanged();
                 LogoutCommand.NotifyCanExecuteChanged();
-                OnPropertyChanged(nameof(SystemUser));
                 OnPropertyChanged(nameof(CurrentUser));
                 OnPropertyChanged(nameof(IsLoggedIn));
             });
@@ -169,36 +170,48 @@ namespace FProductionDashBoard.ViewModels
         #region -- 載入初始化 與 計時器 --
         public async Task LoadAllListsAsync()
         {
-            IsNetConnected = true;
-            var sb = new StringBuilder("最後更新時間:\n");
-            NetStatusTooltip = sb.Append(DateTime.Now.ToString("yyyy/MM/dd HH:mm")).ToString().TrimEnd();
-
-            var t1 = FetchListAsync(() => _core.Data.GetDevicesAsync());
-            var t2 = FetchListAsync(() => _core.Data.GetUsersAsync());
-            var t3 = FetchListAsync(() => _core.Data.GetMaterialsAsync());
-            var t4 = FetchListAsync(() => _core.Data.GetErrorsAsync(Properties.Settings.Default.CultureCode));
-            var t5 = FetchListAsync(() => _core.Data.GetTimeSlotsAsync());
-            var t6 = FetchListAsync(() => _core.Data.GetAllRolesAsync());
-            await Task.WhenAll(t1, t2, t3, t4, t5, t6);
-
-            CommonLists = new ListsFromSql
+            // 新增載入視窗 (評估此視窗的開啟位置 以及 是否 disable 主視窗)
+            var loadingVm = new LoadingViewModel
             {
-                DevicesList  = t1.Result,
-                UsersList    = t2.Result,
-                MaterialsList = t3.Result,
-                ErrorsList   = t4.Result,
-                TimeSlotsList = t5.Result,
-                RolesList    = t6.Result
+                Mode = LoadingMode.Processing,
+                Message = Properties.Resources.LoadingInitMessage,
+                CanCancel = false
             };
-            _core.Log.AddLog($"已載入清單: " +
-                $"Devices:[{CommonLists.DevicesList.Count}]-" +
-                $"Users:[{CommonLists.UsersList.Count}]-" +
-                $"Materials:[{CommonLists.MaterialsList.Count}]-" +
-                $"Errors:[{CommonLists.ErrorsList.Count}]-" +
-                $"TimeSlots:[{CommonLists.TimeSlotsList.Count}]-" +
-                $"Roles:[{CommonLists.RolesList.Count}]");
-            //await SyncAndLogAsync();
-            //await CheckMissedInspectionsAsync();
+            var loadingWin = new LoadingWindow(loadingVm); //Application.Current.MainWindow.IsEnabled = false;
+            loadingWin.Show();
+
+            try
+            {
+                IsNetConnected = true;
+                var sb = new StringBuilder("最後更新時間:\n");
+                NetStatusTooltip = sb.Append(DateTime.Now.ToString("yyyy/MM/dd HH:mm")).ToString().TrimEnd();
+
+                var t1 = FetchListAsync(() => _core.Data.GetDevicesAsync());
+                var t2 = FetchListAsync(() => _core.Data.GetUsersAsync());
+                var t3 = FetchListAsync(() => _core.Data.GetMaterialsAsync());
+                var t4 = FetchListAsync(() => _core.Data.GetErrorsAsync(Properties.Settings.Default.CultureCode));
+                var t5 = FetchListAsync(() => _core.Data.GetTimeSlotsAsync());
+                var t6 = FetchListAsync(() => _core.Data.GetAllRolesAsync());
+                await Task.WhenAll(t1, t2, t3, t4, t5, t6);
+
+                CommonLists = new ListsFromSql
+                {
+                    DevicesList = t1.Result,
+                    UsersList = t2.Result,
+                    MaterialsList = t3.Result,
+                    ErrorsList = t4.Result,
+                    TimeSlotsList = t5.Result,
+                    RolesList = t6.Result
+                };
+                _core.Log.AddLog($"已載入清單: " +
+                    $"Devices:[{CommonLists.DevicesList.Count}]-" +
+                    $"Users:[{CommonLists.UsersList.Count}]-" +
+                    $"Materials:[{CommonLists.MaterialsList.Count}]-" +
+                    $"Errors:[{CommonLists.ErrorsList.Count}]-" +
+                    $"TimeSlots:[{CommonLists.TimeSlotsList.Count}]-" +
+                    $"Roles:[{CommonLists.RolesList.Count}]");
+            }
+            finally { loadingWin.Close(); }
         }
         private async Task<List<T>> FetchListAsync<T>(Func<Task<List<T>>> fetch)
         {
@@ -299,7 +312,8 @@ namespace FProductionDashBoard.ViewModels
                 Message = "閒置逾時警告",
                 CountdownSeconds = 10
             };
-            vm.SessionExtended += (_, _) => {
+            vm.SessionExtended += (_, _) =>
+            {
                 isExtendLogin = true;
                 _core.Log.AddLog("已延長，歡迎回來", LogLevel.Success);
             };
@@ -334,7 +348,7 @@ namespace FProductionDashBoard.ViewModels
         private async Task LogoutAsync()
         {
             await _core.Authorization.LogoutAsync();
-            _cardReaderService.ResetLastCard();
+            _core.CardReader.ResetLastCard();
         }
         private void SetProgress(string message, bool visible = true, bool indeterminate = false, int value = 0)
         {
@@ -355,7 +369,7 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Operation:
-                    _deviceContainer ??= new DeviceCardContainerViewModel(_core, CurrentUser!, CommonLists);
+                    _deviceContainer ??= new DeviceCardContainerViewModel(_core, CommonLists);
                     MainCard = _deviceContainer;
                     break;
 
@@ -463,7 +477,7 @@ namespace FProductionDashBoard.ViewModels
                 return vm.IsConfirmed;
             });
 
-            if (!confirmed) { _cardReaderService.ResetLastCard(); return; }
+            if (!confirmed) { _core.CardReader.ResetLastCard(); return; }
 
             var dto = new Dtos.EmployeeFormDto
             {
@@ -477,7 +491,7 @@ namespace FProductionDashBoard.ViewModels
             var newList = await _core.Data.GetUsersAsync();
             await Application.Current.Dispatcher.InvokeAsync(() => CommonLists.UsersList = newList);
             _core.Log.AddLog($"[CardReader] 已新增員工: {emp.Name}，請重新刷卡登入", LogLevel.Success);
-            _cardReaderService.ResetLastCard();
+            _core.CardReader.ResetLastCard();
         }
         private async Task HandleUpdateCardIdAsync(UiModels.UserInfo existingUser, string cardId)
         {
@@ -491,7 +505,7 @@ namespace FProductionDashBoard.ViewModels
                 return vm.IsConfirmed;
             });
 
-            if (!confirmed) { _cardReaderService.ResetLastCard();return; }
+            if (!confirmed) { _core.CardReader.ResetLastCard(); return; }
 
             var dto = new Dtos.EmployeeFormDto
             {
@@ -507,7 +521,7 @@ namespace FProductionDashBoard.ViewModels
             await _core.Data.UpdateEmployeeAsync(dto);
             await Application.Current.Dispatcher.InvokeAsync(() => existingUser.CardId = cardId);
             _core.Log.AddLog($"[CardReader] 更新卡號: {existingUser.Name}，請重新刷卡登入", LogLevel.Success);
-            _cardReaderService.ResetLastCard();
+            _core.CardReader.ResetLastCard();
         }
 
         // 測試

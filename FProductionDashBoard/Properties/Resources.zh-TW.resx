@@ -243,4 +243,13 @@
   <data name="TuningEndConfirmOffset" xml:space="preserve">
     <value>確認結束調品質？</value>
   </data>
+  <data name="LoadingInitMessage" xml:space="preserve">
+    <value>載入中，請稍候…</value>
+  </data>
+  <data name="TuningCardConfirm" xml:space="preserve">
+    <value>請刷卡確認結束調試</value>
+  </data>
+  <data name="ComStrSystemUser" xml:space="preserve">
+    <value>系統登入人員</value>
+  </data>
 </root>
