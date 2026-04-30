@@ -124,6 +124,15 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 System User 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrSystemUser {
+            get {
+                return ResourceManager.GetString("ComStrSystemUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Time Slot 的當地語系化字串。
         /// </summary>
         internal static string ComStrTimeSlot {
@@ -304,6 +313,15 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Loading, please wait… 的當地語系化字串。
+        /// </summary>
+        internal static string LoadingInitMessage {
+            get {
+                return ResourceManager.GetString("LoadingInitMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Invalid account or password! 的當地語系化字串。
         /// </summary>
         internal static string LogInAccountError {
@@ -390,6 +408,15 @@ namespace FProductionDashBoard.Properties {
         internal static string MaterialNonSelectionError {
             get {
                 return ResourceManager.GetString("MaterialNonSelectionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Swipe card to confirm end of tuning 的當地語系化字串。
+        /// </summary>
+        internal static string TuningCardConfirm {
+            get {
+                return ResourceManager.GetString("TuningCardConfirm", resourceCulture);
             }
         }
         

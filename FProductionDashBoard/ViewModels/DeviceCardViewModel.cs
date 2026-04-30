@@ -8,7 +8,6 @@ using FProductionDashBoard.Services.V1;
 using FProductionDashBoard.UiModels;
 using FProductionDashBoard.UserControls;
 using MaterialDesignThemes.Wpf;
-using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,9 +17,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -35,7 +34,7 @@ namespace FProductionDashBoard.ViewModels
     {
         public DeviceInfo Info { get; }
         private readonly DashboardCoreServices _core;
-        private readonly ListsFromSql commonLists;
+        private readonly ListsFromSql _commonLists;
 
         // 訊息顯示
         [ObservableProperty]
@@ -78,7 +77,7 @@ namespace FProductionDashBoard.ViewModels
             _core = core;
             Info = info;
             CurrentUser = currentuser;
-            commonLists = getLists;
+            _commonLists = getLists;
 
             for (int i = 0; i < getLists.TimeSlotsList.Count; i++) { TimeSlotsStatus.Add(-1); }
 
@@ -93,7 +92,7 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                var ideviceslots = await _core.Data.GetAllSlotsStatusAsync(commonLists.TimeSlotsList, Info.Id);
+                var ideviceslots = await _core.Data.GetAllSlotsStatusAsync(_commonLists.TimeSlotsList, Info.Id);
 
                 if (ideviceslots.Count != TimeSlotsStatus.Count)
                 {
@@ -111,7 +110,7 @@ namespace FProductionDashBoard.ViewModels
         // 操作員按鈕
         private async Task MaterialsChangeAsync() // 待翻譯
         {
-            var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this, commonLists.MaterialsList);
+            var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this, _commonLists.MaterialsList);
             var uc = new MaterialsDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -122,11 +121,12 @@ namespace FProductionDashBoard.ViewModels
                 {
                     var result = vm.Result ?? new();
 
-                    List<(int materialId, int quantity)> selectdetials = new List<(int, int)>();
+                    List<(int materialId, int quantity)> selectDetials = new List<(int, int)>();
                     foreach (var mdetial in result.Selections)
-                        selectdetials.Add((mdetial.Id, mdetial.SelectedCount));
+                        selectDetials.Add((mdetial.Id, mdetial.SelectedCount));
 
-                    await _core.Data.AddReplacementRecordAsync(Info.Id, CurrentUser.Id, selectdetials);
+                    CurrentUser = _core.Authorization.CurrentUser!;
+                    await _core.Data.AddReplacementRecordAsync(Info.Id, CurrentUser.Id, selectDetials);
 
                     _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
                         $"Category: {result.Selections.Count} -> " +
@@ -146,7 +146,7 @@ namespace FProductionDashBoard.ViewModels
         }
         private async Task FirstArticleInspectionAsync() // 待翻譯
         {
-            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, this, commonLists.ErrorsList);
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, this, _commonLists.ErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -158,6 +158,7 @@ namespace FProductionDashBoard.ViewModels
                     var result = vm.Result ?? new();
                     FirstInspectionStatus = result.IsNormal;
 
+                    CurrentUser = _core.Authorization.CurrentUser!;
                     await _core.Data.AddFirstInspectionAsync(Info.Id, CurrentUser.Id, result.IsNormal,
                         CurrentProduct.Name, result.ErrorCode, result.Description);
 
@@ -187,7 +188,7 @@ namespace FProductionDashBoard.ViewModels
         }
         private async Task RoutineInspectionAsync() // 待翻譯
         {
-            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, this, commonLists.ErrorsList);
+            var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, this, _commonLists.ErrorsList);
             var uc = new InspectionDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
             window.ShowDialog();
@@ -198,13 +199,14 @@ namespace FProductionDashBoard.ViewModels
                 {
                     var result = vm.Result ?? new();
 
-                    var currentTimeSlot = _core.Data.GetCurrentTimeSlotId(commonLists.TimeSlotsList);
+                    var currentTimeSlot = _core.Data.GetCurrentTimeSlotId(_commonLists.TimeSlotsList);
                     if (currentTimeSlot == null)
                     {
                         _core.Log.AddLog("目前不在任何巡檢時段內");
                         return;
                     }
 
+                    CurrentUser = _core.Authorization.CurrentUser!;
                     await _core.Data.AddRoutineInspectionAsync(Info.Id, CurrentUser.Id, result.IsNormal, currentTimeSlot ?? 1,
                         CurrentProduct.Name, result.ErrorCode, result.Description);
                     await UpdateTimeSlotsStatusAsync();
@@ -232,9 +234,10 @@ namespace FProductionDashBoard.ViewModels
         }
         private async Task OperationAsync()
         {
+            CurrentUser = _core.Authorization.CurrentUser!;
             var vm = new TuningDialogViewModel(
                 $"{Properties.Resources.ComStrDevice}: {Info.Name}",
-                $"{Properties.Resources.ComStrUser}: {CurrentUser.Name}",
+                $"{Properties.Resources.ComStrUser}: {CurrentUser!.Name}",
                 $"{Properties.Resources.ComStrProduct}: {CurrentProduct.Name}");
             var uc = new TuningDialog { DataContext = vm };
             var window = new DialogWindow(vm, uc);
@@ -258,21 +261,48 @@ namespace FProductionDashBoard.ViewModels
         {
             if (!IsTuning) return;
 
-            var confirmMsg = _activeTuningType == TuningType.Teaching
-                ? Properties.Resources.TuningEndConfirmTeaching
-                : Properties.Resources.TuningEndConfirmOffset;
+            // 呼叫loading視窗 - 刷卡確認結束調試計時
+            //var tcs = new TaskCompletionSource<bool>();
+            bool confirmed = false;
+            var loadingVm = new LoadingViewModel
+            {
+                Mode = LoadingMode.CardReader,
+                Message = Properties.Resources.TuningCardConfirm,
+                CanCancel = true
+            };
+            var loadingWin = new LoadingWindow(loadingVm);
 
-            var confirmVm = new DialogBaseViewModel<object>(confirmMsg);
-            var confirmWindow = new DialogWindow(confirmVm, new UserControl());
-            confirmWindow.ShowDialog();
-            if (!confirmVm.IsConfirmed) return;
+            // 讀卡機事件 - 確認是否與當前登入人員一致
+            void OnCardConfirm(object? s, CardReadEventArgs e)
+            {
+                if (e.CardId == CurrentUser.CardId)
+                {
+                    //tcs.TrySetResult(true);
+                    Application.Current.Dispatcher.Invoke(() => {
+                        confirmed = true;
+                        loadingWin.Close();
+                    });
+                }
+            }
 
-            _tuningTimer?.Stop();
-            IsTuning = false;
-            int elapsed = _tuningElapsedSeconds;
+            // loadingVm.CloseRequested += (_, _) => tcs.TrySetResult(false);
+            _core.CardReader.ResetLastCard();
+            _core.CardReader.CardRead += OnCardConfirm;
+            //開啟並等待視窗
+            loadingWin.ShowDialog();
+            // bool confirmed = await tcs.Task;
+            _core.CardReader.CardRead -= OnCardConfirm;
+            // loadingWin.Close();
 
+            if (!confirmed) return;
+
+            // 調試紀錄流程
             try
             {
+                _tuningTimer?.Stop();
+                IsTuning = false;
+                int elapsed = _tuningElapsedSeconds;
+
                 if (_activeTuningType == TuningType.Teaching)
                     await _core.Data.AddTeachingRecordAsync(Info.Id, CurrentUser.Id, elapsed, CurrentProduct?.Name);
                 else

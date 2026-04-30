@@ -24,7 +24,7 @@ namespace FProductionDashBoard.ViewModels
             new ObservableCollection<DeviceCardViewModel>();
 
         private readonly DashboardCoreServices _core;
-        public UserInfo CurrentUser { get; }
+        public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
 
         public ICommand FirstArticleInsAllCommand { get; }
         public ICommand RoutineInsAllCommand { get; }
@@ -33,10 +33,9 @@ namespace FProductionDashBoard.ViewModels
         public ICommand FastUploadDevicesCommand { get; }
         public ICommand DeleteDevicesCommand { get; }
 
-        public DeviceCardContainerViewModel(DashboardCoreServices core, UserInfo currentuser, ListsFromSql getlists)
+        public DeviceCardContainerViewModel(DashboardCoreServices core, ListsFromSql getlists)
         {
             _core = core;
-            CurrentUser = currentuser;
             commonLists = getlists;
 
             FirstArticleInsAllCommand = new RelayCommand(() => FirstArticleInsAll());
@@ -46,6 +45,8 @@ namespace FProductionDashBoard.ViewModels
             FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());
             FastUploadDevicesCommand = new AsyncRelayCommand(() => FastUploadDevices());
             DeleteDevicesCommand = new RelayCommand(() => DeleteDevices());
+
+            _core.Authorization.UserChanged += () => OnPropertyChanged(nameof(CurrentUser));
         }
         // 待翻譯
         private async void FirstArticleInsAll()
@@ -163,7 +164,7 @@ namespace FProductionDashBoard.ViewModels
                 var result = vm.Result ?? new();
                 foreach (var iselection in result.Selections)
                 {
-                    var idevice = new DeviceCardViewModel(_core, iselection, CurrentUser, commonLists);
+                    var idevice = new DeviceCardViewModel(_core, iselection, CurrentUser!, commonLists);
                     await idevice.UpdateTimeSlotsStatusAsync();
                     Devices.Add(idevice);
                     _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
@@ -185,7 +186,7 @@ namespace FProductionDashBoard.ViewModels
             }
             foreach (var iselection in result)
             {
-                var idevice = new DeviceCardViewModel(_core, iselection, CurrentUser, commonLists);
+                var idevice = new DeviceCardViewModel(_core, iselection, CurrentUser!, commonLists);
                 await idevice.UpdateTimeSlotsStatusAsync();
                 Devices.Add(idevice);
                 _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
