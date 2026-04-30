@@ -38,17 +38,17 @@ namespace FProductionDashBoard.ViewModels
         }
 
         [RelayCommand]
-        private void MaterialButtonClick(MaterialInfo selectedmaterial)
+        private void MaterialButtonClick(MaterialInfo selectedMaterial)
         {
             if (!IsCountMode)
             {
-                selectedmaterial.IsSelected = !selectedmaterial.IsSelected;
-                selectedmaterial.SelectedCount = selectedmaterial.IsSelected ? 1 : 0; ;
+                selectedMaterial.IsSelected = !selectedMaterial.IsSelected;
+                selectedMaterial.SelectedCount = selectedMaterial.IsSelected ? 1 : 0; ;
             }
             else
             {
-                selectedmaterial.IsSelected = true;
-                selectedmaterial.SelectedCount++;
+                selectedMaterial.IsSelected = true;
+                selectedMaterial.SelectedCount++;
             }
             DialogErrorString = "";
             //OnPropertyChanged(nameof(SelectedMaterials));

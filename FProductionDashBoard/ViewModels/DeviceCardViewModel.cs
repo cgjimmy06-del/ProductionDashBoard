@@ -69,14 +69,11 @@ namespace FProductionDashBoard.ViewModels
         public ICommand OperationCommand { get; }
         public ICommand EndTuningCommand { get; }
 
-#pragma warning disable CS8618 // 退出建構函式時，不可為 Null 的欄位必須包含非 Null 值。請考慮新增 'required' 修飾元，或將欄位宣告為可以為 Null。
-        public DeviceCardViewModel() { }
-#pragma warning restore CS8618 // 退出建構函式時，不可為 Null 的欄位必須包含非 Null 值。請考慮新增 'required' 修飾元，或將欄位宣告為可以為 Null。
-        public DeviceCardViewModel(DashboardCoreServices core, DeviceInfo info, UserInfo currentuser, ListsFromSql getLists)
+        public DeviceCardViewModel(DashboardCoreServices core, DeviceInfo info, UserInfo currentUser, ListsFromSql getLists)
         {
             _core = core;
             Info = info;
-            CurrentUser = currentuser;
+            CurrentUser = currentUser;
             _commonLists = getLists;
 
             for (int i = 0; i < getLists.TimeSlotsList.Count; i++) { TimeSlotsStatus.Add(-1); }
@@ -262,7 +259,6 @@ namespace FProductionDashBoard.ViewModels
             if (!IsTuning) return;
 
             // 呼叫loading視窗 - 刷卡確認結束調試計時
-            //var tcs = new TaskCompletionSource<bool>();
             bool confirmed = false;
             var loadingVm = new LoadingViewModel
             {
@@ -277,22 +273,19 @@ namespace FProductionDashBoard.ViewModels
             {
                 if (e.CardId == CurrentUser.CardId)
                 {
-                    //tcs.TrySetResult(true);
-                    Application.Current.Dispatcher.Invoke(() => {
+                    Application.Current.Dispatcher.BeginInvoke(() => {
                         confirmed = true;
                         loadingWin.Close();
                     });
                 }
             }
 
-            // loadingVm.CloseRequested += (_, _) => tcs.TrySetResult(false);
             _core.CardReader.ResetLastCard();
             _core.CardReader.CardRead += OnCardConfirm;
+
             //開啟並等待視窗
             loadingWin.ShowDialog();
-            // bool confirmed = await tcs.Task;
             _core.CardReader.CardRead -= OnCardConfirm;
-            // loadingWin.Close();
 
             if (!confirmed) return;
 

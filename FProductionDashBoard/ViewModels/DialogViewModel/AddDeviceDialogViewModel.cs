@@ -19,7 +19,7 @@ namespace FProductionDashBoard.ViewModels
         public List<DeviceInfo> Selections { get; set; } = new();
     }
 
-    public partial class AddDeivceDialogViewModel : DialogBaseViewModel<DeviceCardsResult>
+    public partial class AddDeviceDialogViewModel : DialogBaseViewModel<DeviceCardsResult>
     {
         private List<DeviceInfo> devicesList = new(); // 設備清單 (資料表來源)
         private List<DeviceCardViewModel> existedDevicesList = new(); // 介面已存在設備清單
@@ -44,10 +44,10 @@ namespace FProductionDashBoard.ViewModels
 
         public ICommand AddToSelectedCommand { get; }
         public ICommand RemoveFromSelectedCommand { get; }
-        public ICommand DownloadDeivcesCommand { get; }
-        public ICommand UploadDeivcesCommand { get; }
+        public ICommand DownloadDevicesCommand { get; }
+        public ICommand UploadDevicesCommand { get; }
 
-        public AddDeivceDialogViewModel(string dialogstring, string defaultsfile,
+        public AddDeviceDialogViewModel(string dialogstring, string defaultsfile,
             List<DeviceInfo> deviceslist, List<DeviceCardViewModel> existedDevicesList) : base(dialogstring)
         {
             defaultDevicesFile = defaultsfile;
@@ -61,8 +61,8 @@ namespace FProductionDashBoard.ViewModels
 
             AddToSelectedCommand = new RelayCommand(() => AddToSelected());
             RemoveFromSelectedCommand = new RelayCommand(() => RemoveFromSelected());
-            DownloadDeivcesCommand = new RelayCommand(() => DownloadDevices());
-            UploadDeivcesCommand = new RelayCommand(() => UploadDevices());
+            DownloadDevicesCommand = new RelayCommand(() => DownloadDevices());
+            UploadDevicesCommand = new RelayCommand(() => UploadDevices());
 
             ConfirmCommand = new RelayCommand(() => OnConfirm());
             CancelCommand = new RelayCommand(() => OnCancel());

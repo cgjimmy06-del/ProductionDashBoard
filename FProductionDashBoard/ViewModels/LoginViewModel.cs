@@ -103,10 +103,10 @@ namespace FProductionDashBoard.ViewModels
             
             if (loginSource == "Normal")
             {
-                if (!LoginService.checkConnection(SelectedServer))
+                if (!LoginDapper.checkConnection(SelectedServer))
                 { Errorinfo = Properties.Resources.LogInConnectionError; return; }
                 // 之後password透過EncryptionService加密後儲存
-                user = LoginService.validateUser(SelectedServer, UserId, Password);
+                user = LoginDapper.validateUser(SelectedServer, UserId, Password);
             }
 
             if (user != null)

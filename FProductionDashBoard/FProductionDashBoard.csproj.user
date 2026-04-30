@@ -11,16 +11,16 @@
     <Compile Update="LoadingWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="UserControls\AddDeviceDialog.xaml.cs">
+    <Compile Update="UserControls\DialogView\AddDeviceDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="UserControls\DeviceCardContainer.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="UserControls\InspectionDialog.xaml.cs">
+    <Compile Update="UserControls\DialogView\InspectionDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="UserControls\MaterialsDialog.xaml.cs">
+    <Compile Update="UserControls\DialogView\MaterialsDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

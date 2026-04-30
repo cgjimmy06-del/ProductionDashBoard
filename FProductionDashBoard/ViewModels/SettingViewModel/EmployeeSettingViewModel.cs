@@ -39,9 +39,12 @@ namespace FProductionDashBoard.ViewModels
                     var roles = await _core.Data.GetAllRolesAsync();
                     foreach (var r in roles) RoleItems.Add(r);
                 }
+
                 var employees = await _core.Data.GetAllEmployeesAsync();
+                var employeesNoSystem = employees.Where(e => e.UserId != "admin" && e.UserId != "visitor");
+
                 EmployeeList.Clear();
-                foreach (var e in employees) EmployeeList.Add(e);
+                foreach (var e in employeesNoSystem) EmployeeList.Add(e);
             }
             catch (Exception ex)
             {
