@@ -38,6 +38,9 @@ namespace FProductionDashBoard
             var user = loginWindow.User;
             Debug.WriteLine($"Login User: {user.Name}, RoleId: {user.RoleId}");
 
+            Directory.CreateDirectory("Settings");
+
+            // 讀取設定檔
             var services = new ServiceCollection();
             var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
