@@ -18,7 +18,7 @@ namespace FProductionDashBoard.Services
         public static bool checkConnection(string serverKey)
         {
             var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
@@ -45,7 +45,7 @@ namespace FProductionDashBoard.Services
         public static UiModels.UserInfo? validateUser(string serverKey, string userid, string password)
         {
             var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
