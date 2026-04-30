@@ -517,7 +517,6 @@ namespace FProductionDashBoard.ViewModels
                 UserId = existingUser.UserId,
                 Name = existingUser.Name,
                 CardId = cardId,
-                Password = "",
                 RoleId = existingUser.RoleId,
                 Email = existingUser.Email,
                 DepartmentId = existingUser.DepartmentId

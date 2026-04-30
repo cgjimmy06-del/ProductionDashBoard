@@ -26,8 +26,11 @@ namespace FProductionDashBoard.Services
         private readonly Repositories.IRolePermissionRepository _rolePermissionRepo;
         private HashSet<int> _userPermissions = [];
 
+        private readonly UiModels.UserInfo _defaultUser = 
+            new UiModels.UserInfo { UserId = "visitor", Name = "訪客", RoleId = 1, Id = 2 };
+
         public UiModels.UserInfo? CurrentUser { get; private set; }
-        public bool IsLoggedIn => CurrentUser is not null && CurrentUser.UserId != "visitor";
+        public bool IsLoggedIn => CurrentUser is not null && CurrentUser.UserId != _defaultUser.UserId;
 
         public event Action? UserChanged;
 
@@ -55,7 +58,7 @@ namespace FProductionDashBoard.Services
                 catch
                 {
                     // 連線失敗時降為訪客離線模式
-                    CurrentUser = new UiModels.UserInfo { UserId = "visitor", Name = "訪客", RoleId = 1, Id = 2 };
+                    CurrentUser = _defaultUser;
                     _userPermissions = [PermissionId.View];
                 }
             }
@@ -64,8 +67,7 @@ namespace FProductionDashBoard.Services
 
         public async Task LogoutAsync()
         {
-            var visitor = new UiModels.UserInfo { UserId = "visitor", Name = "訪客", RoleId = 1, Id = 2 };
-            await InitializeAsync(visitor);
+            await InitializeAsync(_defaultUser);
         }
 
         public bool HasPermission(int permissionId) => _userPermissions.Contains(permissionId);
