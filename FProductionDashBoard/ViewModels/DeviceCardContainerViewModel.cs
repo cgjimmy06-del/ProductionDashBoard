@@ -69,7 +69,7 @@ namespace FProductionDashBoard.ViewModels
                     {
                         idevice.FirstInspectionStatus = result.IsNormal;
 
-                        await _core.Data.AddFirstInspectionAsync(idevice.Info.Id, idevice.CurrentUser.Id, result.IsNormal,
+                        await _core.Data.AddFirstInspectionAsync(idevice.Info.Id, CurrentUser!.Id, result.IsNormal,
                         idevice.CurrentProduct.Name, result.ErrorCode, result.Description);
 
                         _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
@@ -123,7 +123,7 @@ namespace FProductionDashBoard.ViewModels
                 {
                     try
                     {
-                        await _core.Data.AddRoutineInspectionAsync(idevice.Info.Id, idevice.CurrentUser.Id, result.IsNormal,
+                        await _core.Data.AddRoutineInspectionAsync(idevice.Info.Id, CurrentUser!.Id, result.IsNormal,
                             currentTimeSlot ?? 1, idevice.CurrentProduct.Name, result.ErrorCode, result.Description);
                         await idevice.UpdateTimeSlotsStatusAsync();
 
