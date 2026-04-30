@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -11,20 +12,32 @@ namespace FProductionDashBoard.Services
     public static class EncryptionService // AES 加解密
     {
         // 建議金鑰與 IV 從安全來源讀取 (例如環境變數或 Windows Credential Manager)
-        private static readonly byte[] aesKey = Encoding.UTF8.GetBytes("Your32ByteLengthSecureKeyHere1234567890"); // 32 bytes for AES-256
-        private static readonly byte[] aesIV = Encoding.UTF8.GetBytes("Your16ByteIVHere!"); // 16 bytes for AES
+        private static readonly byte[] aesKey = Encoding.UTF8.GetBytes("12345678901234567890123456789012"); // 32 bytes for AES-256
+        private static readonly byte[] aesIV = Encoding.UTF8.GetBytes("1234567890123456!"); // 16 bytes for AES
 
         static EncryptionService()
         {
             // 從環境變數讀取金鑰與 IV
-            string? keyEnv = Environment.GetEnvironmentVariable("YOURAPP_AES_KEY");
-            string? ivEnv = Environment.GetEnvironmentVariable("YOURAPP_AES_IV");
+            // setx YOURAPP_AES_KEY 12345678901234567890123456789012
+            // setx YOURAPP_AES_IV 1234567890123456
 
-            if (string.IsNullOrEmpty(keyEnv) || string.IsNullOrEmpty(ivEnv))
-                throw new InvalidOperationException("AES key/IV not found in environment variables.");
+            //string? keyEnv = Environment.GetEnvironmentVariable("YOURAPP_AES_KEY");
+            //string? ivEnv = Environment.GetEnvironmentVariable("YOURAPP_AES_IV");
 
-            aesKey = Encoding.UTF8.GetBytes(keyEnv);
-            aesIV = Encoding.UTF8.GetBytes(ivEnv);
+            //if (string.IsNullOrEmpty(keyEnv) || string.IsNullOrEmpty(ivEnv))
+            //    throw new InvalidOperationException("AES key/IV not found in environment variables.");
+
+            //aesKey = Encoding.UTF8.GetBytes(keyEnv);
+            //aesIV = Encoding.UTF8.GetBytes(ivEnv);
+
+            aesKey = new byte[32];
+            aesIV = new byte[16];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(aesKey);
+            rng.GetBytes(aesIV);
+
+            Debug.WriteLine(Convert.ToBase64String(aesKey));
+            Debug.WriteLine(Convert.ToBase64String(aesIV));
 
             if (aesKey.Length != 32) // AES-256 需要 32 bytes
                 throw new InvalidOperationException("AES key must be 32 bytes.");
