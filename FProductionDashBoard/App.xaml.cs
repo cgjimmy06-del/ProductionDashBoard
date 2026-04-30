@@ -40,10 +40,9 @@ namespace FProductionDashBoard
 
             Directory.CreateDirectory("Settings");
 
-            // 讀取設定檔
+            // 重用登入階段已讀取的 config（避免 ClickOnce 路徑不穩定造成二次讀取失敗）
             var services = new ServiceCollection();
-            var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
+            var config = Services.LoginDapper.GetCachedConfig();
 
             services.AddSingleton(config);
 
