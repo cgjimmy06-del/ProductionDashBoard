@@ -27,7 +27,8 @@ namespace FProductionDashBoard.ViewModels
 
     public partial class LoginViewModel : ObservableObject
     {
-        public string AppVersion { get; }
+        public string AppVersion => typeof(App).Assembly
+                    .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "unknown";
         private readonly UiModels.UserInfo _visitorLogin =
             new UiModels.UserInfo { UserId = "visitor", Name = "訪客", RoleId = 1, Id = 2 };
 
@@ -67,10 +68,6 @@ namespace FProductionDashBoard.ViewModels
 
         public LoginViewModel()
         {
-            // 讀取 FileVersion
-            AppVersion = FileVersionInfo.GetVersionInfo(
-                Assembly.GetExecutingAssembly().Location).FileVersion ?? "Unknown";
-
             // RelayCommand<T> 可以直接接收參數型別
             LanguageChangeCommand = new RelayCommand(() => languageChange());
             ThemeChangeCommand = new RelayCommand(() => themeChange());
@@ -101,7 +98,7 @@ namespace FProductionDashBoard.ViewModels
             { Errorinfo = Properties.Resources.LogInFillOutError; return; }
 
             UserInfo? user = _visitorLogin; // 預設 loginSource = "Visitor"
-            
+
             if (loginSource == "Normal") // 只有常規登入要經過資料庫驗證
             {
                 if (!LoginDapper.checkConnection(SelectedServer))

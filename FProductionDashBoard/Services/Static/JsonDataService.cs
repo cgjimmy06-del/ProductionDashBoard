@@ -14,7 +14,8 @@ namespace FProductionDashBoard.Services
         //private static readonly string baseFolder = Path.Combine(
         //    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FProductionDashBoard");
 
-        private static readonly string baseFolder = "Settings";
+        private static readonly string baseFolder =
+            Path.Combine(AppContext.BaseDirectory, "Settings");
 
         private static readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
         {

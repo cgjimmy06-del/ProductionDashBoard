@@ -2040,7 +2040,7 @@
           "build/net6.0/xunit.runner.visualstudio.props": {}
         }
       },
-      "FProductionDashBoard/1.0.0": {
+      "FProductionDashBoard/1.0.1": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
@@ -5230,7 +5230,7 @@
         "xunit.runner.visualstudio.nuspec"
       ]
     },
-    "FProductionDashBoard/1.0.0": {
+    "FProductionDashBoard/1.0.1": {
       "type": "project",
       "path": "../FProductionDashBoard/FProductionDashBoard.csproj",
       "msbuildProject": "../FProductionDashBoard/FProductionDashBoard.csproj"
@@ -5238,7 +5238,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0-windows7.0": [
-      "FProductionDashBoard >= 1.0.0",
+      "FProductionDashBoard >= 1.0.1",
       "Microsoft.EntityFrameworkCore.Sqlite >= 8.0.24",
       "Microsoft.NET.Test.Sdk >= 17.11.1",
       "Moq >= 4.20.72",
