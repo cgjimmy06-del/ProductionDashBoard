@@ -18,7 +18,7 @@ namespace FProductionDashBoard.Services
         private static IConfiguration? _cachedConfig;
 
         internal static IConfiguration GetCachedConfig()
-            => _cachedConfig ?? throw new InvalidOperationException("Config not initialized. Call checkConnection first.");
+            => _cachedConfig ?? BuildConfig();
         private static IConfiguration BuildConfig()
         {
             if (_cachedConfig != null) return _cachedConfig;
@@ -30,7 +30,7 @@ namespace FProductionDashBoard.Services
         }
         public static bool checkConnection(string serverKey)
         {
-            var config = BuildConfig();
+            var config = GetCachedConfig();
             var connStr = config.GetConnectionString($"{serverKey}_MESDashboard");
             using var conn = new SqlConnection(connStr);
 
@@ -53,7 +53,7 @@ namespace FProductionDashBoard.Services
         }
         public static UiModels.UserInfo? validateUser(string serverKey, string userid, string password)
         {
-            var config = BuildConfig();
+            var config = GetCachedConfig();
             var connStr = config.GetConnectionString($"{serverKey}_MESDashboard");
             var sqlStr = "SELECT employee_id, card_id, user_id, name, role_id, email FROM employee " +
                 "WHERE user_id=@Userid AND password=@Password";

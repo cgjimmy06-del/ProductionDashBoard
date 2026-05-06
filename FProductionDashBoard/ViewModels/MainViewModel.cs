@@ -29,7 +29,8 @@ namespace FProductionDashBoard.ViewModels
     public enum NavMode { Home, Operation, View, List, Equipment, Order }
     public partial class MainViewModel : ObservableObject
     {
-        public string AppVersion { get; }
+        public string AppVersion => typeof(App).Assembly
+                    .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "unknown";
         public DispatcherTimer DefaultTimer;
 
         public ObservableCollection<object> Cards { get; set; } = new();
@@ -109,10 +110,6 @@ namespace FProductionDashBoard.ViewModels
             MultiCardReaderService multiCardReaderService,
             Services.WebApi.IErpApiService erpApiService)
         {
-            // 讀取 FileVersion
-            AppVersion = FileVersionInfo.GetVersionInfo(
-                Assembly.GetExecutingAssembly().Location).FileVersion ?? "Unknown";
-
             // DI注入 Repository
             _core = core;
             _syncService = syncService;
