@@ -38,7 +38,6 @@ namespace FProductionDashBoard
                 // 後續加入語言
                 string selectedServer = loginWindow.SelectedServer;
                 var user = loginWindow.User;
-                Debug.WriteLine($"Login User: {user.Name}, RoleId: {user.RoleId}");
 
                 Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Settings"));
 
