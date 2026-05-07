@@ -247,8 +247,13 @@ namespace FProductionDashBoard.ViewModels
             IsTuning = true;
             UpdateTuningText();
 
+            if (_tuningTimer != null)
+            {
+                _tuningTimer.Stop();
+                _tuningTimer.Tick -= OnTuningTimerTick;
+            }
             _tuningTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            _tuningTimer.Tick += (_, _) => { _tuningElapsedSeconds++; UpdateTuningText(); };
+            _tuningTimer.Tick += OnTuningTimerTick;
             _tuningTimer.Start();
             await Task.CompletedTask;
         }
@@ -292,7 +297,12 @@ namespace FProductionDashBoard.ViewModels
             // 調試紀錄流程
             try
             {
-                _tuningTimer?.Stop();
+                if (_tuningTimer != null)
+                {
+                    _tuningTimer.Stop();
+                    _tuningTimer.Tick -= OnTuningTimerTick;
+                    _tuningTimer = null;
+                }
                 IsTuning = false;
                 int elapsed = _tuningElapsedSeconds;
 
@@ -315,6 +325,12 @@ namespace FProductionDashBoard.ViewModels
                 _core.Log.AddErrorLog($"EndTuning Ex: {ex.Message}");
             }
         }
+        private void OnTuningTimerTick(object? s, EventArgs e)
+        {
+            _tuningElapsedSeconds++;
+            UpdateTuningText();
+        }
+
         private void UpdateTuningText()
         {
             var label = _activeTuningType == TuningType.Teaching

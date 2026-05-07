@@ -27,7 +27,7 @@ using System.Windows.Threading;
 namespace FProductionDashBoard.ViewModels
 {
     public enum NavMode { Home, Operation, View, List, Equipment, Order }
-    public partial class MainViewModel : ObservableObject
+    public partial class MainViewModel : ObservableObject, IDisposable
     {
         public string AppVersion => typeof(App).Assembly
                     .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "unknown";
@@ -105,6 +105,7 @@ namespace FProductionDashBoard.ViewModels
         private int _missedCheckCounter = 0;
         private int _logInOutCounter = 0;
         private int _isSyncing = 0;
+        private Action? _onUserChanged;
 
         public MainViewModel(DashboardCoreServices core, IOfflineSyncService syncService,
             MultiCardReaderService multiCardReaderService,
@@ -123,7 +124,7 @@ namespace FProductionDashBoard.ViewModels
             // 建立 DispatcherTimer 每秒更新一次時間，此方法位於 "UI 執行緒" 需確認是否移至 "執行緒池"
             DefaultTimer = new DispatcherTimer();
             DefaultTimer.Interval = TimeSpan.FromSeconds(1);
-            DefaultTimer.Tick += async (s, e) => await OnTimerTickAsync();
+            DefaultTimer.Tick += OnTimerTick;
             DefaultTimer.Start();
 
             InitializeCommand = new AsyncRelayCommand(LoadAllListsAsync);
@@ -146,18 +147,19 @@ namespace FProductionDashBoard.ViewModels
             // (訂閱端) 使用者變更事件，刷新命令狀態與使用者顯示 (若 _authService 在執行緒池)
             SystemUser = $"{Properties.Resources.ComStrSystemUser}: {_core.Authorization.CurrentUser!.Name}";
 
-            _core.Authorization.UserChanged += () =>
-            System.Windows.Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (!_core.Authorization.IsLoggedIn) // 若登出則執行對應事件
-                    _deviceContainer = null;
+            _onUserChanged = () =>
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (!_core.Authorization.IsLoggedIn)
+                        _deviceContainer = null;
 
-                SwitchModeCommand.NotifyCanExecuteChanged();
-                TestCommand.NotifyCanExecuteChanged();
-                LogoutCommand.NotifyCanExecuteChanged();
-                OnPropertyChanged(nameof(CurrentUser));
-                OnPropertyChanged(nameof(IsLoggedIn));
-            });
+                    SwitchModeCommand.NotifyCanExecuteChanged();
+                    TestCommand.NotifyCanExecuteChanged();
+                    LogoutCommand.NotifyCanExecuteChanged();
+                    OnPropertyChanged(nameof(CurrentUser));
+                    OnPropertyChanged(nameof(IsLoggedIn));
+                });
+            _core.Authorization.UserChanged += _onUserChanged;
 
             // 新增儀表卡片區
             //Cards.Add(new DeviceCardContainerViewModel(_log, _dataService, CurrentUser));
@@ -324,6 +326,17 @@ namespace FProductionDashBoard.ViewModels
 
             if (!isExtendLogin)
                 await _core.Authorization.LogoutAsync();
+        }
+
+        private async void OnTimerTick(object? s, EventArgs e) => await OnTimerTickAsync();
+
+        public void Dispose()
+        {
+            DefaultTimer.Stop();
+            DefaultTimer.Tick -= OnTimerTick;
+            _core.CardReader.CardRead -= OnCardRead;
+            if (_onUserChanged != null)
+                _core.Authorization.UserChanged -= _onUserChanged;
         }
 
         #endregion
