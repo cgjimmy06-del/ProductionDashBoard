@@ -118,10 +118,7 @@ namespace FProductionDashBoard
             }
             catch(Exception ex)
             {
-                MessageBox.Show($"Process: {Path.GetDirectoryName(Environment.ProcessPath)} \n\n " +
-                    $"GetCurrentDirectory: {Directory.GetCurrentDirectory()} \n\n " +
-                    $"AppContext: {AppContext.BaseDirectory} \n\n " +
-                    $"啟動失敗: \n\n {ex.GetType().Name}\n{ex.Message}\n\n{ex.StackTrace}", 
+                MessageBox.Show($"啟動失敗: \n\n {ex.GetType().Name}\n{ex.Message}\n\n{ex.StackTrace}", 
                     "錯誤", MessageBoxButton.OK, MessageBoxImage.Error);
                 Shutdown();
             }
