@@ -243,7 +243,7 @@ namespace FProductionDashBoard.ViewModels
             if (_missedCheckCounter >= 300)
             {
                 _missedCheckCounter = 0;
-                _ = Task.Run(CheckMissedInspectionsAsync);
+                await CheckMissedInspectionsAsync();
             }
 
             _logInOutCounter++;

@@ -38,7 +38,6 @@ namespace FProductionDashBoard
                 // 後續加入語言
                 string selectedServer = loginWindow.SelectedServer;
                 var user = loginWindow.User;
-                Debug.WriteLine($"Login User: {user.Name}, RoleId: {user.RoleId}");
 
                 Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Settings"));
 
@@ -118,10 +117,7 @@ namespace FProductionDashBoard
             }
             catch(Exception ex)
             {
-                MessageBox.Show($"Process: {Path.GetDirectoryName(Environment.ProcessPath)} \n\n " +
-                    $"GetCurrentDirectory: {Directory.GetCurrentDirectory()} \n\n " +
-                    $"AppContext: {AppContext.BaseDirectory} \n\n " +
-                    $"啟動失敗: \n\n {ex.GetType().Name}\n{ex.Message}\n\n{ex.StackTrace}", 
+                MessageBox.Show($"啟動失敗: \n\n {ex.GetType().Name}\n{ex.Message}\n\n{ex.StackTrace}", 
                     "錯誤", MessageBoxButton.OK, MessageBoxImage.Error);
                 Shutdown();
             }

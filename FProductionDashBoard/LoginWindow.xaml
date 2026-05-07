@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Style="{StaticResource MaterialDesignWindow}"
         WindowStartupLocation="CenterScreen"
-        Title="{Binding AppVersion, StringFormat=PDB Login v{0}}" 
+        Title="{Binding AppVersion, StringFormat=PDB [{0}]}" 
          SizeToContent="Height" Width="300">
 
     <StackPanel Margin="40, 10">
