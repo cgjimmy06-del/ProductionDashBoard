@@ -38,7 +38,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly Theme _darkTheme;
 
         public ObservableCollection<string> Servers { get; } =
-        new ObservableCollection<string> { "FS", "GS", "VS" };
+        new ObservableCollection<string> { "TT" }; // { "FS", "GS", "VS" }; { "TT" };
         public ObservableCollection<LanguageOption> Languages { get; } =
         new ObservableCollection<LanguageOption> { 
             new LanguageOption { DisplayName = "中文", CultureCode = "zh-TW" },
@@ -48,7 +48,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private string selectedLanguage = "zh-TW";
         [ObservableProperty]
-        private string selectedServer = "FS";
+        private string selectedServer = "";
         [ObservableProperty]
         private bool isDarkMode = false;
         [ObservableProperty]
@@ -94,7 +94,7 @@ namespace FProductionDashBoard.ViewModels
 
         private void logInEvent(string loginSource)
         {
-            if (UserId == "" || Password == "")
+            if (UserId == "" || Password == "" || SelectedServer == "")
             { Errorinfo = Properties.Resources.LogInFillOutError; return; }
 
             UserInfo? user = _visitorLogin; // 預設 loginSource = "Visitor"

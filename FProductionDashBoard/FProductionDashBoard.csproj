@@ -9,9 +9,10 @@
 		<Platforms>AnyCPU;x64</Platforms>
 		<ApplicationIcon>appIcon.ico</ApplicationIcon>
 
-		<!-- <AssemblyVersion>1.0.0.0</AssemblyVersion> -->
-		<!-- <FileVersion>1.0.0.0</FileVersion> -->
-		<Version>1.0.1</Version>
+		<!-- 發佈前確認: APP.JSON, LOGIN SERVER -->
+		<AssemblyVersion>1.0.1.2</AssemblyVersion>
+		<FileVersion>1.0.1.2</FileVersion>
+		<Version>1.0.1-Beta.1</Version>
 		<!-- 禁用將 Git Commit ID 加入 InformationalVersion -->
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	</PropertyGroup>
