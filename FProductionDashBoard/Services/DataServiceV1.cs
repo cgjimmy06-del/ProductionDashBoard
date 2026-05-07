@@ -189,6 +189,7 @@ namespace FProductionDashBoard.Services.V1
                 {
                     throw new DatabaseConnectionException("新增物料更換紀錄時資料庫發生錯誤。", ex);
                 }
+                catch (TimeoutException) { }
             }
 
             var payload = new ReplacementPayload
@@ -203,7 +204,11 @@ namespace FProductionDashBoard.Services.V1
                 OperationType = PendingOperationType.AddReplacement,
                 PayloadJson = JsonSerializer.Serialize(payload)
             };
-            _ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
+            _ = Task.Run(async () =>
+            {
+                try { await _offlineCache.EnqueueAsync(op).ConfigureAwait(false); }
+                catch (Exception ex) { Debug.WriteLine($"[OfflineCache] EnqueueAsync failed: {ex.Message}"); }
+            });
 
             throw new OfflineOperationQueuedException(op.Id);
         }
@@ -231,6 +236,7 @@ namespace FProductionDashBoard.Services.V1
                 {
                     throw new DatabaseConnectionException("新增首件紀錄時資料庫發生錯誤。", ex);
                 }
+                catch (TimeoutException) { }
             }
 
             var payload = new FirstInspectionPayload
@@ -248,7 +254,11 @@ namespace FProductionDashBoard.Services.V1
                 OperationType = PendingOperationType.AddFirstInspection,
                 PayloadJson = JsonSerializer.Serialize(payload)
             };
-            _ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
+            _ = Task.Run(async () =>
+            {
+                try { await _offlineCache.EnqueueAsync(op).ConfigureAwait(false); }
+                catch (Exception ex) { Debug.WriteLine($"[OfflineCache] EnqueueAsync failed: {ex.Message}"); }
+            });
 
             throw new OfflineOperationQueuedException(op.Id);
         }
@@ -272,6 +282,7 @@ namespace FProductionDashBoard.Services.V1
                 {
                     throw new DatabaseConnectionException("新增巡檢紀錄時資料庫發生錯誤。", ex);
                 }
+                catch (TimeoutException) { }
             }
 
             var payload = new RoutineInspectionPayload
@@ -290,7 +301,11 @@ namespace FProductionDashBoard.Services.V1
                 OperationType = PendingOperationType.AddRoutineInspection,
                 PayloadJson = JsonSerializer.Serialize(payload)
             };
-            _ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
+            _ = Task.Run(async () =>
+            {
+                try { await _offlineCache.EnqueueAsync(op).ConfigureAwait(false); }
+                catch (Exception ex) { Debug.WriteLine($"[OfflineCache] EnqueueAsync failed: {ex.Message}"); }
+            });
 
             throw new OfflineOperationQueuedException(op.Id);
         }
@@ -383,6 +398,7 @@ namespace FProductionDashBoard.Services.V1
                 {
                     throw new DatabaseConnectionException("新增帶點紀錄時資料庫發生錯誤。", ex);
                 }
+                catch (TimeoutException) { }
             }
 
             var op = new PendingOperation
@@ -396,7 +412,11 @@ namespace FProductionDashBoard.Services.V1
                     OperatedAt = DateTime.Now
                 })
             };
-            _ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
+            _ = Task.Run(async () =>
+            {
+                try { await _offlineCache.EnqueueAsync(op).ConfigureAwait(false); }
+                catch (Exception ex) { Debug.WriteLine($"[OfflineCache] EnqueueAsync failed: {ex.Message}"); }
+            });
             throw new OfflineOperationQueuedException(op.Id);
         }
         public async Task<int> AddOffsetRecordAsync(int equipmentId, int employeeId, int durationSec, string? product)
@@ -412,6 +432,7 @@ namespace FProductionDashBoard.Services.V1
                 {
                     throw new DatabaseConnectionException("新增調品質紀錄時資料庫發生錯誤。", ex);
                 }
+                catch (TimeoutException) { }
             }
 
             var op = new PendingOperation
@@ -425,7 +446,11 @@ namespace FProductionDashBoard.Services.V1
                     OperatedAt = DateTime.Now
                 })
             };
-            _ = Task.Run(async () => await _offlineCache.EnqueueAsync(op));
+            _ = Task.Run(async () =>
+            {
+                try { await _offlineCache.EnqueueAsync(op).ConfigureAwait(false); }
+                catch (Exception ex) { Debug.WriteLine($"[OfflineCache] EnqueueAsync failed: {ex.Message}"); }
+            });
             throw new OfflineOperationQueuedException(op.Id);
         }
 

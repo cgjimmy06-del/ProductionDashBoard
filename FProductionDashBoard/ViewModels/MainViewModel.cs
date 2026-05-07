@@ -238,14 +238,14 @@ namespace FProductionDashBoard.ViewModels
             if (_syncTickCounter >= 60)
             {
                 _syncTickCounter = 0;
-                _ = Task.Run(SyncAndLogAsync);
+                _ = SyncAndLogAsync();
             }
 
             _missedCheckCounter++;
             if (_missedCheckCounter >= 300)
             {
                 _missedCheckCounter = 0;
-                _ = Task.Run(CheckMissedInspectionsAsync);
+                _ = CheckMissedInspectionsAsync();
             }
 
             _logInOutCounter++;
