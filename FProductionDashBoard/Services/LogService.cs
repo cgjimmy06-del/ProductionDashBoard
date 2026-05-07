@@ -150,7 +150,7 @@ namespace FProductionDashBoard.Services
         }
         private void CleanupOldLogs(string filetitle)
         {
-            var files = Directory.GetFiles(_logDirectory, "{filetitle}_*.txt")
+            var files = Directory.GetFiles(_logDirectory, $"{filetitle}_*.txt")
                                  .Select(f => new FileInfo(f))
                                  .OrderByDescending(f => f.CreationTime)
                                  .ToList();
