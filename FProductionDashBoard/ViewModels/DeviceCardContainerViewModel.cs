@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace FProductionDashBoard.ViewModels
@@ -168,7 +169,7 @@ namespace FProductionDashBoard.ViewModels
                 {
                     var idevice = new DeviceCardViewModel(_core, iselection, CurrentUser!, commonLists);
                     await idevice.UpdateTimeSlotsStatusAsync();
-                    Devices.Add(idevice);
+                    Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                     _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
                 }
             }
@@ -190,13 +191,13 @@ namespace FProductionDashBoard.ViewModels
             {
                 var idevice = new DeviceCardViewModel(_core, iselection, CurrentUser!, commonLists);
                 await idevice.UpdateTimeSlotsStatusAsync();
-                Devices.Add(idevice);
+                Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                 _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
             }
         }
         private void DeleteDevices()
         {
-            if (Devices.Any()) Devices.Clear();
+            if (Devices.Any()) Application.Current.Dispatcher.Invoke(() => Devices.Clear());
         }
 
         public void Dispose()
