@@ -17,7 +17,7 @@ namespace FProductionDashBoard.Services.Offline
 
         public async Task<SyncResult> SyncPendingAsync()
         {
-            if (!await _cache.HasPendingAsync()) return SyncResult.Empty;
+            if (!await _cache.HasPendingAsync().ConfigureAwait(false)) return SyncResult.Empty;
 
             using var scope = _scopeFactory.CreateScope();
             var sp = scope.ServiceProvider;
@@ -25,9 +25,9 @@ namespace FProductionDashBoard.Services.Offline
             var equipmentRep = sp.GetRequiredService<IEquipmentRepository>();
             var handlers = sp.GetServices<IPendingOperationHandler>();
 
-            if (!await equipmentRep.CheckConnectionAsync()) return new SyncResult(0, 0);
+            if (!await equipmentRep.CheckConnectionAsync().ConfigureAwait(false)) return new SyncResult(0, 0);
 
-            var pending = await _cache.GetPendingAsync();
+            var pending = await _cache.GetPendingAsync().ConfigureAwait(false);
 
             int syncedCount = 0, failedCount = 0;
             foreach (var op in pending)
@@ -37,13 +37,13 @@ namespace FProductionDashBoard.Services.Offline
 
                 try
                 {
-                    await handler.HandleAsync(op);
-                    await _cache.MarkSyncedAsync(op.Id);
+                    await handler.HandleAsync(op).ConfigureAwait(false);
+                    await _cache.MarkSyncedAsync(op.Id).ConfigureAwait(false);
                     syncedCount++;
                 }
                 catch
                 {
-                    await _cache.MarkFailedAsync(op.Id);
+                    await _cache.MarkFailedAsync(op.Id).ConfigureAwait(false);
                     failedCount++;
                 }
             }

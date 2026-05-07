@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -74,7 +74,7 @@ namespace FProductionDashBoard.Services
                 EnsureFolderExists();
                 string filePath = Path.Combine(baseFolder, fileName);
                 var json = JsonSerializer.Serialize(data, jsonOptions);
-                await File.WriteAllTextAsync(filePath, json, cancellationToken);
+                await File.WriteAllTextAsync(filePath, json, cancellationToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -98,7 +98,7 @@ namespace FProductionDashBoard.Services
                 if (!File.Exists(filePath))
                     return new T();
 
-                var json = await File.ReadAllTextAsync(filePath, cancellationToken);
+                var json = await File.ReadAllTextAsync(filePath, cancellationToken).ConfigureAwait(false);
                 return JsonSerializer.Deserialize<T>(json, jsonOptions) ?? new T();
             }
             catch (OperationCanceledException)

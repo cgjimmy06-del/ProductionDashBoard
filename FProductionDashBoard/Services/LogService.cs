@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FProductionDashBoard.Properties;
 using MaterialDesignThemes.Wpf;
 using System;
@@ -193,7 +193,7 @@ namespace FProductionDashBoard.Services
             var task1 = File.WriteAllLinesAsync(logFilePath, lines);
             var task2 = File.WriteAllLinesAsync(errorlogFilePath, errorlines);
 
-            await Task.WhenAll(task1, task2);
+            await Task.WhenAll(task1, task2).ConfigureAwait(false);
         }
         public string LoadLogFile(string fileName)
         {
