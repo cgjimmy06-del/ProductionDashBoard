@@ -131,7 +131,7 @@ namespace FProductionDashBoard.ViewModels
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
             SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode,
-                (NavMode) => _core.Authorization.HasPermission(Services.PermissionId.View));
+                (_) => _core.Authorization.HasPermission(Services.PermissionId.View));
 
             //  設定元件事件 (工具列)
             TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
@@ -398,14 +398,17 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.List:
+                    if (!_core.Authorization.HasPermission(Services.PermissionId.Edit)) return;
                     MainCard = new SettingViewModel(_core);
                     break;
 
                 case NavMode.Equipment:
+                    if (!_core.Authorization.HasPermission(Services.PermissionId.Setting)) return;
                     MainCard = new HardwareViewModel(_multiCardReaderService);
                     break;
 
                 case NavMode.Order:
+                    if (!_core.Authorization.HasPermission(Services.PermissionId.Order)) return;
                     break;
 
                 default:
