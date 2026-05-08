@@ -49,7 +49,7 @@ namespace FProductionDashBoard.Services
             {
                 try
                 {
-                    var roles = await _rolePermissionRepo.GetAllRolesAsync();
+                    var roles = await _rolePermissionRepo.GetAllRolesAsync().ConfigureAwait(false);
                     var role = roles.FirstOrDefault(r => r.RoleId == user.RoleId);
                     _userPermissions = role?.RolePermissions
                         .Select(rp => rp.PermissionId)
@@ -67,7 +67,7 @@ namespace FProductionDashBoard.Services
 
         public async Task LogoutAsync()
         {
-            await InitializeAsync(_defaultUser);
+            await InitializeAsync(_defaultUser).ConfigureAwait(false);
         }
 
         public bool HasPermission(int permissionId) => _userPermissions.Contains(permissionId);

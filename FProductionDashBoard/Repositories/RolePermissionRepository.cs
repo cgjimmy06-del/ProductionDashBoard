@@ -20,7 +20,7 @@ namespace FProductionDashBoard.Repositories
         public async Task<List<Permission>> GetAllPermissionsAsync()
         {
             await using var ctx = _factory.CreateDbContext();
-            return await ctx.Permissions.ToListAsync();
+            return await ctx.Permissions.ToListAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace FProductionDashBoard.Repositories
             return await ctx.Roles
                 .Include(r => r.RolePermissions)
                     .ThenInclude(rp => rp.Permission)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace FProductionDashBoard.Repositories
                     .ThenInclude(r => (r ?? new()).RolePermissions)
                         .ThenInclude(rp => rp.Permission)
                 .SelectMany(e => e.Role!.RolePermissions.Select(rp => rp.Permission!))
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
 
         public async Task AddRoleWithPermissionsAsync(int roleId, string name, string? description, List<int> permissionIds)
@@ -56,7 +56,7 @@ namespace FProductionDashBoard.Repositories
             ctx.Roles.Add(new Role { RoleId = roleId, Name = name, Description = description });
             foreach (var pid in permissionIds)
                 ctx.RolePermissions.Add(new RolePermission { RoleId = roleId, PermissionId = pid });
-            await ctx.SaveChangesAsync();
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task UpdateRoleWithPermissionsAsync(int roleId, string name, string? description, List<int> permissionIds)
@@ -64,20 +64,20 @@ namespace FProductionDashBoard.Repositories
             await using var ctx = _factory.CreateDbContext();
             var role = await ctx.Roles
                 .Include(r => r.RolePermissions)
-                .FirstOrDefaultAsync(r => r.RoleId == roleId)
+                .FirstOrDefaultAsync(r => r.RoleId == roleId).ConfigureAwait(false)
                 ?? throw new InvalidOperationException($"Role id={roleId} not found");
             role.Name = name;
             role.Description = description;
             ctx.RolePermissions.RemoveRange(role.RolePermissions);
             foreach (var pid in permissionIds)
                 ctx.RolePermissions.Add(new RolePermission { RoleId = roleId, PermissionId = pid });
-            await ctx.SaveChangesAsync();
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<bool> HasEmployeesByRoleAsync(int roleId)
         {
             await using var ctx = _factory.CreateDbContext();
-            return await ctx.Employees.AnyAsync(e => e.RoleId == roleId);
+            return await ctx.Employees.AnyAsync(e => e.RoleId == roleId).ConfigureAwait(false);
         }
     }
 }
