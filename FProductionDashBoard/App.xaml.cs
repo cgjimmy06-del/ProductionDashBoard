@@ -66,8 +66,8 @@ namespace FProductionDashBoard
                 services.AddScoped<Repositories.IRolePermissionRepository, Repositories.RolePermissionRepository>();
 
                 // 離線暫存服務
-                services.AddDbContext<Repositories.LocalDbContext>(opt =>
-                    opt.UseSqlite($"Data Source={Path.Combine(AppContext.BaseDirectory, "Settings", "local_cache.db")}"), 
+                services.AddDbContextFactory<Repositories.LocalDbContext>(opt =>
+                    opt.UseSqlite($"Data Source={Path.Combine(AppContext.BaseDirectory, "Settings", "local_cache.db")}"),
                     ServiceLifetime.Singleton);
                 services.AddSingleton<IOfflineCacheService, OfflineCacheService>();
                 services.AddSingleton<IOfflineSyncService, OfflineSyncService>();

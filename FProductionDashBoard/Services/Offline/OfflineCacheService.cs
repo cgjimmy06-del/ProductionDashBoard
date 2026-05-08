@@ -5,50 +5,56 @@ namespace FProductionDashBoard.Services.Offline
 {
     public class OfflineCacheService : IOfflineCacheService
     {
-        private readonly LocalDbContext _db;
+        private readonly IDbContextFactory<LocalDbContext> _factory;
 
-        public OfflineCacheService(LocalDbContext db)
+        public OfflineCacheService(IDbContextFactory<LocalDbContext> factory)
         {
-            _db = db;
-            _db.Database.EnsureCreated();
+            _factory = factory;
+            using var db = _factory.CreateDbContext();
+            db.Database.EnsureCreated();
         }
 
         public async Task EnqueueAsync(PendingOperation operation)
         {
-            await _db.PendingOperations.AddAsync(operation).ConfigureAwait(false);
-            await _db.SaveChangesAsync().ConfigureAwait(false);
+            await using var db = _factory.CreateDbContext();
+            await db.PendingOperations.AddAsync(operation).ConfigureAwait(false);
+            await db.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<List<PendingOperation>> GetPendingAsync()
         {
-            return await _db.PendingOperations
+            await using var db = _factory.CreateDbContext();
+            return await db.PendingOperations
                 .OrderBy(p => p.CreatedAt)
                 .ToListAsync().ConfigureAwait(false);
         }
 
         public async Task MarkSyncedAsync(Guid id)
         {
-            var op = await _db.PendingOperations.FindAsync(id).ConfigureAwait(false);
+            await using var db = _factory.CreateDbContext();
+            var op = await db.PendingOperations.FindAsync(id).ConfigureAwait(false);
             if (op is not null)
             {
-                _db.PendingOperations.Remove(op);
-                await _db.SaveChangesAsync().ConfigureAwait(false);
+                db.PendingOperations.Remove(op);
+                await db.SaveChangesAsync().ConfigureAwait(false);
             }
         }
 
         public async Task MarkFailedAsync(Guid id)
         {
-            var op = await _db.PendingOperations.FindAsync(id).ConfigureAwait(false);
+            await using var db = _factory.CreateDbContext();
+            var op = await db.PendingOperations.FindAsync(id).ConfigureAwait(false);
             if (op is null) return;
 
             op.RetryCount++;
             op.LastAttemptAt = DateTime.Now;
-            await _db.SaveChangesAsync().ConfigureAwait(false);
+            await db.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<bool> HasPendingAsync()
         {
-            return await _db.PendingOperations.AnyAsync().ConfigureAwait(false);
+            await using var db = _factory.CreateDbContext();
+            return await db.PendingOperations.AnyAsync().ConfigureAwait(false);
         }
     }
 }

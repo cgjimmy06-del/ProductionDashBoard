@@ -259,6 +259,17 @@ namespace FProductionDashBoard.Services.V1
                 catch (TimeoutException tex) { throw new DatabaseConnectionException("新增巡檢紀錄時連線逾時。", tex); }
             }
 
+            var pending = await _offlineCache.GetPendingAsync().ConfigureAwait(false);
+            bool existsInQueue = pending
+                .Where(p => p.OperationType == PendingOperationType.AddRoutineInspection)
+                .Any(p =>
+                {
+                    var pl = JsonSerializer.Deserialize<RoutineInspectionPayload>(p.PayloadJson);
+                    return pl?.EquipmentId == equipmentId && pl?.TimeSlotId == timeSlotId;
+                });
+            if (existsInQueue)
+                throw new BusinessRuleException("同一設備同一時段已有紀錄，不能重複新增。");
+
             var payload = new RoutineInspectionPayload
             {
                 EquipmentId = equipmentId,
@@ -328,20 +339,24 @@ namespace FProductionDashBoard.Services.V1
             // 確認每個結束時段是否有紀錄，沒有紀錄則上傳逾時紀錄
             foreach (var slot in endedSlots)
             {
-                bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, slot.TimeSlotId, BusinessDay).ConfigureAwait(false);
-                if (!exists)
+                try
                 {
-                    try
+                    bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, slot.TimeSlotId, BusinessDay).ConfigureAwait(false);
+                    if (!exists)
                     {
                         // 補上一筆逾時未巡檢紀錄 (以管理員為記錄)
                         await InspectionRecordRep.AddInspectionRecordAsync(
                             InspectionType.Routine, equipmentId, 1, false,
                             slot.TimeSlotId, null, "RTIN0001", null);
                     }
-                    catch (SqlException ex)
-                    {
-                        throw new DatabaseConnectionException($"補填時段 {slot.TimeSlotId} 失敗。", ex);
-                    }
+                }
+                catch (SqlException ex) when (ex.Number == 2601 || ex.Number == 2627)
+                {
+                    // 競態：巡檢紀錄已由其他操作寫入，略過
+                }
+                catch (SqlException ex)
+                {
+                    throw new DatabaseConnectionException($"補填時段 {slot.TimeSlotId} 失敗。", ex);
                 }
             }
         }

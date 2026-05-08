@@ -16,6 +16,12 @@ namespace FProductionDashBoard.Services.Offline.Handlers
         public async Task HandleAsync(PendingOperation op)
         {
             var payload = JsonSerializer.Deserialize<RoutineInspectionPayload>(op.PayloadJson)!;
+
+            var businessDay = payload.OperatedAt.Date;
+            bool exists = await _repo.ExistsInspectionInSlotAsync(
+                payload.EquipmentId, payload.TimeSlotId, businessDay).ConfigureAwait(false);
+            if (exists) return;
+
             await _repo.AddInspectionRecordAsync(
                 InspectionType.Routine, payload.EquipmentId, payload.EmployeeId,
                 payload.Result, payload.TimeSlotId, payload.Product, payload.ErrorCode, payload.Description,
