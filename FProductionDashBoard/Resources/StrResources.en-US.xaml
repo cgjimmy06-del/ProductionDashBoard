@@ -117,9 +117,9 @@
     <!-- Time slot setting -->
     <sys:String x:Key="TimeSlotStartTimeDataGridHeader">Start Time</sys:String>
     <sys:String x:Key="TimeSlotEndTimeDataGridHeader">End Time</sys:String>
-    <sys:String x:Key="TimeSlotCrossDayDataGridHeader">Cross Day</sys:String>
+    <sys:String x:Key="TimeSlotCrossDayDataGridHeader">Overnight</sys:String>
     <sys:String x:Key="TimeSlotLabelDataGridHeader">Label</sys:String>
-    <sys:String x:Key="TimeSlotIsCrossDayCheckbox">Overnight</sys:String>
+    <sys:String x:Key="TimeSlotIsCrossDayCheckbox">Overnight (Past midnight, same shift)</sys:String>
     <sys:String x:Key="TimeSlotLabelAutoFormLabel">Label (auto-generated)</sys:String>
     <!-- Role permission setting -->
     <sys:String x:Key="RoleIdDataGridHeader">Role ID</sys:String>

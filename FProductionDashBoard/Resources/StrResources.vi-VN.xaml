@@ -117,9 +117,9 @@
     <!-- Time slot setting -->
     <sys:String x:Key="TimeSlotStartTimeDataGridHeader">Giờ bắt đầu</sys:String>
     <sys:String x:Key="TimeSlotEndTimeDataGridHeader">Giờ kết thúc</sys:String>
-    <sys:String x:Key="TimeSlotCrossDayDataGridHeader">Qua ngày</sys:String>
+    <sys:String x:Key="TimeSlotCrossDayDataGridHeader">Qua đêm</sys:String>
     <sys:String x:Key="TimeSlotLabelDataGridHeader">Nhãn</sys:String>
-    <sys:String x:Key="TimeSlotIsCrossDayCheckbox">Qua đêm</sys:String>
+    <sys:String x:Key="TimeSlotIsCrossDayCheckbox">Qua đêm (Cùng một ngày làm việc)</sys:String>
     <sys:String x:Key="TimeSlotLabelAutoFormLabel">Nhãn (tự động)</sys:String>
     <!-- Role permission setting -->
     <sys:String x:Key="RoleIdDataGridHeader">ID vai trò</sys:String>
