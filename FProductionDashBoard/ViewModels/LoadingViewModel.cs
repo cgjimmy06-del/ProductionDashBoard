@@ -9,7 +9,7 @@ namespace FProductionDashBoard.ViewModels
 {
     public enum LoadingMode { Processing, LogoutCountdown, CardReader }
 
-    public partial class LoadingViewModel : ObservableObject
+    public partial class LoadingViewModel : ObservableObject, IDisposable
     {
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsSpinning))]
@@ -50,6 +50,13 @@ namespace FProductionDashBoard.ViewModels
                 }
             };
             _countdownTimer.Start();
+        }
+
+        public void Dispose()
+        {
+            _countdownTimer?.Stop();
+            _cts.Cancel();
+            _cts.Dispose();
         }
 
         [RelayCommand]

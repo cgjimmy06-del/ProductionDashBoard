@@ -22,13 +22,20 @@ namespace FProductionDashBoard.Tests.OfflineTests
                 .Options;
 
             _db = new LocalDbContext(options);
-            _sut = new OfflineCacheService(_db);
+            _sut = new OfflineCacheService(new TestDbContextFactory(options));
         }
 
         public void Dispose()
         {
             _db.Dispose();
             _connection.Dispose();
+        }
+
+        private sealed class TestDbContextFactory : IDbContextFactory<LocalDbContext>
+        {
+            private readonly DbContextOptions<LocalDbContext> _options;
+            public TestDbContextFactory(DbContextOptions<LocalDbContext> options) => _options = options;
+            public LocalDbContext CreateDbContext() => new(_options);
         }
 
         private static PendingOperation MakePending(PendingOperationType type = PendingOperationType.AddReplacement)
