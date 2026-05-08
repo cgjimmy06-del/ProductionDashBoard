@@ -12,11 +12,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace FProductionDashBoard.ViewModels
 {
-    public partial class DeviceCardContainerViewModel : ObservableObject
+    public partial class DeviceCardContainerViewModel : ObservableObject, IDisposable
     {
         private string defaultDevicesFile = "defaultdevices.json"; // 預設設備檔案
         private readonly ListsFromSql commonLists;
@@ -24,6 +25,7 @@ namespace FProductionDashBoard.ViewModels
             new ObservableCollection<DeviceCardViewModel>();
 
         private readonly DashboardCoreServices _core;
+        private readonly Action _onUserChanged; // 可被取消註冊
         public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
 
         public ICommand FirstArticleInsAllCommand { get; }
@@ -46,7 +48,8 @@ namespace FProductionDashBoard.ViewModels
             FastUploadDevicesCommand = new AsyncRelayCommand(() => FastUploadDevices());
             DeleteDevicesCommand = new RelayCommand(() => DeleteDevices());
 
-            _core.Authorization.UserChanged += () => OnPropertyChanged(nameof(CurrentUser));
+            _onUserChanged = () => OnPropertyChanged(nameof(CurrentUser));
+            _core.Authorization.UserChanged += _onUserChanged;
         }
         // 待翻譯
         private async Task FirstArticleInsAll()
@@ -166,7 +169,7 @@ namespace FProductionDashBoard.ViewModels
                 {
                     var idevice = new DeviceCardViewModel(_core, iselection, CurrentUser!, commonLists);
                     await idevice.UpdateTimeSlotsStatusAsync();
-                    Devices.Add(idevice);
+                    Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                     _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
                 }
             }
@@ -188,13 +191,18 @@ namespace FProductionDashBoard.ViewModels
             {
                 var idevice = new DeviceCardViewModel(_core, iselection, CurrentUser!, commonLists);
                 await idevice.UpdateTimeSlotsStatusAsync();
-                Devices.Add(idevice);
+                Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                 _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
             }
         }
         private void DeleteDevices()
         {
-            if (Devices.Any()) Devices.Clear();
+            if (Devices.Any()) Application.Current.Dispatcher.Invoke(() => Devices.Clear());
+        }
+
+        public void Dispose()
+        {
+            _core.Authorization.UserChanged -= _onUserChanged;
         }
     }
 }

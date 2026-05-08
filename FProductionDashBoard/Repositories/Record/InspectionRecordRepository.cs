@@ -18,7 +18,7 @@ namespace FProductionDashBoard.Repositories
         public async Task<int?> GetCurrentTimeSlotIdAsync(DateTime businessDate)
         {
             await using var ctx = _factory.CreateDbContext();
-            var slots = await ctx.TimeSlotLookups.ToListAsync();
+            var slots = await ctx.TimeSlotLookups.ToListAsync().ConfigureAwait(false);
 
             var now = DateTime.Now;
             foreach (var slot in slots)
@@ -88,7 +88,7 @@ namespace FProductionDashBoard.Repositories
             };
 
             ctx.InspectionRecords.Add(record);
-            await ctx.SaveChangesAsync();
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
             return record.InspectionId;
         }
 
@@ -101,7 +101,7 @@ namespace FProductionDashBoard.Repositories
                 .AnyAsync(r => r.EquipmentId == equipmentId &&
                                r.TimeSlotId == timeSlotId &&
                                r.CreateAt >= businessDate &&
-                               r.CreateAt < businessDateEnd);
+                               r.CreateAt < businessDateEnd).ConfigureAwait(false);
         }
 
         public async Task<List<(bool hasRecord, bool result)>> GetStatusForAllSlotsAsync(int equipmentId, DateTime businessDate)
@@ -112,9 +112,9 @@ namespace FProductionDashBoard.Repositories
             var records = await ctx.InspectionRecords
                 .Where(r => r.EquipmentId == equipmentId &&
                             r.CreateAt >= businessDate &&
-                            r.CreateAt < businessDateEnd).ToListAsync();
+                            r.CreateAt < businessDateEnd).ToListAsync().ConfigureAwait(false);
 
-            var slots = await ctx.TimeSlotLookups.OrderBy(s => s.TimeSlotId).ToListAsync();
+            var slots = await ctx.TimeSlotLookups.OrderBy(s => s.TimeSlotId).ToListAsync().ConfigureAwait(false);
 
             var result = new List<(bool hasRecord, bool result)>();
             foreach (var slot in slots)
@@ -142,7 +142,7 @@ namespace FProductionDashBoard.Repositories
                 .Include(r => r.TimeSlot)
                 .Include(r => r.Error)
                 .OrderByDescending(r => r.CreateAt)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace FProductionDashBoard.Repositories
                 .Where(r => r.TimeSlotId == timeSlotId && r.CreateAt == date.Date)
                 .Include(r => r.Equipment)
                 .Include(r => r.Employee)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace FProductionDashBoard.Repositories
             };
 
             ctx.MaterialReplacementRecords.Add(record);
-            await ctx.SaveChangesAsync();
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
 
             return record.ReplacementId;
         }
@@ -50,7 +50,7 @@ namespace FProductionDashBoard.Repositories
                 .Include(r => r.Error)
                 .Include(r => r.ReplacementDetails)
                     .ThenInclude(d => d.Material)
-                .FirstOrDefaultAsync(r => r.ReplacementId == replacementId);
+                .FirstOrDefaultAsync(r => r.ReplacementId == replacementId).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace FProductionDashBoard.Repositories
                 .Include(r => r.Equipment)
                 .Include(r => r.Employee)
                 .OrderByDescending(r => r.CreateAt)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace FProductionDashBoard.Repositories
             return await ctx.MaterialReplacementRecords
                 .Where(r => r.EquipmentId == equipmentId)
                 .Include(r => r.ReplacementDetails)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace FProductionDashBoard.Repositories
             return await ctx.MaterialReplacementRecords
                 .Where(r => r.EmployeeId == employeeId)
                 .Include(r => r.ReplacementDetails)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace FProductionDashBoard.Repositories
                 .Where(d => d.MaterialId == materialId)
                 .Include(d => d.ReplacementRecord)
                 .ThenInclude(r => (r ?? new()).Equipment)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
     }
 }

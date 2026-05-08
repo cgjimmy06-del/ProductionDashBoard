@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using FProductionDashBoard.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -23,14 +23,14 @@ namespace FProductionDashBoard.Repositories
             {
                 string sql = @" SELECT * FROM [dashboard_db].[dbo].[equipment]";
 
-                return await connection.QueryAsync<DeviceDto>(sql, commandTimeout: 5);
+                return await connection.QueryAsync<DeviceDto>(sql, commandTimeout: 5).ConfigureAwait(false);
             }
         }
 
         public async Task<List<EquipmentType>> GetEquipmentTypesAsync()
         {
             await using var ctx = _factory.CreateDbContext();
-            return await ctx.Set<EquipmentType>().ToListAsync();
+            return await ctx.Set<EquipmentType>().ToListAsync().ConfigureAwait(false);
         }
     }
 }
