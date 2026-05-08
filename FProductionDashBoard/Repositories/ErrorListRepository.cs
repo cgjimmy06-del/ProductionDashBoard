@@ -20,7 +20,7 @@ namespace FProductionDashBoard.Repositories
             await using var ctx = _factory.CreateDbContext();
             var existingError = await ctx.ErrorLists
                 .Include(e => e.Translations)
-                .FirstOrDefaultAsync(e => e.ErrorCode == newError.ErrorCode);
+                .FirstOrDefaultAsync(e => e.ErrorCode == newError.ErrorCode).ConfigureAwait(false);
 
             if (existingError == null)
             {
@@ -47,7 +47,7 @@ namespace FProductionDashBoard.Repositories
                 ctx.ErrorLists.Update(existingError);
             }
 
-            await ctx.SaveChangesAsync();
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task UpdateTranslationAsync(string errorCode, string languageCode, string newMessage)
@@ -55,7 +55,7 @@ namespace FProductionDashBoard.Repositories
             await using var ctx = _factory.CreateDbContext();
             var error = await ctx.ErrorLists
                 .Include(e => e.Translations)
-                .FirstOrDefaultAsync(e => e.ErrorCode == errorCode);
+                .FirstOrDefaultAsync(e => e.ErrorCode == errorCode).ConfigureAwait(false);
 
             if (error == null)
                 throw new InvalidOperationException($"ErrorCode {errorCode} 不存在");
@@ -70,7 +70,7 @@ namespace FProductionDashBoard.Repositories
             translation.UpdateAt = DateTime.Now;
 
             ctx.ErrorTranslations.Update(translation);
-            await ctx.SaveChangesAsync();
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task DeleteTranslationAsync(string errorCode, string languageCode)
@@ -78,7 +78,7 @@ namespace FProductionDashBoard.Repositories
             await using var ctx = _factory.CreateDbContext();
             var error = await ctx.ErrorLists
                 .Include(e => e.Translations)
-                .FirstOrDefaultAsync(e => e.ErrorCode == errorCode);
+                .FirstOrDefaultAsync(e => e.ErrorCode == errorCode).ConfigureAwait(false);
 
             if (error == null)
                 throw new InvalidOperationException($"ErrorCode {errorCode} 不存在");
@@ -90,7 +90,7 @@ namespace FProductionDashBoard.Repositories
                 throw new InvalidOperationException($"ErrorCode {errorCode} 的語言 {languageCode} 翻譯不存在");
 
             ctx.ErrorTranslations.Remove(translation);
-            await ctx.SaveChangesAsync();
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task DeleteErrorAsync(string errorCode)
@@ -98,13 +98,13 @@ namespace FProductionDashBoard.Repositories
             await using var ctx = _factory.CreateDbContext();
             var error = await ctx.ErrorLists
                 .Include(e => e.Translations)
-                .FirstOrDefaultAsync(e => e.ErrorCode == errorCode);
+                .FirstOrDefaultAsync(e => e.ErrorCode == errorCode).ConfigureAwait(false);
 
             if (error == null)
                 throw new InvalidOperationException($"ErrorCode {errorCode} 不存在");
 
             ctx.ErrorLists.Remove(error);
-            await ctx.SaveChangesAsync();
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<string?> GetMessageAsync(string errorCode, string languageCode)
@@ -115,7 +115,7 @@ namespace FProductionDashBoard.Repositories
                         .SelectMany(e => e.Translations)
                         .Where(t => t.LanguageCode == languageCode)
                         .Select(t => t.Message)
-                        .FirstOrDefaultAsync();
+                        .FirstOrDefaultAsync().ConfigureAwait(false);
         }
 
         public async Task<List<(string ErrorCode, string Message, int TypeId)>> GetMessagesAsync(string languageCode)
@@ -131,7 +131,7 @@ namespace FProductionDashBoard.Repositories
             .Where(x => x.Translation != null)
             .Select(x => new ValueTuple<string, string, int>(x.ErrorCode,
                     x.Translation!.Message ?? "Unknown!", x.TypeId ?? 1))
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<List<(string ErrorCode, string Message, int TypeId)>> GetMessagesWithOtherAsync(string languageCode)
@@ -147,7 +147,7 @@ namespace FProductionDashBoard.Repositories
                 .Where(x => x.Translation != null)
                 .Select(x => new ValueTuple<string, string, int>(x.ErrorCode,
                     x.Translation!.Message ?? "Unknown!", x.TypeId ?? 1))
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
 
             return results
                 .OrderBy(r => r.Item1 == "OTHER" ? 1 : 0)
@@ -162,7 +162,7 @@ namespace FProductionDashBoard.Repositories
                 .Where(e => e.ErrorCode == errorCode)
                 .SelectMany(e => e.Translations)
                 .Select(t => new ValueTuple<string, string>(t.LanguageCode, t.Message ?? ""))
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<List<(string ErrorCode, List<(string LanguageCode, string Message)>)>> GetAllErrorsWithTranslationsAsync()
@@ -176,7 +176,7 @@ namespace FProductionDashBoard.Repositories
                         .Select(t => new ValueTuple<string, string>(t.LanguageCode, t.Message ?? ""))
                         .ToList()
                 ))
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<List<ErrorList>> GetAllWithTranslationsAsync()
@@ -185,12 +185,12 @@ namespace FProductionDashBoard.Repositories
             return await ctx.ErrorLists
                 .Include(e => e.Translations)
                 .Include(e => e.Type)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
         public async Task<List<ListType>> GetListTypesAsync()
         {
             await using var ctx = _factory.CreateDbContext();
-            return await ctx.Set<ListType>().ToListAsync();
+            return await ctx.Set<ListType>().ToListAsync().ConfigureAwait(false);
         }
 
         public async Task UpdateErrorListAsync(ErrorListFormDto dto)
@@ -198,7 +198,7 @@ namespace FProductionDashBoard.Repositories
             await using var ctx = _factory.CreateDbContext();
             var entity = await ctx.ErrorLists
                 .Include(e => e.Translations)
-                .FirstOrDefaultAsync(e => e.ErrorId == dto.Id!.Value)
+                .FirstOrDefaultAsync(e => e.ErrorId == dto.Id!.Value).ConfigureAwait(false)
                 ?? throw new InvalidOperationException($"ErrorList id={dto.Id} not found");
             entity.TypeId = dto.TypeId;
             entity.Severity = dto.Severity;
@@ -227,7 +227,7 @@ namespace FProductionDashBoard.Repositories
                     });
                 }
             }
-            await ctx.SaveChangesAsync();
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
     }
 }

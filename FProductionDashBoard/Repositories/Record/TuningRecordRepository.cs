@@ -1,4 +1,4 @@
-﻿using FProductionDashBoard.Models;
+using FProductionDashBoard.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,7 @@ namespace FProductionDashBoard.Repositories
             };
 
             ctx.TuningRecords.Add(record);
-            await ctx.SaveChangesAsync();
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
             return record.TuningId;
         }
     }

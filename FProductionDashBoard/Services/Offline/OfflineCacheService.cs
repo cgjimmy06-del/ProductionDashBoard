@@ -15,40 +15,40 @@ namespace FProductionDashBoard.Services.Offline
 
         public async Task EnqueueAsync(PendingOperation operation)
         {
-            await _db.PendingOperations.AddAsync(operation);
-            await _db.SaveChangesAsync();
+            await _db.PendingOperations.AddAsync(operation).ConfigureAwait(false);
+            await _db.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<List<PendingOperation>> GetPendingAsync()
         {
             return await _db.PendingOperations
                 .OrderBy(p => p.CreatedAt)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
 
         public async Task MarkSyncedAsync(Guid id)
         {
-            var op = await _db.PendingOperations.FindAsync(id);
+            var op = await _db.PendingOperations.FindAsync(id).ConfigureAwait(false);
             if (op is not null)
             {
                 _db.PendingOperations.Remove(op);
-                await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync().ConfigureAwait(false);
             }
         }
 
         public async Task MarkFailedAsync(Guid id)
         {
-            var op = await _db.PendingOperations.FindAsync(id);
+            var op = await _db.PendingOperations.FindAsync(id).ConfigureAwait(false);
             if (op is null) return;
 
             op.RetryCount++;
             op.LastAttemptAt = DateTime.Now;
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<bool> HasPendingAsync()
         {
-            return await _db.PendingOperations.AnyAsync();
+            return await _db.PendingOperations.AnyAsync().ConfigureAwait(false);
         }
     }
 }

@@ -97,7 +97,7 @@ namespace FProductionDashBoard.ViewModels
                 }
 
                 for (int i = 0; i < ideviceslots.Count; i++)
-                    TimeSlotsStatus[i] = ideviceslots[i];
+                    Application.Current.Dispatcher.Invoke(() => TimeSlotsStatus[i] = ideviceslots[i]);
             }
             catch (Exception ex)
             {
@@ -131,11 +131,13 @@ namespace FProductionDashBoard.ViewModels
                 }
                 catch (OfflineOperationQueuedException)
                 {
-                    _core.Log.AddLog("物料更換已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " + 
+                        "物料更換已暫存，待連線恢復後自動上傳", LogLevel.Warning);
                 }
                 catch (Exception ex)
                 {
-                    _core.Log.AddLog("物料更換紀錄上傳異常");
+                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " + 
+                        "物料更換紀錄上傳異常");
                     _core.Log.AddErrorLog($"MaterialsChange: {ex.Message}");
                     FirstInspectionStatus = false;
                 }
@@ -247,8 +249,13 @@ namespace FProductionDashBoard.ViewModels
             IsTuning = true;
             UpdateTuningText();
 
+            if (_tuningTimer != null)
+            {
+                _tuningTimer.Stop();
+                _tuningTimer.Tick -= OnTuningTimerTick;
+            }
             _tuningTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            _tuningTimer.Tick += (_, _) => { _tuningElapsedSeconds++; UpdateTuningText(); };
+            _tuningTimer.Tick += OnTuningTimerTick;
             _tuningTimer.Start();
             await Task.CompletedTask;
         }
@@ -292,7 +299,12 @@ namespace FProductionDashBoard.ViewModels
             // 調試紀錄流程
             try
             {
-                _tuningTimer?.Stop();
+                if (_tuningTimer != null)
+                {
+                    _tuningTimer.Stop();
+                    _tuningTimer.Tick -= OnTuningTimerTick;
+                    _tuningTimer = null;
+                }
                 IsTuning = false;
                 int elapsed = _tuningElapsedSeconds;
 
@@ -314,6 +326,11 @@ namespace FProductionDashBoard.ViewModels
             {
                 _core.Log.AddErrorLog($"EndTuning Ex: {ex.Message}");
             }
+        }
+        private void OnTuningTimerTick(object? s, EventArgs e)
+        {
+            _tuningElapsedSeconds++;
+            UpdateTuningText();
         }
         private void UpdateTuningText()
         {

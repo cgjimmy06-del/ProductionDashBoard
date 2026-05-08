@@ -45,7 +45,7 @@ namespace FProductionDashBoard.Repositories
             try
             {
                 await using var ctx = _factory.CreateDbContext();
-                return await ctx.Database.CanConnectAsync(cts.Token);
+                return await ctx.Database.CanConnectAsync(cts.Token).ConfigureAwait(false);
             }
             catch (OperationCanceledException) { return false; }
         }
@@ -53,37 +53,37 @@ namespace FProductionDashBoard.Repositories
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             await using var ctx = _factory.CreateDbContext();
-            return await ctx.Set<T>().ToListAsync();
+            return await ctx.Set<T>().ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<T?> GetByIdAsync(int id)
         {
             await using var ctx = _factory.CreateDbContext();
-            return await ctx.Set<T>().FindAsync(id);
+            return await ctx.Set<T>().FindAsync(id).ConfigureAwait(false);
         }
 
         public async Task AddAsync(T entity)
         {
             await using var ctx = _factory.CreateDbContext();
             ctx.Set<T>().Add(entity);
-            await ctx.SaveChangesAsync();
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task UpdateAsync(T entity)
         {
             await using var ctx = _factory.CreateDbContext();
             ctx.Set<T>().Update(entity);
-            await ctx.SaveChangesAsync();
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task DeleteAsync(int id)
         {
             await using var ctx = _factory.CreateDbContext();
-            var entity = await ctx.Set<T>().FindAsync(id);
+            var entity = await ctx.Set<T>().FindAsync(id).ConfigureAwait(false);
             if (entity != null)
             {
                 ctx.Set<T>().Remove(entity);
-                await ctx.SaveChangesAsync();
+                await ctx.SaveChangesAsync().ConfigureAwait(false);
             }
         }
     }
