@@ -117,9 +117,9 @@
     <!-- Time slot setting 巡檢時段設定 -->
     <sys:String x:Key="TimeSlotStartTimeDataGridHeader">開始時間</sys:String>
     <sys:String x:Key="TimeSlotEndTimeDataGridHeader">結束時間</sys:String>
-    <sys:String x:Key="TimeSlotCrossDayDataGridHeader">跨日</sys:String>
+    <sys:String x:Key="TimeSlotCrossDayDataGridHeader">跨夜</sys:String>
     <sys:String x:Key="TimeSlotLabelDataGridHeader">標籤</sys:String>
-    <sys:String x:Key="TimeSlotIsCrossDayCheckbox">跨夜</sys:String>
+    <sys:String x:Key="TimeSlotIsCrossDayCheckbox">跨夜 (同工作日跨零點)</sys:String>
     <sys:String x:Key="TimeSlotLabelAutoFormLabel">標籤 (自動產生)</sys:String>
     <!-- Role permission setting 角色權限設定 -->
     <sys:String x:Key="RoleIdDataGridHeader">角色 ID</sys:String>
