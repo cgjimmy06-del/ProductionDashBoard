@@ -86,6 +86,7 @@ namespace FProductionDashBoard
                 services.AddScoped<Services.IDataService, Services.V1.DataService>();
                 services.AddScoped<Services.LogService>();
                 services.AddSingleton<Services.AuthorizationService>();
+                services.AddSingleton<Services.IDialogService, Services.DialogService>();
                 services.AddSingleton<Services.MultiCardReaderService>();
                 services.AddSingleton<Services.ICardReaderService>(sp =>
                     sp.GetRequiredService<Services.MultiCardReaderService>());
@@ -104,6 +105,8 @@ namespace FProductionDashBoard
 
                 // 註冊 ViewModel
                 services.AddScoped<ViewModels.MainViewModel>();
+                services.AddScoped<ViewModels.SettingViewModel>();
+                services.AddScoped<ViewModels.HardwareViewModel>();
 
                 _serviceProvider = services.BuildServiceProvider();
                 var authService = _serviceProvider.GetRequiredService<Services.AuthorizationService>();

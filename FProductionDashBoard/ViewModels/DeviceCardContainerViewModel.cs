@@ -25,6 +25,7 @@ namespace FProductionDashBoard.ViewModels
             new ObservableCollection<DeviceCardViewModel>();
 
         private readonly DashboardCoreServices _core;
+        private readonly Services.IDialogService _dialog;
         private readonly Action _onUserChanged; // 可被取消註冊
         public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
 
@@ -35,9 +36,10 @@ namespace FProductionDashBoard.ViewModels
         public ICommand FastUploadDevicesCommand { get; }
         public ICommand DeleteDevicesCommand { get; }
 
-        public DeviceCardContainerViewModel(DashboardCoreServices core, ListsFromSql getlists)
+        public DeviceCardContainerViewModel(DashboardCoreServices core, Services.IDialogService dialog, ListsFromSql getlists)
         {
             _core = core;
+            _dialog = dialog;
             commonLists = getlists;
 
             FirstArticleInsAllCommand = new AsyncRelayCommand(() => FirstArticleInsAll());
@@ -58,9 +60,7 @@ namespace FProductionDashBoard.ViewModels
 
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0],
                 commonLists.ErrorsList);
-            var uc = new InspectionDialog { DataContext = vm };
-            var window = new DialogWindow(vm, uc);
-            window.ShowDialog();
+            _dialog.ShowDialog(vm);
 
             if (vm.IsConfirmed)
             {
@@ -107,9 +107,7 @@ namespace FProductionDashBoard.ViewModels
 
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0],
                 commonLists.ErrorsList);
-            var uc = new InspectionDialog { DataContext = vm };
-            var window = new DialogWindow(vm, uc);
-            window.ShowDialog();
+            _dialog.ShowDialog(vm);
 
             if (vm.IsConfirmed)
             {
@@ -158,16 +156,14 @@ namespace FProductionDashBoard.ViewModels
         {
             var vm = new AddDeviceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile,
                                                     commonLists.DevicesList, [.. Devices]); // [.. X] = X.ToList()
-            var uc = new AddDeviceDialog { DataContext = vm };
-            var window = new DialogWindow(vm, uc);
-            window.ShowDialog();
+            _dialog.ShowDialog(vm);
 
             if (vm.IsConfirmed)
             {
                 var result = vm.Result ?? new();
                 foreach (var iselection in result.Selections)
                 {
-                    var idevice = new DeviceCardViewModel(_core, iselection, CurrentUser!, commonLists);
+                    var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists);
                     await idevice.UpdateTimeSlotsStatusAsync();
                     Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                     _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
@@ -189,7 +185,7 @@ namespace FProductionDashBoard.ViewModels
             }
             foreach (var iselection in result)
             {
-                var idevice = new DeviceCardViewModel(_core, iselection, CurrentUser!, commonLists);
+                var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists);
                 await idevice.UpdateTimeSlotsStatusAsync();
                 Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                 _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);

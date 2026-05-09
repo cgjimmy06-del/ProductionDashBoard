@@ -24,8 +24,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private int formMinimumStock = 0;
         [ObservableProperty] private int formQuantityInStock = 0;
 
-        public MaterialSettingViewModel(DashboardCoreServices core)
-            : base(core) { }
+        public MaterialSettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
+            : base(core, dialog) { }
 
         protected override async Task LoadAsync()
         {
