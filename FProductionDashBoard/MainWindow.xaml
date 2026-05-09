@@ -98,7 +98,8 @@
                 </Button>
                 <Separator/>
                 <Button ToolTip="測試" Foreground="{DynamicResource TextPrimaryBrush}"
-                        Command="{Binding TestCommand}">
+                        Command="{Binding TestCommand}"
+                        Visibility="{x:Static local:App.DebugVisibility}">
                     <materialDesign:PackIcon Kind="AbTesting" Width="20" Height="20"/>
                 </Button>
             </ToolBar>

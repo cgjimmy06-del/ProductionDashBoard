@@ -17,6 +17,11 @@ namespace FProductionDashBoard
     /// </summary>
     public partial class App : Application
     {
+#if DEBUG
+        public static Visibility DebugVisibility => Visibility.Visible;
+#else
+        public static Visibility DebugVisibility => Visibility.Collapsed;
+#endif
         private ServiceProvider? _serviceProvider;
 
         protected override async void OnStartup(StartupEventArgs e)

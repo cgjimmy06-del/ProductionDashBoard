@@ -17,7 +17,9 @@ namespace FProductionDashBoard.Services
     public interface IDataService
     {
         public DateTime BusinessDay { get; set; }
+#if DEBUG
         public Task Demo();
+#endif
         public Task<List<DeviceInfo>> GetDevicesAsync();
         public Task<List<UserInfo>> GetUsersAsync();
         public Task<List<MaterialInfo>> GetMaterialsAsync();

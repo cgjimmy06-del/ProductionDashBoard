@@ -93,7 +93,9 @@ namespace FProductionDashBoard.ViewModels
         public IAsyncRelayCommand LogoutCommand { get; } // 登出事件
 
         // 工具列
+#if DEBUG
         public IRelayCommand TestCommand { get; }
+#endif
         // 導覽列
         public ICommand CollapseNavCommand { get; }
         public IRelayCommand SwitchModeCommand { get; }
@@ -134,8 +136,10 @@ namespace FProductionDashBoard.ViewModels
                 (_) => _core.Authorization.HasPermission(Services.PermissionId.View));
 
             //  設定元件事件 (工具列)
+#if DEBUG
             TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
                 () => _core.Authorization.HasPermission(Services.PermissionId.Test));
+#endif
 
             // 設定元件事件 (帳號) 
             LoginCommand = new AsyncRelayCommand(LoginAsync);
@@ -154,7 +158,9 @@ namespace FProductionDashBoard.ViewModels
                         _deviceContainer = null;
 
                     SwitchModeCommand.NotifyCanExecuteChanged();
+#if DEBUG
                     TestCommand.NotifyCanExecuteChanged();
+#endif
                     LogoutCommand.NotifyCanExecuteChanged();
                     OnPropertyChanged(nameof(CurrentUser));
                     OnPropertyChanged(nameof(IsLoggedIn));
@@ -548,6 +554,7 @@ namespace FProductionDashBoard.ViewModels
             _core.CardReader.ResetLastCard();
         }
 
+#if DEBUG
         // 測試
         private async Task SqlTestFunc()
         {
@@ -588,6 +595,7 @@ namespace FProductionDashBoard.ViewModels
             //    _log.AddErrorLog($"Tuning Record: {ex.Message}");
             //}
         }
+#endif
 
     }
 

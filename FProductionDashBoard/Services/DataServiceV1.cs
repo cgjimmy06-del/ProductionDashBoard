@@ -52,6 +52,7 @@ namespace FProductionDashBoard.Services.V1
         }
 
         #region 測試用
+#if DEBUG
         public async Task Demo()
         {
             // 查詢
@@ -70,6 +71,7 @@ namespace FProductionDashBoard.Services.V1
             //}
 
         }
+#endif
         #endregion
 
         #region 清單查詢與 Mapping
