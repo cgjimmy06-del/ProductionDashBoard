@@ -17,6 +17,12 @@ namespace FProductionDashBoard
     /// </summary>
     public partial class App : Application
     {
+#if DEBUG
+        public static Visibility DebugVisibility => Visibility.Visible;
+#else
+        public static Visibility DebugVisibility => Visibility.Collapsed;
+#endif
+
         private ServiceProvider? _serviceProvider;
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -117,7 +123,7 @@ namespace FProductionDashBoard
             }
             catch(Exception ex)
             {
-                MessageBox.Show($"啟動失敗: \n\n {ex.GetType().Name}\n{ex.Message}\n\n{ex.StackTrace}", 
+                MessageBox.Show($"啟動失敗: \n\n {ex.GetType().Name}\n{ex.Message}", 
                     "錯誤", MessageBoxButton.OK, MessageBoxImage.Error);
                 Shutdown();
             }
