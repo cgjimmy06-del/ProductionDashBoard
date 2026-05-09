@@ -43,6 +43,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly IOfflineSyncService _syncService;
         private readonly MultiCardReaderService _multiCardReaderService;
         private readonly Services.WebApi.IErpApiService _erpApiService;
+        private readonly IServiceProvider _sp;
         public LogService _log => _core.Log; // public 是為了Window的顯示
         [ObservableProperty]
         public string? systemUser;
@@ -109,13 +110,15 @@ namespace FProductionDashBoard.ViewModels
 
         public MainViewModel(DashboardCoreServices core, IOfflineSyncService syncService,
             MultiCardReaderService multiCardReaderService,
-            Services.WebApi.IErpApiService erpApiService)
+            Services.WebApi.IErpApiService erpApiService,
+            IServiceProvider sp)
         {
             // DI注入 Repository
             _core = core;
             _syncService = syncService;
             _multiCardReaderService = multiCardReaderService;
             _erpApiService = erpApiService;
+            _sp = sp;
             _core.CardReader.CardRead += OnCardRead;
 
             // 定義工作起始時間 (於 DispatcherTimer 偵測更新)
@@ -402,12 +405,12 @@ namespace FProductionDashBoard.ViewModels
 
                 case NavMode.List:
                     if (!_core.Authorization.HasPermission(Services.PermissionId.Edit)) return;
-                    MainCard = new SettingViewModel(_core);
+                    MainCard = _sp.GetRequiredService<SettingViewModel>();
                     break;
 
                 case NavMode.Equipment:
                     if (!_core.Authorization.HasPermission(Services.PermissionId.Setting)) return;
-                    MainCard = new HardwareViewModel(_multiCardReaderService);
+                    MainCard = _sp.GetRequiredService<HardwareViewModel>();
                     break;
 
                 case NavMode.Order:
