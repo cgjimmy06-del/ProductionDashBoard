@@ -134,9 +134,11 @@ namespace FProductionDashBoard.ViewModels
                 (_) => _core.Authorization.HasPermission(Services.PermissionId.View));
 
             //  設定元件事件 (工具列)
+
+#if DEBUG // 測試函式用
             TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
                 () => _core.Authorization.HasPermission(Services.PermissionId.Test));
-
+#endif
             // 設定元件事件 (帳號) 
             LoginCommand = new AsyncRelayCommand(LoginAsync);
             LogoutCommand = new AsyncRelayCommand(LogoutAsync);
@@ -548,12 +550,12 @@ namespace FProductionDashBoard.ViewModels
             _core.CardReader.ResetLastCard();
         }
 
-        // 測試
+
+#if DEBUG // 測試函式用
         private async Task SqlTestFunc()
         {
             try
             {
-                Debug.WriteLine($"連線狀態: {_core.Data.EquipmentRep.CheckConnection()}");
                 await _core.Data.Demo();
             }
             catch (SqlException sqlex)
@@ -588,7 +590,7 @@ namespace FProductionDashBoard.ViewModels
             //    _log.AddErrorLog($"Tuning Record: {ex.Message}");
             //}
         }
+#endif
 
     }
-
 }

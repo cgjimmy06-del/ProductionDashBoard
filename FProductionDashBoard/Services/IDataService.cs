@@ -17,21 +17,14 @@ namespace FProductionDashBoard.Services
     public interface IDataService
     {
         public DateTime BusinessDay { get; set; }
+#if DEBUG
         public Task Demo();
+#endif
         public Task<List<DeviceInfo>> GetDevicesAsync();
         public Task<List<UserInfo>> GetUsersAsync();
         public Task<List<MaterialInfo>> GetMaterialsAsync();
         public Task<List<ErrorInfo>> GetErrorsAsync(string languageCode);
         public Task<List<TimeSlotLookup>> GetTimeSlotsAsync();
-        public IEquipmentRepository EquipmentRep { get; }
-        public IEmployeeRepository EmployeeRep { get; }
-        public IMaterialRepository MaterialRep { get; }
-        public IErrorListRepository ErrorListRep { get; }
-        public IMaterialReplacementRepository MaterialReplacementRep { get; }
-        public ITimeSlotLookupRepository TimeSlotLookupRep { get; }
-        public IInspectionRecordRepository InspectionRecordRep { get; }
-        public IRolePermissionRepository RolePermissionRep { get; }
-
         /// <summary>
         /// 新增物料更換紀錄 (支援離線暫存)
         /// </summary>
