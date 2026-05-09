@@ -25,8 +25,8 @@ namespace FProductionDashBoard.ViewModels
 
         public bool IsEditMode => EditingId != null;
 
-        public EmployeeSettingViewModel(DashboardCoreServices core)
-            : base(core) { }
+        public EmployeeSettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
+            : base(core, dialog) { }
 
         partial void OnEditingIdChanged(int? value) => OnPropertyChanged(nameof(IsEditMode));
 

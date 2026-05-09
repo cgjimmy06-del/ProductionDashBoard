@@ -44,6 +44,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly MultiCardReaderService _multiCardReaderService;
         private readonly Services.WebApi.IErpApiService _erpApiService;
         private readonly IServiceProvider _sp;
+        private readonly Services.IDialogService _dialog;
         public LogService _log => _core.Log; // public 是為了Window的顯示
         [ObservableProperty]
         public string? systemUser;
@@ -111,7 +112,8 @@ namespace FProductionDashBoard.ViewModels
         public MainViewModel(DashboardCoreServices core, IOfflineSyncService syncService,
             MultiCardReaderService multiCardReaderService,
             Services.WebApi.IErpApiService erpApiService,
-            IServiceProvider sp)
+            IServiceProvider sp,
+            Services.IDialogService dialogService)
         {
             // DI注入 Repository
             _core = core;
@@ -119,6 +121,7 @@ namespace FProductionDashBoard.ViewModels
             _multiCardReaderService = multiCardReaderService;
             _erpApiService = erpApiService;
             _sp = sp;
+            _dialog = dialogService;
             _core.CardReader.CardRead += OnCardRead;
 
             // 定義工作起始時間 (於 DispatcherTimer 偵測更新)
@@ -396,7 +399,7 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Operation:
-                    _deviceContainer ??= new DeviceCardContainerViewModel(_core, CommonLists);
+                    _deviceContainer ??= new DeviceCardContainerViewModel(_core, CommonLists, _dialog);
                     MainCard = _deviceContainer;
                     break;
 
@@ -501,11 +504,7 @@ namespace FProductionDashBoard.ViewModels
                 $"是否新增至系統？\n（預設訪客權限，密碼 0000）";
 
             bool confirmed = await Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                var vm = new DialogBaseViewModel<object>(msg);
-                new DialogWindow(vm).ShowDialog();
-                return vm.IsConfirmed;
-            });
+                _dialog.ShowConfirm(msg));
 
             if (!confirmed) { _core.CardReader.ResetLastCard(); return; }
 
@@ -529,11 +528,7 @@ namespace FProductionDashBoard.ViewModels
                 $"是否更新卡號至資料庫？";
 
             bool confirmed = await Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                var vm = new DialogBaseViewModel<object>(msg);
-                new DialogWindow(vm).ShowDialog();
-                return vm.IsConfirmed;
-            });
+                _dialog.ShowConfirm(msg));
 
             if (!confirmed) { _core.CardReader.ResetLastCard(); return; }
 

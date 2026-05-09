@@ -26,8 +26,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string? formMessageEnUs;
         [ObservableProperty] private string? formMessageViVn;
 
-        public ErrorListSettingViewModel(DashboardCoreServices core)
-            : base(core) { }
+        public ErrorListSettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
+            : base(core, dialog) { }
 
         protected override async Task LoadAsync()
         {

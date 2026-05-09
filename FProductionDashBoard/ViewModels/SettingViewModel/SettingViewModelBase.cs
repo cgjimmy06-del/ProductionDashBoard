@@ -9,6 +9,7 @@ namespace FProductionDashBoard.ViewModels
     public abstract partial class SettingViewModelBase : ObservableObject
     {
         protected readonly DashboardCoreServices _core;
+        private readonly Services.IDialogService _dialog;
 
         [ObservableProperty] private string? formErrorString;
         [ObservableProperty] private string? formSuccessString;
@@ -19,9 +20,10 @@ namespace FProductionDashBoard.ViewModels
         public ICommand SaveCommand { get; protected set; }
         public ICommand CancelCommand { get; protected set; }
 
-        protected SettingViewModelBase(DashboardCoreServices core)
+        protected SettingViewModelBase(DashboardCoreServices core, Services.IDialogService dialog)
         {
             _core = core;
+            _dialog = dialog;
 
             LoadCommand = new AsyncRelayCommand(LoadAsync);
             NewCommand = new RelayCommand(OpenNewForm);
@@ -48,11 +50,6 @@ namespace FProductionDashBoard.ViewModels
                 return;
             await SaveAsync();
         }
-        protected bool ShowConfirm(string message)
-        {
-            var vm = new DialogBaseViewModel<bool>(message);
-            new DialogWindow(vm).ShowDialog();
-            return vm.IsConfirmed;
-        }
+        protected bool ShowConfirm(string message) => _dialog.ShowConfirm(message);
     }
 }

@@ -35,6 +35,7 @@ namespace FProductionDashBoard.ViewModels
         public DeviceInfo Info { get; }
         private readonly DashboardCoreServices _core;
         private readonly ListsFromSql _commonLists;
+        private readonly Services.IDialogService _dialog;
 
         // 訊息顯示
         [ObservableProperty]
@@ -69,12 +70,13 @@ namespace FProductionDashBoard.ViewModels
         public ICommand OperationCommand { get; }
         public ICommand EndTuningCommand { get; }
 
-        public DeviceCardViewModel(DashboardCoreServices core, DeviceInfo info, UserInfo currentUser, ListsFromSql getLists)
+        public DeviceCardViewModel(DashboardCoreServices core, DeviceInfo info, UserInfo currentUser, ListsFromSql getLists, Services.IDialogService dialog)
         {
             _core = core;
             Info = info;
             CurrentUser = currentUser;
             _commonLists = getLists;
+            _dialog = dialog;
 
             for (int i = 0; i < getLists.TimeSlotsList.Count; i++) { TimeSlotsStatus.Add(-1); }
 
@@ -109,9 +111,7 @@ namespace FProductionDashBoard.ViewModels
         {
             CurrentUser = _core.Authorization.CurrentUser!;
             var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this, _commonLists.MaterialsList);
-            var uc = new MaterialsDialog { DataContext = vm };
-            var window = new DialogWindow(vm, uc);
-            window.ShowDialog();
+            _dialog.ShowDialog(vm);
 
             if (vm.IsConfirmed)
             {
@@ -147,9 +147,7 @@ namespace FProductionDashBoard.ViewModels
         {
             CurrentUser = _core.Authorization.CurrentUser!;
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, this, _commonLists.ErrorsList);
-            var uc = new InspectionDialog { DataContext = vm };
-            var window = new DialogWindow(vm, uc);
-            window.ShowDialog();
+            _dialog.ShowDialog(vm);
 
             if (vm.IsConfirmed)
             {
@@ -189,9 +187,7 @@ namespace FProductionDashBoard.ViewModels
         {
             CurrentUser = _core.Authorization.CurrentUser!;
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceRoutineInsDialog, this, _commonLists.ErrorsList);
-            var uc = new InspectionDialog { DataContext = vm };
-            var window = new DialogWindow(vm, uc);
-            window.ShowDialog();
+            _dialog.ShowDialog(vm);
 
             if (vm.IsConfirmed)
             {
@@ -238,9 +234,7 @@ namespace FProductionDashBoard.ViewModels
                 $"{Properties.Resources.ComStrDevice}: {Info.Name}",
                 $"{Properties.Resources.ComStrUser}: {CurrentUser!.Name}",
                 $"{Properties.Resources.ComStrProduct}: {CurrentProduct.Name}");
-            var uc = new TuningDialog { DataContext = vm };
-            var window = new DialogWindow(vm, uc);
-            window.ShowDialog();
+            _dialog.ShowDialog(vm);
 
             if (!vm.IsConfirmed || vm.Result == null) return;
 
