@@ -11,14 +11,14 @@ namespace FProductionDashBoard.ViewModels
         public TimeSlotSettingViewModel TimeSlot { get; }
         public RolePermissionSettingViewModel RolePermission { get; }
 
-        public SettingViewModel(DashboardCoreServices core)
+        public SettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
         {
-            Equipment = new EquipmentSettingViewModel(core);
-            Employee = new EmployeeSettingViewModel(core);
-            Material = new MaterialSettingViewModel(core);
-            ErrorList = new ErrorListSettingViewModel(core);
-            TimeSlot = new TimeSlotSettingViewModel(core);
-            RolePermission = new RolePermissionSettingViewModel(core);
+            Equipment = new EquipmentSettingViewModel(core, dialog);
+            Employee = new EmployeeSettingViewModel(core, dialog);
+            Material = new MaterialSettingViewModel(core, dialog);
+            ErrorList = new ErrorListSettingViewModel(core, dialog);
+            TimeSlot = new TimeSlotSettingViewModel(core, dialog);
+            RolePermission = new RolePermissionSettingViewModel(core, dialog);
         }
     }
 }

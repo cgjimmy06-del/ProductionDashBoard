@@ -30,8 +30,8 @@ namespace FProductionDashBoard.ViewModels
         public string ComputedLabel =>
             $"{FormStartHour:D2}:{FormStartMinute:D2}-{FormEndHour:D2}:{FormEndMinute:D2}";
 
-        public TimeSlotSettingViewModel(DashboardCoreServices core)
-            : base(core) { }
+        public TimeSlotSettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
+            : base(core, dialog) { }
 
         partial void OnFormStartHourChanged(int value) => OnPropertyChanged(nameof(ComputedLabel));
         partial void OnFormStartMinuteChanged(int value) => OnPropertyChanged(nameof(ComputedLabel));

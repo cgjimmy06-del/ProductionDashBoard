@@ -20,8 +20,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string formName = "";
         [ObservableProperty] private string? formDescription;
 
-        public RolePermissionSettingViewModel(DashboardCoreServices core)
-            : base(core) { }
+        public RolePermissionSettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
+            : base(core, dialog) { }
 
         protected override async Task LoadAsync()
         {

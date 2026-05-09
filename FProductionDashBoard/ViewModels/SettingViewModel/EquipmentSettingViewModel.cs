@@ -27,8 +27,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string? formDepartmentId;
         [ObservableProperty] private string? formDescription;
 
-        public EquipmentSettingViewModel(DashboardCoreServices core)
-            : base(core) { }
+        public EquipmentSettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
+            : base(core, dialog) { }
 
         protected override async Task LoadAsync()
         {
