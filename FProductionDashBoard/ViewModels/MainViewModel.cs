@@ -560,7 +560,6 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                Debug.WriteLine($"連線狀態: {_core.Data.EquipmentRep.CheckConnection()}");
                 await _core.Data.Demo();
             }
             catch (SqlException sqlex)

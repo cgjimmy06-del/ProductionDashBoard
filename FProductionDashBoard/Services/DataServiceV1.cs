@@ -22,15 +22,15 @@ namespace FProductionDashBoard.Services.V1
     public class DataService : IDataService
     {
         public DateTime BusinessDay { get; set; }
-        public IEquipmentRepository EquipmentRep { get; }
-        public IEmployeeRepository EmployeeRep { get; }
-        public IMaterialRepository MaterialRep { get; }
-        public IErrorListRepository ErrorListRep { get; }
-        public IMaterialReplacementRepository MaterialReplacementRep { get; }
-        public ITimeSlotLookupRepository TimeSlotLookupRep { get; }
-        public IInspectionRecordRepository InspectionRecordRep { get; }
-        public ITuningRecordRepository TuningRecordRep { get; }
-        public IRolePermissionRepository RolePermissionRep { get; }
+        private readonly IEquipmentRepository EquipmentRep;
+        private readonly IEmployeeRepository EmployeeRep;
+        private readonly IMaterialRepository MaterialRep;
+        private readonly IErrorListRepository ErrorListRep;
+        private readonly IMaterialReplacementRepository MaterialReplacementRep;
+        private readonly ITimeSlotLookupRepository TimeSlotLookupRep;
+        private readonly IInspectionRecordRepository InspectionRecordRep;
+        private readonly ITuningRecordRepository TuningRecordRep;
+        private readonly IRolePermissionRepository RolePermissionRep;
 
         private readonly IOfflineCacheService _offlineCache;
 
