@@ -162,10 +162,13 @@ namespace FProductionDashBoard.ViewModels
                         _deviceContainer = null;
 
                     SwitchModeCommand.NotifyCanExecuteChanged();
-                    TestCommand.NotifyCanExecuteChanged();
                     LogoutCommand.NotifyCanExecuteChanged();
                     OnPropertyChanged(nameof(CurrentUser));
                     OnPropertyChanged(nameof(IsLoggedIn));
+
+#if DEBUG // 測試函式用
+                    TestCommand.NotifyCanExecuteChanged();
+#endif
                 });
             _core.Authorization.UserChanged += _onUserChanged;
 
@@ -371,14 +374,28 @@ namespace FProductionDashBoard.ViewModels
             var loginWindow = new LoginWindow();
             if (loginWindow.ShowDialog() != true) { return; }
 
-            _logInOutCounter = 0;
-            await _core.Authorization.InitializeAsync(loginWindow.User);
+            try
+            {
+                _logInOutCounter = 0;
+                await _core.Authorization.InitializeAsync(loginWindow.User);
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog($"[LoginAsync]: {ex.Message}", LogLevel.Error);
+            }
         }
         private async Task LogoutAsync()
         {
-            await _core.Authorization.LogoutAsync();
-            _core.CardReader.ResetLastCard();
-            // if (CurrentNavMode == NavMode.List) MainCard = null;
+            try
+            {
+                await _core.Authorization.LogoutAsync();
+                _core.CardReader.ResetLastCard();
+                // if (CurrentNavMode == NavMode.List) MainCard = null;
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog($"[LogoutAsync]: {ex.Message}", LogLevel.Error);
+            }
         }
         private void SetProgress(string message, bool visible = true, bool indeterminate = false, int value = 0)
         {
