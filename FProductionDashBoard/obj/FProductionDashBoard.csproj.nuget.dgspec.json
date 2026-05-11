@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\_gitbackup\\DashBoardProject\\FProductionDashBoard\\FProductionDashBoard.csproj": {}
+    "C:\\AIresources\\DashBoardProject\\FProductionDashBoard\\FProductionDashBoard.csproj": {}
   },
   "projects": {
-    "D:\\_gitbackup\\DashBoardProject\\FProductionDashBoard\\FProductionDashBoard.csproj": {
+    "C:\\AIresources\\DashBoardProject\\FProductionDashBoard\\FProductionDashBoard.csproj": {
       "version": "1.0.1-Beta.4",
       "restore": {
-        "projectUniqueName": "D:\\_gitbackup\\DashBoardProject\\FProductionDashBoard\\FProductionDashBoard.csproj",
+        "projectUniqueName": "C:\\AIresources\\DashBoardProject\\FProductionDashBoard\\FProductionDashBoard.csproj",
         "projectName": "FProductionDashBoard",
-        "projectPath": "D:\\_gitbackup\\DashBoardProject\\FProductionDashBoard\\FProductionDashBoard.csproj",
-        "packagesPath": "C:\\Users\\F0004632\\.nuget\\packages\\",
-        "outputPath": "D:\\_gitbackup\\DashBoardProject\\FProductionDashBoard\\obj\\",
+        "projectPath": "C:\\AIresources\\DashBoardProject\\FProductionDashBoard\\FProductionDashBoard.csproj",
+        "packagesPath": "C:\\Users\\kylyh\\.nuget\\packages\\",
+        "outputPath": "C:\\AIresources\\DashBoardProject\\FProductionDashBoard\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\F0004632\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\kylyh\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -43,8 +44,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.300"
+        }
       },
       "frameworks": {
         "net8.0-windows7.0": {
@@ -126,7 +126,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

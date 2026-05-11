@@ -5248,23 +5248,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\F0004632\\.nuget\\packages\\": {},
+    "C:\\Users\\kylyh\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\_gitbackup\\DashBoardProject\\FProductionDashBoard.Tests\\FProductionDashBoard.Tests.csproj",
+      "projectUniqueName": "C:\\AIresources\\DashBoardProject\\FProductionDashBoard.Tests\\FProductionDashBoard.Tests.csproj",
       "projectName": "FProductionDashBoard.Tests",
-      "projectPath": "D:\\_gitbackup\\DashBoardProject\\FProductionDashBoard.Tests\\FProductionDashBoard.Tests.csproj",
-      "packagesPath": "C:\\Users\\F0004632\\.nuget\\packages\\",
-      "outputPath": "D:\\_gitbackup\\DashBoardProject\\FProductionDashBoard.Tests\\obj\\",
+      "projectPath": "C:\\AIresources\\DashBoardProject\\FProductionDashBoard.Tests\\FProductionDashBoard.Tests.csproj",
+      "packagesPath": "C:\\Users\\kylyh\\.nuget\\packages\\",
+      "outputPath": "C:\\AIresources\\DashBoardProject\\FProductionDashBoard.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\F0004632\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\kylyh\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -5273,14 +5273,15 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "projectReferences": {
-            "D:\\_gitbackup\\DashBoardProject\\FProductionDashBoard\\FProductionDashBoard.csproj": {
-              "projectPath": "D:\\_gitbackup\\DashBoardProject\\FProductionDashBoard\\FProductionDashBoard.csproj"
+            "C:\\AIresources\\DashBoardProject\\FProductionDashBoard\\FProductionDashBoard.csproj": {
+              "projectPath": "C:\\AIresources\\DashBoardProject\\FProductionDashBoard\\FProductionDashBoard.csproj"
             }
           }
         }
@@ -5294,8 +5295,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.300"
+      }
     },
     "frameworks": {
       "net8.0-windows7.0": {
@@ -5346,7 +5346,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
