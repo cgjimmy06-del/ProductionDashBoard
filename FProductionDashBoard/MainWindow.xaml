@@ -218,7 +218,7 @@
         </StatusBar>
 
         <!-- 主區域(中) -->
-        <Grid Margin="5">
+        <Grid Margin="0">
             <Grid.ColumnDefinitions>
                 <!-- 導覽列 -->
                 <ColumnDefinition Width="Auto"/>
@@ -227,13 +227,10 @@
             </Grid.ColumnDefinitions>
             <!-- 導覽列 -->
             <Border Grid.Column="0" Margin="0" d:Width="200"
-                    Background="{DynamicResource PrimaryBackgroundBrush}"
+                    Background="{DynamicResource PrimaryBrush}"
                     Width="{Binding IsCollapsedNav, Converter={StaticResource CollapseWidthConverter}}">
                 <DockPanel LastChildFill="True">
                     <!-- 系統設定 釘底 -->
-                    <Separator DockPanel.Dock="Bottom"
-                               Background="{DynamicResource BorderBrush}"
-                               Margin="8,0"/>
                     <RadioButton DockPanel.Dock="Bottom"
                                  GroupName="NavGroup"
                                  Style="{StaticResource NavButtonStyle}"
@@ -247,17 +244,20 @@
                                        VerticalAlignment="Center"/>
                         </StackPanel>
                     </RadioButton>
+                    <Separator DockPanel.Dock="Bottom"
+                               Background="{DynamicResource BorderBrush}"
+                               Margin="8,0"/>
                     <!-- 主導覽區 -->
                     <StackPanel Margin="0">
                         <!-- 登入資訊 (待優化) -->
-                        <StackPanel Background="{DynamicResource PrimaryBackgroundBrush}"
+                        <StackPanel Background="{DynamicResource PrimaryDarkBrush}"
                                 Orientation="Vertical" HorizontalAlignment="Stretch">
-                            <materialDesign:PackIcon Background="{DynamicResource PrimaryBackgroundBrush}"
-                                                     Foreground="{DynamicResource TextPrimaryBrush}"
+                            <materialDesign:PackIcon Background="{DynamicResource PrimaryDarkBrush}"
+                                                     Foreground="{DynamicResource TextLightBrush}"
                                                      HorizontalAlignment="Center"
                                                      Kind="Account" Margin="0"
                                                      Width="100" Height="100"/>
-                            <TextBlock d:Text="訪客" Foreground="{DynamicResource TextPrimaryBrush}"
+                            <TextBlock d:Text="訪客" Foreground="{DynamicResource TextLightBrush}"
                                        Text="{Binding CurrentUser.Name}" Margin="5"
                                        FontSize="16" HorizontalAlignment="Center"/>
                         </StackPanel>

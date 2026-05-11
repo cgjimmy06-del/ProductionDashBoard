@@ -167,17 +167,17 @@
         <Setter Property="Padding" Value="5,0"/>
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="0"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Style.Triggers>
             <!-- 滑鼠移入 -->
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
             </Trigger>
             <!-- 選中狀態 -->
             <Trigger Property="IsChecked" Value="True">
-                <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource SelectedBrush}"/>
                 <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
             </Trigger>
         </Style.Triggers>
