@@ -218,7 +218,7 @@
         </StatusBar>
 
         <!-- 主區域(中) -->
-        <Grid Margin="0">
+        <Grid Margin="0" Background="{DynamicResource BackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <!-- 導覽列 -->
                 <ColumnDefinition Width="Auto"/>
