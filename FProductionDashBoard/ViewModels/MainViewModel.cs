@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -26,7 +27,7 @@ using System.Windows.Threading;
 
 namespace FProductionDashBoard.ViewModels
 {
-    public enum NavMode { Home, Operation, View, List, Equipment, Order }
+    public enum NavMode { Home, Operation, View, List, Equipment, Order, SystemSettings }
     public partial class MainViewModel : ObservableObject, IDisposable
     {
         public string AppVersion => typeof(App).Assembly
@@ -47,6 +48,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly Services.CardReaderHandler _cardReaderHandler;
 
         #endregion
+
         [ObservableProperty]
         public string? systemUser;
         public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
@@ -121,6 +123,8 @@ namespace FProductionDashBoard.ViewModels
             _cardReaderHandler.Attach();
 
             // 定義工作起始時間 (於 DispatcherTimer 偵測更新)
+            BusinessHour = Properties.Settings.Default.BusinessHour;
+            BusinessMinute = Properties.Settings.Default.BusinessMinute;
             _core.Data.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
 
             // 建立 DispatcherTimer 每秒更新一次時間，此方法位於 "UI 執行緒" 需確認是否移至 "執行緒池"
@@ -239,19 +243,21 @@ namespace FProductionDashBoard.ViewModels
             OnPropertyChanged(nameof(IsCardReaderConnected));
             OnPropertyChanged(nameof(CardReaderStatusTooltip));
 
+            var s = Properties.Settings.Default;
+
             _syncTickCounter++;
-            if (_syncTickCounter >= 60)
+            if (s.SyncEnabled && _syncTickCounter >= s.SyncIntervalSec)
             {
                 _syncTickCounter = 0;
-                _ = Task.Run(async ()=> 
+                _ = Task.Run(async ()=>
                 {
                     try { await SyncAndLogAsync(); }
-                    catch (Exception ex) { _core.Log.AddLog($"[SyncAndLogAsync] {ex.Message}"); } 
+                    catch (Exception ex) { _core.Log.AddLog($"[SyncAndLogAsync] {ex.Message}"); }
                 });
             }
 
             _missedCheckCounter++;
-            if (_missedCheckCounter >= 300)
+            if (s.MissedCheckEnabled && _missedCheckCounter >= s.MissedCheckIntervalSec)
             {
                 _missedCheckCounter = 0;
                 _ = Task.Run(async () =>
@@ -262,7 +268,7 @@ namespace FProductionDashBoard.ViewModels
             }
 
             _logInOutCounter++;
-            if (_logInOutCounter >= 600)
+            if (s.IdleLogoutEnabled && _logInOutCounter >= s.IdleLogoutIntervalSec)
             {
                 _logInOutCounter = 0;
                 await CheckLogOutForLongIdle();
@@ -428,6 +434,12 @@ namespace FProductionDashBoard.ViewModels
 
                 case NavMode.Order:
                     if (!_core.Authorization.HasPermission(Services.PermissionId.Order)) return;
+                    break;
+
+                case NavMode.SystemSettings:
+                    var ssVm = _serviceProvider.GetRequiredService<SystemSettingsViewModel>();
+                    ssVm.LoadFromSettings();
+                    MainCard = ssVm;
                     break;
 
                 default:

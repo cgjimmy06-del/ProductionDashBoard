@@ -24,6 +24,7 @@
     <sys:String x:Key="LargeFontButtonTooltip">Phóng to chữ</sys:String>
     <sys:String x:Key="LogSaveButtonTooltip">Lưu nhật ký hiện tại</sys:String>
     <sys:String x:Key="ToggleLogPanelTooltip">Hiển thị/Ẩn bảng nhật ký</sys:String>
+    <sys:String x:Key="SystemSettingsNavButton">Cài đặt hệ thống</sys:String>
     <sys:String x:Key="LogInButtonTooltip">Đăng nhập</sys:String>
     <sys:String x:Key="LogOutButtonTooltip">Đăng xuất</sys:String>
     <sys:String x:Key="ReloadButtonTooltip">Tải lại danh sách từ cơ sở dữ liệu</sys:String>
@@ -135,6 +136,26 @@
     <sys:String x:Key="CardReaderTestTooltip">Kiểm tra kết nối</sys:String>
     <sys:String x:Key="CardReaderApplyTooltip">Áp dụng và kết nối lại</sys:String>
     <sys:String x:Key="CardReaderDeleteTooltip">Xóa đầu đọc thẻ</sys:String>
+    <!--#endregion-->
+    <!--#region system settings view -->
+    <sys:String x:Key="SsAppearanceHeader">Ngoại hình</sys:String>
+    <sys:String x:Key="SsThemeLabel">Chủ đề</sys:String>
+    <sys:String x:Key="SsThemeLight">Sáng</sys:String>
+    <sys:String x:Key="SsThemeDark">Tối</sys:String>
+    <sys:String x:Key="SsSystemParamsHeader">Thông số hệ thống</sys:String>
+    <sys:String x:Key="SsBusinessStartTime">Giờ bắt đầu ca làm</sys:String>
+    <sys:String x:Key="SsHourUnit">giờ</sys:String>
+    <sys:String x:Key="SsMinuteUnit">phút</sys:String>
+    <sys:String x:Key="SsBackgroundTasksHeader">Tác vụ nền</sys:String>
+    <sys:String x:Key="SsSyncLabel">Đồng bộ tải lên</sys:String>
+    <sys:String x:Key="SsMissedCheckLabel">Kiểm tra bỏ lỡ</sys:String>
+    <sys:String x:Key="SsIdleLogoutLabel">Đăng xuất nhàn rỗi</sys:String>
+    <sys:String x:Key="SsEvery">Mỗi</sys:String>
+    <sys:String x:Key="SsSecondUnit">giây</sys:String>
+    <sys:String x:Key="SsAboutHeader">Giới thiệu</sys:String>
+    <sys:String x:Key="SsVersionLabel">Phiên bản</sys:String>
+    <sys:String x:Key="SsApplyButton">Áp dụng</sys:String>
+    <sys:String x:Key="SsUnsavedChanges">Có thay đổi chưa được lưu</sys:String>
     <!--#endregion-->
     <!--#region loading window -->
     <sys:String x:Key="LoadingProcessingMessage">Đang xử lý, vui lòng chờ...</sys:String>
