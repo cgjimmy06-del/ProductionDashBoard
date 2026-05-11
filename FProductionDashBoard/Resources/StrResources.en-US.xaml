@@ -23,6 +23,7 @@
     <sys:String x:Key="ErrorLogButtonTooltip">Show error log</sys:String>
     <sys:String x:Key="LargeFontButtonTooltip">Make the text bigger</sys:String>
     <sys:String x:Key="LogSaveButtonTooltip">Save current logs and errorlogs</sys:String>
+    <sys:String x:Key="ToggleLogPanelTooltip">Show/Hide Log Panel</sys:String>
     <sys:String x:Key="LogInButtonTooltip">Log in</sys:String>
     <sys:String x:Key="LogOutButtonTooltip">Log out</sys:String>
     <sys:String x:Key="ReloadButtonTooltip">Reload lists from database</sys:String>

@@ -97,6 +97,11 @@
                     <materialDesign:PackIcon Kind="ContentPaste" Width="20" Height="20"/>
                 </Button>
                 <Separator/>
+                <ToggleButton ToolTip="{DynamicResource ToggleLogPanelTooltip}"
+                              Foreground="{DynamicResource TextPrimaryBrush}"
+                              IsChecked="{Binding IsLogPanelVisible, Mode=TwoWay}">
+                    <materialDesign:PackIcon Kind="ConsoleLine" Width="20" Height="20"/>
+                </ToggleButton>
                 <Button ToolTip="測試" Foreground="{DynamicResource TextPrimaryBrush}"
                         Command="{Binding TestCommand}"
                         Visibility="{x:Static local:App.DebugVisibility}">
@@ -318,7 +323,7 @@
             </Border>
 
             <!-- 儀錶板主顯示區 -->
-            <Grid Grid.Column="1" Margin="0">
+            <Grid x:Name="ContentGrid" Grid.Column="1" Margin="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="5" />

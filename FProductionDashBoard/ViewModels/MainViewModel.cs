@@ -61,6 +61,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private bool isCollapsedNav = false; // 導覽列收合
         [ObservableProperty]
+        private bool isLogPanelVisible = true; // 訊息面板顯示
+        [ObservableProperty]
         private int progressValue = 0; // 進度調數值
         [ObservableProperty]
         private string progressString = Properties.Resources.MainProgressIdle; // 進度條說明
