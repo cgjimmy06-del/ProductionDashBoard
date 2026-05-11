@@ -42,15 +42,16 @@ namespace FProductionDashBoard.ViewModels
         private readonly DashboardCoreServices _core;
         private readonly IOfflineSyncService _syncService;
         private readonly MultiCardReaderService _multiCardReaderService;
-        private readonly Services.WebApi.IErpApiService _erpApiService;
         private readonly IServiceProvider _serviceProvider;
         private readonly Services.IDialogService _dialog;
+        private readonly Services.CardReaderHandler _cardReaderHandler;
 
+        #endregion
         [ObservableProperty]
         public string? systemUser;
         public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
         public bool IsLoggedIn => _core.Authorization.IsLoggedIn;
-        #endregion
+        
         #region -- 介面邏輯 --
         [ObservableProperty]
         private int businessHour = 8; // 定義工作天的時
@@ -106,7 +107,6 @@ namespace FProductionDashBoard.ViewModels
 
         public MainViewModel(DashboardCoreServices core, IOfflineSyncService syncService,
             MultiCardReaderService multiCardReaderService,
-            Services.WebApi.IErpApiService erpApiService,
             IServiceProvider sp,
             Services.IDialogService dialogService)
         {
@@ -114,10 +114,11 @@ namespace FProductionDashBoard.ViewModels
             _core = core;
             _syncService = syncService;
             _multiCardReaderService = multiCardReaderService;
-            _erpApiService = erpApiService;
             _serviceProvider = sp;
             _dialog = dialogService;
-            _core.CardReader.CardRead += OnCardRead;
+            _cardReaderHandler = new Services.CardReaderHandler(
+                _core, sp.GetRequiredService<Services.WebApi.IErpApiService>(), _dialog, CommonLists);
+            _cardReaderHandler.Attach();
 
             // 定義工作起始時間 (於 DispatcherTimer 偵測更新)
             _core.Data.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
@@ -199,15 +200,12 @@ namespace FProductionDashBoard.ViewModels
                 var t6 = FetchListAsync(() => _core.Data.GetAllRolesAsync());
                 await Task.WhenAll(t1, t2, t3, t4, t5, t6);
 
-                CommonLists = new ListsFromSql
-                {
-                    DevicesList = t1.Result,
-                    UsersList = t2.Result,
-                    MaterialsList = t3.Result,
-                    ErrorsList = t4.Result,
-                    TimeSlotsList = t5.Result,
-                    RolesList = t6.Result
-                };
+                CommonLists.DevicesList   = t1.Result;
+                CommonLists.UsersList     = t2.Result;
+                CommonLists.MaterialsList = t3.Result;
+                CommonLists.ErrorsList    = t4.Result;
+                CommonLists.TimeSlotsList = t5.Result;
+                CommonLists.RolesList     = t6.Result;
                 _core.Log.AddLog($"已載入清單: " +
                     $"Devices:[{CommonLists.DevicesList.Count}]-" +
                     $"Users:[{CommonLists.UsersList.Count}]-" +
@@ -347,7 +345,7 @@ namespace FProductionDashBoard.ViewModels
         {
             DefaultTimer.Stop();
             DefaultTimer.Tick -= OnTimerTick;
-            _core.CardReader.CardRead -= OnCardRead;
+            _cardReaderHandler.Detach();
             if (_onUserChanged != null)
                 _core.Authorization.UserChanged -= _onUserChanged;
         }
@@ -435,94 +433,6 @@ namespace FProductionDashBoard.ViewModels
                 default:
                     break;
             }
-        }
-
-        // 讀卡機事件：記錄 log + 自動登入/換手 / ERP 查詢新增或更新卡號
-        private async void OnCardRead(object? sender, Services.CardReadEventArgs e)
-        {
-            try
-            {
-                //_core.Log.AddLog($"[CardReader:{e.PortName}] {e.CardId}");
-                var snapshot = CommonLists.UsersList.ToList();
-                var user = snapshot.FirstOrDefault(u => u.CardId == e.CardId);
-
-                if (user != null)
-                {
-                    if (_core.Authorization.CurrentUser?.CardId == e.CardId) return;
-                    await _core.Authorization.InitializeAsync(user);
-                    _core.Log.AddLog($"[CardReader] 登入: {user.Name}", LogLevel.Success);
-                    return;
-                }
-
-                // 未在 UsersList 找到 → 查詢 ERP
-                var emp = await _erpApiService.GetEmpInfoByCardAsync(e.CardId);
-                if (emp == null)
-                {
-                    _core.Log.AddLog($"[CardReader] 未識別卡號: {e.CardId}", LogLevel.Warning);
-                    return;
-                }
-
-                var existingUser = snapshot.FirstOrDefault(u => u.UserId == emp.EmpNo);
-                if (existingUser == null)
-                    await HandleAddNewEmployeeAsync(emp, e.CardId);
-                else
-                    await HandleUpdateCardIdAsync(existingUser, e.CardId);
-            }
-            catch (Exception ex)
-            {
-                _core.Log.AddLog($"[CardReader] 處理失敗: {ex.Message}", LogLevel.Error);
-            }
-        }
-
-        // 依賴 ERP 查詢新增或更新卡號
-        private async Task HandleAddNewEmployeeAsync(Dtos.EmpInfoDto emp, string cardId)
-        {
-            var msg = $"查詢到 ERP 員工資訊\n\n員工編號：{emp.EmpNo}\n姓名：{emp.Name}\n卡號：{cardId}\n\n" +
-                $"是否新增至系統？\n（預設訪客權限，密碼 0000）";
-
-            bool confirmed = await Application.Current.Dispatcher.InvokeAsync(() =>
-                _dialog.ShowConfirm(msg));
-
-            if (!confirmed) { _core.CardReader.ResetLastCard(); return; }
-
-            var dto = new Dtos.EmployeeFormDto
-            {
-                UserId = emp.EmpNo,
-                Name = emp.Name,
-                CardId = cardId,
-                Password = "0000",
-                RoleId = 1
-            };
-            await _core.Data.AddEmployeeAsync(dto);
-            var newList = await _core.Data.GetUsersAsync();
-            await Application.Current.Dispatcher.InvokeAsync(() => CommonLists.UsersList = newList);
-            _core.Log.AddLog($"[CardReader] 已新增員工: {emp.Name}，請重新刷卡登入", LogLevel.Success);
-            _core.CardReader.ResetLastCard();
-        }
-        private async Task HandleUpdateCardIdAsync(UiModels.UserInfo existingUser, string cardId)
-        {
-            var msg = $"系統已有此員工\n\n員工編號：{existingUser.UserId}\n姓名：{existingUser.Name}\n\n新卡號：{cardId}\n\n" +
-                $"是否更新卡號至資料庫？";
-
-            bool confirmed = await Application.Current.Dispatcher.InvokeAsync(() =>
-                _dialog.ShowConfirm(msg));
-
-            if (!confirmed) { _core.CardReader.ResetLastCard(); return; }
-
-            var dto = new Dtos.EmployeeFormDto
-            {
-                Id = existingUser.Id,
-                UserId = existingUser.UserId,
-                Name = existingUser.Name,
-                CardId = cardId,
-                RoleId = existingUser.RoleId,
-                Email = existingUser.Email,
-                DepartmentId = existingUser.DepartmentId
-            };
-            await _core.Data.UpdateEmployeeAsync(dto);
-            await Application.Current.Dispatcher.InvokeAsync(() => existingUser.CardId = cardId);
-            _core.Log.AddLog($"[CardReader] 更新卡號: {existingUser.Name}，請重新刷卡登入", LogLevel.Success);
-            _core.CardReader.ResetLastCard();
         }
 
 
