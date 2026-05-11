@@ -160,33 +160,25 @@
     </Style>
 
     <!-- 具名樣式 -->
-    <Style x:Key="NavButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+    <Style x:Key="NavButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignFlatButton}">
         <Setter Property="Height" Value="40"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="Padding" Value="5,0"/>
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="0"/>
-        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
-        <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
-        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
         <Style.Triggers>
             <!-- 滑鼠移入 -->
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
-                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryLightBrush}"/>
-            </Trigger>
-            <!-- 按下 -->
-            <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
             </Trigger>
             <!-- 選中狀態 -->
             <Trigger Property="IsChecked" Value="True">
-                <Setter Property="Background" Value="{DynamicResource SelectedBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
                 <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource SelectedBrush}"/>
             </Trigger>
         </Style.Triggers>
     </Style>

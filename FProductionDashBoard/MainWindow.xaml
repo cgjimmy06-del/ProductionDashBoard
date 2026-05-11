@@ -231,7 +231,11 @@
                     Width="{Binding IsCollapsedNav, Converter={StaticResource CollapseWidthConverter}}">
                 <DockPanel LastChildFill="True">
                     <!-- 系統設定 釘底 -->
+                    <Separator DockPanel.Dock="Bottom"
+                               Background="{DynamicResource BorderBrush}"
+                               Margin="8,0"/>
                     <RadioButton DockPanel.Dock="Bottom"
+                                 GroupName="NavGroup"
                                  Style="{StaticResource NavButtonStyle}"
                                  Command="{Binding SwitchModeCommand}"
                                  CommandParameter="{x:Static localvm:NavMode.SystemSettings}"
@@ -246,14 +250,14 @@
                     <!-- 主導覽區 -->
                     <StackPanel Margin="0">
                         <!-- 登入資訊 (待優化) -->
-                        <StackPanel Background="{DynamicResource PrimaryBrush}"
+                        <StackPanel Background="{DynamicResource PrimaryBackgroundBrush}"
                                 Orientation="Vertical" HorizontalAlignment="Stretch">
-                            <materialDesign:PackIcon Background="{DynamicResource PrimaryBrush}"
-                                                     Foreground="{DynamicResource TextLightBrush}"
+                            <materialDesign:PackIcon Background="{DynamicResource PrimaryBackgroundBrush}"
+                                                     Foreground="{DynamicResource TextPrimaryBrush}"
                                                      HorizontalAlignment="Center"
                                                      Kind="Account" Margin="0"
                                                      Width="100" Height="100"/>
-                            <TextBlock d:Text="訪客" Foreground="{DynamicResource TextLightBrush}"
+                            <TextBlock d:Text="訪客" Foreground="{DynamicResource TextPrimaryBrush}"
                                        Text="{Binding CurrentUser.Name}" Margin="5"
                                        FontSize="16" HorizontalAlignment="Center"/>
                         </StackPanel>
@@ -267,7 +271,8 @@
                             </StackPanel>
                         </RadioButton>
                         <!-- 導覽內容 -->
-                        <RadioButton Style="{StaticResource NavButtonStyle}"
+                        <RadioButton GroupName="NavGroup"
+                                     Style="{StaticResource NavButtonStyle}"
                                      Command="{Binding SwitchModeCommand}"
                                      CommandParameter="{x:Static localvm:NavMode.Home}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -277,7 +282,8 @@
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </RadioButton>
-                        <RadioButton Style="{StaticResource NavButtonStyle}"
+                        <RadioButton GroupName="NavGroup"
+                                     Style="{StaticResource NavButtonStyle}"
                                      Command="{Binding SwitchModeCommand}"
                                      CommandParameter="{x:Static localvm:NavMode.Operation}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -287,7 +293,8 @@
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </RadioButton>
-                        <RadioButton Style="{StaticResource NavButtonStyle}"
+                        <RadioButton GroupName="NavGroup"
+                                     Style="{StaticResource NavButtonStyle}"
                                      Command="{Binding SwitchModeCommand}"
                                      CommandParameter="{x:Static localvm:NavMode.View}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -297,7 +304,8 @@
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </RadioButton>
-                        <RadioButton Style="{StaticResource NavButtonStyle}"
+                        <RadioButton GroupName="NavGroup"
+                                     Style="{StaticResource NavButtonStyle}"
                                      Command="{Binding SwitchModeCommand}"
                                      CommandParameter="{x:Static localvm:NavMode.List}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -307,7 +315,8 @@
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </RadioButton>
-                        <RadioButton Style="{StaticResource NavButtonStyle}"
+                        <RadioButton GroupName="NavGroup"
+                                     Style="{StaticResource NavButtonStyle}"
                                      Command="{Binding SwitchModeCommand}"
                                      CommandParameter="{x:Static localvm:NavMode.Equipment}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -317,7 +326,8 @@
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </RadioButton>
-                        <RadioButton Style="{StaticResource NavButtonStyle}"
+                        <RadioButton GroupName="NavGroup"
+                                     Style="{StaticResource NavButtonStyle}"
                                      Command="{Binding SwitchModeCommand}"
                                      CommandParameter="{x:Static localvm:NavMode.Order}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
