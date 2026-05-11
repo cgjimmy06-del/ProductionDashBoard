@@ -1,0 +1,223 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.SystemSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="800">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 未套用變更 Banner -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource WarningBrush}"
+                Padding="16,8"
+                Visibility="{Binding HasUnsavedChanges,
+                             Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel>
+                <Button DockPanel.Dock="Right"
+                        Content="{DynamicResource SsApplyButton}"
+                        Style="{StaticResource ConfirmButtonStyle}"
+                        Command="{Binding ApplyCommand}"/>
+                <TextBlock Text="{DynamicResource SsUnsavedChanges}"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource TextDarkBrush}"/>
+            </DockPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="16">
+        <StackPanel MaxWidth="700" HorizontalAlignment="Left">
+
+            <!-- 外觀 -->
+            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                    CornerRadius="4" Padding="16" Margin="0,0,0,16"
+                    Background="{DynamicResource BackgroundBrush}">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource SsAppearanceHeader}"
+                               FontSize="14" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <!-- 語言 -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="{DynamicResource LanguageText}" VerticalAlignment="Center" Width="60"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <RadioButton Content="中文" Margin="0,0,12,0"
+                                     Style="{StaticResource MaterialDesignRadioButton}"
+                                     GroupName="LanguageGroup"
+                                     IsChecked="{Binding CurrentLanguage,
+                                         Converter={StaticResource EqualToConverter},
+                                         ConverterParameter='zh-TW', Mode=OneWay}"
+                                     Command="{Binding SetLanguageCommand}"
+                                     CommandParameter="zh-TW"/>
+                        <RadioButton Content="English" Margin="0,0,12,0"
+                                     Style="{StaticResource MaterialDesignRadioButton}"
+                                     GroupName="LanguageGroup"
+                                     IsChecked="{Binding CurrentLanguage,
+                                         Converter={StaticResource EqualToConverter},
+                                         ConverterParameter='en-US', Mode=OneWay}"
+                                     Command="{Binding SetLanguageCommand}"
+                                     CommandParameter="en-US"/>
+                        <RadioButton Content="Tiếng Việt"
+                                     Style="{StaticResource MaterialDesignRadioButton}"
+                                     GroupName="LanguageGroup"
+                                     IsChecked="{Binding CurrentLanguage,
+                                         Converter={StaticResource EqualToConverter},
+                                         ConverterParameter='vi-VN', Mode=OneWay}"
+                                     Command="{Binding SetLanguageCommand}"
+                                     CommandParameter="vi-VN"/>
+                    </StackPanel>
+                    <!-- 主題 -->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource SsThemeLabel}" VerticalAlignment="Center" Width="60"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <RadioButton Content="{DynamicResource SsThemeLight}" Margin="0,0,12,0"
+                                     Style="{StaticResource MaterialDesignRadioButton}"
+                                     GroupName="ThemeGroup"
+                                     IsChecked="{Binding CurrentIsLight, Mode=OneWay}"
+                                     Command="{Binding SetThemeCommand}"
+                                     CommandParameter="False"/>
+                        <RadioButton Content="{DynamicResource SsThemeDark}"
+                                     Style="{StaticResource MaterialDesignRadioButton}"
+                                     GroupName="ThemeGroup"
+                                     IsChecked="{Binding CurrentIsDark, Mode=OneWay}"
+                                     Command="{Binding SetThemeCommand}"
+                                     CommandParameter="True"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 系統參數 -->
+            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                    CornerRadius="4" Padding="16" Margin="0,0,0,16"
+                    Background="{DynamicResource BackgroundBrush}">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource SsSystemParamsHeader}"
+                               FontSize="14" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="{DynamicResource SsBusinessStartTime}" VerticalAlignment="Center" Width="130"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox Width="60" Margin="8,0"
+                                 Text="{Binding BusinessHour, UpdateSourceTrigger=PropertyChanged}"
+                                 materialDesign:HintAssist.Hint="{DynamicResource SsHourUnit}"/>
+                        <TextBlock Text="{DynamicResource SsHourUnit}" VerticalAlignment="Center" Margin="0,0,16,0"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox Width="60"
+                                 Text="{Binding BusinessMinute, UpdateSourceTrigger=PropertyChanged}"
+                                 materialDesign:HintAssist.Hint="{DynamicResource SsMinuteUnit}"/>
+                        <TextBlock Text="{DynamicResource SsMinuteUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 背景任務 -->
+            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                    CornerRadius="4" Padding="16" Margin="0,0,0,16"
+                    Background="{DynamicResource BackgroundBrush}">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource SsBackgroundTasksHeader}"
+                               FontSize="14" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,0,0,12"/>
+
+                    <!-- 同步上傳 -->
+                    <Grid Margin="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource SsSyncLabel}" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <ToggleButton Grid.Column="1"
+                                      IsChecked="{Binding SyncEnabled}"
+                                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                      Margin="8,0"/>
+                        <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}" VerticalAlignment="Center" Margin="16,0,8,0"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox Grid.Column="3" Width="60"
+                                 Text="{Binding SyncIntervalSec, UpdateSourceTrigger=PropertyChanged}"
+                                 IsEnabled="{Binding SyncEnabled}"/>
+                        <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </Grid>
+
+                    <!-- 未巡檢偵測 -->
+                    <Grid Margin="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource SsMissedCheckLabel}" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <ToggleButton Grid.Column="1"
+                                      IsChecked="{Binding MissedCheckEnabled}"
+                                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                      Margin="8,0"/>
+                        <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}" VerticalAlignment="Center" Margin="16,0,8,0"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox Grid.Column="3" Width="60"
+                                 Text="{Binding MissedCheckIntervalSec, UpdateSourceTrigger=PropertyChanged}"
+                                 IsEnabled="{Binding MissedCheckEnabled}"/>
+                        <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </Grid>
+
+                    <!-- 閒置登出 -->
+                    <Grid Margin="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource SsIdleLogoutLabel}" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <ToggleButton Grid.Column="1"
+                                      IsChecked="{Binding IdleLogoutEnabled}"
+                                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                      Margin="8,0"/>
+                        <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}" VerticalAlignment="Center" Margin="16,0,8,0"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox Grid.Column="3" Width="60"
+                                 Text="{Binding IdleLogoutIntervalSec, UpdateSourceTrigger=PropertyChanged}"
+                                 IsEnabled="{Binding IdleLogoutEnabled}"/>
+                        <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 關於 -->
+            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                    CornerRadius="4" Padding="16" Margin="0,0,0,16"
+                    Background="{DynamicResource BackgroundBrush}">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource SsAboutHeader}"
+                               FontSize="14" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="{DynamicResource SsVersionLabel}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding AppVersion}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
