@@ -71,5 +71,8 @@ namespace FProductionDashBoard.Services
         }
 
         public bool HasPermission(int permissionId) => _userPermissions.Contains(permissionId);
+
+        public bool HasAnyPermission(params int[] permissionIds)
+            => permissionIds.Any(id => _userPermissions.Contains(id));
     }
 }
