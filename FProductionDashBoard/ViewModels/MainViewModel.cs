@@ -45,7 +45,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly Services.WebApi.IErpApiService _erpApiService;
         private readonly IServiceProvider _serviceProvider;
         private readonly Services.IDialogService _dialog;
-        public LogService _log => _core.Log; // public 是為了Window的顯示
+
         [ObservableProperty]
         public string? systemUser;
         public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
@@ -61,11 +61,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private bool isCollapsedNav = false; // 導覽列收合
         [ObservableProperty]
-        private bool autoScrollEnabled = true; // 訊息視窗是否滾動
-        [ObservableProperty]
-        private bool isLargeFontMode = false; // 訊息視窗是否放大字型
-        [ObservableProperty]
-        private bool isErrorMode = false; // 訊息視窗是否切換至異常訊息
+        private bool isLogPanelVisible = true; // 訊息面板顯示
         [ObservableProperty]
         private int progressValue = 0; // 進度調數值
         [ObservableProperty]
@@ -84,7 +80,6 @@ namespace FProductionDashBoard.ViewModels
         private string netStatusTooltip = ""; // 連線狀態訊息
         #endregion
 
-        public ObservableCollection<LogEntry> CurrentLogs => IsErrorMode ? _core.Log.ErrorLogs : _core.Log.Logs;
         public ListsFromSql CommonLists = new();
 
         public ICommand InitializeCommand { get; }
@@ -100,7 +95,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand CollapseNavCommand { get; }
         public IRelayCommand SwitchModeCommand { get; }
         // 訊息窗
-        public ICommand SaveLogsCommand { get; }
+        public LogPanelViewModel LogPanel { get; }
         // 主視覺視窗
 
         private int _syncTickCounter = 0;
@@ -145,12 +140,12 @@ namespace FProductionDashBoard.ViewModels
             TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
                 () => _core.Authorization.HasPermission(Services.PermissionId.Test));
 #endif
-            // 設定元件事件 (帳號) 
+            // 設定元件事件 (帳號)
             LoginCommand = new AsyncRelayCommand(LoginAsync);
             LogoutCommand = new AsyncRelayCommand(LogoutAsync);
 
-            // 設定元件事件 (訊息視窗)
-            SaveLogsCommand = new AsyncRelayCommand(() => SaveLogsAsync());
+            // 訊息面板 ViewModel
+            LogPanel = sp.GetRequiredService<LogPanelViewModel>();
 
             // (訂閱端) 使用者變更事件，刷新命令狀態與使用者顯示 (若 _authService 在執行緒池)
             SystemUser = $"{Properties.Resources.ComStrSystemUser}: {_core.Authorization.CurrentUser!.Name}";
@@ -439,41 +434,6 @@ namespace FProductionDashBoard.ViewModels
 
                 default:
                     break;
-            }
-        }
-
-        // 訊息窗事件
-        partial void OnIsErrorModeChanged(bool value)
-        {
-            if (value && _core.Log.IsNewErrorLog) _core.Log.IsNewErrorLog = false;
-
-            OnPropertyChanged(nameof(CurrentLogs));
-            // 取代此函式 (不需判斷PropertyName)
-            //PropertyChanged += (s, e) => {
-            //    if (e.PropertyName == nameof(IsErrorMode)) OnPropertyChanged(nameof(CurrentLogs)); };
-        }
-        private async Task SaveLogsAsync()
-        {
-            try
-            {
-                ProgressString = Properties.Resources.MainProgressSaving;
-
-                await _core.Log.SaveAllLogsToFileAsync();
-
-                ProgressString = Properties.Resources.MainProgressSuccess;
-            }
-            catch (AggregateException ex)
-            {
-                ProgressString = Properties.Resources.MainProgressStopped;
-                _core.Log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogs");
-                _core.Log.AddErrorLog($"SaveLogs Aggre.Ex: {ex.ToString()}");
-            }
-            catch (Exception ex)
-            {
-                // 最外層保護，抓所有未預期的錯誤
-                ProgressString = Properties.Resources.MainProgressStopped;
-                _core.Log.AddLog($"{Properties.Resources.ComStrErrorTitle}: SaveLogs");
-                _core.Log.AddErrorLog($"SaveLogs Ex: {ex.ToString()}");
             }
         }
 
