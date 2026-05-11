@@ -24,6 +24,7 @@
     <sys:String x:Key="LargeFontButtonTooltip">Make the text bigger</sys:String>
     <sys:String x:Key="LogSaveButtonTooltip">Save current logs and errorlogs</sys:String>
     <sys:String x:Key="ToggleLogPanelTooltip">Show/Hide Log Panel</sys:String>
+    <sys:String x:Key="SystemSettingsNavButton">System Settings</sys:String>
     <sys:String x:Key="LogInButtonTooltip">Log in</sys:String>
     <sys:String x:Key="LogOutButtonTooltip">Log out</sys:String>
     <sys:String x:Key="ReloadButtonTooltip">Reload lists from database</sys:String>
@@ -135,6 +136,26 @@
     <sys:String x:Key="CardReaderTestTooltip">Test connection</sys:String>
     <sys:String x:Key="CardReaderApplyTooltip">Apply and reconnect</sys:String>
     <sys:String x:Key="CardReaderDeleteTooltip">Remove card reader</sys:String>
+    <!--#endregion-->
+    <!--#region system settings view -->
+    <sys:String x:Key="SsAppearanceHeader">Appearance</sys:String>
+    <sys:String x:Key="SsThemeLabel">Theme</sys:String>
+    <sys:String x:Key="SsThemeLight">Light</sys:String>
+    <sys:String x:Key="SsThemeDark">Dark</sys:String>
+    <sys:String x:Key="SsSystemParamsHeader">System Parameters</sys:String>
+    <sys:String x:Key="SsBusinessStartTime">Business Start Time</sys:String>
+    <sys:String x:Key="SsHourUnit">hr</sys:String>
+    <sys:String x:Key="SsMinuteUnit">min</sys:String>
+    <sys:String x:Key="SsBackgroundTasksHeader">Background Tasks</sys:String>
+    <sys:String x:Key="SsSyncLabel">Sync Upload</sys:String>
+    <sys:String x:Key="SsMissedCheckLabel">Missed Check</sys:String>
+    <sys:String x:Key="SsIdleLogoutLabel">Idle Logout</sys:String>
+    <sys:String x:Key="SsEvery">Every</sys:String>
+    <sys:String x:Key="SsSecondUnit">sec</sys:String>
+    <sys:String x:Key="SsAboutHeader">About</sys:String>
+    <sys:String x:Key="SsVersionLabel">Version</sys:String>
+    <sys:String x:Key="SsApplyButton">Apply Settings</sys:String>
+    <sys:String x:Key="SsUnsavedChanges">Settings changed — unsaved</sys:String>
     <!--#endregion-->
     <!--#region loading window -->
     <sys:String x:Key="LoadingProcessingMessage">Processing, please wait...</sys:String>

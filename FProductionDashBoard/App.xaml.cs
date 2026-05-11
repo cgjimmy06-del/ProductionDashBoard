@@ -108,6 +108,7 @@ namespace FProductionDashBoard
                 services.AddScoped<ViewModels.SettingViewModel>();
                 services.AddScoped<ViewModels.HardwareViewModel>();
                 services.AddScoped<ViewModels.LogPanelViewModel>();
+                services.AddScoped<ViewModels.SystemSettingsViewModel>();
 
                 _serviceProvider = services.BuildServiceProvider();
                 var authService = _serviceProvider.GetRequiredService<Services.AuthorizationService>();

@@ -118,5 +118,101 @@ namespace FProductionDashBoard.Properties {
                 this["ReaderBaud"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
+        public int BusinessHour {
+            get {
+                return ((int)(this["BusinessHour"]));
+            }
+            set {
+                this["BusinessHour"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int BusinessMinute {
+            get {
+                return ((int)(this["BusinessMinute"]));
+            }
+            set {
+                this["BusinessMinute"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public int SyncIntervalSec {
+            get {
+                return ((int)(this["SyncIntervalSec"]));
+            }
+            set {
+                this["SyncIntervalSec"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public int MissedCheckIntervalSec {
+            get {
+                return ((int)(this["MissedCheckIntervalSec"]));
+            }
+            set {
+                this["MissedCheckIntervalSec"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("600")]
+        public int IdleLogoutIntervalSec {
+            get {
+                return ((int)(this["IdleLogoutIntervalSec"]));
+            }
+            set {
+                this["IdleLogoutIntervalSec"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SyncEnabled {
+            get {
+                return ((bool)(this["SyncEnabled"]));
+            }
+            set {
+                this["SyncEnabled"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool MissedCheckEnabled {
+            get {
+                return ((bool)(this["MissedCheckEnabled"]));
+            }
+            set {
+                this["MissedCheckEnabled"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IdleLogoutEnabled {
+            get {
+                return ((bool)(this["IdleLogoutEnabled"]));
+            }
+            set {
+                this["IdleLogoutEnabled"] = value;
+            }
+        }
     }
 }
