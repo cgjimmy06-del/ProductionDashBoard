@@ -42,8 +42,10 @@ namespace FProductionDashBoard.ViewModels
             _dialog = dialog;
             commonLists = getlists;
 
-            FirstArticleInsAllCommand = new AsyncRelayCommand(() => FirstArticleInsAll());
-            RoutineInsAllCommand = new AsyncRelayCommand(() => RoutineInsAll());
+            FirstArticleInsAllCommand = new AsyncRelayCommand(() => FirstArticleInsAll(),
+                () => _core.Authorization.HasPermission(PermissionId.OperateInspection));
+            RoutineInsAllCommand = new AsyncRelayCommand(() => RoutineInsAll(),
+                () => _core.Authorization.HasPermission(PermissionId.OperateInspection));
 
             AddDevicesCommand = new AsyncRelayCommand(() => AddDeviceCard());
             FastDownloadDevicesCommand = new RelayCommand(() => FastDownloadDevices());

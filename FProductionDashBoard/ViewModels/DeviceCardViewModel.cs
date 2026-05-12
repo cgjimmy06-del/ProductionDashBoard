@@ -67,7 +67,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand MaterialsChangeCommand { get; }
         public ICommand FirstInspectionCommand { get; }
         public ICommand RoutineInspectionCommand { get; }
-        public ICommand OperationCommand { get; }
+        public ICommand TuningCommand { get; }
         public ICommand EndTuningCommand { get; }
 
         public DeviceCardViewModel(DashboardCoreServices core, Services.IDialogService dialog, DeviceInfo info, UserInfo currentUser, ListsFromSql getLists)
@@ -80,11 +80,16 @@ namespace FProductionDashBoard.ViewModels
 
             for (int i = 0; i < getLists.TimeSlotsList.Count; i++) { TimeSlotsStatus.Add(-1); }
 
-            MaterialsChangeCommand = new AsyncRelayCommand(MaterialsChangeAsync);
-            FirstInspectionCommand = new AsyncRelayCommand(FirstArticleInspectionAsync);
-            RoutineInspectionCommand = new AsyncRelayCommand(RoutineInspectionAsync);
-            OperationCommand = new AsyncRelayCommand(OperationAsync);
-            EndTuningCommand = new AsyncRelayCommand(EndTuningAsync);
+            MaterialsChangeCommand = new AsyncRelayCommand(MaterialsChangeAsync,
+                () => _core.Authorization.HasPermission(PermissionId.OperateMaterial));
+            FirstInspectionCommand = new AsyncRelayCommand(FirstArticleInspectionAsync,
+                () => _core.Authorization.HasPermission(PermissionId.OperateInspection));
+            RoutineInspectionCommand = new AsyncRelayCommand(RoutineInspectionAsync,
+                () => _core.Authorization.HasPermission(PermissionId.OperateInspection));
+            TuningCommand = new AsyncRelayCommand(TuningAsync, 
+                () => _core.Authorization.HasPermission(PermissionId.OperateTuning));
+            EndTuningCommand = new AsyncRelayCommand(EndTuningAsync, 
+                () => _core.Authorization.HasPermission(PermissionId.OperateTuning));
 
         }
         public async Task UpdateTimeSlotsStatusAsync()
@@ -227,7 +232,7 @@ namespace FProductionDashBoard.ViewModels
                 }
             }
         }
-        private async Task OperationAsync()
+        private async Task TuningAsync()
         {
             CurrentUser = _core.Authorization.CurrentUser!;
             var vm = new TuningDialogViewModel(

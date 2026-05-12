@@ -113,7 +113,7 @@
                     <Button Margin="5"
                             Style="{DynamicResource DeviceMainButtonStyle}"
                             Content="{DynamicResource OperationButton}" 
-                            Command="{Binding OperationCommand}"/>
+                            Command="{Binding TuningCommand}"/>
                 </StackPanel>
 
                 <!-- 巡檢燈 -->
