@@ -44,7 +44,7 @@ namespace FProductionDashBoard.Services
             CurrentUser = user;
 
             // 訪客不需連線，直接套用預設唯讀權限
-            if (user.UserId == "visitor") _userPermissions = [PermissionId.View];
+            if (user.UserId == _defaultUser.UserId) _userPermissions = [PermissionId.View];
             else
             {
                 try
