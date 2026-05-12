@@ -24,6 +24,10 @@
     <sys:String x:Key="LargeFontButtonTooltip">Phóng to chữ</sys:String>
     <sys:String x:Key="LogSaveButtonTooltip">Lưu nhật ký hiện tại</sys:String>
     <sys:String x:Key="ToggleLogPanelTooltip">Hiển thị/Ẩn bảng nhật ký</sys:String>
+    <sys:String x:Key="LayoutSingleTooltip">Đơn</sys:String>
+    <sys:String x:Key="LayoutHSplitTooltip">Chia đôi ngang</sys:String>
+    <sys:String x:Key="LayoutVSplitTooltip">Chia đôi dọc</sys:String>
+    <sys:String x:Key="LayoutQuadTooltip">Bốn ô</sys:String>
     <sys:String x:Key="SystemSettingsNavButton">Cài đặt hệ thống</sys:String>
     <sys:String x:Key="LogInButtonTooltip">Đăng nhập</sys:String>
     <sys:String x:Key="LogOutButtonTooltip">Đăng xuất</sys:String>

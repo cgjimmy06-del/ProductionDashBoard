@@ -104,7 +104,7 @@
                     <materialDesign:PackIcon Kind="ConsoleLine" Width="20" Height="20"/>
                 </ToggleButton>
                 <Separator/>
-                <Button ToolTip="單格" Foreground="{DynamicResource TextPrimaryBrush}"
+                <Button ToolTip="{DynamicResource LayoutSingleTooltip}" Foreground="{DynamicResource TextPrimaryBrush}"
                         Command="{Binding SetLayoutCommand}"
                         CommandParameter="{x:Static localvm:LayoutMode.Single}">
                     <Button.Style>
@@ -118,7 +118,7 @@
                     </Button.Style>
                     <materialDesign:PackIcon Kind="ViewDashboard" Width="18" Height="18"/>
                 </Button>
-                <Button ToolTip="左右分割" Foreground="{DynamicResource TextPrimaryBrush}"
+                <Button ToolTip="{DynamicResource LayoutHSplitTooltip}" Foreground="{DynamicResource TextPrimaryBrush}"
                         Command="{Binding SetLayoutCommand}"
                         CommandParameter="{x:Static localvm:LayoutMode.HorizontalSplit}">
                     <Button.Style>
@@ -132,7 +132,7 @@
                     </Button.Style>
                     <materialDesign:PackIcon Kind="ViewSplitVertical" Width="18" Height="18"/>
                 </Button>
-                <Button ToolTip="上下分割" Foreground="{DynamicResource TextPrimaryBrush}"
+                <Button ToolTip="{DynamicResource LayoutVSplitTooltip}" Foreground="{DynamicResource TextPrimaryBrush}"
                         Command="{Binding SetLayoutCommand}"
                         CommandParameter="{x:Static localvm:LayoutMode.VerticalSplit}">
                     <Button.Style>
@@ -146,7 +146,7 @@
                     </Button.Style>
                     <materialDesign:PackIcon Kind="ViewSplitHorizontal" Width="18" Height="18"/>
                 </Button>
-                <Button ToolTip="四格" Foreground="{DynamicResource TextPrimaryBrush}"
+                <Button ToolTip="{DynamicResource LayoutQuadTooltip}" Foreground="{DynamicResource TextPrimaryBrush}"
                         Command="{Binding SetLayoutCommand}"
                         CommandParameter="{x:Static localvm:LayoutMode.Quad}">
                     <Button.Style>
