@@ -370,7 +370,7 @@ namespace FProductionDashBoard.ViewModels
         }
         private async Task LoginAsync()
         {
-            var loginWindow = new LoginWindow();
+            var loginWindow = new LoginWindow(isSettingsEnabled: false);
             if (loginWindow.ShowDialog() != true) { return; }
 
             try
