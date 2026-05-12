@@ -22,11 +22,11 @@ namespace FProductionDashBoard
         public string SelectedServer { get; set; } = "";
         public UiModels.UserInfo User { get; set; } = new UiModels.UserInfo() { UserId = "unknown", Name = "unknown" };
 
-        public LoginWindow()
+        public LoginWindow(bool isSettingsEnabled = true)
         {
             InitializeComponent();
 
-            var vm = new ViewModels.LoginViewModel();
+            var vm = new ViewModels.LoginViewModel(isSettingsEnabled);
             DataContext = vm;
             // 登入成功後事件
             vm.OnLoginSuccess = (server, user) =>
