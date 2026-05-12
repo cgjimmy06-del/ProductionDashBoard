@@ -28,6 +28,10 @@
     <sys:String x:Key="LayoutHSplitTooltip">Chia đôi ngang</sys:String>
     <sys:String x:Key="LayoutVSplitTooltip">Chia đôi dọc</sys:String>
     <sys:String x:Key="LayoutQuadTooltip">Bốn ô</sys:String>
+    <sys:String x:Key="MenuFile">_Tệp</sys:String>
+    <sys:String x:Key="MenuFileExit">Thoát(_X)</sys:String>
+    <sys:String x:Key="MenuTools">_Công cụ</sys:String>
+    <sys:String x:Key="MenuToolsSettings">Cài đặt _nâng cao</sys:String>
     <sys:String x:Key="SystemSettingsNavButton">Cài đặt hệ thống</sys:String>
     <sys:String x:Key="LogInButtonTooltip">Đăng nhập</sys:String>
     <sys:String x:Key="LogOutButtonTooltip">Đăng xuất</sys:String>

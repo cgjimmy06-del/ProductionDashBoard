@@ -330,5 +330,11 @@
         <Setter Property="Height" Value="20"/>
         <Setter Property="Margin" Value="5,0"/>
     </Style>
-    
+    <!--#region Menu 樣式 -->
+    <Style TargetType="MenuItem" BasedOn="{StaticResource MaterialDesignMenuItem}">
+        <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+    </Style>
+    <!--#endregion-->
+
 </ResourceDictionary>

@@ -28,6 +28,10 @@
     <sys:String x:Key="LayoutHSplitTooltip">Horizontal Split</sys:String>
     <sys:String x:Key="LayoutVSplitTooltip">Vertical Split</sys:String>
     <sys:String x:Key="LayoutQuadTooltip">Quad</sys:String>
+    <sys:String x:Key="MenuFile">_File</sys:String>
+    <sys:String x:Key="MenuFileExit">E_xit</sys:String>
+    <sys:String x:Key="MenuTools">_Tools</sys:String>
+    <sys:String x:Key="MenuToolsSettings">_Advanced Settings</sys:String>
     <sys:String x:Key="SystemSettingsNavButton">System Settings</sys:String>
     <sys:String x:Key="LogInButtonTooltip">Log in</sys:String>
     <sys:String x:Key="LogOutButtonTooltip">Log out</sys:String>

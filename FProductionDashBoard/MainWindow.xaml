@@ -55,13 +55,14 @@
 
     <DockPanel LastChildFill="True">
         <!-- Menu 區域 -->
-        <Menu DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignPaper}"
-              Foreground="{DynamicResource MaterialDesignBody}">
-            <MenuItem Header="_檔案">
-                <MenuItem Header="結束(_X)"/>
+        <Menu DockPanel.Dock="Top"
+              Background="{DynamicResource BackgroundBrush}"
+              Foreground="{DynamicResource TextPrimaryBrush}">
+            <MenuItem Header="{DynamicResource MenuFile}">
+                <MenuItem Header="{DynamicResource MenuFileExit}"/>
             </MenuItem>
-            <MenuItem Header="工具(_T)">
-                <MenuItem Header="進階設定(_,)"
+            <MenuItem Header="{DynamicResource MenuTools}">
+                <MenuItem Header="{DynamicResource MenuToolsSettings}"
                           Command="{Binding SwitchModeCommand}"
                           CommandParameter="{x:Static localvm:NavMode.SystemSettings}"
                           InputGestureText="Ctrl+,"/>
