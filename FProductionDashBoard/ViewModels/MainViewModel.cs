@@ -28,6 +28,7 @@ using System.Windows.Threading;
 namespace FProductionDashBoard.ViewModels
 {
     public enum NavMode { Home, Operation, View, List, Equipment, Order, SystemSettings }
+    public enum LayoutMode { Single, HorizontalSplit, VerticalSplit, Quad }
     public partial class MainViewModel : ObservableObject, IDisposable
     {
         public string AppVersion => typeof(App).Assembly
@@ -36,8 +37,17 @@ namespace FProductionDashBoard.ViewModels
 
         public ObservableCollection<object> Cards { get; set; } = new();
         [ObservableProperty]
-        public object? mainCard; // 主視窗中的主卡片
+        public object? mainCard;
+        [ObservableProperty]
+        private LayoutMode currentLayout = LayoutMode.Single;
         private DeviceCardContainerViewModel? _deviceContainer;
+        private readonly Dictionary<PanelViewModel, DeviceCardContainerViewModel> _panelContainers = new();
+
+        public PanelViewModel Panel1 { get; }
+        public PanelViewModel Panel2 { get; }
+        public PanelViewModel Panel3 { get; }
+        public PanelViewModel Panel4 { get; }
+        public IRelayCommand<LayoutMode> SetLayoutCommand { get; }
 
         #region  -- DI注入資源 --
         private readonly DashboardCoreServices _core;
@@ -152,6 +162,13 @@ namespace FProductionDashBoard.ViewModels
             // 訊息面板 ViewModel
             LogPanel = sp.GetRequiredService<LogPanelViewModel>();
 
+            // 版面配置 Panels
+            Panel1 = new PanelViewModel(SwitchPanelContent);
+            Panel2 = new PanelViewModel(SwitchPanelContent);
+            Panel3 = new PanelViewModel(SwitchPanelContent);
+            Panel4 = new PanelViewModel(SwitchPanelContent);
+            SetLayoutCommand = new RelayCommand<LayoutMode>(SetLayout);
+
             // (訂閱端) 使用者變更事件，刷新命令狀態與使用者顯示 (若 _authService 在執行緒池)
             SystemUser = $"{Properties.Resources.ComStrSystemUser}: {_core.Authorization.CurrentUser!.Name}";
 
@@ -159,7 +176,10 @@ namespace FProductionDashBoard.ViewModels
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
                     if (!_core.Authorization.IsLoggedIn)
+                    {
                         _deviceContainer = null;
+                        _panelContainers.Clear();
+                    }
 
                     SwitchModeCommand.NotifyCanExecuteChanged();
                     LogoutCommand.NotifyCanExecuteChanged();
@@ -404,35 +424,34 @@ namespace FProductionDashBoard.ViewModels
             ProgressValue = value;
         }
         private void ClearProgress() => SetProgress(Properties.Resources.MainProgressIdle, visible: false);
-        // 導覽列事件
+        // 導覽列事件（永遠切換 Panel1，向下相容）
         public void SwitchMode(NavMode mode)
         {
             if (mode.Equals(CurrentNavMode)) return;
             CurrentNavMode = mode;
+            SwitchPanelContent(Panel1, mode);
+        }
+
+        private void SwitchPanelContent(PanelViewModel panel, NavMode mode)
+        {
+            object? content = null;
             switch (mode)
             {
-                case NavMode.Home:
-                    break;
-
                 case NavMode.Operation:
                     if (!_core.Authorization.HasAnyPermission(
-                        PermissionId.OperateInspection, PermissionId.OperateMaterial, 
+                        PermissionId.OperateInspection, PermissionId.OperateMaterial,
                         PermissionId.OperateTuning, PermissionId.Order)) return;
-                    _deviceContainer ??= new DeviceCardContainerViewModel(_core, _dialog, CommonLists);
-                    MainCard = _deviceContainer;
-                    break;
-
-                case NavMode.View:
+                    content = GetOrCreateContainer(panel);
                     break;
 
                 case NavMode.List:
                     if (!_core.Authorization.HasPermission(PermissionId.Edit)) return;
-                    MainCard = _serviceProvider.GetRequiredService<SettingViewModel>();
+                    content = _serviceProvider.GetRequiredService<SettingViewModel>();
                     break;
 
                 case NavMode.Equipment:
                     if (!_core.Authorization.HasPermission(PermissionId.Setting)) return;
-                    MainCard = _serviceProvider.GetRequiredService<HardwareViewModel>();
+                    content = _serviceProvider.GetRequiredService<HardwareViewModel>();
                     break;
 
                 case NavMode.Order:
@@ -443,12 +462,34 @@ namespace FProductionDashBoard.ViewModels
                     if (!_core.Authorization.HasPermission(PermissionId.Setting)) return;
                     var ssVm = _serviceProvider.GetRequiredService<SystemSettingsViewModel>();
                     ssVm.LoadFromSettings();
-                    MainCard = ssVm;
-                    break;
-
-                default:
+                    content = ssVm;
                     break;
             }
+            panel.SetMode(mode);
+            panel.Content = content;
+            if (panel == Panel1) MainCard = content;
+        }
+
+        private DeviceCardContainerViewModel GetOrCreateContainer(PanelViewModel panel)
+        {
+            if (panel == Panel1)
+            {
+                _deviceContainer ??= new DeviceCardContainerViewModel(_core, _dialog, CommonLists);
+                return _deviceContainer;
+            }
+            if (!_panelContainers.TryGetValue(panel, out var vm))
+                _panelContainers[panel] = vm = new DeviceCardContainerViewModel(_core, _dialog, CommonLists);
+            return vm;
+        }
+
+        private void SetLayout(LayoutMode layout)
+        {
+            CurrentLayout = layout;
+            bool isMulti = layout != LayoutMode.Single;
+            Panel1.ShowHeader = isMulti;
+            Panel2.ShowHeader = isMulti;
+            Panel3.ShowHeader = isMulti;
+            Panel4.ShowHeader = isMulti;
         }
 
 
