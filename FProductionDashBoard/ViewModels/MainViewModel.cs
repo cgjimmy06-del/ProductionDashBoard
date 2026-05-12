@@ -44,8 +44,8 @@ namespace FProductionDashBoard.ViewModels
         private readonly IOfflineSyncService _syncService;
         private readonly MultiCardReaderService _multiCardReaderService;
         private readonly IServiceProvider _serviceProvider;
-        private readonly Services.IDialogService _dialog;
-        private readonly Services.CardReaderHandler _cardReaderHandler;
+        private readonly IDialogService _dialog;
+        private readonly CardReaderHandler _cardReaderHandler;
 
         #endregion
 
@@ -110,7 +110,7 @@ namespace FProductionDashBoard.ViewModels
         public MainViewModel(DashboardCoreServices core, IOfflineSyncService syncService,
             MultiCardReaderService multiCardReaderService,
             IServiceProvider sp,
-            Services.IDialogService dialogService)
+            IDialogService dialogService)
         {
             // DI注入 Repository
             _core = core;
@@ -118,7 +118,7 @@ namespace FProductionDashBoard.ViewModels
             _multiCardReaderService = multiCardReaderService;
             _serviceProvider = sp;
             _dialog = dialogService;
-            _cardReaderHandler = new Services.CardReaderHandler(
+            _cardReaderHandler = new CardReaderHandler(
                 _core, sp.GetRequiredService<Services.WebApi.IErpApiService>(), _dialog, CommonLists);
             _cardReaderHandler.Attach();
 
@@ -137,13 +137,13 @@ namespace FProductionDashBoard.ViewModels
             // 設定元件事件 (導覽列)
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
             SwitchModeCommand = new RelayCommand<NavMode>(SwitchMode,
-                (_) => _core.Authorization.HasPermission(Services.PermissionId.View));
+                (_) => _core.Authorization.HasPermission(PermissionId.View));
 
             //  設定元件事件 (工具列)
 
 #if DEBUG // 測試函式用
             TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
-                () => _core.Authorization.HasPermission(Services.PermissionId.Test));
+                () => _core.Authorization.HasPermission(PermissionId.Test));
 #endif
             // 設定元件事件 (帳號)
             LoginCommand = new AsyncRelayCommand(LoginAsync);
@@ -370,7 +370,7 @@ namespace FProductionDashBoard.ViewModels
         }
         private async Task LoginAsync()
         {
-            var loginWindow = new LoginWindow();
+            var loginWindow = new LoginWindow(isSettingsEnabled: false);
             if (loginWindow.ShowDialog() != true) { return; }
 
             try
@@ -415,6 +415,9 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Operation:
+                    if (!_core.Authorization.HasAnyPermission(
+                        PermissionId.OperateInspection, PermissionId.OperateMaterial, 
+                        PermissionId.OperateTuning, PermissionId.Order)) return;
                     _deviceContainer ??= new DeviceCardContainerViewModel(_core, _dialog, CommonLists);
                     MainCard = _deviceContainer;
                     break;
@@ -423,20 +426,21 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.List:
-                    if (!_core.Authorization.HasPermission(Services.PermissionId.Edit)) return;
+                    if (!_core.Authorization.HasPermission(PermissionId.Edit)) return;
                     MainCard = _serviceProvider.GetRequiredService<SettingViewModel>();
                     break;
 
                 case NavMode.Equipment:
-                    if (!_core.Authorization.HasPermission(Services.PermissionId.Setting)) return;
+                    if (!_core.Authorization.HasPermission(PermissionId.Setting)) return;
                     MainCard = _serviceProvider.GetRequiredService<HardwareViewModel>();
                     break;
 
                 case NavMode.Order:
-                    if (!_core.Authorization.HasPermission(Services.PermissionId.Order)) return;
+                    if (!_core.Authorization.HasAnyPermission(PermissionId.Order, PermissionId.Schedule)) return;
                     break;
 
                 case NavMode.SystemSettings:
+                    if (!_core.Authorization.HasPermission(PermissionId.Setting)) return;
                     var ssVm = _serviceProvider.GetRequiredService<SystemSettingsViewModel>();
                     ssVm.LoadFromSettings();
                     MainCard = ssVm;

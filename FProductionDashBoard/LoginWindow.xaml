@@ -15,8 +15,9 @@
     <StackPanel Margin="40, 10">
         <!-- 語言切換 -->
         <TextBlock Text="{DynamicResource LanguageText}" Margin="5,5,5,0"/>
-        <ComboBox Margin="5" 
-                  ItemsSource="{Binding Languages}" 
+        <ComboBox Margin="5"
+                  IsEnabled="{Binding IsSettingsEnabled}"
+                  ItemsSource="{Binding Languages}"
                   DisplayMemberPath="DisplayName"
                   SelectedValuePath="CultureCode"
                   SelectedValue="{Binding SelectedLanguage, Mode=TwoWay}">
@@ -29,6 +30,7 @@
         <!-- 伺服器切換 -->
         <TextBlock Text="{DynamicResource ServerText}" Margin="5,5,5,0"/>
         <ComboBox Margin="5"
+                  IsEnabled="{Binding IsSettingsEnabled}"
                   ItemsSource="{Binding Servers}"
                   SelectedItem="{Binding SelectedServer, Mode=TwoWay}"/>
         <!-- 帳號區 -->
@@ -60,6 +62,7 @@
         </Button>
         <!-- 主題切換Command="{Binding ThemeChangeCommand}" -->
         <ToggleButton Width="60" Height="30" BorderThickness="0" Margin="0,10,0,0"
+                    IsEnabled="{Binding IsSettingsEnabled}"
                     Command="{Binding ThemeChangeCommand}"
                     IsChecked="{Binding IsDarkMode, Mode=TwoWay}"
                     HorizontalAlignment="Center" VerticalAlignment="Bottom">

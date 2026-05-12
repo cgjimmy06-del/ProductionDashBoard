@@ -61,13 +61,16 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private string errorinfo = "";
 
+        public bool IsSettingsEnabled { get; }
+
         public ICommand LoginCommand { get; }
         public ICommand LanguageChangeCommand { get; }
         public ICommand ThemeChangeCommand { get; }
         public Action<string, UserInfo>? OnLoginSuccess { get; set; }
 
-        public LoginViewModel()
+        public LoginViewModel(bool isSettingsEnabled = true)
         {
+            IsSettingsEnabled = isSettingsEnabled;
             // RelayCommand<T> 可以直接接收參數型別
             LanguageChangeCommand = new RelayCommand(() => languageChange());
             ThemeChangeCommand = new RelayCommand(() => themeChange());
