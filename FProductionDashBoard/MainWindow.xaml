@@ -90,16 +90,75 @@
                 <Button ToolTip="貼上" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="ContentPaste" Width="20" Height="20"/>
                 </Button>
-                <Separator/>
+                <Button ToolTip="測試" Foreground="{DynamicResource TextPrimaryBrush}"
+                        Command="{Binding TestCommand}"
+                        Visibility="{x:Static local:App.DebugVisibility}">
+                    <materialDesign:PackIcon Kind="AbTesting" Width="20" Height="20"/>
+                </Button>
+            </ToolBar>
+            <!-- 視圖控制 ToolBar -->
+            <ToolBar Background="{DynamicResource PrimaryBackgroundBrush}">
                 <ToggleButton ToolTip="{DynamicResource ToggleLogPanelTooltip}"
                               Foreground="{DynamicResource TextPrimaryBrush}"
                               IsChecked="{Binding IsLogPanelVisible, Mode=TwoWay}">
                     <materialDesign:PackIcon Kind="ConsoleLine" Width="20" Height="20"/>
                 </ToggleButton>
-                <Button ToolTip="測試" Foreground="{DynamicResource TextPrimaryBrush}"
-                        Command="{Binding TestCommand}"
-                        Visibility="{x:Static local:App.DebugVisibility}">
-                    <materialDesign:PackIcon Kind="AbTesting" Width="20" Height="20"/>
+                <Separator/>
+                <Button ToolTip="單格" Foreground="{DynamicResource TextPrimaryBrush}"
+                        Command="{Binding SetLayoutCommand}"
+                        CommandParameter="{x:Static localvm:LayoutMode.Single}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CurrentLayout}" Value="{x:Static localvm:LayoutMode.Single}">
+                                    <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <materialDesign:PackIcon Kind="ViewDashboard" Width="18" Height="18"/>
+                </Button>
+                <Button ToolTip="左右分割" Foreground="{DynamicResource TextPrimaryBrush}"
+                        Command="{Binding SetLayoutCommand}"
+                        CommandParameter="{x:Static localvm:LayoutMode.HorizontalSplit}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CurrentLayout}" Value="{x:Static localvm:LayoutMode.HorizontalSplit}">
+                                    <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <materialDesign:PackIcon Kind="ViewSplitVertical" Width="18" Height="18"/>
+                </Button>
+                <Button ToolTip="上下分割" Foreground="{DynamicResource TextPrimaryBrush}"
+                        Command="{Binding SetLayoutCommand}"
+                        CommandParameter="{x:Static localvm:LayoutMode.VerticalSplit}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CurrentLayout}" Value="{x:Static localvm:LayoutMode.VerticalSplit}">
+                                    <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <materialDesign:PackIcon Kind="ViewSplitHorizontal" Width="18" Height="18"/>
+                </Button>
+                <Button ToolTip="四格" Foreground="{DynamicResource TextPrimaryBrush}"
+                        Command="{Binding SetLayoutCommand}"
+                        CommandParameter="{x:Static localvm:LayoutMode.Quad}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CurrentLayout}" Value="{x:Static localvm:LayoutMode.Quad}">
+                                    <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <materialDesign:PackIcon Kind="ViewGrid" Width="18" Height="18"/>
                 </Button>
             </ToolBar>
         </ToolBarTray>
@@ -348,19 +407,112 @@
                     <RowDefinition Height="5" />
                     <RowDefinition Height="150" />
                 </Grid.RowDefinitions>
-                <!-- 主內容UI (預設2欄儀表板卡片) ScrollViewer/WrapPanel -->
+                <!-- 主內容區域：版型由 CurrentLayout 控制 -->
                 <Grid Grid.Row="0">
-                    <!-- 後續定義分割區塊 -->
-                    <!--<ItemsControl ItemsSource="{Binding Cards}">
-                        <ItemsControl.Resources>
-                            <DataTemplate DataType="{x:Type localvm:DeviceCardContainerViewModel}">
-                                <localuc:DeviceCardContainer />
-                            </DataTemplate>
-                        </ItemsControl.Resources>
-                    </ItemsControl>-->
-                    <!-- 使用者自訂卡片區塊 -->
-                    <ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding MainCard}" />
+                    <!-- Single（預設） -->
+                    <ContentControl Content="{Binding MainCard}">
+                        <ContentControl.Style>
+                            <Style TargetType="ContentControl">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentLayout}" Value="{x:Static localvm:LayoutMode.HorizontalSplit}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding CurrentLayout}" Value="{x:Static localvm:LayoutMode.VerticalSplit}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding CurrentLayout}" Value="{x:Static localvm:LayoutMode.Quad}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ContentControl.Style>
+                    </ContentControl>
 
+                    <!-- HorizontalSplit：左右兩格 -->
+                    <Grid>
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentLayout}" Value="{x:Static localvm:LayoutMode.HorizontalSplit}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <localuc:PanelView DataContext="{Binding Panel1}" Grid.Column="0"/>
+                        <GridSplitter Grid.Column="1"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                      Background="{DynamicResource BorderBrush}"
+                                      ResizeDirection="Columns"/>
+                        <localuc:PanelView DataContext="{Binding Panel2}" Grid.Column="2"/>
+                    </Grid>
+
+                    <!-- VerticalSplit：上下兩格 -->
+                    <Grid>
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentLayout}" Value="{x:Static localvm:LayoutMode.VerticalSplit}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="5"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <localuc:PanelView DataContext="{Binding Panel1}" Grid.Row="0"/>
+                        <GridSplitter Grid.Row="1"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                      Background="{DynamicResource BorderBrush}"
+                                      ResizeDirection="Rows"/>
+                        <localuc:PanelView DataContext="{Binding Panel2}" Grid.Row="2"/>
+                    </Grid>
+
+                    <!-- Quad：四格 2×2 -->
+                    <Grid>
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentLayout}" Value="{x:Static localvm:LayoutMode.Quad}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="5"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <localuc:PanelView DataContext="{Binding Panel1}" Grid.Row="0" Grid.Column="0"/>
+                        <localuc:PanelView DataContext="{Binding Panel2}" Grid.Row="0" Grid.Column="2"/>
+                        <localuc:PanelView DataContext="{Binding Panel3}" Grid.Row="2" Grid.Column="0"/>
+                        <localuc:PanelView DataContext="{Binding Panel4}" Grid.Row="2" Grid.Column="2"/>
+                        <GridSplitter Grid.Column="1" Grid.RowSpan="3"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                      Background="{DynamicResource BorderBrush}"
+                                      ResizeDirection="Columns"/>
+                        <GridSplitter Grid.Row="1" Grid.ColumnSpan="3"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                      Background="{DynamicResource BorderBrush}"
+                                      ResizeDirection="Rows"/>
+                    </Grid>
                 </Grid>
                 <!-- GridSplitter -->
                 <GridSplitter Grid.Row="1"
