@@ -23,6 +23,9 @@ namespace FProductionDashBoard.ViewModels
             [NavMode.SystemSettings]= new(IsRepeatable: false, ClearOnUserChange: true),
         };
 
-        public static NavModePolicy Of(NavMode mode) => _map[mode];
+        public static NavModePolicy Of(NavMode mode) =>
+            _map.TryGetValue(mode, out var policy) ? policy :
+            throw new InvalidOperationException(
+                $"NavMode '{mode}' has no policy defined in NavModeDescriptor._map.");
     }
 }

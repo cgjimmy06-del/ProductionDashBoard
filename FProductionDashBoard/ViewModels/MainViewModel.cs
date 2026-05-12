@@ -291,9 +291,14 @@ namespace FProductionDashBoard.ViewModels
             if (s.MissedCheckEnabled && _missedCheckCounter >= s.MissedCheckIntervalSec)
             {
                 _missedCheckCounter = 0;
+                var containerSnapshot = new[] { _deviceContainer }
+                    .Concat(_panelContainers.Values)
+                    .Where(c => c != null)
+                    .Cast<DeviceCardContainerViewModel>()
+                    .ToList();
                 _ = Task.Run(async () =>
                 {
-                    try { await CheckMissedInspectionsAsync(); }
+                    try { await CheckMissedInspectionsAsync(containerSnapshot); }
                     catch (Exception ex) { _core.Log.AddLog($"[CheckMissedInspectionsAsync] {ex.Message}"); }
                 });
             }
@@ -325,14 +330,13 @@ namespace FProductionDashBoard.ViewModels
             finally
             { Interlocked.Exchange(ref _isSyncing, 0); }
         }
-        // 未巡檢偵測與插入 -- 巡檢狀態更新 (5分鐘檢查) (若離線狀態延至下個工作日，則前日未插入之資料將會遺漏) ** 
-        private async Task CheckMissedInspectionsAsync()
+        // 未巡檢偵測與插入 -- 巡檢狀態更新 (5分鐘檢查) (若離線狀態延至下個工作日，則前日未插入之資料將會遺漏) **
+        private async Task CheckMissedInspectionsAsync(
+            IReadOnlyList<DeviceCardContainerViewModel> containers)
         {
             if (CommonLists.TimeSlotsList.Count == 0) return;
-            var activeDevices = new[] { _deviceContainer }
-                .Concat(_panelContainers.Values)
-                .Where(c => c != null)
-                .SelectMany(c => c!.Devices)
+            var activeDevices = containers
+                .SelectMany(c => c.Devices)
                 .Distinct()
                 .ToList();
             if (!activeDevices.Any()) return;
@@ -443,8 +447,8 @@ namespace FProductionDashBoard.ViewModels
         public void SwitchMode(NavMode mode)
         {
             if (mode.Equals(CurrentNavMode)) return;
-            CurrentNavMode = mode;
-            SwitchPanelContent(Panel1, mode); // 回傳值由 Panel1 的 revert 機制處理
+            bool success = SwitchPanelContent(Panel1, mode);
+            if (success) CurrentNavMode = mode;
         }
 
         private bool SwitchPanelContent(PanelViewModel panel, NavMode mode)
@@ -515,10 +519,7 @@ namespace FProductionDashBoard.ViewModels
         {
             CurrentLayout = layout;
             bool isMulti = layout != LayoutMode.Single;
-            Panel1.ShowHeader = isMulti;
-            Panel2.ShowHeader = isMulti;
-            Panel3.ShowHeader = isMulti;
-            Panel4.ShowHeader = isMulti;
+            foreach (var p in _panels) p.ShowHeader = isMulti;
         }
 
 
