@@ -47,6 +47,7 @@ namespace FProductionDashBoard.ViewModels
         public PanelViewModel Panel2 { get; }
         public PanelViewModel Panel3 { get; }
         public PanelViewModel Panel4 { get; }
+        private PanelViewModel[] _panels = [];
         public IRelayCommand<LayoutMode> SetLayoutCommand { get; }
 
         #region  -- DI注入資源 --
@@ -167,6 +168,7 @@ namespace FProductionDashBoard.ViewModels
             Panel2 = new PanelViewModel(SwitchPanelContent);
             Panel3 = new PanelViewModel(SwitchPanelContent);
             Panel4 = new PanelViewModel(SwitchPanelContent);
+            _panels = [Panel1, Panel2, Panel3, Panel4];
             SetLayoutCommand = new RelayCommand<LayoutMode>(SetLayout);
 
             // (訂閱端) 使用者變更事件，刷新命令狀態與使用者顯示 (若 _authService 在執行緒池)
@@ -175,6 +177,17 @@ namespace FProductionDashBoard.ViewModels
             _onUserChanged = () =>
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
+                    // 依 Policy 清除管理類 panel（監控類如 Operation 保留）
+                    foreach (var p in _panels)
+                    {
+                        if (NavModeDescriptor.Of(p.CurrentNavMode).ClearOnUserChange)
+                        {
+                            p.Content = null;
+                            p.SetMode(NavMode.Home);
+                        }
+                    }
+                    MainCard = Panel1.Content;
+
                     if (!_core.Authorization.IsLoggedIn)
                     {
                         _deviceContainer = null;
@@ -317,11 +330,16 @@ namespace FProductionDashBoard.ViewModels
         // 未巡檢偵測與插入 -- 巡檢狀態更新 (5分鐘檢查) (若離線狀態延至下個工作日，則前日未插入之資料將會遺漏) ** 
         private async Task CheckMissedInspectionsAsync()
         {
-            var activeDevices = _deviceContainer?.Devices;
-            if (activeDevices == null || !activeDevices.Any()) return;
             if (CommonLists.TimeSlotsList.Count == 0) return;
+            var activeDevices = new[] { _deviceContainer }
+                .Concat(_panelContainers.Values)
+                .Where(c => c != null)
+                .SelectMany(c => c!.Devices)
+                .Distinct()
+                .ToList();
+            if (!activeDevices.Any()) return;
 
-            var deviceSnapshot = activeDevices.ToList();
+            var deviceSnapshot = activeDevices;
             foreach (var card in deviceSnapshot)
             {
                 try
@@ -429,37 +447,50 @@ namespace FProductionDashBoard.ViewModels
         {
             if (mode.Equals(CurrentNavMode)) return;
             CurrentNavMode = mode;
-            SwitchPanelContent(Panel1, mode);
+            SwitchPanelContent(Panel1, mode); // 回傳值由 Panel1 的 revert 機制處理
         }
 
-        private void SwitchPanelContent(PanelViewModel panel, NavMode mode)
+        private bool SwitchPanelContent(PanelViewModel panel, NavMode mode)
         {
+            var policy = NavModeDescriptor.Of(mode);
+
+            // 排他性：singleton mode 若其他 panel 已顯示，將其清空
+            if (!policy.IsRepeatable)
+            {
+                var occupied = _panels.FirstOrDefault(p => p != panel && p.CurrentNavMode == mode);
+                if (occupied != null)
+                {
+                    occupied.Content = null;
+                    occupied.SetMode(NavMode.Home);
+                }
+            }
+
             object? content = null;
             switch (mode)
             {
                 case NavMode.Operation:
                     if (!_core.Authorization.HasAnyPermission(
                         PermissionId.OperateInspection, PermissionId.OperateMaterial,
-                        PermissionId.OperateTuning, PermissionId.Order)) return;
+                        PermissionId.OperateTuning, PermissionId.Order)) return false;
                     content = GetOrCreateContainer(panel);
                     break;
 
                 case NavMode.List:
-                    if (!_core.Authorization.HasPermission(PermissionId.Edit)) return;
+                    if (!_core.Authorization.HasPermission(PermissionId.Edit)) return false;
                     content = _serviceProvider.GetRequiredService<SettingViewModel>();
                     break;
 
                 case NavMode.Equipment:
-                    if (!_core.Authorization.HasPermission(PermissionId.Setting)) return;
+                    if (!_core.Authorization.HasPermission(PermissionId.Setting)) return false;
                     content = _serviceProvider.GetRequiredService<HardwareViewModel>();
                     break;
 
                 case NavMode.Order:
-                    if (!_core.Authorization.HasAnyPermission(PermissionId.Order, PermissionId.Schedule)) return;
+                    if (!_core.Authorization.HasAnyPermission(PermissionId.Order, PermissionId.Schedule)) return false;
                     break;
 
                 case NavMode.SystemSettings:
-                    if (!_core.Authorization.HasPermission(PermissionId.Setting)) return;
+                    if (!_core.Authorization.HasPermission(PermissionId.Setting)) return false;
                     var ssVm = _serviceProvider.GetRequiredService<SystemSettingsViewModel>();
                     ssVm.LoadFromSettings();
                     content = ssVm;
@@ -468,6 +499,7 @@ namespace FProductionDashBoard.ViewModels
             panel.SetMode(mode);
             panel.Content = content;
             if (panel == Panel1) MainCard = content;
+            return true;
         }
 
         private DeviceCardContainerViewModel GetOrCreateContainer(PanelViewModel panel)

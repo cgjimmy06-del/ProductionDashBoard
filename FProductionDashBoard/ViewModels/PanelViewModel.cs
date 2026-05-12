@@ -6,8 +6,9 @@ namespace FProductionDashBoard.ViewModels
 {
     public partial class PanelViewModel : ObservableObject
     {
-        private readonly Action<PanelViewModel, NavMode> _switchHandler;
+        private readonly Func<PanelViewModel, NavMode, bool> _switchHandler;
         private bool _isSwitching;
+        private NavMode _previousNavMode = NavMode.Home;
 
         [ObservableProperty]
         private object? content;
@@ -20,7 +21,7 @@ namespace FProductionDashBoard.ViewModels
 
         public IEnumerable<NavMode> AvailableModes { get; } = Enum.GetValues<NavMode>();
 
-        public PanelViewModel(Action<PanelViewModel, NavMode> switchHandler)
+        public PanelViewModel(Func<PanelViewModel, NavMode, bool> switchHandler)
         {
             _switchHandler = switchHandler;
         }
@@ -28,7 +29,9 @@ namespace FProductionDashBoard.ViewModels
         partial void OnCurrentNavModeChanged(NavMode value)
         {
             if (_isSwitching) return;
-            _switchHandler(this, value);
+            bool success = _switchHandler(this, value);
+            if (!success) SetMode(_previousNavMode);
+            else _previousNavMode = value;
         }
 
         internal void SetMode(NavMode mode)
