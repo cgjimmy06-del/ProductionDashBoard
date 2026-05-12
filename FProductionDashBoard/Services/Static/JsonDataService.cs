@@ -10,7 +10,7 @@ namespace FProductionDashBoard.Services
 {
     public static class JsonDataService // 待翻譯 後續須統一處理 try catch 的logging
     {
-        // 存在使用者的AppData，後續可能需要
+        // 存在使用者的AppData，後續可能需要 ApplicationData, LocalApplicationData
         //private static readonly string baseFolder = Path.Combine(
         //    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FProductionDashBoard");
 
