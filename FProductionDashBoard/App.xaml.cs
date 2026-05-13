@@ -111,9 +111,17 @@ namespace FProductionDashBoard
                 services.AddScoped<ViewModels.SystemSettingsViewModel>();
 
                 _serviceProvider = services.BuildServiceProvider();
+                // 啟動登入權限
                 var authService = _serviceProvider.GetRequiredService<Services.AuthorizationService>();
+                try 
+                {
+                    using var scope = _serviceProvider.CreateScope();
+                    var dataService = scope.ServiceProvider.GetRequiredService<Services.IDataService>();
+                    var roles = await dataService.GetAllRolesAsync();
+                    authService.SetCachedRoles(roles);
+                }
+                catch { }
                 await authService.InitializeAsync(user);
-
                 // 預設啟動一台讀卡機 (以最後連線的設備為準)
                 _serviceProvider.GetRequiredService<Services.MultiCardReaderService>()
                     .AddReader(FProductionDashBoard.Properties.Settings.Default.ReaderPort,

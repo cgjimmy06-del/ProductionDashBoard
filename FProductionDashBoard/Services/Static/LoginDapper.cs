@@ -63,30 +63,44 @@ namespace FProductionDashBoard.Services
             cmd.Parameters.AddWithValue("@Userid", userid);
             cmd.Parameters.AddWithValue("@Password", password);
 
-            conn.Open();
-            using var reader = cmd.ExecuteReader();
-            if (reader.Read())
+            try
             {
-                // 手動對應，確保欄位正確
-                var employeeId = reader["employee_id"] != DBNull.Value ? Convert.ToInt32(reader["employee_id"]) : 1;
-                var cardId = reader["card_id"].ToString() ?? "";
-                var userId = reader["user_id"].ToString() ?? "";
-                var name = reader["name"].ToString() ?? "";
-                var roleId = reader["role_id"] != DBNull.Value ? Convert.ToInt32(reader["role_id"]) : 1;
-                var email = reader["email"].ToString() ?? "";
-
-                return new UiModels.UserInfo
+                conn.Open();
+                using var reader = cmd.ExecuteReader();
+                if (reader.Read())
                 {
-                    UserId = userId,
-                    Name = name,
-                    RoleId = roleId,
-                    Id = employeeId,
-                    CardId = cardId,
-                    Email = email
-                };
+                    // 手動對應，確保欄位正確
+                    var employeeId = reader["employee_id"] != DBNull.Value ? Convert.ToInt32(reader["employee_id"]) : 1;
+                    var cardId = reader["card_id"].ToString() ?? "";
+                    var userId = reader["user_id"].ToString() ?? "";
+                    var name = reader["name"].ToString() ?? "";
+                    var roleId = reader["role_id"] != DBNull.Value ? Convert.ToInt32(reader["role_id"]) : 1;
+                    var email = reader["email"].ToString() ?? "";
+
+                    return new UiModels.UserInfo
+                    {
+                        UserId = userId,
+                        Name = name,
+                        RoleId = roleId,
+                        Id = employeeId,
+                        CardId = cardId,
+                        Email = email
+                    };
+                }
+                return null;
             }
-            return null;
-            //return conn.QueryFirstOrDefault<UiModels.UserInfo>(sqlStr, new { Userid = userid, Password = password });
+            catch (SqlException sqlex)
+            {
+                Debug.WriteLine($"[checkConnection] SQL: {sqlex.Message}"); return null;
+            }
+            catch (TaskCanceledException)
+            {
+                Debug.WriteLine("[checkConnection] Task cancelled"); return null;
+            }
+            catch (Exception normalex)
+            {
+                Debug.WriteLine($"[checkConnection] {normalex.Message}"); return null;
+            }
         }
     }
 }

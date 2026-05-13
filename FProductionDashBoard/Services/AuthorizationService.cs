@@ -23,10 +23,10 @@ namespace FProductionDashBoard.Services
 
     public class AuthorizationService
     {
-        private readonly Repositories.IRolePermissionRepository _rolePermissionRepo;
+        private List<Models.Role>? _cachedRoles;
         private HashSet<int> _userPermissions = [];
 
-        private readonly UiModels.UserInfo _defaultUser = 
+        private readonly UiModels.UserInfo _defaultUser =
             new UiModels.UserInfo { UserId = "visitor", Name = "訪客", RoleId = 1, Id = 2 };
 
         public UiModels.UserInfo? CurrentUser { get; private set; }
@@ -34,42 +34,36 @@ namespace FProductionDashBoard.Services
 
         public event Action? UserChanged;
 
-        public AuthorizationService(Repositories.IRolePermissionRepository rolePermissionRepo)
+        public void SetCachedRoles(List<Models.Role> roles)
         {
-            _rolePermissionRepo = rolePermissionRepo;
+            _cachedRoles = roles;
         }
 
-        public async Task InitializeAsync(UiModels.UserInfo user)
+        public Task InitializeAsync(UiModels.UserInfo user)
         {
             CurrentUser = user;
 
-            // 訪客不需連線，直接套用預設唯讀權限
-            if (user.UserId == _defaultUser.UserId) _userPermissions = [PermissionId.View];
+            if (user.UserId == _defaultUser.UserId)
+                _userPermissions = [PermissionId.View];
+            else if (_cachedRoles != null)
+            {
+                var role = _cachedRoles.FirstOrDefault(r => r.RoleId == user.RoleId);
+                _userPermissions = role?.RolePermissions
+                    .Select(rp => rp.PermissionId)
+                    .ToHashSet() ?? [];
+            }
             else
             {
-                try
-                {
-                    var roles = await _rolePermissionRepo.GetAllRolesAsync().ConfigureAwait(false);
-                    var role = roles.FirstOrDefault(r => r.RoleId == user.RoleId);
-
-                    _userPermissions = role?.RolePermissions
-                        .Select(rp => rp.PermissionId)
-                        .ToHashSet() ?? [];
-                }
-                catch
-                {
-                    // 連線失敗時降為訪客離線模式
-                    CurrentUser = _defaultUser;
-                    _userPermissions = [PermissionId.View];
-                }
+                // 從未取得角色資料（完全離線啟動），降為訪客
+                CurrentUser = _defaultUser;
+                _userPermissions = [PermissionId.View];
             }
-            UserChanged?.Invoke(); // 呼叫端
+
+            UserChanged?.Invoke();
+            return Task.CompletedTask;
         }
 
-        public async Task LogoutAsync()
-        {
-            await InitializeAsync(_defaultUser).ConfigureAwait(false);
-        }
+        public Task LogoutAsync() => InitializeAsync(_defaultUser);
 
         public bool HasPermission(int permissionId) => _userPermissions.Contains(permissionId);
 

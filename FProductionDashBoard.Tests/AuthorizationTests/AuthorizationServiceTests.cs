@@ -24,7 +24,7 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
             };
             repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role> { role });
 
-            var svc = new AuthorizationService(repo.Object);
+            var svc = new AuthorizationService();
             await svc.InitializeAsync(new UserInfo { UserId = "u1", Name = "n1", RoleId = roleId });
             return svc;
         }
@@ -33,7 +33,7 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
         {
             var repo = new Mock<IRolePermissionRepository>();
             repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role>());
-            var svc = new AuthorizationService(repo.Object);
+            var svc = new AuthorizationService();
             await svc.InitializeAsync(new UserInfo { UserId = "u1", Name = "n1", RoleId = 99 });
             return svc;
         }
@@ -68,7 +68,7 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
         {
             var repo = new Mock<IRolePermissionRepository>();
             repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role>());
-            var svc = new AuthorizationService(repo.Object);
+            var svc = new AuthorizationService();
 
             bool eventRaised = false;
             svc.UserChanged += () => eventRaised = true;
@@ -109,7 +109,7 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
         {
             var repo = new Mock<IRolePermissionRepository>();
             repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role>());
-            var svc = new AuthorizationService(repo.Object);
+            var svc = new AuthorizationService();
             await svc.InitializeAsync(new UserInfo { UserId = "visitor", Name = "n1", RoleId = 1 });
             Assert.False(svc.IsLoggedIn);
         }
@@ -121,7 +121,7 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
         {
             var repo = new Mock<IRolePermissionRepository>();
             repo.Setup(r => r.GetAllRolesAsync()).ThrowsAsync(new Exception("connection failed"));
-            var svc = new AuthorizationService(repo.Object);
+            var svc = new AuthorizationService();
 
             await svc.InitializeAsync(new UserInfo { UserId = "admin", Name = "Admin", RoleId = 0 });
 
@@ -138,7 +138,7 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
         {
             var repo = new Mock<IRolePermissionRepository>();
             repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role>());
-            var svc = new AuthorizationService(repo.Object);
+            var svc = new AuthorizationService();
             await svc.InitializeAsync(new UserInfo { UserId = "admin", Name = "n1", RoleId = 0 });
 
             await svc.LogoutAsync();
@@ -152,7 +152,7 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
         {
             var repo = new Mock<IRolePermissionRepository>();
             repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role>());
-            var svc = new AuthorizationService(repo.Object);
+            var svc = new AuthorizationService();
             await svc.InitializeAsync(new UserInfo { UserId = "admin", Name = "n1", RoleId = 0 });
 
             int eventCount = 0;
