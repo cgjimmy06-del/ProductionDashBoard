@@ -120,8 +120,16 @@ namespace FProductionDashBoard.ViewModels
         // 上下載設備清單 (可供外部快速上下載按鈕)
         public void DownloadDevices()
         {
-            Services.JsonDataService.Save(SelectedDevices, defaultDevicesFile);
-            DialogErrorString = Properties.Resources.ComStrDownloaded;
+            try
+            {
+                Services.JsonDataService.Save(SelectedDevices, defaultDevicesFile);
+                DialogErrorString = Properties.Resources.ComStrDownloaded;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DownloadDevices] {ex.Message}");
+                DialogErrorString = "設備清單儲存失敗";
+            }
         }
         public void UploadDevices()
         {

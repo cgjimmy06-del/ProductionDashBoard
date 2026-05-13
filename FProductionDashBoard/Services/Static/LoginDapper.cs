@@ -40,15 +40,15 @@ namespace FProductionDashBoard.Services
             }
             catch (SqlException sqlex)
             {
-                Debug.WriteLine($"SQL error: {sqlex.Message}"); return false; throw;
+                Debug.WriteLine($"[checkConnection] SQL: {sqlex.Message}"); return false;
             }
             catch (TaskCanceledException)
             {
-                Debug.WriteLine("Task Canceled"); return false; throw;
+                Debug.WriteLine("[checkConnection] Task cancelled"); return false;
             }
             catch (Exception normalex)
             {
-                Debug.WriteLine($"error: {normalex.Message}"); return false; throw;
+                Debug.WriteLine($"[checkConnection] {normalex.Message}"); return false;
             }
         }
         public static UiModels.UserInfo? validateUser(string serverKey, string userid, string password)

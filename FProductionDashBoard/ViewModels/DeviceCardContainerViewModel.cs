@@ -55,7 +55,7 @@ namespace FProductionDashBoard.ViewModels
             _onUserChanged = () => OnPropertyChanged(nameof(CurrentUser));
             _core.Authorization.UserChanged += _onUserChanged;
         }
-        // 待翻譯
+        
         private async Task FirstArticleInsAll()
         {
             if (!Devices.Any()) return;
@@ -87,16 +87,14 @@ namespace FProductionDashBoard.ViewModels
                     }
                     catch (BusinessRuleException ex)
                     {
-                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
-                        $"業務規則異常", LogLevel.Error);
-                        _core.Log.AddErrorLog($"FirstInspection BusinessRuleEx: {ex.Message}");
+                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - 首件業務規則異常", LogLevel.Error);
+                        _core.Log.AddErrorLog($"[FirstArticleInsAll] {ex.Message}");
                         idevice.FirstInspectionStatus = false;
                     }
                     catch (Exception ex)
                     {
-                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
-                            $"首件紀錄上傳異常");
-                        _core.Log.AddErrorLog($"FirstInspection Ex: {ex.Message}");
+                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - 首件紀錄上傳失敗", LogLevel.Error);
+                        _core.Log.AddErrorLog($"[FirstArticleInsAll] {ex.Message}");
                         idevice.FirstInspectionStatus = false;
                     }
 
@@ -140,15 +138,13 @@ namespace FProductionDashBoard.ViewModels
                     }
                     catch (BusinessRuleException ex)
                     {
-                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
-                            $"業務規則異常", LogLevel.Error);
-                        _core.Log.AddErrorLog($"RoutineInspection BusinessRuleEx: {ex.Message}");
+                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - 巡檢業務規則異常", LogLevel.Error);
+                        _core.Log.AddErrorLog($"[RoutineInsAll] {ex.Message}");
                     }
                     catch (Exception ex)
                     {
-                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
-                            $"巡檢紀錄上傳異常");
-                        _core.Log.AddErrorLog($"RoutineInspection Ex: {ex.Message}");
+                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - 巡檢紀錄上傳失敗", LogLevel.Error);
+                        _core.Log.AddErrorLog($"[RoutineInsAll] {ex.Message}");
                     }
                 }
             }
@@ -174,8 +170,16 @@ namespace FProductionDashBoard.ViewModels
         }
         private void FastDownloadDevices()
         {
-            JsonDataService.Save(Devices.Select(s => s.Info), defaultDevicesFile);
-            _core.Log.AddLog($"{Properties.Resources.ComStrDownloaded}: {defaultDevicesFile}", LogLevel.Info);
+            try
+            {
+                JsonDataService.Save(Devices.Select(s => s.Info), defaultDevicesFile);
+                _core.Log.AddLog($"{Properties.Resources.ComStrDownloaded}: {defaultDevicesFile}", LogLevel.Info);
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("設備清單儲存失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[FastDownloadDevices] {ex.Message}");
+            }
         }
         private async Task FastUploadDevices()
         {
