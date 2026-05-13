@@ -108,6 +108,8 @@ namespace FProductionDashBoard.ViewModels
         public IRelayCommand SwitchModeCommand { get; }
         // 訊息窗
         public LogPanelViewModel LogPanel { get; }
+        // 外觀設定（供 Menu 直接切換語言/主題）
+        public SystemSettingsViewModel SystemSettings { get; }
         // 主視覺視窗
 
         private int _syncTickCounter = 0;
@@ -160,6 +162,10 @@ namespace FProductionDashBoard.ViewModels
 
             // 訊息面板 ViewModel
             LogPanel = sp.GetRequiredService<LogPanelViewModel>();
+
+            // 外觀設定 ViewModel（供 Menu 直接切換語言/主題）
+            SystemSettings = sp.GetRequiredService<SystemSettingsViewModel>();
+            SystemSettings.LoadFromSettings();
 
             // 版面配置 Panels
             Panel1 = new PanelViewModel(SwitchPanelContent);
