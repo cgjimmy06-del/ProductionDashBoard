@@ -76,7 +76,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task<List<DeviceInfo>> GetDevicesAsync()
         {
             if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Equipment repository connection failed");
+                throw new InvalidOperationException("[GetDevicesAsync] 設備清單 Repository 連線失敗");
             var list = await EquipmentRep.GetAllAsync().ConfigureAwait(false);
             return list.Select(eq => new DeviceInfo
             {
@@ -95,7 +95,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task<List<UserInfo>> GetUsersAsync()
         {
             if (!await EmployeeRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Employee repository connection failed");
+                throw new InvalidOperationException("[GetUsersAsync] 人員清單 Repository 連線失敗");
             var list = await EmployeeRep.GetAllAsync().ConfigureAwait(false);
             return list.Select(us => new UserInfo
             {
@@ -112,7 +112,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task<List<MaterialInfo>> GetMaterialsAsync()
         {
             if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Material repository connection failed");
+                throw new InvalidOperationException("[GetMaterialsAsync] 材料清單 Repository 連線失敗");
             var list = await MaterialRep.GetAllAsync().ConfigureAwait(false);
             return list.Select(ma => new MaterialInfo
             {
@@ -130,7 +130,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task<List<ErrorInfo>> GetErrorsAsync(string languageCode)
         {
             if (!await ErrorListRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("ErrorList repository connection failed");
+                throw new InvalidOperationException("[GetErrorsAsync] 錯誤清單 Repository 連線失敗");
             var list = await ErrorListRep.GetMessagesWithOtherAsync(languageCode).ConfigureAwait(false);
             return list.Select(er => new ErrorInfo
             {
@@ -142,7 +142,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task<List<TimeSlotLookup>> GetTimeSlotsAsync()
         {
             if (!await TimeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+                throw new InvalidOperationException("[GetTimeSlotsAsync] 時段清單 Repository 連線失敗");
             var list = (await TimeSlotLookupRep.GetAllAsync().ConfigureAwait(false)).OrderBy(s => s.TimeSlotId);
             return list.ToList();
         }
@@ -161,9 +161,9 @@ namespace FProductionDashBoard.Services.V1
                 }
                 catch (SqlException ex)
                 {
-                    throw new DatabaseConnectionException("新增物料更換紀錄時資料庫發生錯誤。", ex);
+                    throw new DatabaseConnectionException("[AddReplacementRecordAsync] 新增物料更換紀錄失敗：資料庫錯誤", ex);
                 }
-                catch (TimeoutException tex) { throw new DatabaseConnectionException("新增物料更換紀錄時連線逾時。", tex); }
+                catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddReplacementRecordAsync] 新增物料更換紀錄失敗：連線逾時", tex); }
             }
 
             var payload = new ReplacementPayload
@@ -208,9 +208,9 @@ namespace FProductionDashBoard.Services.V1
                 }
                 catch (SqlException ex)
                 {
-                    throw new DatabaseConnectionException("新增首件紀錄時資料庫發生錯誤。", ex);
+                    throw new DatabaseConnectionException("[AddFirstInspectionAsync] 新增首件紀錄失敗：資料庫錯誤", ex);
                 }
-                catch (TimeoutException tex) { throw new DatabaseConnectionException("新增首件紀錄時連線逾時。", tex); }
+                catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddFirstInspectionAsync] 新增首件紀錄失敗：連線逾時", tex); }
             }
 
             var payload = new FirstInspectionPayload
@@ -244,7 +244,7 @@ namespace FProductionDashBoard.Services.V1
             {
                 bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, timeSlotId, BusinessDay).ConfigureAwait(false);
                 if (exists)
-                    throw new BusinessRuleException("同一設備同一時段已有紀錄，不能重複新增。");
+                    throw new BusinessRuleException("[AddRoutineInspectionAsync] 同一設備同一時段已有紀錄，不能重複新增");
 
                 try
                 {
@@ -254,9 +254,9 @@ namespace FProductionDashBoard.Services.V1
                 }
                 catch (SqlException ex)
                 {
-                    throw new DatabaseConnectionException("新增巡檢紀錄時資料庫發生錯誤。", ex);
+                    throw new DatabaseConnectionException("[AddRoutineInspectionAsync] 新增巡檢紀錄失敗：資料庫錯誤", ex);
                 }
-                catch (TimeoutException tex) { throw new DatabaseConnectionException("新增巡檢紀錄時連線逾時。", tex); }
+                catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddRoutineInspectionAsync] 新增巡檢紀錄失敗：連線逾時", tex); }
             }
 
             /// 進入離線DB前，確認local DB是否有相同紀錄 *** 只在同一個工作日有效 *** 同步確認 RoutineInspectionSyncHandler
@@ -299,7 +299,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task<List<int>> GetAllSlotsStatusAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {
             if (!await TimeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+                throw new InvalidOperationException("[GetAllSlotsStatusAsync] 時段 Repository 連線失敗");
 
             var slotsResult = await InspectionRecordRep.GetStatusForAllSlotsAsync(equipmentId, BusinessDay).ConfigureAwait(false);
 
@@ -329,7 +329,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {
             if (!(await InspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false)))
-                throw new InvalidOperationException("InspectionRecordRep repository connection failed");
+                throw new InvalidOperationException("[CheckAndInsertMissedInspectionAsync] 巡檢紀錄 Repository 連線失敗");
 
             // 搜尋已結束的時段
             var endedSlots = timeSlotLookups.Where(slot =>
@@ -358,7 +358,7 @@ namespace FProductionDashBoard.Services.V1
                 }
                 catch (SqlException ex)
                 {
-                    throw new DatabaseConnectionException($"補填時段 {slot.TimeSlotId} 失敗。", ex);
+                    throw new DatabaseConnectionException($"[CheckAndInsertMissedInspectionAsync] 補填時段 {slot.TimeSlotId} 失敗：資料庫錯誤", ex);
                 }
             }
         }
@@ -387,9 +387,9 @@ namespace FProductionDashBoard.Services.V1
                 }
                 catch (SqlException ex)
                 {
-                    throw new DatabaseConnectionException("新增帶點紀錄時資料庫發生錯誤。", ex);
+                    throw new DatabaseConnectionException("[AddTeachingRecordAsync] 新增帶點紀錄失敗：資料庫錯誤", ex);
                 }
-                catch (TimeoutException tex) { throw new DatabaseConnectionException("新增帶點紀錄時連線逾時。", tex); }
+                catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddTeachingRecordAsync] 新增帶點紀錄失敗：連線逾時", tex); }
             }
 
             var op = new PendingOperation
@@ -421,9 +421,9 @@ namespace FProductionDashBoard.Services.V1
                 }
                 catch (SqlException ex)
                 {
-                    throw new DatabaseConnectionException("新增調品質紀錄時資料庫發生錯誤。", ex);
+                    throw new DatabaseConnectionException("[AddOffsetRecordAsync] 新增調品質紀錄失敗：資料庫錯誤", ex);
                 }
-                catch (TimeoutException tex) { throw new DatabaseConnectionException("新增調品質紀錄時連線逾時。", tex); }
+                catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddOffsetRecordAsync] 新增調品質紀錄失敗：連線逾時", tex); }
             }
 
             var op = new PendingOperation
@@ -452,14 +452,14 @@ namespace FProductionDashBoard.Services.V1
         public async Task<List<Equipment>> GetAllEquipmentAsync()
         {
             if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Equipment repository connection failed");
+                throw new InvalidOperationException("[GetAllEquipmentAsync] 設備 Repository 連線失敗");
             return (await EquipmentRep.GetAllAsync().ConfigureAwait(false)).ToList();
         }
 
         public async Task AddEquipmentAsync(EquipmentFormDto dto)
         {
             if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Equipment repository connection failed");
+                throw new InvalidOperationException("[AddEquipmentAsync] 設備 Repository 連線失敗");
             var entity = new Equipment
             {
                 Code = dto.Code,
@@ -479,9 +479,9 @@ namespace FProductionDashBoard.Services.V1
         public async Task UpdateEquipmentAsync(EquipmentFormDto dto)
         {
             if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Equipment repository connection failed");
+                throw new InvalidOperationException("[UpdateEquipmentAsync] 設備 Repository 連線失敗");
             var entity = await EquipmentRep.GetByIdAsync(dto.Id!.Value).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"Equipment id={dto.Id} not found");
+                ?? throw new InvalidOperationException($"[UpdateEquipmentAsync] 找不到設備 ID={dto.Id}");
             entity.Code = dto.Code;
             entity.Name = dto.Name;
             entity.Ip = dto.Ip;
@@ -499,14 +499,14 @@ namespace FProductionDashBoard.Services.V1
         public async Task DeleteEquipmentAsync(int id)
         {
             if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Equipment repository connection failed");
+                throw new InvalidOperationException("[DeleteEquipmentAsync] 設備 Repository 連線失敗");
             await EquipmentRep.DeleteAsync(id).ConfigureAwait(false);
         }
 
         public async Task<List<EquipmentType>> GetEquipmentTypesAsync()
         {
             if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Equipment repository connection failed");
+                throw new InvalidOperationException("[GetEquipmentTypesAsync] 設備 Repository 連線失敗");
             return await EquipmentRep.GetEquipmentTypesAsync().ConfigureAwait(false);
         }
 
@@ -517,14 +517,14 @@ namespace FProductionDashBoard.Services.V1
         public async Task<List<Employee>> GetAllEmployeesAsync()
         {
             if (!await EmployeeRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Employee repository connection failed");
+                throw new InvalidOperationException("[GetAllEmployeesAsync] 人員 Repository 連線失敗");
             return (await EmployeeRep.GetAllAsync().ConfigureAwait(false)).ToList();
         }
 
         public async Task AddEmployeeAsync(EmployeeFormDto dto)
         {
             if (!await EmployeeRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Employee repository connection failed");
+                throw new InvalidOperationException("[AddEmployeeAsync] 人員 Repository 連線失敗");
             var entity = new Employee
             {
                 UserId = dto.UserId,
@@ -541,9 +541,9 @@ namespace FProductionDashBoard.Services.V1
         public async Task UpdateEmployeeAsync(EmployeeFormDto dto)
         {
             if (!await EmployeeRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Employee repository connection failed");
+                throw new InvalidOperationException("[UpdateEmployeeAsync] 人員 Repository 連線失敗");
             var entity = await EmployeeRep.GetByIdAsync(dto.Id!.Value).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"Employee id={dto.Id} not found");
+                ?? throw new InvalidOperationException($"[UpdateEmployeeAsync] 找不到人員 ID={dto.Id}");
             entity.UserId = dto.UserId;
             entity.Name = dto.Name;
             if (!string.IsNullOrEmpty(dto.Password))
@@ -559,7 +559,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task DeleteEmployeeAsync(int id)
         {
             if (!await EmployeeRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Employee repository connection failed");
+                throw new InvalidOperationException("[DeleteEmployeeAsync] 人員 Repository 連線失敗");
             await EmployeeRep.DeleteAsync(id).ConfigureAwait(false);
         }
 
@@ -570,21 +570,21 @@ namespace FProductionDashBoard.Services.V1
         public async Task<List<Material>> GetAllMaterialsAsync()
         {
             if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Material repository connection failed");
+                throw new InvalidOperationException("[GetAllMaterialsAsync] 材料 Repository 連線失敗");
             return (await MaterialRep.GetAllAsync().ConfigureAwait(false)).ToList();
         }
 
         public async Task<List<MaterialType>> GetMaterialTypesAsync()
         {
             if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Material repository connection failed");
+                throw new InvalidOperationException("[GetMaterialTypesAsync] 材料 Repository 連線失敗");
             return await MaterialRep.GetMaterialTypesAsync().ConfigureAwait(false);
         }
 
         public async Task AddMaterialAsync(MaterialFormDto dto)
         {
             if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Material repository connection failed");
+                throw new InvalidOperationException("[AddMaterialAsync] 材料 Repository 連線失敗");
             var entity = new Material
             {
                 MaterialCode = dto.MaterialCode,
@@ -602,9 +602,9 @@ namespace FProductionDashBoard.Services.V1
         public async Task UpdateMaterialAsync(MaterialFormDto dto)
         {
             if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Material repository connection failed");
+                throw new InvalidOperationException("[UpdateMaterialAsync] 材料 Repository 連線失敗");
             var entity = await MaterialRep.GetByIdAsync(dto.Id!.Value).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"Material id={dto.Id} not found");
+                ?? throw new InvalidOperationException($"[UpdateMaterialAsync] 找不到材料 ID={dto.Id}");
             entity.MaterialCode = dto.MaterialCode;
             entity.Name = dto.Name;
             entity.Brand = dto.Brand;
@@ -620,7 +620,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task DeleteMaterialAsync(int id)
         {
             if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Material repository connection failed");
+                throw new InvalidOperationException("[DeleteMaterialAsync] 材料 Repository 連線失敗");
             await MaterialRep.DeleteAsync(id).ConfigureAwait(false);
         }
 
@@ -631,20 +631,20 @@ namespace FProductionDashBoard.Services.V1
         public async Task<List<ErrorList>> GetAllErrorListsAsync()
         {
             if (!await ErrorListRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("ErrorList repository connection failed");
+                throw new InvalidOperationException("[GetAllErrorListsAsync] 錯誤清單 Repository 連線失敗");
             return await ErrorListRep.GetAllWithTranslationsAsync().ConfigureAwait(false);
         }
         public async Task<List<ListType>> GetListTypesAsync()
         {
             if (!await ErrorListRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("Material repository connection failed");
+                throw new InvalidOperationException("[GetListTypesAsync] 錯誤清單 Repository 連線失敗");
             return await ErrorListRep.GetListTypesAsync().ConfigureAwait(false);
         }
 
         public async Task AddErrorListAsync(ErrorListFormDto dto)
         {
             if (!await ErrorListRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("ErrorList repository connection failed");
+                throw new InvalidOperationException("[AddErrorListAsync] 錯誤清單 Repository 連線失敗");
             var error = new ErrorList
             {
                 ErrorCode = dto.ErrorCode,
@@ -664,16 +664,16 @@ namespace FProductionDashBoard.Services.V1
         public async Task UpdateErrorListAsync(ErrorListFormDto dto)
         {
             if (!await ErrorListRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("ErrorList repository connection failed");
+                throw new InvalidOperationException("[UpdateErrorListAsync] 錯誤清單 Repository 連線失敗");
             await ErrorListRep.UpdateErrorListAsync(dto).ConfigureAwait(false);
         }
 
         public async Task DeleteErrorListAsync(int id)
         {
             if (!await ErrorListRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("ErrorList repository connection failed");
+                throw new InvalidOperationException("[DeleteErrorListAsync] 錯誤清單 Repository 連線失敗");
             var entity = await ErrorListRep.GetByIdAsync(id).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"ErrorList id={id} not found");
+                ?? throw new InvalidOperationException($"[DeleteErrorListAsync] 找不到錯誤清單 ID={id}");
             await ErrorListRep.DeleteErrorAsync(entity.ErrorCode).ConfigureAwait(false);
         }
 
@@ -683,7 +683,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task AddTimeSlotAsync(TimeSlotFormDto dto)
         {
             if (!await TimeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+                throw new InvalidOperationException("[AddTimeSlotAsync] 時段 Repository 連線失敗");
             var entity = new TimeSlotLookup
             {
                 TimeSlotId = dto.TimeSlotId,
@@ -697,9 +697,9 @@ namespace FProductionDashBoard.Services.V1
         public async Task UpdateTimeSlotAsync(TimeSlotFormDto dto)
         {
             if (!await TimeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+                throw new InvalidOperationException("[UpdateTimeSlotAsync] 時段 Repository 連線失敗");
             var entity = await TimeSlotLookupRep.GetByIdAsync(dto.TimeSlotId).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"TimeSlot {dto.TimeSlotId} not found");
+                ?? throw new InvalidOperationException($"[UpdateTimeSlotAsync] 找不到時段 ID={dto.TimeSlotId}");
             entity.StartAt = dto.StartAt;
             entity.EndAt = dto.EndAt;
             entity.IsCrossDay = dto.IsCrossDay;
@@ -709,7 +709,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task DeleteTimeSlotAsync(int timeSlotId)
         {
             if (!await TimeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("TimeSlotLookup repository connection failed");
+                throw new InvalidOperationException("[DeleteTimeSlotAsync] 時段 Repository 連線失敗");
             await TimeSlotLookupRep.DeleteAsync(timeSlotId).ConfigureAwait(false);
         }
 
@@ -719,7 +719,7 @@ namespace FProductionDashBoard.Services.V1
         public async Task<List<Models.Role>> GetAllRolesAsync()
         {
             if (!await RolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("RolePermission repository connection failed");
+                throw new InvalidOperationException("[GetAllRolesAsync] 角色權限 Repository 連線失敗");
             return await RolePermissionRep.GetAllRolesAsync().ConfigureAwait(false);
         }
 
@@ -729,30 +729,30 @@ namespace FProductionDashBoard.Services.V1
         public async Task<List<Models.Permission>> GetAllPermissionsAsync()
         {
             if (!await RolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("RolePermission repository connection failed");
+                throw new InvalidOperationException("[GetAllPermissionsAsync] 角色權限 Repository 連線失敗");
             return await RolePermissionRep.GetAllPermissionsAsync().ConfigureAwait(false);
         }
 
         public async Task AddRoleAsync(RoleFormDto dto)
         {
             if (!await RolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("RolePermission repository connection failed");
+                throw new InvalidOperationException("[AddRoleAsync] 角色權限 Repository 連線失敗");
             await RolePermissionRep.AddRoleWithPermissionsAsync(dto.RoleId, dto.Name, dto.Description, dto.SelectedPermissionIds).ConfigureAwait(false);
         }
 
         public async Task UpdateRoleAsync(RoleFormDto dto)
         {
             if (!await RolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("RolePermission repository connection failed");
+                throw new InvalidOperationException("[UpdateRoleAsync] 角色權限 Repository 連線失敗");
             await RolePermissionRep.UpdateRoleWithPermissionsAsync(dto.Id!.Value, dto.Name, dto.Description, dto.SelectedPermissionIds).ConfigureAwait(false);
         }
 
         public async Task DeleteRoleAsync(int id)
         {
             if (!await RolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("RolePermission repository connection failed");
+                throw new InvalidOperationException("[DeleteRoleAsync] 角色權限 Repository 連線失敗");
             if (await RolePermissionRep.HasEmployeesByRoleAsync(id).ConfigureAwait(false))
-                throw new InvalidOperationException("此角色有員工使用，無法刪除");
+                throw new InvalidOperationException("[DeleteRoleAsync] 此角色有員工使用，無法刪除");
             await RolePermissionRep.DeleteAsync(id).ConfigureAwait(false);
         }
 
