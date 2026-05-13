@@ -102,7 +102,8 @@
 
         <!-- ToolBar 區域 -->
         <ToolBarTray DockPanel.Dock="Top" Background="{DynamicResource PrimaryBackgroundBrush}">
-            <ToolBar Background="{DynamicResource PrimaryBackgroundBrush}">
+            <ToolBar Loaded="ToolBar_Loaded"
+                     Background="{DynamicResource PrimaryBackgroundBrush}">
                 <Button ToolTip="新增" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="Add" Width="20" Height="20"/>
                 </Button>
@@ -129,7 +130,8 @@
                 </Button>
             </ToolBar>
             <!-- 視圖控制 ToolBar -->
-            <ToolBar Background="{DynamicResource PrimaryBackgroundBrush}">
+            <ToolBar Loaded="ToolBar_Loaded"
+                     Background="{DynamicResource PrimaryBackgroundBrush}">
                 <ToggleButton ToolTip="{DynamicResource ToggleLogPanelTooltip}"
                               Foreground="{DynamicResource TextPrimaryBrush}"
                               IsChecked="{Binding IsLogPanelVisible, Mode=TwoWay}">

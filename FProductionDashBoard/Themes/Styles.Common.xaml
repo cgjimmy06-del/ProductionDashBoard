@@ -158,6 +158,10 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style TargetType="MenuItem">
+        <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
+        <Setter Property="MinWidth" Value="60"/>
+    </Style>
 
     <!-- 具名樣式 -->
     <Style x:Key="NavButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignFlatButton}">

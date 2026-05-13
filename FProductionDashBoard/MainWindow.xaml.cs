@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace FProductionDashBoard
 {
@@ -13,6 +15,13 @@ namespace FProductionDashBoard
             InitializeComponent();
             DataContextChanged += OnDataContextChanged;
             Closed += OnWindowClosed;
+        }
+
+        private void ToolBar_Loaded(object sender, RoutedEventArgs e)
+        {
+            var toolBar = (ToolBar)sender;
+            if (toolBar.Template.FindName("OverflowButton", toolBar) is ToggleButton toolBarButton)
+                toolBarButton.SetResourceReference(Control.BackgroundProperty, "PrimaryBackgroundBrush");
         }
 
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
