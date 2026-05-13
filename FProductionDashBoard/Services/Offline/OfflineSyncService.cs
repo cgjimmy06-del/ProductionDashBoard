@@ -1,6 +1,7 @@
 using FProductionDashBoard.Repositories;
 using FProductionDashBoard.Services.Offline.Handlers;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 
 namespace FProductionDashBoard.Services.Offline
 {
@@ -41,8 +42,9 @@ namespace FProductionDashBoard.Services.Offline
                     await _cache.MarkSyncedAsync(op.Id).ConfigureAwait(false);
                     syncedCount++;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Debug.WriteLine($"[SyncPendingAsync] OperationType={op.OperationType} Id={op.Id}: {ex.Message}");
                     await _cache.MarkFailedAsync(op.Id).ConfigureAwait(false);
                     failedCount++;
                 }

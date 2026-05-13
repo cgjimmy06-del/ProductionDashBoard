@@ -170,8 +170,16 @@ namespace FProductionDashBoard.ViewModels
         }
         private void FastDownloadDevices()
         {
-            JsonDataService.Save(Devices.Select(s => s.Info), defaultDevicesFile);
-            _core.Log.AddLog($"{Properties.Resources.ComStrDownloaded}: {defaultDevicesFile}", LogLevel.Info);
+            try
+            {
+                JsonDataService.Save(Devices.Select(s => s.Info), defaultDevicesFile);
+                _core.Log.AddLog($"{Properties.Resources.ComStrDownloaded}: {defaultDevicesFile}", LogLevel.Info);
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("設備清單儲存失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[FastDownloadDevices] {ex.Message}");
+            }
         }
         private async Task FastUploadDevices()
         {

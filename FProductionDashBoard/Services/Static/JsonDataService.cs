@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FProductionDashBoard.Services
 {
-    public static class JsonDataService // 待翻譯 後續須統一處理 try catch 的logging
+    public static class JsonDataService
     {
         // 存在使用者的AppData，後續可能需要 ApplicationData, LocalApplicationData
         //private static readonly string baseFolder = Path.Combine(
@@ -38,7 +39,8 @@ namespace FProductionDashBoard.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Save Error] {ex.Message}");
+                Debug.WriteLine($"[Save] {ex.Message}");
+                throw;
             }
         }
 
@@ -59,7 +61,7 @@ namespace FProductionDashBoard.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Load Error] {ex.Message}");
+                Debug.WriteLine($"[Load] {ex.Message}");
                 return new T();
             }
         }
@@ -78,11 +80,13 @@ namespace FProductionDashBoard.Services
             }
             catch (OperationCanceledException)
             {
-                Console.WriteLine("[SaveAsync] Operation was cancelled.");
+                Debug.WriteLine("[SaveAsync] Operation cancelled");
+                throw;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[SaveAsync Error] {ex.Message}");
+                Debug.WriteLine($"[SaveAsync] {ex.Message}");
+                throw;
             }
         }
 
@@ -103,12 +107,12 @@ namespace FProductionDashBoard.Services
             }
             catch (OperationCanceledException)
             {
-                Console.WriteLine("[LoadAsync] Operation was cancelled.");
+                Debug.WriteLine("[LoadAsync] Operation cancelled");
                 return new T();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[LoadAsync Error] {ex.Message}");
+                Debug.WriteLine($"[LoadAsync] {ex.Message}");
                 return new T();
             }
         }
