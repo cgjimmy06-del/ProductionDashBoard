@@ -51,6 +51,7 @@ namespace FProductionDashBoard.Services
                 {
                     var roles = await _rolePermissionRepo.GetAllRolesAsync().ConfigureAwait(false);
                     var role = roles.FirstOrDefault(r => r.RoleId == user.RoleId);
+
                     _userPermissions = role?.RolePermissions
                         .Select(rp => rp.PermissionId)
                         .ToHashSet() ?? [];
