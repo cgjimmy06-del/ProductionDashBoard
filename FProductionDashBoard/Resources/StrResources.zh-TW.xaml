@@ -32,6 +32,8 @@
     <sys:String x:Key="MenuFileExit">結束(_X)</sys:String>
     <sys:String x:Key="MenuTools">工具(_T)</sys:String>
     <sys:String x:Key="MenuToolsSettings">進階設定(_,)</sys:String>
+    <sys:String x:Key="MenuViewLanguage">語言(_L)</sys:String>
+    <sys:String x:Key="MenuViewTheme">主題(_H)</sys:String>
     <sys:String x:Key="SystemSettingsNavButton">系統設定</sys:String>
     <sys:String x:Key="LogInButtonTooltip">登入</sys:String>
     <sys:String x:Key="LogOutButtonTooltip">登出</sys:String>

@@ -32,6 +32,8 @@
     <sys:String x:Key="MenuFileExit">Thoát(_X)</sys:String>
     <sys:String x:Key="MenuTools">_Công cụ</sys:String>
     <sys:String x:Key="MenuToolsSettings">Cài đặt _nâng cao</sys:String>
+    <sys:String x:Key="MenuViewLanguage">_Ngôn ngữ</sys:String>
+    <sys:String x:Key="MenuViewTheme">_Chủ đề</sys:String>
     <sys:String x:Key="SystemSettingsNavButton">Cài đặt hệ thống</sys:String>
     <sys:String x:Key="LogInButtonTooltip">Đăng nhập</sys:String>
     <sys:String x:Key="LogOutButtonTooltip">Đăng xuất</sys:String>

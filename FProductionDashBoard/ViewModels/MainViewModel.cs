@@ -108,6 +108,8 @@ namespace FProductionDashBoard.ViewModels
         public IRelayCommand SwitchModeCommand { get; }
         // 訊息窗
         public LogPanelViewModel LogPanel { get; }
+        // 外觀設定（供 Menu 直接切換語言/主題）
+        public SystemSettingsViewModel SystemSettings { get; }
         // 主視覺視窗
 
         private int _syncTickCounter = 0;
@@ -161,6 +163,10 @@ namespace FProductionDashBoard.ViewModels
             // 訊息面板 ViewModel
             LogPanel = sp.GetRequiredService<LogPanelViewModel>();
 
+            // 外觀設定 ViewModel（供 Menu 直接切換語言/主題）
+            SystemSettings = sp.GetRequiredService<SystemSettingsViewModel>();
+            SystemSettings.LoadFromSettings();
+
             // 版面配置 Panels
             Panel1 = new PanelViewModel(SwitchPanelContent);
             Panel2 = new PanelViewModel(SwitchPanelContent);
@@ -169,43 +175,11 @@ namespace FProductionDashBoard.ViewModels
             _panels = [Panel1, Panel2, Panel3, Panel4];
             SetLayoutCommand = new RelayCommand<LayoutMode>(SetLayout);
 
-            // (訂閱端) 使用者變更事件，刷新命令狀態與使用者顯示 (若 _authService 在執行緒池)
+            // 初始登入人員
             SystemUser = $"{Properties.Resources.ComStrSystemUser}: {_core.Authorization.CurrentUser!.Name}";
 
-            _onUserChanged = () =>
-                System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                {
-                    // 依 Policy 清除管理類 panel（監控類如 Operation 保留）
-                    foreach (var p in _panels)
-                    {
-                        if (NavModeDescriptor.Of(p.CurrentNavMode).ClearOnUserChange)
-                        {
-                            p.Content = null;
-                            p.SetMode(NavMode.Home);
-                        }
-                    }
-                    MainCard = Panel1.Content;
-
-                    if (!_core.Authorization.IsLoggedIn)
-                    {
-                        // _deviceContainer = null;
-                        // _panelContainers.Clear();
-                    }
-
-                    SwitchModeCommand.NotifyCanExecuteChanged();
-                    LogoutCommand.NotifyCanExecuteChanged();
-                    OnPropertyChanged(nameof(CurrentUser));
-                    OnPropertyChanged(nameof(IsLoggedIn));
-
-#if DEBUG // 測試函式用
-                    TestCommand.NotifyCanExecuteChanged();
-#endif
-                });
+            _onUserChanged = () => OnUserChanged();
             _core.Authorization.UserChanged += _onUserChanged;
-
-            // 新增儀表卡片區
-            //Cards.Add(new DeviceCardContainerViewModel(_log, _dataService, CurrentUser));
-
         }
 
         #region -- 載入初始化 與 計時器 --
@@ -261,7 +235,45 @@ namespace FProductionDashBoard.ViewModels
                 return [];
             }
         }
+        // 人員切換權限觸發事件
+        private void OnUserChanged()
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    // 依 Policy 清除管理類 panel（監控類如 Operation 保留）
+                    foreach (var p in _panels)
+                    {
+                        if (NavModeDescriptor.Of(p.CurrentNavMode).ClearOnUserChange)
+                        {
+                            p.Content = null;
+                            p.SetMode(NavMode.Home);
+                        }
+                    }
+                    MainCard = Panel1.Content;
 
+                    if (!_core.Authorization.IsLoggedIn)
+                    {
+                        // _deviceContainer = null;
+                        // _panelContainers.Clear();
+                    }
+
+                    SwitchModeCommand.NotifyCanExecuteChanged();
+                    LogoutCommand.NotifyCanExecuteChanged();
+                    OnPropertyChanged(nameof(CurrentUser));
+                    OnPropertyChanged(nameof(IsLoggedIn));
+
+#if DEBUG // 測試函式用
+                    TestCommand.NotifyCanExecuteChanged();
+#endif
+                }
+                catch (Exception ex)
+                {
+                    _core.Log.AddLog($"[OnUserChanged] {ex.Message}", LogLevel.Error);
+                }
+            });
+        }
         // Timer Tick 自動偵測邏輯
         private async void OnTimerTick(object? s, EventArgs e) => await OnTimerTickAsync();
         private async Task OnTimerTickAsync()

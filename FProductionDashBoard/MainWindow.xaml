@@ -62,6 +62,37 @@
                 <MenuItem Header="{DynamicResource MenuFileExit}"/>
             </MenuItem>
             <MenuItem Header="{DynamicResource MenuTools}">
+                <MenuItem Header="{DynamicResource MenuViewLanguage}">
+                    <MenuItem Header="中文" IsCheckable="True"
+                              IsChecked="{Binding SystemSettings.CurrentLanguage,
+                                  Converter={StaticResource EqualToConverter},
+                                  ConverterParameter='zh-TW', Mode=OneWay}"
+                              Command="{Binding SystemSettings.SetLanguageCommand}"
+                              CommandParameter="zh-TW"/>
+                    <MenuItem Header="English" IsCheckable="True"
+                              IsChecked="{Binding SystemSettings.CurrentLanguage,
+                                  Converter={StaticResource EqualToConverter},
+                                  ConverterParameter='en-US', Mode=OneWay}"
+                              Command="{Binding SystemSettings.SetLanguageCommand}"
+                              CommandParameter="en-US"/>
+                    <MenuItem Header="Tiếng Việt" IsCheckable="True"
+                              IsChecked="{Binding SystemSettings.CurrentLanguage,
+                                  Converter={StaticResource EqualToConverter},
+                                  ConverterParameter='vi-VN', Mode=OneWay}"
+                              Command="{Binding SystemSettings.SetLanguageCommand}"
+                              CommandParameter="vi-VN"/>
+                </MenuItem>
+                <MenuItem Header="{DynamicResource MenuViewTheme}">
+                    <MenuItem Header="{DynamicResource SsThemeLight}" IsCheckable="True"
+                              IsChecked="{Binding SystemSettings.CurrentIsLight, Mode=OneWay}"
+                              Command="{Binding SystemSettings.SetThemeCommand}"
+                              CommandParameter="False"/>
+                    <MenuItem Header="{DynamicResource SsThemeDark}" IsCheckable="True"
+                              IsChecked="{Binding SystemSettings.CurrentIsDark, Mode=OneWay}"
+                              Command="{Binding SystemSettings.SetThemeCommand}"
+                              CommandParameter="True"/>
+                </MenuItem>
+                <Separator/>
                 <MenuItem Header="{DynamicResource MenuToolsSettings}"
                           Command="{Binding SwitchModeCommand}"
                           CommandParameter="{x:Static localvm:NavMode.SystemSettings}"
@@ -71,7 +102,8 @@
 
         <!-- ToolBar 區域 -->
         <ToolBarTray DockPanel.Dock="Top" Background="{DynamicResource PrimaryBackgroundBrush}">
-            <ToolBar Background="{DynamicResource PrimaryBackgroundBrush}">
+            <ToolBar Loaded="ToolBar_Loaded"
+                     Background="{DynamicResource PrimaryBackgroundBrush}">
                 <Button ToolTip="新增" Foreground="{DynamicResource TextPrimaryBrush}">
                     <materialDesign:PackIcon Kind="Add" Width="20" Height="20"/>
                 </Button>
@@ -98,7 +130,8 @@
                 </Button>
             </ToolBar>
             <!-- 視圖控制 ToolBar -->
-            <ToolBar Background="{DynamicResource PrimaryBackgroundBrush}">
+            <ToolBar Loaded="ToolBar_Loaded"
+                     Background="{DynamicResource PrimaryBackgroundBrush}">
                 <ToggleButton ToolTip="{DynamicResource ToggleLogPanelTooltip}"
                               Foreground="{DynamicResource TextPrimaryBrush}"
                               IsChecked="{Binding IsLogPanelVisible, Mode=TwoWay}">
