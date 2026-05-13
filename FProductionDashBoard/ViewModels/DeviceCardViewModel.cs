@@ -108,7 +108,8 @@ namespace FProductionDashBoard.ViewModels
             }
             catch (Exception ex)
             {
-                _core.Log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"[{Info.Name}] 時段狀態更新失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[UpdateTimeSlotsStatusAsync] {ex.Message}");
             }
         }
         // 操作員按鈕
@@ -141,9 +142,8 @@ namespace FProductionDashBoard.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " + 
-                        "物料更換紀錄上傳異常");
-                    _core.Log.AddErrorLog($"MaterialsChange: {ex.Message}");
+                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - 物料更換紀錄上傳失敗", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[MaterialsChangeAsync] {ex.Message}");
                     FirstInspectionStatus = false;
                 }
             }
@@ -174,16 +174,14 @@ namespace FProductionDashBoard.ViewModels
                 }
                 catch (BusinessRuleException ex)
                 {
-                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
-                        $"業務規則異常", LogLevel.Error);
-                    _core.Log.AddErrorLog($"FirstInspection BusinessRuleEx: {ex.Message}");
+                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - 首件業務規則異常", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[FirstArticleInspectionAsync] {ex.Message}");
                     FirstInspectionStatus = false;
                 }
                 catch (Exception ex)
                 {
-                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
-                        $"首件紀錄上傳異常");
-                    _core.Log.AddErrorLog($"FirstInspection Ex: {ex.Message}");
+                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - 首件紀錄上傳失敗", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[FirstArticleInspectionAsync] {ex.Message}");
                     FirstInspectionStatus = false;
                 }
             }
@@ -220,15 +218,13 @@ namespace FProductionDashBoard.ViewModels
                 }
                 catch (BusinessRuleException ex)
                 {
-                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
-                        $"業務規則異常", LogLevel.Error);
-                    _core.Log.AddErrorLog($"RoutineInspection BusinessRuleEx: {ex.Message}");
+                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - 巡檢業務規則異常", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[RoutineInspectionAsync] {ex.Message}");
                 }
                 catch (Exception ex)
                 {
-                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
-                        $"巡檢紀錄上傳異常");
-                    _core.Log.AddErrorLog($"RoutineInspection Ex: {ex.Message}");
+                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - 巡檢紀錄上傳失敗", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[RoutineInspectionAsync] {ex.Message}");
                 }
             }
         }
@@ -323,7 +319,8 @@ namespace FProductionDashBoard.ViewModels
             }
             catch (Exception ex)
             {
-                _core.Log.AddErrorLog($"EndTuning Ex: {ex.Message}");
+                _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - 調試紀錄上傳失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[EndTuningAsync] {ex.Message}");
             }
         }
         private void OnTuningTimerTick(object? s, EventArgs e)

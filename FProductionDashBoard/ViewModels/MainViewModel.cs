@@ -231,7 +231,8 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 IsNetConnected = false;
-                _core.Log.AddLog($"{Properties.Resources.ComStrErrorTitle}: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog("清單載入失敗，請確認連線", LogLevel.Error);
+                _core.Log.AddErrorLog($"[FetchListAsync] {ex.Message}");
                 return [];
             }
         }
@@ -270,7 +271,8 @@ namespace FProductionDashBoard.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    _core.Log.AddLog($"[OnUserChanged] {ex.Message}", LogLevel.Error);
+                    _core.Log.AddLog("使用者切換時發生錯誤", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[OnUserChanged] {ex.Message}");
                 }
             });
         }
@@ -295,7 +297,11 @@ namespace FProductionDashBoard.ViewModels
                 _ = Task.Run(async ()=>
                 {
                     try { await SyncAndLogAsync(); }
-                    catch (Exception ex) { _core.Log.AddLog($"[SyncAndLogAsync] {ex.Message}"); }
+                    catch (Exception ex)
+                    {
+                        _core.Log.AddLog("[SyncAndLogAsync] 同步背景任務發生例外", LogLevel.Error);
+                        _core.Log.AddErrorLog($"[SyncAndLogAsync] {ex.Message}");
+                    }
                 });
             }
 
@@ -311,7 +317,11 @@ namespace FProductionDashBoard.ViewModels
                 _ = Task.Run(async () =>
                 {
                     try { await CheckMissedInspectionsAsync(containerSnapshot); }
-                    catch (Exception ex) { _core.Log.AddLog($"[CheckMissedInspectionsAsync] {ex.Message}"); }
+                    catch (Exception ex)
+                    {
+                        _core.Log.AddLog("[CheckMissedInspectionsAsync] 補填背景任務發生例外", LogLevel.Error);
+                        _core.Log.AddErrorLog($"[CheckMissedInspectionsAsync] {ex.Message}");
+                    }
                 });
             }
 
@@ -337,7 +347,8 @@ namespace FProductionDashBoard.ViewModels
             }
             catch (Exception ex)
             {
-                _core.Log.AddLog($"同步暫存異常: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog("同步暫存資料失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[SyncAndLogAsync] {ex.Message}");
             }
             finally
             { Interlocked.Exchange(ref _isSyncing, 0); }
@@ -370,7 +381,8 @@ namespace FProductionDashBoard.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    _core.Log.AddLog($"逾時補填失敗 [{card.Info.Name}]: {ex.Message}", LogLevel.Error);
+                    _core.Log.AddLog($"逾時補填失敗 [{card.Info.Name}]", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[CheckMissedInspectionsAsync] [{card.Info.Name}] {ex.Message}");
                 }
             }
         }
@@ -432,7 +444,8 @@ namespace FProductionDashBoard.ViewModels
             }
             catch (Exception ex)
             {
-                _core.Log.AddLog($"[LoginAsync]: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog("登入失敗，請稍後重試", LogLevel.Error);
+                _core.Log.AddErrorLog($"[LoginAsync] {ex.Message}");
             }
         }
         private async Task LogoutAsync()
@@ -444,7 +457,8 @@ namespace FProductionDashBoard.ViewModels
             }
             catch (Exception ex)
             {
-                _core.Log.AddLog($"[LogoutAsync]: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog("登出失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[LogoutAsync] {ex.Message}");
             }
         }
         private void SetProgress(string message, bool visible = true, bool indeterminate = false, int value = 0)
