@@ -23,7 +23,7 @@ namespace FProductionDashBoard.Tests.Services
             var core = new DashboardCoreServices(
                 new LogService(),
                 mockData.Object,
-                new AuthorizationService(mockRepo.Object),
+                new AuthorizationService(),
                 mockCardReader.Object);
 
             var mockErp = new Mock<IErpApiService>();

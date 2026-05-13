@@ -59,6 +59,7 @@ namespace FProductionDashBoard.Services
             catch (Exception ex)
             {
                 _core.Log.AddLog($"[CardReader] 處理失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddErrorLog($"[OnCardRead] {ex.Message}");
             }
         }
 

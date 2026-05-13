@@ -47,7 +47,7 @@ namespace FProductionDashBoard.Repositories
                 await using var ctx = _factory.CreateDbContext();
                 return await ctx.Database.CanConnectAsync(cts.Token).ConfigureAwait(false);
             }
-            catch (OperationCanceledException) { return false; }
+            catch { return false; }
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
