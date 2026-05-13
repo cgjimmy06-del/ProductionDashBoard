@@ -215,6 +215,8 @@ namespace FProductionDashBoard.ViewModels
                 CommonLists.ErrorsList    = t4.Result;
                 CommonLists.TimeSlotsList = t5.Result;
                 CommonLists.RolesList     = t6.Result;
+                if (CommonLists.RolesList.Any())
+                    _core.Authorization.SetCachedRoles(CommonLists.RolesList);
                 _core.Log.AddLog($"已載入清單: " +
                     $"Devices:[{CommonLists.DevicesList.Count}]-" +
                     $"Users:[{CommonLists.UsersList.Count}]-" +
