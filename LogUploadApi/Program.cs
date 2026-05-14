@@ -2,6 +2,8 @@ using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDirectoryBrowser();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -13,6 +15,9 @@ var storagePath = string.IsNullOrEmpty(configPath)
 Directory.CreateDirectory(storagePath);
 
 var fileProvider = new PhysicalFileProvider(storagePath);
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseStaticFiles(new StaticFileOptions
 {
