@@ -6,8 +6,9 @@ builder.Services.AddDirectoryBrowser();
 var app = builder.Build();
 
 var configPath = builder.Configuration["StoragePath"];
+var webRoot = builder.Environment.WebRootPath ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
 var storagePath = string.IsNullOrEmpty(configPath)
-    ? Path.Combine(builder.Environment.WebRootPath, "logs")
+    ? Path.Combine(webRoot, "logs")
     : configPath;
 Directory.CreateDirectory(storagePath);
 
