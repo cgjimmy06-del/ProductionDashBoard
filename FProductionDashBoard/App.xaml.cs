@@ -45,7 +45,9 @@ namespace FProductionDashBoard
                 string selectedServer = loginWindow.SelectedServer;
                 var user = loginWindow.User;
 
-                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Settings"));
+                Directory.CreateDirectory(Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "FProductionDashBoard"));
 
                 // 讀取設定檔 // 重用登入階段已讀取的 config（避免 ClickOnce 路徑不穩定造成二次讀取失敗）
                 var services = new ServiceCollection();
@@ -73,7 +75,9 @@ namespace FProductionDashBoard
 
                 // 離線暫存服務
                 services.AddDbContextFactory<Repositories.LocalDbContext>(opt =>
-                    opt.UseSqlite($"Data Source={Path.Combine(AppContext.BaseDirectory, "Settings", "local_cache.db")}"),
+                    opt.UseSqlite($"Data Source={Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        "FProductionDashBoard", "local_cache.db")}"),
                     ServiceLifetime.Singleton);
                 services.AddSingleton<IOfflineCacheService, OfflineCacheService>();
                 services.AddSingleton<IOfflineSyncService, OfflineSyncService>();
