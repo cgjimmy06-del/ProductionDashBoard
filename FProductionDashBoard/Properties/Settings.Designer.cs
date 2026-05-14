@@ -214,5 +214,29 @@ namespace FProductionDashBoard.Properties {
                 this["IdleLogoutEnabled"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LogSaveToFile {
+            get {
+                return ((bool)(this["LogSaveToFile"]));
+            }
+            set {
+                this["LogSaveToFile"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("7")]
+        public int LogDaysToKeep {
+            get {
+                return ((int)(this["LogDaysToKeep"]));
+            }
+            set {
+                this["LogDaysToKeep"] = value;
+            }
+        }
     }
 }

@@ -117,6 +117,133 @@
                 </StackPanel>
             </Border>
 
+            <!-- 日誌管理 -->
+            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                    CornerRadius="4" Padding="16" Margin="0,0,0,16"
+                    Background="{DynamicResource BackgroundBrush}">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource SsLogUploadHeader}"
+                               FontSize="14" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,0,0,12"/>
+
+                    <!-- 自動儲存 Toggle -->
+                    <Grid Margin="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource SsLogSaveToFile}"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <ToggleButton Grid.Column="1" IsChecked="{Binding LogSaveToFile}"
+                                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                      Margin="8,0"/>
+                    </Grid>
+
+                    <!-- 保留天數 -->
+                    <Grid Margin="0,4,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource SsLogDaysToKeep}"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox Grid.Column="1" Width="60" Margin="8,0"
+                                 Text="{Binding LogDaysToKeep, UpdateSourceTrigger=PropertyChanged}"
+                                 IsEnabled="{Binding LogSaveToFile}"/>
+                        <TextBlock Grid.Column="2" Text="{DynamicResource SsDayUnit}"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </Grid>
+
+                    <Separator Margin="0,0,0,8"/>
+
+                    <!-- Log 檔選取 + 上傳按鈕 -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox Grid.Column="0"
+                                  ItemsSource="{Binding AvailableLogFiles}"
+                                  SelectedItem="{Binding SelectedLogFile}"
+                                  Margin="0,0,8,0"/>
+                        <Button Padding="5,0" Grid.Column="1"
+                                Content="{DynamicResource SsLogUploadButton}"
+                                Command="{Binding UploadLogCommand}"
+                                Style="{StaticResource FunctionButtonStyle}"/>
+                    </Grid>
+
+                    <!-- 新增附件按鈕 -->
+                    <Button Content="{DynamicResource SsLogAddAttachment}"
+                            Command="{Binding AddAttachmentCommand}"
+                            HorizontalAlignment="Left"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Margin="0,0,0,4"/>
+
+                    <!-- 附件清單 -->
+                    <ListView ItemsSource="{Binding AttachmentPaths}"
+                              Visibility="{Binding HasAttachments,
+                                  Converter={StaticResource BooleanToVisibilityConverter}}"
+                              MaxHeight="110" Margin="0,0,0,8"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="4,2"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding}"
+                                               VerticalAlignment="Center"
+                                               TextTrimming="CharacterEllipsis"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <Button Grid.Column="1"
+                                            Command="{Binding DataContext.RemoveAttachmentCommand,
+                                                RelativeSource={RelativeSource AncestorType=ListView}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource GridEditButtonStyle}"
+                                            Width="24" Height="24" Padding="0">
+                                        <materialDesign:PackIcon Kind="Close" Width="14" Height="14"/>
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <!-- 進度條（上傳中才顯示） -->
+                    <ProgressBar IsIndeterminate="True" Height="4" Margin="0,0,0,4"
+                                 Visibility="{Binding IsUploading,
+                                     Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                    <!-- 上傳狀態文字 -->
+                    <TextBlock Text="{Binding UploadStatus}" FontSize="12"
+                               Visibility="{Binding UploadStatus,
+                                   Converter={StaticResource StringHasValueToVisibilityConverter}}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsUploadSuccess}" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsUploadSuccess}" Value="False">
+                                        <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
             <!-- 背景任務 -->
             <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                     CornerRadius="4" Padding="16" Margin="0,0,0,16"

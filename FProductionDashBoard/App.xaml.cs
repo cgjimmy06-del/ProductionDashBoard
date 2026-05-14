@@ -107,8 +107,8 @@ namespace FProductionDashBoard
                 var logUploadBaseUrl = config["LogUploadApi:BaseUrl"] ?? "";
                 services.AddHttpClient<Services.WebApi.ILogUploadService, Services.WebApi.LogUploadService>(client =>
                 {
-                    if (!string.IsNullOrEmpty(logUploadBaseUrl))
-                        client.BaseAddress = new Uri(logUploadBaseUrl);
+                    if (Uri.TryCreate(logUploadBaseUrl, UriKind.Absolute, out var baseUri))
+                        client.BaseAddress = baseUri;
                     client.Timeout = TimeSpan.FromSeconds(5);
                 });
 

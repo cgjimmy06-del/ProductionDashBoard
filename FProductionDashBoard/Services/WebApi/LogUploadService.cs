@@ -29,5 +29,19 @@ public class LogUploadService : ILogUploadService
         return result?.FileName ?? string.Empty;
     }
 
+    public async Task<string> UploadLogStreamAsync(Stream stream, string fileName)
+    {
+        var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(stream);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+        content.Add(fileContent, "file", fileName);
+
+        var response = await _http.PostAsync("api/logs/upload", content);
+        response.EnsureSuccessStatusCode();
+
+        var result = await response.Content.ReadFromJsonAsync<UploadResult>();
+        return result?.FileName ?? string.Empty;
+    }
+
     private record UploadResult(string FileName);
 }
