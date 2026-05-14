@@ -100,6 +100,14 @@ namespace FProductionDashBoard
                     client.Timeout = TimeSpan.FromSeconds(5);
                 });
 
+                var logUploadBaseUrl = config["LogUploadApi:BaseUrl"] ?? "";
+                services.AddHttpClient<Services.WebApi.ILogUploadService, Services.WebApi.LogUploadService>(client =>
+                {
+                    if (!string.IsNullOrEmpty(logUploadBaseUrl))
+                        client.BaseAddress = new Uri(logUploadBaseUrl);
+                    client.Timeout = TimeSpan.FromSeconds(5);
+                });
+
                 // 註冊 Facade
                 services.AddScoped<Services.DashboardCoreServices>();
 
