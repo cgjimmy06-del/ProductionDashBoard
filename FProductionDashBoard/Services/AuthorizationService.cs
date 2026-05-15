@@ -42,9 +42,14 @@ namespace FProductionDashBoard.Services
         public Task InitializeAsync(UiModels.UserInfo user)
         {
             CurrentUser = user;
-
             if (user.UserId == _defaultUser.UserId)
+            {
+#if DEBUG
+                _userPermissions = [1,2,3,4,5,6,7,8,9,10,11];
+#else
                 _userPermissions = [PermissionId.View];
+#endif
+            }
             else if (_cachedRoles != null)
             {
                 var role = _cachedRoles.FirstOrDefault(r => r.RoleId == user.RoleId);
