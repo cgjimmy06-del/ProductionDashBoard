@@ -11,12 +11,9 @@ namespace FProductionDashBoard.Services
 {
     public static class JsonDataService
     {
-        // 存在使用者的AppData，後續可能需要 ApplicationData, LocalApplicationData
-        //private static readonly string baseFolder = Path.Combine(
-        //    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FProductionDashBoard");
-
-        private static readonly string baseFolder =
-            Path.Combine(AppContext.BaseDirectory, "Settings");
+        private static readonly string baseFolder = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "FProductionDashBoard");
 
         private static readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
         {

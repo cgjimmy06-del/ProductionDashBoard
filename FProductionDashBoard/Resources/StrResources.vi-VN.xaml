@@ -156,6 +156,12 @@
     <sys:String x:Key="SsBusinessStartTime">Giờ bắt đầu ca làm</sys:String>
     <sys:String x:Key="SsHourUnit">giờ</sys:String>
     <sys:String x:Key="SsMinuteUnit">phút</sys:String>
+    <sys:String x:Key="SsLogUploadHeader">Quản lý nhật ký</sys:String>
+    <sys:String x:Key="SsLogSaveToFile">Tự động lưu tệp</sys:String>
+    <sys:String x:Key="SsLogDaysToKeep">Số ngày lưu</sys:String>
+    <sys:String x:Key="SsDayUnit">ngày</sys:String>
+    <sys:String x:Key="SsLogAddAttachment">+ Thêm tệp đính kèm</sys:String>
+    <sys:String x:Key="SsLogUploadButton">Tải lên</sys:String>
     <sys:String x:Key="SsBackgroundTasksHeader">Tác vụ nền</sys:String>
     <sys:String x:Key="SsSyncLabel">Đồng bộ tải lên</sys:String>
     <sys:String x:Key="SsMissedCheckLabel">Kiểm tra bỏ lỡ</sys:String>

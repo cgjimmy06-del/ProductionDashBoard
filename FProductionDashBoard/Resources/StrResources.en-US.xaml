@@ -156,6 +156,12 @@
     <sys:String x:Key="SsBusinessStartTime">Business Start Time</sys:String>
     <sys:String x:Key="SsHourUnit">hr</sys:String>
     <sys:String x:Key="SsMinuteUnit">min</sys:String>
+    <sys:String x:Key="SsLogUploadHeader">Log Management</sys:String>
+    <sys:String x:Key="SsLogSaveToFile">Auto Save to File</sys:String>
+    <sys:String x:Key="SsLogDaysToKeep">Days to Keep</sys:String>
+    <sys:String x:Key="SsDayUnit">Day(s)</sys:String>
+    <sys:String x:Key="SsLogAddAttachment">+ Add Attachment</sys:String>
+    <sys:String x:Key="SsLogUploadButton">Upload</sys:String>
     <sys:String x:Key="SsBackgroundTasksHeader">Background Tasks</sys:String>
     <sys:String x:Key="SsSyncLabel">Sync Upload</sys:String>
     <sys:String x:Key="SsMissedCheckLabel">Missed Check</sys:String>
