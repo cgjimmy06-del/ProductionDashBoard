@@ -19,7 +19,7 @@ namespace FProductionDashBoard.ViewModels
 {
     public partial class DeviceCardContainerViewModel : ObservableObject, IDisposable
     {
-        private string defaultDevicesFile = "defaultdevices.json"; // 預設設備檔案
+        private string defaultDevicesFile = "DefaultDevices.json"; // 預設設備檔案
         private readonly ListsFromSql commonLists;
         public ObservableCollection<DeviceCardViewModel> Devices { get; } =
             new ObservableCollection<DeviceCardViewModel>();

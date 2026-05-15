@@ -39,7 +39,7 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                await _log.SaveAllLogsToFileAsync();
+                await _log.ExportInMemoryLogsAsync();
                 _log.AddLog(Properties.Resources.MainProgressSuccess, LogLevel.Success);
             }
             catch (System.AggregateException ex)

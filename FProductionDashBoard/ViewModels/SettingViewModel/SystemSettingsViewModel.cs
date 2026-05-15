@@ -1,9 +1,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.Services.WebApi;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
+using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
@@ -14,6 +20,7 @@ namespace FProductionDashBoard.ViewModels
     public partial class SystemSettingsViewModel : ObservableObject
     {
         private readonly DashboardCoreServices _core;
+        private readonly ILogUploadService _logUpload;
 
         private readonly PaletteHelper _paletteHelper = new PaletteHelper();
         private readonly Theme _lightTheme = Theme.Create(BaseTheme.Light,
@@ -49,16 +56,52 @@ namespace FProductionDashBoard.ViewModels
         partial void OnIdleLogoutEnabledChanged(bool value)     => HasUnsavedChanges = true;
         partial void OnIdleLogoutIntervalSecChanged(int value)  => HasUnsavedChanges = true;
 
+        // 日誌設定（直接映射 LogService，setter 同時觸發 HasUnsavedChanges）
+        public bool LogSaveToFile
+        {
+            get => _core.Log.SaveToFile;
+            set { _core.Log.SaveToFile = value; HasUnsavedChanges = true; OnPropertyChanged(); }
+        }
+
+        public int LogDaysToKeep
+        {
+            get => _core.Log.DaysToKeep;
+            set { _core.Log.DaysToKeep = value; HasUnsavedChanges = true; OnPropertyChanged(); }
+        }
+
+        // 日誌上傳
+        public ObservableCollection<string> AvailableLogFiles => _core.Log.AvailableLogFiles;
+        public ObservableCollection<string> AttachmentPaths { get; } = new();
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(UploadLogCommand))]
+        private string? selectedLogFile;
+
+        [ObservableProperty] private string uploadStatus = "";
+        [ObservableProperty] private bool? isUploadSuccess;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(UploadLogCommand))]
+        private bool isUploading = false;
+
+        [ObservableProperty] private bool hasAttachments = false;
+
         public string AppVersion => typeof(App).Assembly
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
             ?.InformationalVersion ?? "unknown";
 
         public ICommand ApplyCommand { get; }
+        public IRelayCommand AddAttachmentCommand { get; }
+        public IRelayCommand<string> RemoveAttachmentCommand { get; }
+        public IAsyncRelayCommand UploadLogCommand { get; }
 
-        public SystemSettingsViewModel(DashboardCoreServices core)
+        public SystemSettingsViewModel(DashboardCoreServices core, ILogUploadService logUploadService)
         {
             _core = core;
+            _logUpload = logUploadService;
             LoadFromSettings();
+
+            AttachmentPaths.CollectionChanged += (_, _) => HasAttachments = AttachmentPaths.Count > 0;
 
             SetLanguageCommand = new RelayCommand<string>(lang => {
                 if (string.IsNullOrEmpty(lang)) return;
@@ -77,6 +120,11 @@ namespace FProductionDashBoard.ViewModels
             });
 
             ApplyCommand = new RelayCommand(Apply);
+            AddAttachmentCommand = new RelayCommand(AddAttachment);
+            RemoveAttachmentCommand = new RelayCommand<string>(path => AttachmentPaths.Remove(path!));
+            UploadLogCommand = new AsyncRelayCommand(UploadLogAsync, () => !IsUploading && SelectedLogFile != null);
+
+            _core.Log.RefreshAvailableLogFiles();
         }
 
         public void LoadFromSettings()
@@ -90,7 +138,11 @@ namespace FProductionDashBoard.ViewModels
             MissedCheckIntervalSec = s.MissedCheckIntervalSec;
             IdleLogoutEnabled      = s.IdleLogoutEnabled;
             IdleLogoutIntervalSec  = s.IdleLogoutIntervalSec;
+            LogSaveToFile          = s.LogSaveToFile;
+            LogDaysToKeep          = s.LogDaysToKeep;
             HasUnsavedChanges      = false;
+
+            _core.Log.RefreshAvailableLogFiles();
         }
 
         private void Apply()
@@ -104,9 +156,60 @@ namespace FProductionDashBoard.ViewModels
             s.MissedCheckIntervalSec = MissedCheckIntervalSec;
             s.IdleLogoutEnabled      = IdleLogoutEnabled;
             s.IdleLogoutIntervalSec  = IdleLogoutIntervalSec;
+            s.LogSaveToFile          = LogSaveToFile;
+            s.LogDaysToKeep          = LogDaysToKeep;
             s.Save();
             HasUnsavedChanges = false;
             _core.Log.AddLog(Properties.Resources.MainProgressSuccess, LogLevel.Success);
+        }
+
+        private void AddAttachment()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Multiselect = true,
+                Filter = "Images & Documents|*.png;*.jpg;*.jpeg;*.bmp;*.xlsx;*.xls;*.pdf;*.txt|All Files|*.*",
+                InitialDirectory = Directory.Exists(_core.Log.LogDirectory) ? _core.Log.LogDirectory : null
+            };
+            if (dialog.ShowDialog() != true) return;
+            foreach (var path in dialog.FileNames)
+                if (!AttachmentPaths.Contains(path))
+                    AttachmentPaths.Add(path);
+        }
+
+        private async Task UploadLogAsync()
+        {
+            IsUploading = true;
+            IsUploadSuccess = null;
+            UploadStatus = "";
+            try
+            {
+                var logPath = _core.Log.GetLogFilePath(SelectedLogFile!);
+                var allPaths = new[] { logPath }.Concat(AttachmentPaths).ToList();
+
+                using var ms = new MemoryStream();
+                using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, leaveOpen: true))
+                    foreach (var p in allPaths)
+                        zip.CreateEntryFromFile(p, Path.GetFileName(p));
+                ms.Position = 0;
+
+                var fileName = await _logUpload.UploadLogStreamAsync(ms, "report.zip");
+                UploadStatus = $"已上傳：{fileName}";
+                IsUploadSuccess = true;
+                SelectedLogFile = null;
+                AttachmentPaths.Clear();
+                _core.Log.AddLog($"[UploadLog] 上傳成功：{fileName}", LogLevel.Success);
+            }
+            catch (Exception ex)
+            {
+                UploadStatus = ex.Message;
+                IsUploadSuccess = false;
+                _core.Log.AddErrorLog($"[UploadLogAsync] {ex.Message}");
+            }
+            finally
+            {
+                IsUploading = false;
+            }
         }
 
         private void ApplyLanguage(string cultureCode)

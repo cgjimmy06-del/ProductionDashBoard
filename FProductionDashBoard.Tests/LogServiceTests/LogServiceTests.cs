@@ -6,40 +6,13 @@ namespace FProductionDashBoard.Tests.LogServiceTests
 {
     public class LogServiceTests
     {
-        // ─── LoadLogFile ──────────────────────────────────────────────────────────
-
-        [Fact]
-        public void LoadLogFile_NonExistentFile_ReturnsErrorMessage()
-        {
-            var svc = new LogService();
-            var result = svc.LoadLogFile("nonexistent_xyz_9999.txt");
-            Assert.Equal("檔案不存在或已被壓縮備份。", result);
-        }
-
-        [Fact]
-        public void LoadLogFile_ExistingFile_ReturnsFileContent()
-        {
-            var svc = new LogService();
-            var fileName = $"testload_{Guid.NewGuid():N}.txt";
-            var filePath = Path.Combine("Logs", fileName);
-            try
-            {
-                File.WriteAllText(filePath, "hello world");
-                Assert.Equal("hello world", svc.LoadLogFile(fileName));
-            }
-            finally
-            {
-                if (File.Exists(filePath)) File.Delete(filePath);
-            }
-        }
-
         // ─── SaveAllLogsToFileAsync ───────────────────────────────────────────────
 
         [Fact]
         public async Task SaveAllLogsToFileAsync_CreatesLogAndErrorLogFiles()
         {
             var svc = new LogService();
-            await svc.SaveAllLogsToFileAsync();
+            await svc.ExportInMemoryLogsAsync();
 
             var files = Directory.GetFiles("Logs");
             Assert.Contains(files, f => Path.GetFileName(f).StartsWith("log_") && f.EndsWith("_t.txt"));
