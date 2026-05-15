@@ -37,12 +37,11 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private InspectionRadioCheck inspectionCheck = InspectionRadioCheck.Success;
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsOtherSelected))]
         private string selectionCode;
         [ObservableProperty]
         private string otherDescription = "";
         public bool IsOtherSelected => SelectionCode == (ErrorCodes.LastOrDefault() ?? new()).ErrorCode;
-        partial void OnSelectionCodeChanged(string value)
-        { OnPropertyChanged(nameof(IsOtherSelected)); }
         public InspectionDialogViewModel(string dialogstring, DeviceCardViewModel getinfo,
             List<ErrorInfo> sqlerrorslist) : base(dialogstring)
         {

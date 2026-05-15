@@ -23,6 +23,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Runtime.InteropServices;
 using System.Windows.Threading;
 
 namespace FProductionDashBoard.ViewModels
@@ -102,7 +103,9 @@ namespace FProductionDashBoard.ViewModels
         public IAsyncRelayCommand LogoutCommand { get; } // 登出事件
 
         // 工具列
+#if DEBUG
         public IRelayCommand TestCommand { get; }
+#endif
         // 導覽列
         public ICommand CollapseNavCommand { get; }
         public IRelayCommand SwitchModeCommand { get; }
@@ -114,8 +117,18 @@ namespace FProductionDashBoard.ViewModels
 
         private int _syncTickCounter = 0;
         private int _missedCheckCounter = 0;
-        private int _logInOutCounter = 0;
         private int _isSyncing = 0;
+
+        // 閒置更新機制
+        [DllImport("user32.dll")] private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+        [StructLayout(LayoutKind.Sequential)] private struct LASTINPUTINFO { public uint cbSize; public uint dwTime; }
+        private int GetIdleSeconds()
+        {
+            var info = new LASTINPUTINFO { cbSize = (uint)Marshal.SizeOf<LASTINPUTINFO>() };
+            GetLastInputInfo(ref info);
+            return (int)((uint)Environment.TickCount - info.dwTime) / 1000;
+        }
+
         private Action? _onUserChanged; // 可被取消註冊
 
         public MainViewModel(DashboardCoreServices core, IOfflineSyncService syncService,
@@ -328,12 +341,8 @@ namespace FProductionDashBoard.ViewModels
                 });
             }
 
-            _logInOutCounter++;
-            if (s.IdleLogoutEnabled && _logInOutCounter >= s.IdleLogoutIntervalSec)
-            {
-                _logInOutCounter = 0;
+            if (s.IdleLogoutEnabled && IsLoggedIn && GetIdleSeconds() >= s.IdleLogoutIntervalSec)
                 await CheckLogOutForLongIdle();
-            }
         }
         // 同步暫存資料  (1分鐘檢查)
         private async Task SyncAndLogAsync()
@@ -442,7 +451,6 @@ namespace FProductionDashBoard.ViewModels
 
             try
             {
-                _logInOutCounter = 0;
                 await _core.Authorization.InitializeAsync(loginWindow.User);
             }
             catch (Exception ex)
