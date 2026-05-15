@@ -13,6 +13,7 @@ namespace FProductionDashBoard.Services
         private readonly WebApi.IErpApiService _erpApiService;
         private readonly IDialogService _dialog;
         private readonly ListsFromSql _commonLists;
+        private readonly SemaphoreSlim _cardReadLock = new(1, 1);
 
         public CardReaderHandler(DashboardCoreServices core,
             WebApi.IErpApiService erpApiService,
@@ -30,6 +31,7 @@ namespace FProductionDashBoard.Services
 
         private async void OnCardRead(object? sender, CardReadEventArgs e)
         {
+            if (!await _cardReadLock.WaitAsync(0)) return;
             try
             {
                 var snapshot = _commonLists.UsersList.ToList();
@@ -60,6 +62,10 @@ namespace FProductionDashBoard.Services
             {
                 _core.Log.AddLog($"[CardReader] 處理失敗: {ex.Message}", LogLevel.Error);
                 _core.Log.AddErrorLog($"[OnCardRead] {ex.Message}");
+            }
+            finally
+            {
+                _cardReadLock.Release();
             }
         }
 

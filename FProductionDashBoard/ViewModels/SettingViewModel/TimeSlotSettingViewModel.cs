@@ -21,10 +21,10 @@ namespace FProductionDashBoard.ViewModels
         public bool IsNewMode { get; private set; } = true;
 
         [ObservableProperty] private int? editingId;
-        [ObservableProperty] private int formStartHour = 0;
-        [ObservableProperty] private int formStartMinute = 0;
-        [ObservableProperty] private int formEndHour = 0;
-        [ObservableProperty] private int formEndMinute = 30;
+        [ObservableProperty] [NotifyPropertyChangedFor(nameof(ComputedLabel))] private int formStartHour = 0;
+        [ObservableProperty] [NotifyPropertyChangedFor(nameof(ComputedLabel))] private int formStartMinute = 0;
+        [ObservableProperty] [NotifyPropertyChangedFor(nameof(ComputedLabel))] private int formEndHour = 0;
+        [ObservableProperty] [NotifyPropertyChangedFor(nameof(ComputedLabel))] private int formEndMinute = 30;
         [ObservableProperty] private bool formIsCrossDay = false;
 
         public string ComputedLabel =>
@@ -32,11 +32,6 @@ namespace FProductionDashBoard.ViewModels
 
         public TimeSlotSettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
             : base(core, dialog) { }
-
-        partial void OnFormStartHourChanged(int value) => OnPropertyChanged(nameof(ComputedLabel));
-        partial void OnFormStartMinuteChanged(int value) => OnPropertyChanged(nameof(ComputedLabel));
-        partial void OnFormEndHourChanged(int value) => OnPropertyChanged(nameof(ComputedLabel));
-        partial void OnFormEndMinuteChanged(int value) => OnPropertyChanged(nameof(ComputedLabel));
 
         protected override async Task LoadAsync()
         {
