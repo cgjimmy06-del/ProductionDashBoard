@@ -121,6 +121,7 @@ namespace FProductionDashBoard
                 services.AddScoped<ViewModels.HardwareViewModel>();
                 services.AddScoped<ViewModels.LogPanelViewModel>();
                 services.AddScoped<ViewModels.SystemSettingsViewModel>();
+                services.AddScoped<ViewModels.HomeViewModel>();
 
                 _serviceProvider = services.BuildServiceProvider();
                 // 啟動登入權限

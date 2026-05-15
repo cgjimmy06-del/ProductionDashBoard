@@ -49,6 +49,9 @@
             <DataTemplate DataType="{x:Type localvm:SystemSettingsViewModel}">
                 <localuc:SystemSettingsView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type localvm:HomeViewModel}">
+                <localuc:HomeView />
+            </DataTemplate>
 
         </ResourceDictionary>
     </Window.Resources>
