@@ -14,7 +14,7 @@ namespace FProductionDashBoard.ViewModels
         public ObservableCollection<Employee> EmployeeList { get; } = new();
         public ObservableCollection<Role> RoleItems { get; } = new();
 
-        [ObservableProperty] private int? editingId;
+        [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsEditMode))] private int? editingId;
         [ObservableProperty] private string formUserId = "";
         [ObservableProperty] private string formName = "";
         [ObservableProperty] private string formPassword = "";
@@ -27,8 +27,6 @@ namespace FProductionDashBoard.ViewModels
 
         public EmployeeSettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
             : base(core, dialog) { }
-
-        partial void OnEditingIdChanged(int? value) => OnPropertyChanged(nameof(IsEditMode));
 
         protected override async Task LoadAsync()
         {
