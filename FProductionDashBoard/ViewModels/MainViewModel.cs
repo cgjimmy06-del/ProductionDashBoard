@@ -187,6 +187,8 @@ namespace FProductionDashBoard.ViewModels
             Panel4 = new PanelViewModel(SwitchPanelContent);
             _panels = [Panel1, Panel2, Panel3, Panel4];
             SetLayoutCommand = new RelayCommand<LayoutMode>(SetLayout);
+            foreach (var ipandel in _panels)
+                SwitchPanelContent(ipandel, NavMode.Home);
 
             // 初始登入人員
             SystemUser = $"{Properties.Resources.ComStrSystemUser}: {_core.Authorization.CurrentUser!.Name}";
@@ -493,6 +495,10 @@ namespace FProductionDashBoard.ViewModels
             object? content = null;
             switch (mode)
             {
+                case NavMode.Home:
+                    content = _serviceProvider.GetRequiredService<HomeViewModel>();
+                    break;
+
                 case NavMode.Operation:
                     if (!_core.Authorization.HasAnyPermission(
                         PermissionId.OperateInspection, PermissionId.OperateMaterial,
@@ -528,10 +534,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 var occupied = _panels.FirstOrDefault(p => p != panel && p.CurrentNavMode == mode);
                 if (occupied != null)
-                {
-                    occupied.Content = null;
-                    occupied.SetMode(NavMode.Home);
-                }
+                    SwitchPanelContent(occupied, NavMode.Home);
             }
 
             panel.SetMode(mode);
