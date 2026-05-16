@@ -23,17 +23,7 @@ namespace FProductionDashBoard.Repositories
             var now = DateTime.Now;
             foreach (var slot in slots)
             {
-                var slotStart = businessDate.Date.Add(slot.StartAt);
-                var slotEnd = businessDate.Date.Add(slot.EndAt);
-
-                // 跨日邏輯: 跨整點 EndAt + 1；跨日 StartAt, EndAt + 1
-                if (slot.IsCrossDay)
-                {
-                    slotEnd = slotEnd.AddDays(1);
-                    if (slot.EndAt > slot.StartAt)
-                        slotStart = slotStart.AddDays(1);
-                }
-
+                var (slotStart, slotEnd) = slot.GetBounds(businessDate);
                 if (now >= slotStart && now < slotEnd)
                     return slot.TimeSlotId;
             }
@@ -45,17 +35,7 @@ namespace FProductionDashBoard.Repositories
             var now = DateTime.Now;
             foreach (var slot in timeslots)
             {
-                var slotStart = businessDate.Date.Add(slot.StartAt);
-                var slotEnd = businessDate.Date.Add(slot.EndAt);
-
-                // 跨日邏輯: 跨整點 EndAt + 1；跨日 StartAt, EndAt + 1
-                if (slot.IsCrossDay)
-                {
-                    slotEnd = slotEnd.AddDays(1);
-                    if (slot.EndAt > slot.StartAt)
-                        slotStart = slotStart.AddDays(1);
-                }
-
+                var (slotStart, slotEnd) = slot.GetBounds(businessDate);
                 if (now >= slotStart && now < slotEnd)
                     return slot.TimeSlotId;
             }
