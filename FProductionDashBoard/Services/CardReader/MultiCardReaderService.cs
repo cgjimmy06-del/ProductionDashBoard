@@ -15,15 +15,18 @@ namespace FProductionDashBoard.Services
         public CardReaderService AddReader(string portName, int baudRate)
         {
             var reader = new CardReaderService(portName, baudRate);
-            reader.CardRead += (s, e) => CardRead?.Invoke(s, e);
+            reader.CardRead += OnCardRead;
             _readers.Add(reader);
             reader.Start();
             return reader;
         }
         public void RemoveReader(CardReaderService reader)
         {
+            reader.CardRead -= OnCardRead;
             reader.Stop();
             _readers.Remove(reader);
         }
+
+        private void OnCardRead(object? sender, CardReadEventArgs e) => CardRead?.Invoke(sender, e);
     }
 }

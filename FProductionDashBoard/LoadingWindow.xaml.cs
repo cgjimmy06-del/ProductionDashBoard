@@ -16,8 +16,12 @@ namespace FProductionDashBoard
             DataContext = vm;
             Owner = Application.Current.MainWindow;
             Opacity = 0;
-            vm.CloseRequested += (_, _) => Dispatcher.Invoke(Close);
+            vm.CloseRequested += OnCloseRequested;
+            Closed += (_, _) => vm.CloseRequested -= OnCloseRequested;
         }
+
+        private void OnCloseRequested(object? sender, EventArgs e)
+            => Dispatcher.Invoke(Close);
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {

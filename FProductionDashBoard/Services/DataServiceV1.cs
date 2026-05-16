@@ -309,7 +309,7 @@ namespace FProductionDashBoard.Services.V1
             {
                 var slot = timeSlotLookups[i];
                 var (hasRecord, recordResult) = slotsResult[i]; // AI 提示與timeSlotLookups數量不符警告
-                var (slotStart, slotEnd) = GetSlotBounds(slot);
+                var (slotStart, slotEnd) = slot.GetBounds(BusinessDay);
 
                 int status;
                 if (now < slotStart) status = -1; // 灰
@@ -334,7 +334,7 @@ namespace FProductionDashBoard.Services.V1
             // 搜尋已結束的時段
             var endedSlots = timeSlotLookups.Where(slot =>
             {
-                var (_, slotEnd) = GetSlotBounds(slot);
+                var (_, slotEnd) = slot.GetBounds(BusinessDay);
                 return slotEnd <= DateTime.Now;
             });
 
@@ -362,20 +362,6 @@ namespace FProductionDashBoard.Services.V1
                 }
             }
         }
-        // 跨日邏輯: 跨整點 EndAt + 1；跨日 StartAt, EndAt + 1
-        private (DateTime slotStart, DateTime slotEnd) GetSlotBounds(TimeSlotLookup slot)
-        {
-            var slotStart = BusinessDay.Date.Add(slot.StartAt);
-            var slotEnd = BusinessDay.Date.Add(slot.EndAt);
-            if (slot.IsCrossDay)
-            {
-                slotEnd = slotEnd.AddDays(1);
-                if (slot.EndAt > slot.StartAt)
-                    slotStart = slotStart.AddDays(1);
-            }
-            return (slotStart, slotEnd);
-        }
-
         public async Task<int> AddTeachingRecordAsync(int equipmentId, int employeeId, int durationSec, string? product)
         {
             if (await TuningRecordRep.CheckConnectionAsync().ConfigureAwait(false))
