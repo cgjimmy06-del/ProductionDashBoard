@@ -17,7 +17,7 @@ public class LogUploadService : ILogUploadService
     public async Task<string> UploadLogFileAsync(string filePath)
     {
         await using var fileStream = File.OpenRead(filePath);
-        var content = new MultipartFormDataContent();
+        using var content = new MultipartFormDataContent();
         var fileContent = new StreamContent(fileStream);
         fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
         content.Add(fileContent, "file", Path.GetFileName(filePath));
@@ -31,7 +31,7 @@ public class LogUploadService : ILogUploadService
 
     public async Task<string> UploadLogStreamAsync(Stream stream, string fileName)
     {
-        var content = new MultipartFormDataContent();
+        using var content = new MultipartFormDataContent();
         var fileContent = new StreamContent(stream);
         fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
         content.Add(fileContent, "file", fileName);
