@@ -185,7 +185,15 @@ namespace FProductionDashBoard.ViewModels
             try
             {
                 var logPath = _core.Log.GetLogFilePath(SelectedLogFile!);
-                var allPaths = new[] { logPath }.Concat(AttachmentPaths).ToList();
+                var allPaths = new[] { logPath }
+                    .Concat(AttachmentPaths)
+                    .Select(p => Path.GetFullPath(p))
+                    .ToList();
+
+                var missing = allPaths.Where(p => !File.Exists(p)).ToList();
+                if (missing.Any())
+                    throw new FileNotFoundException(
+                        $"附件不存在：{string.Join(", ", missing.Select(Path.GetFileName))}");
 
                 using var ms = new MemoryStream();
                 using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, leaveOpen: true))
@@ -223,7 +231,8 @@ namespace FProductionDashBoard.ViewModels
             if (oldDict != null)
             {
                 int index = Application.Current.Resources.MergedDictionaries.IndexOf(oldDict);
-                Application.Current.Resources.MergedDictionaries[index] = dict;
+                Application.Current.Resources.MergedDictionaries.RemoveAt(index);
+                Application.Current.Resources.MergedDictionaries.Insert(index, dict);
             }
             else Application.Current.Resources.MergedDictionaries.Add(dict);
 
@@ -245,7 +254,8 @@ namespace FProductionDashBoard.ViewModels
             if (oldDictTheme != null)
             {
                 int index = Application.Current.Resources.MergedDictionaries.IndexOf(oldDictTheme);
-                Application.Current.Resources.MergedDictionaries[index] = dictTheme;
+                Application.Current.Resources.MergedDictionaries.RemoveAt(index);
+                Application.Current.Resources.MergedDictionaries.Insert(index, dictTheme);
             }
             else Application.Current.Resources.MergedDictionaries.Add(dictTheme);
 
