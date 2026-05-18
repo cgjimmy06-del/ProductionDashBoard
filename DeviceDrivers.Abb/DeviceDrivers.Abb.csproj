@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <RootNamespace>DeviceDrivers.Abb</RootNamespace>
+    <AssemblyName>DeviceDrivers.Abb</AssemblyName>
+  </PropertyGroup>
+
+  <!-- ABB PC SDK assemblies (net48). Verified loadable in-process on .NET 8 by the
+       EnvTest spike. Private=true so the DLLs are copied next to consumers' output. -->
+  <ItemGroup>
+    <Reference Include="ABB.Robotics.Controllers.PC">
+      <HintPath>lib\ABB.Robotics.Controllers.PC.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="RobotStudio.Services.RobApi">
+      <HintPath>lib\RobotStudio.Services.RobApi.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="RobotStudio.Services.RobApi.Desktop">
+      <HintPath>lib\RobotStudio.Services.RobApi.Desktop.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>
