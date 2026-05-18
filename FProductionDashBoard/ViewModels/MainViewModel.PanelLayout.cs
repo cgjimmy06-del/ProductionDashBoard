@@ -106,11 +106,11 @@ namespace FProductionDashBoard.ViewModels
         {
             if (panel == Panel1)
             {
-                _deviceContainer ??= new DeviceCardContainerViewModel(_core, _dialog, CommonLists);
+                _deviceContainer ??= _serviceProvider.GetRequiredService<DeviceCardContainerViewModel>();
                 return _deviceContainer;
             }
             if (!_panelContainers.TryGetValue(panel, out var vm))
-                _panelContainers[panel] = vm = new DeviceCardContainerViewModel(_core, _dialog, CommonLists);
+                _panelContainers[panel] = vm = _serviceProvider.GetRequiredService<DeviceCardContainerViewModel>();
             return vm;
         }
 

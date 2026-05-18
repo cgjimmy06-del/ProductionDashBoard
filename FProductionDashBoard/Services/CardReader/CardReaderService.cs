@@ -16,7 +16,7 @@ namespace FProductionDashBoard.Services
         public event EventHandler<CardReadEventArgs>? CardRead;
         public bool IsConnected => _port?.IsOpen == true;
 
-        public CardReaderService(string portName = "COM3", int baudRate = 115200)
+        public CardReaderService(string portName, int baudRate)
         {
             PortName = portName;
             BaudRate = baudRate;
