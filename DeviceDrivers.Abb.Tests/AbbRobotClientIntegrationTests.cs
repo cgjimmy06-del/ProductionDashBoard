@@ -11,7 +11,10 @@ namespace DeviceDrivers.Abb.Tests;
 /// <list type="bullet">
 ///   <item><c>ABB_ROBOT_IP</c> —— 機器人 IP（必要，未設定則所有整合測試直接早退）。</item>
 ///   <item><c>ABB_TEST_BOOL_VAR</c> / <c>ABB_TEST_NUM_VAR</c> / <c>ABB_TEST_STRING_VAR</c>
-///         —— 可寫的測試變數位址，格式 <c>task/module/variable</c>（未設定則該項早退）。</item>
+///         —— 可「寫入」的測試變數位址，格式 <c>task/module/variable</c>，會做寫入→讀回→還原
+///         （未設定則該項早退）。</item>
+///   <item><c>ABB_TEST_BOOL_READ_VAR</c> / <c>ABB_TEST_STRING_READ_VAR</c>
+///         —— 僅供「唯讀」驗證的現有變數位址，只讀不寫、無破壞性（未設定則該項早退）。</item>
 /// </list>
 /// 執行：<c>dotnet test --filter "Category=Integration"</c>
 /// <para>
@@ -152,5 +155,31 @@ public class AbbRobotClientIntegrationTests
         {
             client.WriteString(address, original);   // 還原
         }
+    }
+
+    [Fact]
+    public void ReadBool_FromExistingVariable_Succeeds()
+    {
+        if (!HasRobot) return;
+        var address = TestAddress("ABB_TEST_BOOL_READ_VAR");
+        if (address is null) return;   // 未設定 ABB_TEST_BOOL_READ_VAR，略過
+
+        using var client = Connected();
+        // 唯讀、無破壞性：驗證 (Bool)rd.Value 讀取轉型 —— 轉型錯誤會丟 AbbRobotException 使測試失敗。
+        bool value = client.ReadBool(address);
+        Assert.IsType<bool>(value);
+    }
+
+    [Fact]
+    public void ReadString_FromExistingVariable_Succeeds()
+    {
+        if (!HasRobot) return;
+        var address = TestAddress("ABB_TEST_STRING_READ_VAR");
+        if (address is null) return;   // 未設定 ABB_TEST_STRING_READ_VAR，略過
+
+        using var client = Connected();
+        // 唯讀、無破壞性：驗證 (RapidString)rd.Value 讀取轉型。
+        string value = client.ReadString(address);
+        Assert.NotNull(value);
     }
 }
