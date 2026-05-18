@@ -51,7 +51,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string netStatusTooltip = "";
         #endregion
 
-        public ListsFromSql CommonLists = new();
+        public ListsFromSql CommonLists;
 
         public ICommand InitializeCommand { get; }
         public IAsyncRelayCommand LoginCommand { get; }
@@ -72,13 +72,15 @@ namespace FProductionDashBoard.ViewModels
         public MainViewModel(DashboardCoreServices core, IOfflineSyncService syncService,
             MultiCardReaderService multiCardReaderService,
             IServiceProvider sp,
-            IDialogService dialogService)
+            IDialogService dialogService,
+            ListsFromSql commonLists)
         {
             _core = core;
             _syncService = syncService;
             _multiCardReaderService = multiCardReaderService;
             _serviceProvider = sp;
             _dialog = dialogService;
+            CommonLists = commonLists;
             _cardReaderHandler = new CardReaderHandler(
                 _core, sp.GetRequiredService<Services.WebApi.IErpApiService>(), _dialog, CommonLists);
             _cardReaderHandler.Attach();
