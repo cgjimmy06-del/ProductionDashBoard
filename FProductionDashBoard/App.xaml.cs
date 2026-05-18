@@ -115,6 +115,9 @@ namespace FProductionDashBoard
                 // 註冊 Facade
                 services.AddScoped<Services.DashboardCoreServices>();
 
+                // 註冊共用清單狀態（單例，供各面板 ViewModel 直接注入）
+                services.AddSingleton<UiModels.ListsFromSql>();
+
                 // 註冊 ViewModel
                 services.AddScoped<ViewModels.MainViewModel>();
                 services.AddScoped<ViewModels.SettingViewModel>();
@@ -122,6 +125,7 @@ namespace FProductionDashBoard
                 services.AddScoped<ViewModels.LogPanelViewModel>();
                 services.AddScoped<ViewModels.SystemSettingsViewModel>();
                 services.AddScoped<ViewModels.HomeViewModel>();
+                services.AddTransient<ViewModels.DeviceCardContainerViewModel>();
 
                 _serviceProvider = services.BuildServiceProvider();
                 // 啟動登入權限

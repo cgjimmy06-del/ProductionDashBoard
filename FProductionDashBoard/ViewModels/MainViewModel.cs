@@ -51,7 +51,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string netStatusTooltip = "";
         #endregion
 
-        public ListsFromSql CommonLists = new();
+        public ListsFromSql CommonLists;
 
         public ICommand InitializeCommand { get; }
         public IAsyncRelayCommand LoginCommand { get; }
@@ -72,13 +72,16 @@ namespace FProductionDashBoard.ViewModels
         public MainViewModel(DashboardCoreServices core, IOfflineSyncService syncService,
             MultiCardReaderService multiCardReaderService,
             IServiceProvider sp,
-            IDialogService dialogService)
+            IDialogService dialogService,
+            ListsFromSql commonLists)
         {
             _core = core;
             _syncService = syncService;
             _multiCardReaderService = multiCardReaderService;
             _serviceProvider = sp;
             _dialog = dialogService;
+            CommonLists = commonLists;
+
             _cardReaderHandler = new CardReaderHandler(
                 _core, sp.GetRequiredService<Services.WebApi.IErpApiService>(), _dialog, CommonLists);
             _cardReaderHandler.Attach();
@@ -87,11 +90,6 @@ namespace FProductionDashBoard.ViewModels
 
             InitializeCommand = new AsyncRelayCommand(LoadAllListsAsync);
             CollapseNavCommand = new RelayCommand(() => { IsCollapsedNav = !IsCollapsedNav; });
-
-#if DEBUG
-            TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
-                () => _core.Authorization.HasPermission(PermissionId.Test));
-#endif
 
             LoginCommand = new AsyncRelayCommand(LoginAsync);
             LogoutCommand = new AsyncRelayCommand(LogoutAsync);
@@ -105,6 +103,11 @@ namespace FProductionDashBoard.ViewModels
             SystemUser = $"{Properties.Resources.ComStrSystemUser}: {_core.Authorization.CurrentUser!.Name}";
             _onUserChanged = () => OnUserChanged();
             _core.Authorization.UserChanged += _onUserChanged;
+
+#if DEBUG
+            TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
+                () => _core.Authorization.HasPermission(PermissionId.Test));
+#endif
         }
 
         #region -- 載入初始化 --
