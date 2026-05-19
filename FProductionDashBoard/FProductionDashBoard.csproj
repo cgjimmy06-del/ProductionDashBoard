@@ -86,4 +86,8 @@
 		<Folder Include="Dtos\" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\DeviceDrivers.Abb\DeviceDrivers.Abb.csproj" />
+	</ItemGroup>
+
 </Project>
