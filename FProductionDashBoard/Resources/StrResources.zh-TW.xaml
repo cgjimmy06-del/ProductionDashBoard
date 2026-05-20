@@ -90,6 +90,33 @@
     <sys:String x:Key="SettingTabErrorList">錯誤清單</sys:String>
     <sys:String x:Key="SettingTabTimeSlot">巡檢時段</sys:String>
     <sys:String x:Key="SettingTabRolePermission">角色權限</sys:String>
+    <sys:String x:Key="SettingTabSopChecklist">SOP 點檢表管理</sys:String>
+    <!-- SOP 點檢表管理 -->
+    <sys:String x:Key="SopTypeFilterAll">全部</sys:String>
+    <sys:String x:Key="SopModelFilterHint">型號篩選</sys:String>
+    <sys:String x:Key="SopFilterHint">件號 / 品名 / 工序 / 備註</sys:String>
+    <sys:String x:Key="SopHeaderSection">表頭</sys:String>
+    <sys:String x:Key="SopItemsSection">明細</sys:String>
+    <sys:String x:Key="SopPartFilter">件號篩選</sys:String>
+    <sys:String x:Key="SopPartFilterHint">輸入 8 碼可新建</sys:String>
+    <sys:String x:Key="SopAddPart">+ 新增 Part</sys:String>
+    <sys:String x:Key="SopNewPartTitle">新增件號</sys:String>
+    <sys:String x:Key="SopPartBrand">品牌</sys:String>
+    <sys:String x:Key="SopPartName">品名</sys:String>
+    <sys:String x:Key="SopPart">件號</sys:String>
+    <sys:String x:Key="SopPartNo">件號</sys:String>
+    <sys:String x:Key="SopModel">型號</sys:String>
+    <sys:String x:Key="SopProcess">工序</sys:String>
+    <sys:String x:Key="SopType">類型</sys:String>
+    <sys:String x:Key="SopRemark">備註</sys:String>
+    <sys:String x:Key="SopAddItem">+ 新增明細</sys:String>
+    <sys:String x:Key="SopItemSeq">順序</sys:String>
+    <sys:String x:Key="SopItemCheckType">類型</sys:String>
+    <sys:String x:Key="SopItemWorkstation">工位</sys:String>
+    <sys:String x:Key="SopItemMaterial">物料</sys:String>
+    <sys:String x:Key="SopItemQuantity">數量</sys:String>
+    <sys:String x:Key="SopItemContent">內容</sys:String>
+    <sys:String x:Key="SopItemRemark">備註</sys:String>
     <!-- Common headers / tooltips -->
     <sys:String x:Key="SettingActionDataGridHeader">操作</sys:String>
     <sys:String x:Key="SettingEditTooltip">編輯</sys:String>

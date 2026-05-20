@@ -14,12 +14,13 @@ namespace FProductionDashBoard.Models
         E,
     }
 
-    // 點檢類型：字串存（SQL 欄位 varchar(10)）；未來新增「文字說明型」時建議共用通用 enum 值，避免膨脹
+    // 點檢類型：字串存（SQL 欄位 varchar(10)）
     public enum CheckType
     {
         Station,  // 工位：使用 workstation_no + material_id
         Fixture,  // 治夾具：使用 material_id
         Quantity, // 數量：使用 quantity
+        Other,    // 其他：使用 content（文字說明型）
     }
 
     public class SopChecklist

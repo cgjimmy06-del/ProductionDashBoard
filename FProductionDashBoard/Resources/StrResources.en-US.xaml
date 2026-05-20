@@ -90,6 +90,33 @@
     <sys:String x:Key="SettingTabErrorList">Error List</sys:String>
     <sys:String x:Key="SettingTabTimeSlot">Time Slot</sys:String>
     <sys:String x:Key="SettingTabRolePermission">Role &amp; Permission</sys:String>
+    <sys:String x:Key="SettingTabSopChecklist">SOP Checklist</sys:String>
+    <!-- SOP Checklist -->
+    <sys:String x:Key="SopTypeFilterAll">All</sys:String>
+    <sys:String x:Key="SopModelFilterHint">Model filter</sys:String>
+    <sys:String x:Key="SopFilterHint">Part / Name / Process / Remark</sys:String>
+    <sys:String x:Key="SopHeaderSection">Header</sys:String>
+    <sys:String x:Key="SopItemsSection">Items</sys:String>
+    <sys:String x:Key="SopPartFilter">Part Filter</sys:String>
+    <sys:String x:Key="SopPartFilterHint">Enter 8 chars to enable creation</sys:String>
+    <sys:String x:Key="SopAddPart">+ New Part</sys:String>
+    <sys:String x:Key="SopNewPartTitle">New Part</sys:String>
+    <sys:String x:Key="SopPartBrand">Brand</sys:String>
+    <sys:String x:Key="SopPartName">Name</sys:String>
+    <sys:String x:Key="SopPart">Part</sys:String>
+    <sys:String x:Key="SopPartNo">Part No</sys:String>
+    <sys:String x:Key="SopModel">Model</sys:String>
+    <sys:String x:Key="SopProcess">Process</sys:String>
+    <sys:String x:Key="SopType">Type</sys:String>
+    <sys:String x:Key="SopRemark">Remark</sys:String>
+    <sys:String x:Key="SopAddItem">+ Add Item</sys:String>
+    <sys:String x:Key="SopItemSeq">Seq</sys:String>
+    <sys:String x:Key="SopItemCheckType">Type</sys:String>
+    <sys:String x:Key="SopItemWorkstation">Station</sys:String>
+    <sys:String x:Key="SopItemMaterial">Material</sys:String>
+    <sys:String x:Key="SopItemQuantity">Quantity</sys:String>
+    <sys:String x:Key="SopItemContent">Content</sys:String>
+    <sys:String x:Key="SopItemRemark">Remark</sys:String>
     <!-- Common headers / tooltips -->
     <sys:String x:Key="SettingActionDataGridHeader">Action</sys:String>
     <sys:String x:Key="SettingEditTooltip">Edit</sys:String>

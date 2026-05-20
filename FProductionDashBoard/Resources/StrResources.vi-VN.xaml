@@ -90,6 +90,33 @@
     <sys:String x:Key="SettingTabErrorList">Danh sách lỗi</sys:String>
     <sys:String x:Key="SettingTabTimeSlot">Ca kiểm tra</sys:String>
     <sys:String x:Key="SettingTabRolePermission">Vai trò &amp; Quyền</sys:String>
+    <sys:String x:Key="SettingTabSopChecklist">Quản lý SOP</sys:String>
+    <!-- Quản lý SOP -->
+    <sys:String x:Key="SopTypeFilterAll">Tất cả</sys:String>
+    <sys:String x:Key="SopModelFilterHint">Lọc Model</sys:String>
+    <sys:String x:Key="SopFilterHint">Part / Tên / Quá trình / Ghi chú</sys:String>
+    <sys:String x:Key="SopHeaderSection">Đầu</sys:String>
+    <sys:String x:Key="SopItemsSection">Chi tiết</sys:String>
+    <sys:String x:Key="SopPartFilter">Lọc Part</sys:String>
+    <sys:String x:Key="SopPartFilterHint">Nhập 8 ký tự để tạo mới</sys:String>
+    <sys:String x:Key="SopAddPart">+ Thêm Part</sys:String>
+    <sys:String x:Key="SopNewPartTitle">Thêm Part</sys:String>
+    <sys:String x:Key="SopPartBrand">Thương hiệu</sys:String>
+    <sys:String x:Key="SopPartName">Tên</sys:String>
+    <sys:String x:Key="SopPart">Part</sys:String>
+    <sys:String x:Key="SopPartNo">Mã Part</sys:String>
+    <sys:String x:Key="SopModel">Model</sys:String>
+    <sys:String x:Key="SopProcess">Quá trình</sys:String>
+    <sys:String x:Key="SopType">Loại</sys:String>
+    <sys:String x:Key="SopRemark">Ghi chú</sys:String>
+    <sys:String x:Key="SopAddItem">+ Thêm chi tiết</sys:String>
+    <sys:String x:Key="SopItemSeq">TT</sys:String>
+    <sys:String x:Key="SopItemCheckType">Loại</sys:String>
+    <sys:String x:Key="SopItemWorkstation">Vị trí</sys:String>
+    <sys:String x:Key="SopItemMaterial">Vật tư</sys:String>
+    <sys:String x:Key="SopItemQuantity">Số lượng</sys:String>
+    <sys:String x:Key="SopItemContent">Nội dung</sys:String>
+    <sys:String x:Key="SopItemRemark">Ghi chú</sys:String>
     <!-- Common headers / tooltips -->
     <sys:String x:Key="SettingActionDataGridHeader">Thao tác</sys:String>
     <sys:String x:Key="SettingEditTooltip">Chỉnh sửa</sys:String>
