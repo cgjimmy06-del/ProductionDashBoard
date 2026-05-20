@@ -49,16 +49,17 @@
                          Text="{Binding SopFilter, UpdateSourceTrigger=PropertyChanged}"/>
                 <ComboBox Grid.Column="1"
                           ItemsSource="{Binding SopTypeFilterOptions}"
-                          SelectedItem="{Binding SopTypeFilter}"
+                          SelectedValue="{Binding SopTypeFilter}"
+                          SelectedValuePath="Value"
                           materialDesign:HintAssist.Hint="{DynamicResource SopType}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock>
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
-                                        <Setter Property="Text" Value="{Binding}"/>
+                                        <Setter Property="Text" Value="{Binding Value}"/>
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                            <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
                                                 <Setter Property="Text" Value="{DynamicResource SopTypeFilterAll}"/>
                                             </DataTrigger>
                                         </Style.Triggers>

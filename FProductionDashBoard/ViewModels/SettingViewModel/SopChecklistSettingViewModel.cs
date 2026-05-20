@@ -29,7 +29,7 @@ namespace FProductionDashBoard.ViewModels
         public IReadOnlyList<SopType> SopTypes { get; } = Enum.GetValues<SopType>();
         public IReadOnlyList<CheckType> CheckTypes { get; } = Enum.GetValues<CheckType>();
         public IReadOnlyList<int> WorkstationNoOptions { get; } = new[] { 1, 2, 3, 4, 5, 6 };
-        public IReadOnlyList<SopType?> SopTypeFilterOptions { get; }
+        public IReadOnlyList<SopTypeFilterOption> SopTypeFilterOptions { get; }
 
         // ── SOP 左清單篩選 ──────────────────────────────────────────
         [ObservableProperty] private string sopFilter = "";
@@ -66,9 +66,9 @@ namespace FProductionDashBoard.ViewModels
         public SopChecklistSettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
             : base(core, dialog)
         {
-            SopTypeFilterOptions = new SopType?[] { null }
-                .Concat(Enum.GetValues<SopType>().Cast<SopType?>())
-                .ToList();
+            SopTypeFilterOptions = new SopTypeFilterOption[] { new(null) }
+                .Concat(Enum.GetValues<SopType>().Select(t => new SopTypeFilterOption(t)))
+                .ToArray();
         }
 
         // ── 篩選邏輯 ────────────────────────────────────────────────
@@ -467,4 +467,6 @@ namespace FProductionDashBoard.ViewModels
             IsItemFormVisible = false;
         }
     }
+
+    public sealed record SopTypeFilterOption(SopType? Value);
 }
