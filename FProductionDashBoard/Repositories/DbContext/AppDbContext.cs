@@ -24,6 +24,12 @@ namespace FProductionDashBoard.Repositories
         public DbSet<TimeSlotLookup> TimeSlotLookups { get; set; }
         public DbSet<TuningRecord> TuningRecords { get; set; }
 
+        public DbSet<ProductPart> ProductParts { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<SopChecklist> SopChecklists { get; set; }
+        public DbSet<SopChecklistItem> SopChecklistItems { get; set; }
+        public DbSet<EquipmentProduct> EquipmentProducts { get; set; }
+
         public DbSet<Role> Roles => Set<Role>();
         public DbSet<Permission> Permissions => Set<Permission>();
         public DbSet<RolePermission> RolePermissions => Set<RolePermission>();

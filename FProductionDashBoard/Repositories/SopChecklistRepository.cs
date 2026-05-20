@@ -1,0 +1,29 @@
+using FProductionDashBoard.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace FProductionDashBoard.Repositories
+{
+    public class SopChecklistRepository : Repository<SopChecklist, MesDbContext>, ISopChecklistRepository
+    {
+        public SopChecklistRepository(IDbContextFactory<MesDbContext> factory) : base(factory)
+        {
+        }
+
+        public async Task<SopChecklist?> GetWithItemsAsync(int sopId)
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.SopChecklists
+                .Include(s => s.Items)
+                .FirstOrDefaultAsync(s => s.SopId == sopId)
+                .ConfigureAwait(false);
+        }
+
+        public async Task<List<WorkProcess>> GetProcessesAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Set<WorkProcess>().ToListAsync().ConfigureAwait(false);
+        }
+    }
+}

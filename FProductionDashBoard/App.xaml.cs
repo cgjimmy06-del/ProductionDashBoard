@@ -72,6 +72,10 @@ namespace FProductionDashBoard
                 services.AddScoped<Repositories.IInspectionRecordRepository, Repositories.InspectionRecordRepository>();
                 services.AddScoped<Repositories.ITuningRecordRepository, Repositories.TuningRecordRepository>();
                 services.AddScoped<Repositories.IRolePermissionRepository, Repositories.RolePermissionRepository>();
+                services.AddScoped<Repositories.IProductPartRepository, Repositories.ProductPartRepository>();
+                services.AddScoped<Repositories.IProductRepository, Repositories.ProductRepository>();
+                services.AddScoped<Repositories.ISopChecklistRepository, Repositories.SopChecklistRepository>();
+                services.AddScoped<Repositories.IEquipmentProductRepository, Repositories.EquipmentProductRepository>();
 
                 // 離線暫存服務
                 services.AddDbContextFactory<Repositories.LocalDbContext>(opt =>
