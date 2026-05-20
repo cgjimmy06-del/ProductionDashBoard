@@ -218,16 +218,16 @@ namespace FProductionDashBoard.Tests.ViewModels
         [Fact]
         public void OpenNewItemForm_AutoIncrementsSeq()
         {
+            // Strict sequential: Seq = Count + 1 regardless of existing Seq values
             var vm = CreateVm();
             vm.FormItems.Add(new SopChecklistItemFormDto { Seq = 1, CheckType = CheckType.Station });
-            vm.FormItems.Add(new SopChecklistItemFormDto { Seq = 5, CheckType = CheckType.Quantity });
+            vm.FormItems.Add(new SopChecklistItemFormDto { Seq = 2, CheckType = CheckType.Quantity });
 
             vm.OpenNewItemFormCommand.Execute(null);
 
             Assert.True(vm.IsItemFormVisible);
-            Assert.Equal(6, vm.ItemFormSeq);
+            Assert.Equal(3, vm.ItemFormSeq);
             Assert.Equal(CheckType.Station, vm.ItemFormCheckType);
-            Assert.Null(vm.ItemFormMaterialId);
         }
 
         [Fact]
@@ -244,20 +244,21 @@ namespace FProductionDashBoard.Tests.ViewModels
             var vm = CreateVm();
             vm.ItemFormCheckType = CheckType.Station;
             vm.ItemFormWorkstationNo = 3;
-            vm.ItemFormMaterialId = 10;
             vm.ItemFormQuantity = 500;
             vm.ItemFormContent = "x";
 
+            // Switch to Fixture: clears WorkstationNo/Quantity/Content, resets Material to first FixtureMaterial (null in tests)
             vm.ItemFormCheckType = CheckType.Fixture;
             Assert.Null(vm.ItemFormWorkstationNo);
             Assert.Null(vm.ItemFormQuantity);
             Assert.Null(vm.ItemFormContent);
-            // Material 應保留供 Fixture 用
-            Assert.Equal(10, vm.ItemFormMaterialId);
 
+            // Switch to Quantity: clears Material; auto-sets Quantity to 0
             vm.ItemFormCheckType = CheckType.Quantity;
             Assert.Null(vm.ItemFormMaterialId);
+            Assert.Equal(0, vm.ItemFormQuantity);
 
+            // Switch to Other: clears all non-Other fields
             vm.ItemFormCheckType = CheckType.Other;
             Assert.Null(vm.ItemFormWorkstationNo);
             Assert.Null(vm.ItemFormMaterialId);
@@ -291,14 +292,17 @@ namespace FProductionDashBoard.Tests.ViewModels
         }
 
         [Fact]
-        public void SaveItem_Quantity_RequiresQuantity()
+        public void SaveItem_Quantity_NullQuantityDefaultsToZero()
         {
+            // Quantity is no longer required; null auto-converts to 0
             var vm = CreateVm();
             vm.OpenNewItemFormCommand.Execute(null);
             vm.ItemFormCheckType = CheckType.Quantity;
             vm.ItemFormQuantity = null;
             vm.SaveItemCommand.Execute(null);
-            Assert.False(string.IsNullOrEmpty(vm.FormErrorString));
+            Assert.True(string.IsNullOrEmpty(vm.FormErrorString));
+            Assert.Single(vm.FormItems);
+            Assert.Equal(0, vm.FormItems[0].Quantity);
         }
 
         [Fact]

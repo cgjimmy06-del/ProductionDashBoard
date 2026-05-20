@@ -20,6 +20,7 @@ namespace FProductionDashBoard.ViewModels
         public ObservableCollection<ProductPart> PartList { get; } = new();
         public ObservableCollection<ProductPart> FilteredPartList { get; } = new();
         public ObservableCollection<ProductModel> ModelList { get; } = new();
+        public ObservableCollection<ProductModel> FilteredModelList { get; } = new();
         public ObservableCollection<WorkProcess> ProcessList { get; } = new();
         public ObservableCollection<Material> StationMaterials { get; } = new();
         public ObservableCollection<Material> FixtureMaterials { get; } = new();
@@ -39,6 +40,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(BeginCreatePartCommand))]
         private string partFilter = "";
+        [ObservableProperty] private string modelFilter = "";
         [ObservableProperty] private int? formPartId;
         [ObservableProperty] private int? formModelId;
         [ObservableProperty] private int? formProcessId;
@@ -73,6 +75,7 @@ namespace FProductionDashBoard.ViewModels
         partial void OnSopFilterChanged(string value) => RecomputeFilteredSopList();
         partial void OnSopTypeFilterChanged(SopType? value) => RecomputeFilteredSopList();
         partial void OnPartFilterChanged(string value) => RecomputeFilteredPartList();
+        partial void OnModelFilterChanged(string value) => RecomputeFilteredModelList();
 
         private void RecomputeFilteredSopList()
         {
@@ -107,6 +110,18 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
+        private void RecomputeFilteredModelList()
+        {
+            FilteredModelList.Clear();
+            foreach (var m in ModelList)
+            {
+                if (!string.IsNullOrEmpty(ModelFilter) &&
+                    (m.Name ?? "").IndexOf(ModelFilter, StringComparison.OrdinalIgnoreCase) < 0)
+                    continue;
+                FilteredModelList.Add(m);
+            }
+        }
+
         // ── CheckType 切換時清非當前類型欄位 ─────────────────────────
         partial void OnItemFormCheckTypeChanged(CheckType value)
         {
@@ -115,16 +130,23 @@ namespace FProductionDashBoard.ViewModels
                 case CheckType.Station:
                     ItemFormQuantity = null;
                     ItemFormContent = null;
+                    var stationCountOnSwitch = FormItems.Count(i => i.CheckType == CheckType.Station);
+                    ItemFormWorkstationNo = stationCountOnSwitch < WorkstationNoOptions.Count
+                        ? WorkstationNoOptions[stationCountOnSwitch]
+                        : WorkstationNoOptions[^1];
+                    ItemFormMaterialId = StationMaterials.FirstOrDefault()?.MaterialId;
                     break;
                 case CheckType.Fixture:
                     ItemFormWorkstationNo = null;
                     ItemFormQuantity = null;
                     ItemFormContent = null;
+                    ItemFormMaterialId = FixtureMaterials.FirstOrDefault()?.MaterialId;
                     break;
                 case CheckType.Quantity:
                     ItemFormWorkstationNo = null;
                     ItemFormMaterialId = null;
                     ItemFormContent = null;
+                    ItemFormQuantity = 0;
                     break;
                 case CheckType.Other:
                     ItemFormWorkstationNo = null;
@@ -187,11 +209,15 @@ namespace FProductionDashBoard.ViewModels
         private void OpenNewItemForm()
         {
             EditingItemIndex = null;
-            ItemFormSeq = (FormItems.LastOrDefault()?.Seq ?? 0) + 1;
+            ItemFormSeq = FormItems.Count + 1;
             ItemFormCheckType = CheckType.Station;
-            ItemFormWorkstationNo = null;
-            ItemFormMaterialId = null;
-            ItemFormQuantity = null;
+            // Auto-preset for Station (most common)
+            var stationCount = FormItems.Count(i => i.CheckType == CheckType.Station);
+            ItemFormWorkstationNo = stationCount < WorkstationNoOptions.Count
+                ? WorkstationNoOptions[stationCount]
+                : WorkstationNoOptions[^1];
+            ItemFormMaterialId = StationMaterials.FirstOrDefault()?.MaterialId;
+            ItemFormQuantity = 0;
             ItemFormContent = null;
             ItemFormRemark = null;
             IsItemFormVisible = true;
@@ -217,6 +243,10 @@ namespace FProductionDashBoard.ViewModels
             if (!ShowConfirm($"{Properties.Resources.DialogBaseConfirm} {Properties.Resources.DialogBaseDelete}?"))
                 return;
             FormItems.Remove(item);
+            // Renumber remaining items strictly sequential (no gaps)
+            var temp = FormItems.ToList();
+            FormItems.Clear();
+            for (int i = 0; i < temp.Count; i++) { temp[i].Seq = i + 1; FormItems.Add(temp[i]); }
         }
 
         [RelayCommand]
@@ -233,8 +263,7 @@ namespace FProductionDashBoard.ViewModels
                     { FormErrorString = "Fixture: 物料必填"; return; }
                     break;
                 case CheckType.Quantity:
-                    if (ItemFormQuantity == null)
-                    { FormErrorString = "Quantity: 數量必填"; return; }
+                    if (ItemFormQuantity == null) ItemFormQuantity = 0;
                     break;
                 case CheckType.Other:
                     if (string.IsNullOrWhiteSpace(ItemFormContent))
@@ -362,6 +391,7 @@ namespace FProductionDashBoard.ViewModels
 
                 RecomputeFilteredSopList();
                 RecomputeFilteredPartList();
+                RecomputeFilteredModelList();
             }
             catch (Exception ex)
             {
@@ -375,6 +405,8 @@ namespace FProductionDashBoard.ViewModels
         {
             EditingSopId = null;
             ClearForm();
+            if (ModelList.Any()) FormModelId = ModelList[0].ModelId;
+            if (ProcessList.Any()) FormProcessId = ProcessList[0].ProcessId;
             FormErrorString = null;
             FormSuccessString = null;
             IsFormVisible = true;
@@ -422,6 +454,7 @@ namespace FProductionDashBoard.ViewModels
         {
             EditingSopId = null;
             PartFilter = "";
+            ModelFilter = "";
             FormPartId = null;
             FormModelId = null;
             FormProcessId = null;

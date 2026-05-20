@@ -92,6 +92,8 @@
     <sys:String x:Key="SettingTabRolePermission">Role &amp; Permission</sys:String>
     <sys:String x:Key="SettingTabSopChecklist">SOP Checklist</sys:String>
     <!-- SOP Checklist -->
+    <sys:String x:Key="SopTypeFilterAll">All</sys:String>
+    <sys:String x:Key="SopModelFilterHint">Model filter</sys:String>
     <sys:String x:Key="SopFilterHint">Part / Name / Process / Remark</sys:String>
     <sys:String x:Key="SopHeaderSection">Header</sys:String>
     <sys:String x:Key="SopItemsSection">Items</sys:String>

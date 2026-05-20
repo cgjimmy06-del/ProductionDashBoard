@@ -50,7 +50,24 @@
                 <ComboBox Grid.Column="1"
                           ItemsSource="{Binding SopTypeFilterOptions}"
                           SelectedItem="{Binding SopTypeFilter}"
-                          materialDesign:HintAssist.Hint="{DynamicResource SopType}"/>
+                          materialDesign:HintAssist.Hint="{DynamicResource SopType}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="{Binding}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                                <Setter Property="Text" Value="{DynamicResource SopTypeFilterAll}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </Grid>
 
             <!-- SOP 主清單 -->
@@ -117,115 +134,132 @@
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                Margin="0,0,0,4"/>
 
-                    <!-- Part 篩選 + Combo + 新增按鈕 -->
-                    <StackPanel Margin="4">
-                        <TextBlock Text="{DynamicResource SopPartFilter}"
-                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Margin="0,0,4,0"
-                                     materialDesign:HintAssist.Hint="{DynamicResource SopPartFilterHint}"
-                                     Text="{Binding PartFilter, UpdateSourceTrigger=PropertyChanged}"/>
-                            <Button Grid.Column="1"
-                                    Style="{StaticResource FunctionButtonStyle}"
-                                    Command="{Binding BeginCreatePartCommand}"
-                                    Content="{DynamicResource SopAddPart}"/>
-                        </Grid>
-                        <TextBlock Text="{DynamicResource SopPart}"
-                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                                   Foreground="{DynamicResource TextPrimaryBrush}"
-                                   Margin="0,6,0,0"/>
-                        <ComboBox ItemsSource="{Binding FilteredPartList}"
-                                  DisplayMemberPath="PartNo"
-                                  SelectedValuePath="PartId"
-                                  SelectedValue="{Binding FormPartId}"
-                                  materialDesign:HintAssist.Hint="{DynamicResource SopPart}"/>
+                    <!-- Row 1：Part（左）+ Model（右） -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                        <!-- inline Part 新增卡片 -->
-                        <Border Margin="0,8,0,0" Padding="8"
-                                Background="{DynamicResource PrimaryBackgroundBrush}"
-                                BorderBrush="{DynamicResource MaterialDesignDivider}"
-                                BorderThickness="1"
-                                Visibility="{Binding IsCreatingPart, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <StackPanel>
-                                <TextBlock Text="{DynamicResource SopNewPartTitle}"
-                                           Style="{StaticResource MaterialDesignBody2TextBlock}"
-                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                <TextBlock Margin="0,4,0,0"
-                                           Foreground="{DynamicResource TextPrimaryBrush}"
-                                           Text="{Binding PartFilter, StringFormat=件號: {0}}"/>
-                                <TextBox Margin="0,4,0,0"
-                                         materialDesign:HintAssist.Hint="{DynamicResource SopPartBrand}"
-                                         Text="{Binding NewPartBrand, UpdateSourceTrigger=PropertyChanged}"/>
-                                <TextBox Margin="0,4,0,0"
-                                         materialDesign:HintAssist.Hint="{DynamicResource SopPartName}"
-                                         Text="{Binding NewPartName, UpdateSourceTrigger=PropertyChanged}"/>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
-                                    <Button Margin="0,0,8,0"
-                                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                                            Foreground="{DynamicResource PrimaryBrush}"
-                                            BorderBrush="{DynamicResource PrimaryBrush}"
-                                            Command="{Binding CancelCreatePartCommand}"
-                                            Content="{DynamicResource CancelButton}"/>
-                                    <Button Command="{Binding ConfirmCreatePartCommand}"
-                                            Content="{DynamicResource SaveButton}"/>
+                        <!-- 件號區 -->
+                        <StackPanel Grid.Column="0" Margin="4">
+                            <TextBlock Text="{DynamicResource SopPartFilter}"
+                                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Margin="0,0,4,0"
+                                         materialDesign:HintAssist.Hint="{DynamicResource SopPartFilterHint}"
+                                         Text="{Binding PartFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                                <Button Grid.Column="1"
+                                        Style="{StaticResource FunctionButtonStyle}"
+                                        Command="{Binding BeginCreatePartCommand}"
+                                        Content="{DynamicResource SopAddPart}"/>
+                            </Grid>
+                            <TextBlock Text="{DynamicResource SopPart}"
+                                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       Margin="0,6,0,0"/>
+                            <ComboBox ItemsSource="{Binding FilteredPartList}"
+                                      DisplayMemberPath="PartNo"
+                                      SelectedValuePath="PartId"
+                                      SelectedValue="{Binding FormPartId}"
+                                      materialDesign:HintAssist.Hint="{DynamicResource SopPart}"/>
+
+                            <!-- inline Part 新增卡片 -->
+                            <Border Margin="0,8,0,0" Padding="8"
+                                    Background="{DynamicResource PrimaryBackgroundBrush}"
+                                    BorderBrush="{DynamicResource MaterialDesignDivider}"
+                                    BorderThickness="1"
+                                    Visibility="{Binding IsCreatingPart, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource SopNewPartTitle}"
+                                               Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Margin="0,4,0,0"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                               Text="{Binding PartFilter, StringFormat=件號: {0}}"/>
+                                    <TextBox Margin="0,4,0,0"
+                                             materialDesign:HintAssist.Hint="{DynamicResource SopPartBrand}"
+                                             Text="{Binding NewPartBrand, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <TextBox Margin="0,4,0,0"
+                                             materialDesign:HintAssist.Hint="{DynamicResource SopPartName}"
+                                             Text="{Binding NewPartName, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                                        <Button Margin="0,0,8,0"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                Foreground="{DynamicResource PrimaryBrush}"
+                                                BorderBrush="{DynamicResource PrimaryBrush}"
+                                                Command="{Binding CancelCreatePartCommand}"
+                                                Content="{DynamicResource CancelButton}"/>
+                                        <Button Command="{Binding ConfirmCreatePartCommand}"
+                                                Content="{DynamicResource SaveButton}"/>
+                                    </StackPanel>
                                 </StackPanel>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
+                            </Border>
+                        </StackPanel>
 
-                    <!-- Model / Process / SopType -->
-                    <Grid Margin="0,8,0,0">
+                        <!-- 型號區 -->
+                        <StackPanel Grid.Column="2" Margin="4">
+                            <TextBlock Text="{DynamicResource SopModel}"
+                                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SopModelFilterHint}"
+                                     Text="{Binding ModelFilter, UpdateSourceTrigger=PropertyChanged}"
+                                     Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding FilteredModelList}"
+                                      DisplayMemberPath="Name"
+                                      SelectedValuePath="ModelId"
+                                      SelectedValue="{Binding FormModelId}"
+                                      materialDesign:HintAssist.Hint="{DynamicResource SopModel}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Row 2：Process + SopType + Remark -->
+                    <Grid Margin="0,0,0,4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="4">
-                            <TextBlock Text="{DynamicResource SopModel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <ComboBox ItemsSource="{Binding ModelList}"
-                                      DisplayMemberPath="Name"
-                                      SelectedValuePath="ModelId"
-                                      SelectedValue="{Binding FormModelId}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Margin="4">
                             <TextBlock Text="{DynamicResource SopProcess}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <ComboBox ItemsSource="{Binding ProcessList}"
                                       DisplayMemberPath="Name"
                                       SelectedValuePath="ProcessId"
                                       SelectedValue="{Binding FormProcessId}"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="2" Margin="4">
+                        <StackPanel Grid.Column="1" Margin="4">
                             <TextBlock Text="{DynamicResource SopType}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <ComboBox ItemsSource="{Binding SopTypes}"
                                       SelectedItem="{Binding FormSopType}"/>
                         </StackPanel>
+                        <StackPanel Grid.Column="2" Margin="4">
+                            <TextBlock Text="{DynamicResource SopRemark}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SopRemark}"
+                                     Text="{Binding FormRemark, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
                     </Grid>
-
-                    <StackPanel Margin="4,4,4,0">
-                        <TextBlock Text="{DynamicResource SopRemark}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox materialDesign:HintAssist.Hint="{DynamicResource SopRemark}"
-                                 Text="{Binding FormRemark, UpdateSourceTrigger=PropertyChanged}"/>
-                    </StackPanel>
 
                     <!-- ── 明細區 ── -->
                     <TextBlock Text="{DynamicResource SopItemsSection}"
                                Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
                                Foreground="{DynamicResource TextPrimaryBrush}"
-                               Margin="0,16,0,4"/>
+                               Margin="0,8,0,4"/>
 
                     <DataGrid ItemsSource="{Binding FormItems}"
                               AutoGenerateColumns="False"
                               IsReadOnly="True"
                               CanUserAddRows="False"
                               SelectionMode="Single"
-                              MinHeight="120" MaxHeight="240">
+                              MinHeight="120" MaxHeight="240"
+                              materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="{DynamicResource SopItemSeq}" Binding="{Binding Seq}" Width="60"
+                            <DataGridTextColumn Header="{DynamicResource SopItemSeq}" Binding="{Binding Seq}" Width="50"
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                             <DataGridTextColumn Header="{DynamicResource SopItemCheckType}" Binding="{Binding CheckType}" Width="80"
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
@@ -279,9 +313,13 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="2*"/>
                                 </Grid.ColumnDefinitions>
+                                <!-- Seq 唯讀顯示 -->
                                 <StackPanel Grid.Column="0" Margin="4">
                                     <TextBlock Text="{DynamicResource SopItemSeq}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                    <TextBox Text="{Binding ItemFormSeq, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <TextBlock Text="{Binding ItemFormSeq}"
+                                               Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                               Margin="0,4,0,0"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Margin="4">
                                     <TextBlock Text="{DynamicResource SopItemCheckType}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
