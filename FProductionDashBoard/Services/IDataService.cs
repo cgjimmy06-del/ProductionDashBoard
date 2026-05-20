@@ -104,5 +104,21 @@ namespace FProductionDashBoard.Services
         public Task AddRoleAsync(RoleFormDto dto);
         public Task UpdateRoleAsync(RoleFormDto dto);
         public Task DeleteRoleAsync(int id);
+
+        // ─── 設定：件號 CRUD（SOP 點檢表暴露給 Part 篩選 + inline 新增） ──────
+        public Task<List<ProductPart>> GetAllProductPartsAsync();
+        public Task<int> AddProductPartAsync(ProductPartFormDto dto);
+
+        // ─── 設定：SOP lookup（下拉用） ─────────────────────────────────────
+        public Task<List<ProductModel>> GetProductModelsAsync();
+        public Task<List<WorkProcess>> GetWorkProcessesAsync();
+        public Task<List<Material>> GetMaterialsByTypeAsync(int typeId);
+
+        // ─── 設定：SOP 點檢表 CRUD ─────────────────────────────────────────
+        public Task<List<SopChecklist>> GetAllSopChecklistsAsync();
+        public Task<SopChecklist?> GetSopChecklistWithItemsAsync(int sopId);
+        public Task AddSopChecklistAsync(SopChecklistFormDto dto);
+        public Task UpdateSopChecklistAsync(SopChecklistFormDto dto);
+        public Task DeleteSopChecklistAsync(int id);
     }
 }
