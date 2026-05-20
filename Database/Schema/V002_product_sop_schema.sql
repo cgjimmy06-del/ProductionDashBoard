@@ -1,30 +1,32 @@
 -- =============================================================================
 -- V002_product_sop_schema.sql
 -- Adds product / SOP checklist / equipment-producible-list schema.
--- Tables: part, product_model, work_process, product,
+-- Tables: product_part, product_model, work_process, product,
 --         sop_checklist, sop_checklist_item, equipment_product
 -- Idempotent: every object is guarded by IF NOT EXISTS, safe to re-run.
 -- NOTE: select the target database in SSMS before executing.
 --       Requires V001 (provides [_migration_history]) to be applied first.
 -- =============================================================================
+USE [dashboard_db]
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
 -- ----------------------------------------------------------------------------
--- 1. part  -- part master
+-- 1. product_part  -- part master
 -- ----------------------------------------------------------------------------
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'part')
-CREATE TABLE [dbo].[part] (
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'product_part')
+CREATE TABLE [dbo].[product_part] (
     [part_id]     [int]           IDENTITY(1,1) NOT NULL,
     [part_no]     [varchar](8)    NOT NULL,
     [brand]       [varchar](10)   NULL,
     [name]        [nvarchar](50)  NULL,
-    [create_at]   [datetime2](7)  NOT NULL CONSTRAINT [DF_part_create_at] DEFAULT (sysdatetime()),
-    [update_at]   [datetime2](7)  NOT NULL CONSTRAINT [DF_part_update_at] DEFAULT (sysdatetime()),
-    CONSTRAINT [PK_part] PRIMARY KEY CLUSTERED ([part_id] ASC),
-    CONSTRAINT [UQ_part_part_no] UNIQUE NONCLUSTERED ([part_no] ASC)
+    [create_at]   [datetime2](7)  NOT NULL CONSTRAINT [DF_product_part_create_at] DEFAULT (sysdatetime()),
+    [update_at]   [datetime2](7)  NOT NULL CONSTRAINT [DF_product_part_update_at] DEFAULT (sysdatetime()),
+    CONSTRAINT [PK_product_part] PRIMARY KEY CLUSTERED ([part_id] ASC),
+    CONSTRAINT [UQ_product_part_part_no] UNIQUE NONCLUSTERED ([part_no] ASC)
 );
 GO
 
@@ -129,7 +131,7 @@ GO
 -- ----------------------------------------------------------------------------
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_product_part')
 ALTER TABLE [dbo].[product] ADD CONSTRAINT [FK_product_part]
-    FOREIGN KEY ([part_id]) REFERENCES [dbo].[part] ([part_id]);
+    FOREIGN KEY ([part_id]) REFERENCES [dbo].[product_part] ([part_id]);
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_product_model')
