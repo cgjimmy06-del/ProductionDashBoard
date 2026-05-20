@@ -55,7 +55,13 @@ namespace FProductionDashBoard.ViewModels
         }
 
         [RelayCommand]
-        private void ToggleMode() { IsCountMode = !IsCountMode; ClearSelection(); }
+        private void ToggleMode() 
+        { 
+            IsCountMode = !IsCountMode;
+            foreach (var m in Materials)
+            { if (m.IsSelected) m.SelectedCount = 1; }
+        }
+
         [RelayCommand]
         private void ClearSelection()
         {

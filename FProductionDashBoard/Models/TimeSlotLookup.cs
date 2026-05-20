@@ -30,7 +30,7 @@ namespace FProductionDashBoard.Models
             builder.Property(t => t.StartAt).HasColumnName("start_at");
             builder.Property(t => t.EndAt).HasColumnName("end_at");
             builder.Property(t => t.Label).HasColumnName("label");
-            builder.Property(t => t.IsCrossDay).HasColumnType("iscrossday").HasDefaultValue(false);
+            builder.Property(t => t.IsCrossDay).HasColumnName("iscrossday").HasDefaultValue(false);
         }
     }
 }
