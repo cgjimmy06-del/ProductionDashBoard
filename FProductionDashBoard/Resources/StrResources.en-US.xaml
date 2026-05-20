@@ -118,6 +118,10 @@
     <sys:String x:Key="SopItemQuantity">Quantity</sys:String>
     <sys:String x:Key="SopItemContent">Content</sys:String>
     <sys:String x:Key="SopItemRemark">Remark</sys:String>
+    <sys:String x:Key="CheckTypeStation">Station</sys:String>
+    <sys:String x:Key="CheckTypeFixture">Fixture</sys:String>
+    <sys:String x:Key="CheckTypeQuantity">Quantity</sys:String>
+    <sys:String x:Key="CheckTypeOther">Other</sys:String>
     <!-- Common headers / tooltips -->
     <sys:String x:Key="SettingActionDataGridHeader">Action</sys:String>
     <sys:String x:Key="SettingEditTooltip">Edit</sys:String>

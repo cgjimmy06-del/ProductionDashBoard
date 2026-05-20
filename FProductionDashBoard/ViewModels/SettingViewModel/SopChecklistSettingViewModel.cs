@@ -256,21 +256,25 @@ namespace FProductionDashBoard.ViewModels
             {
                 case CheckType.Station:
                     if (ItemFormWorkstationNo == null || ItemFormMaterialId == null)
-                    { FormErrorString = "Station: 工位編號與物料皆必填"; return; }
+                    { FormErrorString = Properties.Resources.SopValidationStation; return; }
                     break;
                 case CheckType.Fixture:
                     if (ItemFormMaterialId == null)
-                    { FormErrorString = "Fixture: 物料必填"; return; }
+                    { FormErrorString = Properties.Resources.SopValidationFixture; return; }
                     break;
                 case CheckType.Quantity:
                     if (ItemFormQuantity == null) ItemFormQuantity = 0;
                     break;
                 case CheckType.Other:
                     if (string.IsNullOrWhiteSpace(ItemFormContent))
-                    { FormErrorString = "Other: 內容必填"; return; }
+                    { FormErrorString = Properties.Resources.SopValidationOther; return; }
                     break;
             }
 
+            var mat = (ItemFormCheckType == CheckType.Station || ItemFormCheckType == CheckType.Fixture)
+                ? StationMaterials.FirstOrDefault(m => m.MaterialId == ItemFormMaterialId)
+                  ?? FixtureMaterials.FirstOrDefault(m => m.MaterialId == ItemFormMaterialId)
+                : null;
             var item = new SopChecklistItemFormDto
             {
                 Id = EditingItemIndex == null ? null : FormItems[EditingItemIndex.Value].Id,
@@ -278,6 +282,7 @@ namespace FProductionDashBoard.ViewModels
                 CheckType = ItemFormCheckType,
                 WorkstationNo = ItemFormCheckType == CheckType.Station ? ItemFormWorkstationNo : null,
                 MaterialId = (ItemFormCheckType == CheckType.Station || ItemFormCheckType == CheckType.Fixture) ? ItemFormMaterialId : null,
+                MaterialName = mat?.Name,
                 Quantity = ItemFormCheckType == CheckType.Quantity ? ItemFormQuantity : null,
                 Content = ItemFormCheckType == CheckType.Other ? ItemFormContent : null,
                 Remark = ItemFormRemark
@@ -310,6 +315,8 @@ namespace FProductionDashBoard.ViewModels
                 FormItems.Clear();
                 foreach (var i in detail.Items.OrderBy(x => x.Seq))
                 {
+                    var mat = StationMaterials.FirstOrDefault(m => m.MaterialId == i.MaterialId)
+                           ?? FixtureMaterials.FirstOrDefault(m => m.MaterialId == i.MaterialId);
                     FormItems.Add(new SopChecklistItemFormDto
                     {
                         Id = i.ItemId,
@@ -317,6 +324,7 @@ namespace FProductionDashBoard.ViewModels
                         CheckType = i.CheckType,
                         WorkstationNo = i.WorkstationNo,
                         MaterialId = i.MaterialId,
+                        MaterialName = mat?.Name,
                         Quantity = i.Quantity,
                         Content = i.Content,
                         Remark = i.Remark

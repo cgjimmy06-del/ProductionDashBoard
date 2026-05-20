@@ -32,5 +32,13 @@ namespace FProductionDashBoard.Repositories
             await using var ctx = _factory.CreateDbContext();
             return await ctx.Set<EquipmentType>().ToListAsync().ConfigureAwait(false);
         }
+
+        public async Task<List<Equipment>> GetAllWithTypeAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Set<Equipment>()
+                .Include(e => e.Type)
+                .ToListAsync().ConfigureAwait(false);
+        }
     }
 }

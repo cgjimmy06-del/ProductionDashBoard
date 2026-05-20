@@ -448,7 +448,7 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllEquipmentAsync] 設備 Repository 連線失敗");
-            return (await EquipmentRep.GetAllAsync().ConfigureAwait(false)).ToList();
+            return await EquipmentRep.GetAllWithTypeAsync().ConfigureAwait(false);
         }
 
         public async Task AddEquipmentAsync(EquipmentFormDto dto)
@@ -566,7 +566,7 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllMaterialsAsync] 材料 Repository 連線失敗");
-            return (await MaterialRep.GetAllAsync().ConfigureAwait(false)).ToList();
+            return await MaterialRep.GetAllWithTypeAsync().ConfigureAwait(false);
         }
 
         public async Task<List<MaterialType>> GetMaterialTypesAsync()
