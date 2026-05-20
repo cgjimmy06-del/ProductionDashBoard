@@ -4,6 +4,7 @@ using FProductionDashBoard.Repositories;
 using FProductionDashBoard.Services.Exceptions;
 using FProductionDashBoard.Services.Offline;
 using FProductionDashBoard.Services.V1;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
@@ -21,6 +22,10 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         private readonly Mock<IOfflineCacheService> _offlineCache = new();
         private readonly Mock<IRolePermissionRepository> _rolePermissionRep = new();
         private readonly Mock<ITuningRecordRepository> _tuningRecordRep = new();
+        private readonly Mock<IProductPartRepository> _productPartRep = new();
+        private readonly Mock<IProductRepository> _productRep = new();
+        private readonly Mock<ISopChecklistRepository> _sopChecklistRep = new();
+        private readonly Mock<IDbContextFactory<MesDbContext>> _mesFactory = new();
         public DataServiceV1Tests()
         {
             // 預設連線正常
@@ -28,6 +33,10 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             _inspectionRecordRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
             _timeSlotLookupRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
             _rolePermissionRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
+            _materialRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
+            _productPartRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
+            _productRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
+            _sopChecklistRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
             _offlineCache.Setup(c => c.EnqueueAsync(It.IsAny<PendingOperation>())).Returns(Task.CompletedTask);
         }
 
@@ -43,7 +52,11 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 _timeSlotLookupRep.Object,
                 _offlineCache.Object,
                 _rolePermissionRep.Object,
-                _tuningRecordRep.Object
+                _tuningRecordRep.Object,
+                _productPartRep.Object,
+                _productRep.Object,
+                _sopChecklistRep.Object,
+                _mesFactory.Object
             );
             service.BusinessDay = businessDay ?? DateTime.Today;
             return service;
@@ -693,5 +706,156 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             await Assert.ThrowsAsync<InvalidOperationException>(
                 () => CreateService().DeleteRoleAsync(1));
         }
+
+        // ─── ProductPart CRUD ────────────────────────────────────────────────
+
+        [Fact]
+        public async Task GetAllProductPartsAsync_WhenConnectionFails_Throws()
+        {
+            _productPartRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().GetAllProductPartsAsync());
+        }
+
+        [Fact]
+        public async Task GetAllProductPartsAsync_ReturnsRepoList()
+        {
+            _productPartRep.Setup(r => r.GetAllAsync())
+                .ReturnsAsync([
+                    new ProductPart { PartId = 1, PartNo = "ABC11111" },
+                    new ProductPart { PartId = 2, PartNo = "ABC22222" }
+                ]);
+
+            var result = await CreateService().GetAllProductPartsAsync();
+            Assert.Equal(2, result.Count);
+            Assert.Equal("ABC11111", result[0].PartNo);
+        }
+
+        [Fact]
+        public async Task AddProductPartAsync_WhenConnectionFails_Throws()
+        {
+            _productPartRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().AddProductPartAsync(new ProductPartFormDto { PartNo = "TEST0001" }));
+        }
+
+        [Fact]
+        public async Task AddProductPartAsync_ReturnsBackfilledPartId()
+        {
+            _productPartRep.Setup(r => r.AddAsync(It.IsAny<ProductPart>()))
+                .Callback<ProductPart>(p => p.PartId = 42)
+                .Returns(Task.CompletedTask);
+
+            var newId = await CreateService().AddProductPartAsync(
+                new ProductPartFormDto { PartNo = "TEST0001", Brand = "B", Name = "N" });
+            Assert.Equal(42, newId);
+        }
+
+        // ─── SOP lookup ──────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task GetMaterialsByTypeAsync_WhenConnectionFails_Throws()
+        {
+            _materialRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().GetMaterialsByTypeAsync(1));
+        }
+
+        [Fact]
+        public async Task GetMaterialsByTypeAsync_FiltersByTypeId()
+        {
+            _materialRep.Setup(r => r.GetAllAsync())
+                .ReturnsAsync([
+                    new Material { MaterialId = 1, TypeId = 1, Name = "Station-A" },
+                    new Material { MaterialId = 2, TypeId = 1, Name = "Station-B" },
+                    new Material { MaterialId = 3, TypeId = 2, Name = "Fixture-A" },
+                    new Material { MaterialId = 4, TypeId = null, Name = "Untyped" }
+                ]);
+
+            var stations = await CreateService().GetMaterialsByTypeAsync(1);
+            Assert.Equal(2, stations.Count);
+            Assert.All(stations, m => Assert.Equal(1, m.TypeId));
+
+            var fixtures = await CreateService().GetMaterialsByTypeAsync(2);
+            Assert.Single(fixtures);
+            Assert.Equal(3, fixtures[0].MaterialId);
+        }
+
+        [Fact]
+        public async Task GetProductModelsAsync_ReturnsRepoList()
+        {
+            _productRep.Setup(r => r.GetModelsAsync())
+                .ReturnsAsync([new ProductModel { ModelId = 100, Name = "100A" }]);
+
+            var result = await CreateService().GetProductModelsAsync();
+            Assert.Single(result);
+            Assert.Equal("100A", result[0].Name);
+        }
+
+        [Fact]
+        public async Task GetWorkProcessesAsync_ReturnsRepoList()
+        {
+            _sopChecklistRep.Setup(r => r.GetProcessesAsync())
+                .ReturnsAsync([new WorkProcess { ProcessId = 1, Name = "加工" }]);
+
+            var result = await CreateService().GetWorkProcessesAsync();
+            Assert.Single(result);
+            Assert.Equal("加工", result[0].Name);
+        }
+
+        // ─── SopChecklist CRUD ───────────────────────────────────────────────
+
+        [Fact]
+        public async Task GetSopChecklistWithItemsAsync_WhenConnectionFails_Throws()
+        {
+            _sopChecklistRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().GetSopChecklistWithItemsAsync(1));
+        }
+
+        [Fact]
+        public async Task GetSopChecklistWithItemsAsync_DelegatesToRepository()
+        {
+            var sop = new SopChecklist { SopId = 7, Remark = "test" };
+            _sopChecklistRep.Setup(r => r.GetWithItemsAsync(7)).ReturnsAsync(sop);
+
+            var result = await CreateService().GetSopChecklistWithItemsAsync(7);
+            Assert.Same(sop, result);
+        }
+
+        [Fact]
+        public async Task DeleteSopChecklistAsync_WhenConnectionFails_Throws()
+        {
+            _sopChecklistRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().DeleteSopChecklistAsync(1));
+        }
+
+        [Fact]
+        public async Task DeleteSopChecklistAsync_CallsRepositoryDelete()
+        {
+            _sopChecklistRep.Setup(r => r.DeleteAsync(5)).Returns(Task.CompletedTask).Verifiable();
+            await CreateService().DeleteSopChecklistAsync(5);
+            _sopChecklistRep.Verify();
+        }
+
+        [Fact]
+        public async Task AddSopChecklistAsync_WhenConnectionFails_Throws()
+        {
+            _sopChecklistRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().AddSopChecklistAsync(new SopChecklistFormDto()));
+        }
+
+        [Fact]
+        public async Task UpdateSopChecklistAsync_WhenIdIsNull_Throws()
+        {
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService().UpdateSopChecklistAsync(new SopChecklistFormDto { Id = null }));
+        }
+
+        // 註：AddSopChecklistAsync / UpdateSopChecklistAsync 的 happy path 使用單一 DbContext
+        // 進行 EnsureProduct + Add/Update Items，需要 EF 真實 ctx 或 in-memory provider 驗證；
+        // 由 PR-A 手動 UI 驗證涵蓋。
     }
 }

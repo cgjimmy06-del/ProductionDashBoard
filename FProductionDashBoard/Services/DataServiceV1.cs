@@ -30,13 +30,19 @@ namespace FProductionDashBoard.Services.V1
         private readonly IInspectionRecordRepository InspectionRecordRep;
         private readonly ITuningRecordRepository TuningRecordRep;
         private readonly IRolePermissionRepository RolePermissionRep;
+        private readonly IProductPartRepository ProductPartRep;
+        private readonly IProductRepository ProductRep;
+        private readonly ISopChecklistRepository SopChecklistRep;
+        private readonly IDbContextFactory<MesDbContext> _mesFactory;
 
         private readonly IOfflineCacheService _offlineCache;
 
         public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep,
             IErrorListRepository errorListRep, IMaterialReplacementRepository materialReplacementRep,
             IInspectionRecordRepository inspectionRecordRep, ITimeSlotLookupRepository timeSlotLookupRep,
-            IOfflineCacheService offlineCache, IRolePermissionRepository rolePermissionRep, ITuningRecordRepository tuningRecordRep)
+            IOfflineCacheService offlineCache, IRolePermissionRepository rolePermissionRep, ITuningRecordRepository tuningRecordRep,
+            IProductPartRepository productPartRep, IProductRepository productRep, ISopChecklistRepository sopChecklistRep,
+            IDbContextFactory<MesDbContext> mesFactory)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
@@ -48,6 +54,10 @@ namespace FProductionDashBoard.Services.V1
             _offlineCache = offlineCache;
             RolePermissionRep = rolePermissionRep;
             TuningRecordRep = tuningRecordRep;
+            ProductPartRep = productPartRep;
+            ProductRep = productRep;
+            SopChecklistRep = sopChecklistRep;
+            _mesFactory = mesFactory;
         }
 
 #if DEBUG
@@ -739,6 +749,193 @@ namespace FProductionDashBoard.Services.V1
             if (await RolePermissionRep.HasEmployeesByRoleAsync(id).ConfigureAwait(false))
                 throw new InvalidOperationException("[DeleteRoleAsync] 此角色有員工使用，無法刪除");
             await RolePermissionRep.DeleteAsync(id).ConfigureAwait(false);
+        }
+
+        #endregion
+
+        #region 設定：件號 CRUD
+
+        public async Task<List<ProductPart>> GetAllProductPartsAsync()
+        {
+            if (!await ProductPartRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetAllProductPartsAsync] 件號 Repository 連線失敗");
+            return (await ProductPartRep.GetAllAsync().ConfigureAwait(false)).ToList();
+        }
+
+        public async Task<int> AddProductPartAsync(ProductPartFormDto dto)
+        {
+            if (!await ProductPartRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[AddProductPartAsync] 件號 Repository 連線失敗");
+            var entity = new ProductPart
+            {
+                PartNo = dto.PartNo,
+                Brand = dto.Brand,
+                Name = dto.Name
+            };
+            await ProductPartRep.AddAsync(entity).ConfigureAwait(false);
+            return entity.PartId; // EF 回填 PK
+        }
+
+        #endregion
+
+        #region 設定：SOP lookup
+
+        public async Task<List<ProductModel>> GetProductModelsAsync()
+        {
+            if (!await ProductRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetProductModelsAsync] 產品 Repository 連線失敗");
+            return await ProductRep.GetModelsAsync().ConfigureAwait(false);
+        }
+
+        public async Task<List<WorkProcess>> GetWorkProcessesAsync()
+        {
+            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetWorkProcessesAsync] SOP Repository 連線失敗");
+            return await SopChecklistRep.GetProcessesAsync().ConfigureAwait(false);
+        }
+
+        public async Task<List<Material>> GetMaterialsByTypeAsync(int typeId)
+        {
+            if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetMaterialsByTypeAsync] 物料 Repository 連線失敗");
+            var all = await MaterialRep.GetAllAsync().ConfigureAwait(false);
+            return all.Where(m => m.TypeId == typeId).ToList();
+        }
+
+        #endregion
+
+        #region 設定：SOP 點檢表 CRUD
+
+        public async Task<List<SopChecklist>> GetAllSopChecklistsAsync()
+        {
+            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetAllSopChecklistsAsync] SOP Repository 連線失敗");
+            await using var ctx = _mesFactory.CreateDbContext();
+            return await ctx.SopChecklists
+                .Include(s => s.Product).ThenInclude(p => p!.Part)
+                .Include(s => s.Product).ThenInclude(p => p!.Model)
+                .Include(s => s.Process)
+                .ToListAsync().ConfigureAwait(false);
+        }
+
+        public async Task<SopChecklist?> GetSopChecklistWithItemsAsync(int sopId)
+        {
+            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetSopChecklistWithItemsAsync] SOP Repository 連線失敗");
+            return await SopChecklistRep.GetWithItemsAsync(sopId).ConfigureAwait(false);
+        }
+
+        public async Task AddSopChecklistAsync(SopChecklistFormDto dto)
+        {
+            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[AddSopChecklistAsync] SOP Repository 連線失敗");
+
+            await using var ctx = _mesFactory.CreateDbContext();
+            var productId = await EnsureProductAsync(ctx, dto.PartId, dto.ModelId).ConfigureAwait(false);
+
+            var entity = new SopChecklist
+            {
+                ProductId = productId,
+                ProcessId = dto.ProcessId,
+                SopType = dto.SopType,
+                Remark = dto.Remark
+            };
+            foreach (var i in dto.Items)
+            {
+                entity.Items.Add(new SopChecklistItem
+                {
+                    Seq = i.Seq,
+                    CheckType = i.CheckType,
+                    WorkstationNo = i.WorkstationNo,
+                    MaterialId = i.MaterialId,
+                    Quantity = i.Quantity,
+                    Content = i.Content,
+                    Remark = i.Remark
+                });
+            }
+            ctx.SopChecklists.Add(entity);
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public async Task UpdateSopChecklistAsync(SopChecklistFormDto dto)
+        {
+            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[UpdateSopChecklistAsync] SOP Repository 連線失敗");
+            if (dto.Id == null)
+                throw new InvalidOperationException("[UpdateSopChecklistAsync] dto.Id 不可為空");
+
+            await using var ctx = _mesFactory.CreateDbContext();
+
+            var existing = await ctx.SopChecklists
+                .Include(s => s.Items)
+                .FirstOrDefaultAsync(s => s.SopId == dto.Id.Value)
+                .ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"[UpdateSopChecklistAsync] 找不到 SOP ID={dto.Id}");
+
+            var productId = await EnsureProductAsync(ctx, dto.PartId, dto.ModelId).ConfigureAwait(false);
+            existing.ProductId = productId;
+            existing.ProcessId = dto.ProcessId;
+            existing.SopType = dto.SopType;
+            existing.Remark = dto.Remark;
+            existing.UpdateAt = DateTime.Now;
+
+            // Items 差異
+            var dtoItemIds = dto.Items.Where(i => i.Id != null).Select(i => i.Id!.Value).ToHashSet();
+            var toRemove = existing.Items.Where(i => !dtoItemIds.Contains(i.ItemId)).ToList();
+            foreach (var item in toRemove)
+                ctx.SopChecklistItems.Remove(item);
+
+            foreach (var i in dto.Items)
+            {
+                if (i.Id == null)
+                {
+                    existing.Items.Add(new SopChecklistItem
+                    {
+                        Seq = i.Seq,
+                        CheckType = i.CheckType,
+                        WorkstationNo = i.WorkstationNo,
+                        MaterialId = i.MaterialId,
+                        Quantity = i.Quantity,
+                        Content = i.Content,
+                        Remark = i.Remark
+                    });
+                }
+                else
+                {
+                    var target = existing.Items.FirstOrDefault(x => x.ItemId == i.Id.Value);
+                    if (target == null) continue;
+                    target.Seq = i.Seq;
+                    target.CheckType = i.CheckType;
+                    target.WorkstationNo = i.WorkstationNo;
+                    target.MaterialId = i.MaterialId;
+                    target.Quantity = i.Quantity;
+                    target.Content = i.Content;
+                    target.Remark = i.Remark;
+                }
+            }
+
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public async Task DeleteSopChecklistAsync(int id)
+        {
+            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[DeleteSopChecklistAsync] SOP Repository 連線失敗");
+            await SopChecklistRep.DeleteAsync(id).ConfigureAwait(false);
+        }
+
+        // 取或建 Product：UI 不暴露 Product；EnsureProductAsync 由 SOP 寫入時自動處理
+        private static async Task<int> EnsureProductAsync(MesDbContext ctx, int partId, int modelId)
+        {
+            var existing = await ctx.Products
+                .FirstOrDefaultAsync(p => p.PartId == partId && p.ModelId == modelId)
+                .ConfigureAwait(false);
+            if (existing != null) return existing.ProductId;
+
+            var p = new Product { PartId = partId, ModelId = modelId };
+            ctx.Products.Add(p);
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
+            return p.ProductId;
         }
 
         #endregion

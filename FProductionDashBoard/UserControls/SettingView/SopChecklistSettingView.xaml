@@ -1,0 +1,424 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.SopChecklistSettingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:models="clr-namespace:FProductionDashBoard.Models"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="1100">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="35*"/>
+            <ColumnDefinition Width="65*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ========== 左欄：SOP 清單 + 篩選 ========== -->
+        <Grid Grid.Column="0" Margin="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- 新增 SOP -->
+            <Button Grid.Row="0" HorizontalAlignment="Right" Margin="0,0,0,4"
+                    Command="{Binding NewCommand}"
+                    ToolTip="{DynamicResource NewButtonTooltip}"
+                    Style="{StaticResource FunctionButtonStyle}">
+                <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"/>
+            </Button>
+
+            <!-- 篩選列 -->
+            <Grid Grid.Row="1" Margin="0,0,0,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Margin="0,0,4,0"
+                         materialDesign:HintAssist.Hint="{DynamicResource SopFilterHint}"
+                         Text="{Binding SopFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding SopTypeFilterOptions}"
+                          SelectedItem="{Binding SopTypeFilter}"
+                          materialDesign:HintAssist.Hint="{DynamicResource SopType}"/>
+            </Grid>
+
+            <!-- SOP 主清單 -->
+            <DataGrid Grid.Row="2"
+                      ItemsSource="{Binding FilteredSopList}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      SelectionMode="Single"
+                      materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{DynamicResource SopPartNo}" Binding="{Binding Product.Part.PartNo}" Width="*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="{DynamicResource SopModel}" Binding="{Binding Product.Model.Name}" Width="*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="{DynamicResource SopProcess}" Binding="{Binding Process.Name}" Width="*"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTextColumn Header="{DynamicResource SopType}" Binding="{Binding SopType}" Width="50"
+                                        ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                    <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Style="{StaticResource GridEditButtonStyle}"
+                                            Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="{DynamicResource SettingEditTooltip}"
+                                            Foreground="{DynamicResource SecondaryBrush}">
+                                        <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18"/>
+                                    </Button>
+                                    <Button Style="{StaticResource GridEditButtonStyle}"
+                                            Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="{DynamicResource SettingDeleteTooltip}"
+                                            Foreground="{DynamicResource ErrorBrush}">
+                                        <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <!-- ========== 右欄：編輯區（IsFormVisible 控制） ========== -->
+        <Border Grid.Column="1" Margin="4"
+                Visibility="{Binding IsFormVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Background="{DynamicResource PrimaryBackgroundBrush}"
+                BorderThickness="1,0,0,0"
+                BorderBrush="{DynamicResource MaterialDesignDivider}"
+                Padding="12,8">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <TextBlock Text="{Binding EditingSopId, StringFormat=編輯 SOP (ID: {0}), TargetNullValue=新增 SOP}"
+                               Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+
+                    <!-- ── 表頭區 ── -->
+                    <TextBlock Text="{DynamicResource SopHeaderSection}"
+                               Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,0,0,4"/>
+
+                    <!-- Part 篩選 + Combo + 新增按鈕 -->
+                    <StackPanel Margin="4">
+                        <TextBlock Text="{DynamicResource SopPartFilter}"
+                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Margin="0,0,4,0"
+                                     materialDesign:HintAssist.Hint="{DynamicResource SopPartFilterHint}"
+                                     Text="{Binding PartFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Grid.Column="1"
+                                    Style="{StaticResource FunctionButtonStyle}"
+                                    Command="{Binding BeginCreatePartCommand}"
+                                    Content="{DynamicResource SopAddPart}"/>
+                        </Grid>
+                        <TextBlock Text="{DynamicResource SopPart}"
+                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Margin="0,6,0,0"/>
+                        <ComboBox ItemsSource="{Binding FilteredPartList}"
+                                  DisplayMemberPath="PartNo"
+                                  SelectedValuePath="PartId"
+                                  SelectedValue="{Binding FormPartId}"
+                                  materialDesign:HintAssist.Hint="{DynamicResource SopPart}"/>
+
+                        <!-- inline Part 新增卡片 -->
+                        <Border Margin="0,8,0,0" Padding="8"
+                                Background="{DynamicResource PrimaryBackgroundBrush}"
+                                BorderBrush="{DynamicResource MaterialDesignDivider}"
+                                BorderThickness="1"
+                                Visibility="{Binding IsCreatingPart, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource SopNewPartTitle}"
+                                           Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Margin="0,4,0,0"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           Text="{Binding PartFilter, StringFormat=件號: {0}}"/>
+                                <TextBox Margin="0,4,0,0"
+                                         materialDesign:HintAssist.Hint="{DynamicResource SopPartBrand}"
+                                         Text="{Binding NewPartBrand, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBox Margin="0,4,0,0"
+                                         materialDesign:HintAssist.Hint="{DynamicResource SopPartName}"
+                                         Text="{Binding NewPartName, UpdateSourceTrigger=PropertyChanged}"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                                    <Button Margin="0,0,8,0"
+                                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                                            Foreground="{DynamicResource PrimaryBrush}"
+                                            BorderBrush="{DynamicResource PrimaryBrush}"
+                                            Command="{Binding CancelCreatePartCommand}"
+                                            Content="{DynamicResource CancelButton}"/>
+                                    <Button Command="{Binding ConfirmCreatePartCommand}"
+                                            Content="{DynamicResource SaveButton}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Model / Process / SopType -->
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="4">
+                            <TextBlock Text="{DynamicResource SopModel}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <ComboBox ItemsSource="{Binding ModelList}"
+                                      DisplayMemberPath="Name"
+                                      SelectedValuePath="ModelId"
+                                      SelectedValue="{Binding FormModelId}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="4">
+                            <TextBlock Text="{DynamicResource SopProcess}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <ComboBox ItemsSource="{Binding ProcessList}"
+                                      DisplayMemberPath="Name"
+                                      SelectedValuePath="ProcessId"
+                                      SelectedValue="{Binding FormProcessId}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Margin="4">
+                            <TextBlock Text="{DynamicResource SopType}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <ComboBox ItemsSource="{Binding SopTypes}"
+                                      SelectedItem="{Binding FormSopType}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Margin="4,4,4,0">
+                        <TextBlock Text="{DynamicResource SopRemark}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox materialDesign:HintAssist.Hint="{DynamicResource SopRemark}"
+                                 Text="{Binding FormRemark, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+
+                    <!-- ── 明細區 ── -->
+                    <TextBlock Text="{DynamicResource SopItemsSection}"
+                               Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,16,0,4"/>
+
+                    <DataGrid ItemsSource="{Binding FormItems}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              SelectionMode="Single"
+                              MinHeight="120" MaxHeight="240">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="{DynamicResource SopItemSeq}" Binding="{Binding Seq}" Width="60"
+                                                ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                            <DataGridTextColumn Header="{DynamicResource SopItemCheckType}" Binding="{Binding CheckType}" Width="80"
+                                                ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                            <DataGridTextColumn Header="{DynamicResource SopItemWorkstation}" Binding="{Binding WorkstationNo}" Width="60"
+                                                ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                            <DataGridTextColumn Header="{DynamicResource SopItemMaterial}" Binding="{Binding MaterialId}" Width="80"
+                                                ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                            <DataGridTextColumn Header="{DynamicResource SopItemQuantity}" Binding="{Binding Quantity}" Width="60"
+                                                ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                            <DataGridTextColumn Header="{DynamicResource SopItemContent}" Binding="{Binding Content}" Width="*"
+                                                ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                            <DataGridTextColumn Header="{DynamicResource SopItemRemark}" Binding="{Binding Remark}" Width="*"
+                                                ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                            <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button Style="{StaticResource GridEditButtonStyle}"
+                                                    Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    Foreground="{DynamicResource SecondaryBrush}">
+                                                <materialDesign:PackIcon Kind="Pencil" Width="16" Height="16"/>
+                                            </Button>
+                                            <Button Style="{StaticResource GridEditButtonStyle}"
+                                                    Command="{Binding DataContext.RemoveItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    Foreground="{DynamicResource ErrorBrush}">
+                                                <materialDesign:PackIcon Kind="Delete" Width="16" Height="16"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Button HorizontalAlignment="Right" Margin="0,4,0,0"
+                            Style="{StaticResource FunctionButtonStyle}"
+                            Command="{Binding OpenNewItemFormCommand}"
+                            Content="{DynamicResource SopAddItem}"/>
+
+                    <!-- ── 明細子表單（IsItemFormVisible 控制） ── -->
+                    <Border Margin="0,8,0,0" Padding="8"
+                            Background="{DynamicResource PrimaryBackgroundBrush}"
+                            BorderBrush="{DynamicResource MaterialDesignDivider}"
+                            BorderThickness="1"
+                            Visibility="{Binding IsItemFormVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Margin="4">
+                                    <TextBlock Text="{DynamicResource SopItemSeq}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBox Text="{Binding ItemFormSeq, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="4">
+                                    <TextBlock Text="{DynamicResource SopItemCheckType}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <ComboBox ItemsSource="{Binding CheckTypes}"
+                                              SelectedItem="{Binding ItemFormCheckType}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Station: WorkstationNo + Material -->
+                            <StackPanel Margin="4,4,4,0">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ItemFormCheckType}" Value="{x:Static models:CheckType.Station}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                                        <TextBlock Text="{DynamicResource SopItemWorkstation}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        <ComboBox ItemsSource="{Binding WorkstationNoOptions}"
+                                                  SelectedItem="{Binding ItemFormWorkstationNo}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{DynamicResource SopItemMaterial}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        <ComboBox ItemsSource="{Binding StationMaterials}"
+                                                  DisplayMemberPath="Name"
+                                                  SelectedValuePath="MaterialId"
+                                                  SelectedValue="{Binding ItemFormMaterialId}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+
+                            <!-- Fixture: Material -->
+                            <StackPanel Margin="4,4,4,0">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ItemFormCheckType}" Value="{x:Static models:CheckType.Fixture}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <TextBlock Text="{DynamicResource SopItemMaterial}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <ComboBox ItemsSource="{Binding FixtureMaterials}"
+                                          DisplayMemberPath="Name"
+                                          SelectedValuePath="MaterialId"
+                                          SelectedValue="{Binding ItemFormMaterialId}"/>
+                            </StackPanel>
+
+                            <!-- Quantity: Quantity -->
+                            <StackPanel Margin="4,4,4,0">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ItemFormCheckType}" Value="{x:Static models:CheckType.Quantity}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <TextBlock Text="{DynamicResource SopItemQuantity}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBox Text="{Binding ItemFormQuantity, UpdateSourceTrigger=PropertyChanged}"
+                                         materialDesign:HintAssist.Hint="{DynamicResource SopItemQuantity}"/>
+                            </StackPanel>
+
+                            <!-- Other: Content -->
+                            <StackPanel Margin="4,4,4,0">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ItemFormCheckType}" Value="{x:Static models:CheckType.Other}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <TextBlock Text="{DynamicResource SopItemContent}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBox Text="{Binding ItemFormContent, UpdateSourceTrigger=PropertyChanged}"
+                                         materialDesign:HintAssist.Hint="{DynamicResource SopItemContent}"
+                                         AcceptsReturn="True" TextWrapping="Wrap" MinLines="2" MaxLines="6"
+                                         VerticalScrollBarVisibility="Auto"/>
+                            </StackPanel>
+
+                            <!-- Remark (永遠顯示) -->
+                            <StackPanel Margin="4,4,4,0">
+                                <TextBlock Text="{DynamicResource SopItemRemark}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBox Text="{Binding ItemFormRemark, UpdateSourceTrigger=PropertyChanged}"
+                                         materialDesign:HintAssist.Hint="{DynamicResource SopItemRemark}"/>
+                            </StackPanel>
+
+                            <!-- 明細按鈕列 -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                                <Button Margin="0,0,8,0"
+                                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                                        Foreground="{DynamicResource PrimaryBrush}"
+                                        BorderBrush="{DynamicResource PrimaryBrush}"
+                                        Command="{Binding CancelItemCommand}"
+                                        Content="{DynamicResource CancelButton}"/>
+                                <Button Command="{Binding SaveItemCommand}"
+                                        Content="{DynamicResource SaveButton}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 訊息 -->
+                    <TextBlock Text="{Binding FormErrorString}" Margin="4,8,4,0"
+                               Foreground="{DynamicResource ErrorBrush}"
+                               Visibility="{Binding FormErrorString, Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
+                    <TextBlock Text="{Binding FormSuccessString}" Margin="4,8,4,0"
+                               Foreground="{DynamicResource SuccessBrush}"
+                               Visibility="{Binding FormSuccessString, Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
+
+                    <!-- SOP 表單操作列 -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,4,4">
+                        <Button Margin="0,0,8,0"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                BorderBrush="{DynamicResource PrimaryBrush}"
+                                Command="{Binding CancelCommand}"
+                                Content="{DynamicResource CancelButton}"/>
+                        <Button Command="{Binding SaveCommand}"
+                                Content="{DynamicResource SaveButton}"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>
