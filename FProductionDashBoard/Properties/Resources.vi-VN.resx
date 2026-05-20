@@ -174,6 +174,15 @@
   <data name="DialogBaseSave" xml:space="preserve">
     <value>Lưu</value>
   </data>
+  <data name="SopValidationStation" xml:space="preserve">
+    <value>Station: Số trạm và vật liệu là bắt buộc</value>
+  </data>
+  <data name="SopValidationFixture" xml:space="preserve">
+    <value>Fixture: Vật liệu là bắt buộc</value>
+  </data>
+  <data name="SopValidationOther" xml:space="preserve">
+    <value>Other: Nội dung là bắt buộc</value>
+  </data>
   <data name="InsFirstAbnormal" xml:space="preserve">
     <value>Kiểm tra đầu tiên bất thường, vui lòng báo cáo theo quy trình!</value>
   </data>

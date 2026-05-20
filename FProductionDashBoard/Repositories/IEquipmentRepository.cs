@@ -20,6 +20,7 @@ namespace FProductionDashBoard.Repositories
     {
         public Task<IEnumerable<DeviceDto>> GetDevicesAllDapperAsync();
         public Task<List<EquipmentType>> GetEquipmentTypesAsync();
+        public Task<List<Equipment>> GetAllWithTypeAsync();
     }
 
 
