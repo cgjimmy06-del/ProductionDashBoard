@@ -174,6 +174,15 @@
   <data name="DialogBaseSave" xml:space="preserve">
     <value>儲存</value>
   </data>
+  <data name="SopValidationStation" xml:space="preserve">
+    <value>Station: 工位編號與物料皆必填</value>
+  </data>
+  <data name="SopValidationFixture" xml:space="preserve">
+    <value>Fixture: 物料必填</value>
+  </data>
+  <data name="SopValidationOther" xml:space="preserve">
+    <value>Other: 內容必填</value>
+  </data>
   <data name="InsFirstAbnormal" xml:space="preserve">
     <value>首件異常，請依流程通報!</value>
   </data>

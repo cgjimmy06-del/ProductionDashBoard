@@ -19,5 +19,13 @@ namespace FProductionDashBoard.Repositories
             await using var ctx = _factory.CreateDbContext();
             return await ctx.Set<MaterialType>().ToListAsync().ConfigureAwait(false);
         }
+
+        public async Task<List<Material>> GetAllWithTypeAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.Set<Material>()
+                .Include(m => m.Type)
+                .ToListAsync().ConfigureAwait(false);
+        }
     }
 }

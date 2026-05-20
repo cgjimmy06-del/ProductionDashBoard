@@ -193,6 +193,15 @@
     <value>Save</value>
     <comment>基礎彈出視窗: 儲存</comment>
   </data>
+  <data name="SopValidationStation" xml:space="preserve">
+    <value>Station: Workstation No. and material are required</value>
+  </data>
+  <data name="SopValidationFixture" xml:space="preserve">
+    <value>Fixture: Material is required</value>
+  </data>
+  <data name="SopValidationOther" xml:space="preserve">
+    <value>Other: Content is required</value>
+  </data>
   <data name="InsFirstAbnormal" xml:space="preserve">
     <value>First Inspection Abnormal, please report according to procedure!</value>
     <comment>品質檢驗: 首件-檢驗異常</comment>

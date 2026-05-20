@@ -266,11 +266,36 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{DynamicResource SopItemSeq}" Binding="{Binding Seq}" Width="50"
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                            <DataGridTextColumn Header="{DynamicResource SopItemCheckType}" Binding="{Binding CheckType}" Width="80"
-                                                ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                            <DataGridTemplateColumn Header="{DynamicResource SopItemCheckType}" Width="80">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock HorizontalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="{Binding CheckType}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding CheckType}" Value="{x:Static models:CheckType.Station}">
+                                                            <Setter Property="Text" Value="{DynamicResource CheckTypeStation}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding CheckType}" Value="{x:Static models:CheckType.Fixture}">
+                                                            <Setter Property="Text" Value="{DynamicResource CheckTypeFixture}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding CheckType}" Value="{x:Static models:CheckType.Quantity}">
+                                                            <Setter Property="Text" Value="{DynamicResource CheckTypeQuantity}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding CheckType}" Value="{x:Static models:CheckType.Other}">
+                                                            <Setter Property="Text" Value="{DynamicResource CheckTypeOther}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTextColumn Header="{DynamicResource SopItemWorkstation}" Binding="{Binding WorkstationNo}" Width="60"
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                            <DataGridTextColumn Header="{DynamicResource SopItemMaterial}" Binding="{Binding MaterialId}" Width="80"
+                            <DataGridTextColumn Header="{DynamicResource SopItemMaterial}" Binding="{Binding MaterialName}" Width="80"
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                             <DataGridTextColumn Header="{DynamicResource SopItemQuantity}" Binding="{Binding Quantity}" Width="60"
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
@@ -329,7 +354,33 @@
                                 <StackPanel Grid.Column="1" Margin="4">
                                     <TextBlock Text="{DynamicResource SopItemCheckType}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                     <ComboBox ItemsSource="{Binding CheckTypes}"
-                                              SelectedItem="{Binding ItemFormCheckType}"/>
+                                              SelectedItem="{Binding ItemFormCheckType}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="{Binding}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding}" Value="{x:Static models:CheckType.Station}">
+                                                                    <Setter Property="Text" Value="{DynamicResource CheckTypeStation}"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding}" Value="{x:Static models:CheckType.Fixture}">
+                                                                    <Setter Property="Text" Value="{DynamicResource CheckTypeFixture}"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding}" Value="{x:Static models:CheckType.Quantity}">
+                                                                    <Setter Property="Text" Value="{DynamicResource CheckTypeQuantity}"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding}" Value="{x:Static models:CheckType.Other}">
+                                                                    <Setter Property="Text" Value="{DynamicResource CheckTypeOther}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
                                 </StackPanel>
                             </Grid>
 

@@ -239,7 +239,25 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("DialogBaseSave", resourceCulture);
             }
         }
-        
+
+        internal static string SopValidationStation {
+            get {
+                return ResourceManager.GetString("SopValidationStation", resourceCulture);
+            }
+        }
+
+        internal static string SopValidationFixture {
+            get {
+                return ResourceManager.GetString("SopValidationFixture", resourceCulture);
+            }
+        }
+
+        internal static string SopValidationOther {
+            get {
+                return ResourceManager.GetString("SopValidationOther", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   查詢類似 First Inspection Abnormal, please report according to procedure! 的當地語系化字串。
         /// </summary>
