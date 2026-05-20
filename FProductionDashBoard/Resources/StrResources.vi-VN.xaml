@@ -93,6 +93,7 @@
     <sys:String x:Key="SettingTabSopChecklist">Quản lý SOP</sys:String>
     <!-- Quản lý SOP -->
     <sys:String x:Key="SopTypeFilterAll">Tất cả</sys:String>
+    <sys:String x:Key="SopModelFilter">Lọc Model</sys:String>
     <sys:String x:Key="SopModelFilterHint">Lọc Model</sys:String>
     <sys:String x:Key="SopFilterHint">Part / Tên / Quá trình / Ghi chú</sys:String>
     <sys:String x:Key="SopHeaderSection">Đầu</sys:String>

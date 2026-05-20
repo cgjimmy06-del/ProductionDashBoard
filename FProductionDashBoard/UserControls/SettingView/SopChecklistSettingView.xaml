@@ -206,12 +206,16 @@
 
                         <!-- 型號區 -->
                         <StackPanel Grid.Column="2" Margin="4">
-                            <TextBlock Text="{DynamicResource SopModel}"
+                            <TextBlock Text="{DynamicResource SopModelFilter}"
                                        Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <TextBox materialDesign:HintAssist.Hint="{DynamicResource SopModelFilterHint}"
                                      Text="{Binding ModelFilter, UpdateSourceTrigger=PropertyChanged}"
                                      Margin="0,0,0,4"/>
+                            <TextBlock Text="{DynamicResource SopModel}"
+                                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       Margin="0,6,0,0"/>
                             <ComboBox ItemsSource="{Binding FilteredModelList}"
                                       DisplayMemberPath="Name"
                                       SelectedValuePath="ModelId"
