@@ -126,6 +126,5 @@ namespace FProductionDashBoard.Services
         public Task AddEquipmentProductAsync(EquipmentProductFormDto dto);
         public Task UpdateEquipmentProductAsync(EquipmentProductFormDto dto);
         public Task DeleteEquipmentProductAsync(int id);
-        public Task ResequenceEquipmentProductsAsync(int equipmentId);
     }
 }

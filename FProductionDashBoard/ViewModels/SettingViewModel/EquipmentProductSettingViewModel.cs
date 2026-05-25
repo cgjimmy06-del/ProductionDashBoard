@@ -234,7 +234,6 @@ namespace FProductionDashBoard.ViewModels
             try
             {
                 await _core.Data.DeleteEquipmentProductAsync(ep.EquipmentProductId);
-                await _core.Data.ResequenceEquipmentProductsAsync(ep.EquipmentId);
                 if (SelectedEquipment != null)
                     await LoadProductListAsync(SelectedEquipment.Id);
             }
@@ -332,7 +331,6 @@ namespace FProductionDashBoard.ViewModels
                     await _core.Data.UpdateEquipmentProductAsync(dto);
 
                 bool wasNew = EditingProductId == null;
-                await _core.Data.ResequenceEquipmentProductsAsync(SelectedEquipment.Id);
                 await LoadProductListAsync(SelectedEquipment.Id);
                 CloseForm();
                 FormSuccessString = wasNew ? "新增成功" : "更新成功";

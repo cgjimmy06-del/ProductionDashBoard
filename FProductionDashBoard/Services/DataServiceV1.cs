@@ -990,20 +990,6 @@ namespace FProductionDashBoard.Services.V1
             await EquipmentProductRep.DeleteAsync(id).ConfigureAwait(false);
         }
 
-        public async Task ResequenceEquipmentProductsAsync(int equipmentId)
-        {
-            if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
-                throw new InvalidOperationException("[ResequenceEquipmentProductsAsync] 機台可生產清單 Repository 連線失敗");
-            await using var ctx = _mesFactory.CreateDbContext();
-            var records = await ctx.EquipmentProducts
-                .Where(ep => ep.EquipmentId == equipmentId)
-                .OrderBy(ep => ep.SeqNo)
-                .ToListAsync().ConfigureAwait(false);
-            for (int i = 0; i < records.Count; i++)
-                records[i].SeqNo = i + 1;
-            await ctx.SaveChangesAsync().ConfigureAwait(false);
-        }
-
         #endregion
     }
 }
