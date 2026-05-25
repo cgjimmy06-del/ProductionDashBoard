@@ -219,8 +219,7 @@
                             <ComboBox ItemsSource="{Binding FilteredModelList}"
                                       DisplayMemberPath="Name"
                                       SelectedValuePath="ModelId"
-                                      SelectedValue="{Binding FormModelId}"
-                                      materialDesign:HintAssist.Hint="{DynamicResource SopModel}"/>
+                                      SelectedValue="{Binding FormModelId}"/>
                         </StackPanel>
                     </Grid>
 

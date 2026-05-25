@@ -35,7 +35,7 @@ GO
 -- ----------------------------------------------------------------------------
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'product_model')
 CREATE TABLE [dbo].[product_model] (
-    [model_id]    [int]           NOT NULL,
+    [model_id]    [int]           IDENTITY(1,1) NOT NULL,
     [name]        [varchar](10)   NOT NULL,
     [create_at]   [datetime2](7)  NOT NULL CONSTRAINT [DF_product_model_create_at] DEFAULT (sysdatetime()),
     [update_at]   [datetime2](7)  NOT NULL CONSTRAINT [DF_product_model_update_at] DEFAULT (sysdatetime()),
