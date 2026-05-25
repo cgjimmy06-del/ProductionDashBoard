@@ -101,6 +101,7 @@
     <sys:String x:Key="SopPartFilter">Part Filter</sys:String>
     <sys:String x:Key="SopPartFilterHint">Enter 8 chars to enable creation</sys:String>
     <sys:String x:Key="SopAddPart">+ New Part</sys:String>
+    <sys:String x:Key="SopAddModel">+ Add Model</sys:String>
     <sys:String x:Key="SopNewPartTitle">New Part</sys:String>
     <sys:String x:Key="SopPartBrand">Brand</sys:String>
     <sys:String x:Key="SopPartName">Name</sys:String>

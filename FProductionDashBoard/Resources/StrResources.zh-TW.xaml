@@ -101,6 +101,7 @@
     <sys:String x:Key="SopPartFilter">件號篩選</sys:String>
     <sys:String x:Key="SopPartFilterHint">輸入 8 碼可新建</sys:String>
     <sys:String x:Key="SopAddPart">+ 新增 Part</sys:String>
+    <sys:String x:Key="SopAddModel">+ 新增型號</sys:String>
     <sys:String x:Key="SopNewPartTitle">新增件號</sys:String>
     <sys:String x:Key="SopPartBrand">品牌</sys:String>
     <sys:String x:Key="SopPartName">品名</sys:String>

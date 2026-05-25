@@ -31,7 +31,7 @@ CREATE TABLE [dbo].[product_part] (
 GO
 
 -- ----------------------------------------------------------------------------
--- 2. product_model  -- model lookup (manually-assigned key)
+-- 2. product_model  -- model lookup (IDENTITY key, UI inline add supported)
 -- ----------------------------------------------------------------------------
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'product_model')
 CREATE TABLE [dbo].[product_model] (
@@ -39,7 +39,8 @@ CREATE TABLE [dbo].[product_model] (
     [name]        [varchar](10)   NOT NULL,
     [create_at]   [datetime2](7)  NOT NULL CONSTRAINT [DF_product_model_create_at] DEFAULT (sysdatetime()),
     [update_at]   [datetime2](7)  NOT NULL CONSTRAINT [DF_product_model_update_at] DEFAULT (sysdatetime()),
-    CONSTRAINT [PK_product_model] PRIMARY KEY CLUSTERED ([model_id] ASC)
+    CONSTRAINT [PK_product_model] PRIMARY KEY CLUSTERED ([model_id] ASC),
+    CONSTRAINT [UQ_product_model_name] UNIQUE NONCLUSTERED ([name] ASC)
 );
 GO
 
