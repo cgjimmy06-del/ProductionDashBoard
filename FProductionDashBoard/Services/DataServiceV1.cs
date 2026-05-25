@@ -33,6 +33,7 @@ namespace FProductionDashBoard.Services.V1
         private readonly IProductPartRepository ProductPartRep;
         private readonly IProductRepository ProductRep;
         private readonly ISopChecklistRepository SopChecklistRep;
+        private readonly IEquipmentProductRepository EquipmentProductRep;
         private readonly IDbContextFactory<MesDbContext> _mesFactory;
 
         private readonly IOfflineCacheService _offlineCache;
@@ -42,7 +43,7 @@ namespace FProductionDashBoard.Services.V1
             IInspectionRecordRepository inspectionRecordRep, ITimeSlotLookupRepository timeSlotLookupRep,
             IOfflineCacheService offlineCache, IRolePermissionRepository rolePermissionRep, ITuningRecordRepository tuningRecordRep,
             IProductPartRepository productPartRep, IProductRepository productRep, ISopChecklistRepository sopChecklistRep,
-            IDbContextFactory<MesDbContext> mesFactory)
+            IEquipmentProductRepository equipmentProductRep, IDbContextFactory<MesDbContext> mesFactory)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
@@ -57,6 +58,7 @@ namespace FProductionDashBoard.Services.V1
             ProductPartRep = productPartRep;
             ProductRep = productRep;
             SopChecklistRep = sopChecklistRep;
+            EquipmentProductRep = equipmentProductRep;
             _mesFactory = mesFactory;
         }
 
@@ -936,6 +938,70 @@ namespace FProductionDashBoard.Services.V1
             ctx.Products.Add(p);
             await ctx.SaveChangesAsync().ConfigureAwait(false);
             return p.ProductId;
+        }
+
+        #endregion
+
+        #region 設定：機台可生產清單 CRUD
+
+        public async Task<List<EquipmentProduct>> GetEquipmentProductsByEquipmentAsync(int equipmentId)
+        {
+            if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetEquipmentProductsByEquipmentAsync] 機台可生產清單 Repository 連線失敗");
+            await using var ctx = _mesFactory.CreateDbContext();
+            return await ctx.EquipmentProducts
+                .Where(ep => ep.EquipmentId == equipmentId)
+                .Include(ep => ep.Sop).ThenInclude(s => s!.Product).ThenInclude(p => p!.Part)
+                .Include(ep => ep.Sop).ThenInclude(s => s!.Product).ThenInclude(p => p!.Model)
+                .Include(ep => ep.Sop).ThenInclude(s => s!.Process)
+                .OrderBy(ep => ep.SeqNo)
+                .ToListAsync().ConfigureAwait(false);
+        }
+
+        public async Task AddEquipmentProductAsync(EquipmentProductFormDto dto)
+        {
+            if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[AddEquipmentProductAsync] 機台可生產清單 Repository 連線失敗");
+            var entity = new EquipmentProduct
+            {
+                EquipmentId = dto.EquipmentId,
+                SopId = dto.SopId,
+                SeqNo = dto.SeqNo
+            };
+            await EquipmentProductRep.AddAsync(entity).ConfigureAwait(false);
+        }
+
+        public async Task UpdateEquipmentProductAsync(EquipmentProductFormDto dto)
+        {
+            if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[UpdateEquipmentProductAsync] 機台可生產清單 Repository 連線失敗");
+            var entity = await EquipmentProductRep.GetByIdAsync(dto.Id!.Value).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"[UpdateEquipmentProductAsync] 找不到 EquipmentProduct ID={dto.Id}");
+            entity.SopId = dto.SopId;
+            entity.SeqNo = dto.SeqNo;
+            entity.UpdateAt = DateTime.Now;
+            await EquipmentProductRep.UpdateAsync(entity).ConfigureAwait(false);
+        }
+
+        public async Task DeleteEquipmentProductAsync(int id)
+        {
+            if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[DeleteEquipmentProductAsync] 機台可生產清單 Repository 連線失敗");
+            await EquipmentProductRep.DeleteAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task ResequenceEquipmentProductsAsync(int equipmentId)
+        {
+            if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[ResequenceEquipmentProductsAsync] 機台可生產清單 Repository 連線失敗");
+            await using var ctx = _mesFactory.CreateDbContext();
+            var records = await ctx.EquipmentProducts
+                .Where(ep => ep.EquipmentId == equipmentId)
+                .OrderBy(ep => ep.SeqNo)
+                .ToListAsync().ConfigureAwait(false);
+            for (int i = 0; i < records.Count; i++)
+                records[i].SeqNo = i + 1;
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
         #endregion
