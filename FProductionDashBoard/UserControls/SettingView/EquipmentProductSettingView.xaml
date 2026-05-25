@@ -228,7 +228,7 @@
                                                Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                                     <TextBox Text="{Binding SopKeywordFilter, UpdateSourceTrigger=PropertyChanged}"
-                                             materialDesign:HintAssist.Hint="{DynamicResource EqprodSopSearchLabel}"/>
+                                             materialDesign:HintAssist.Hint="{DynamicResource EqprodSopSearchTooltip}"/>
                                 </StackPanel>
                             </Grid>
 

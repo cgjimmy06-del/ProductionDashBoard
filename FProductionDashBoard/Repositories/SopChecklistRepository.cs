@@ -25,5 +25,14 @@ namespace FProductionDashBoard.Repositories
             await using var ctx = _factory.CreateDbContext();
             return await ctx.Set<WorkProcess>().ToListAsync().ConfigureAwait(false);
         }
+
+        public async Task<int> AddProductModelAsync(string name)
+        {
+            await using var ctx = _factory.CreateDbContext();
+            var entity = new ProductModel { Name = name };
+            ctx.Set<ProductModel>().Add(entity);
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
+            return entity.ModelId;
+        }
     }
 }

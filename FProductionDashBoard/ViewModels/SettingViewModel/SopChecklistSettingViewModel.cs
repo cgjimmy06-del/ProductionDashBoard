@@ -40,7 +40,9 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(BeginCreatePartCommand))]
         private string partFilter = "";
-        [ObservableProperty] private string modelFilter = "";
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(CreateModelCommand))]
+        private string modelFilter = "";
         [ObservableProperty] private int? formPartId;
         [ObservableProperty] private int? formModelId;
         [ObservableProperty] private int? formProcessId;
@@ -203,6 +205,32 @@ namespace FProductionDashBoard.ViewModels
 
         [RelayCommand]
         private void CancelCreatePart() => IsCreatingPart = false;
+
+        // ── inline Model 新增 ────────────────────────────────────────
+        private bool CanCreateModel() =>
+            ModelFilter?.Length == 3 && !FilteredModelList.Any();
+
+        [RelayCommand(CanExecute = nameof(CanCreateModel))]
+        private async Task CreateModelAsync()
+        {
+            if (!ShowConfirm($"型號「{ModelFilter}」不存在，是否新增？")) return;
+            try
+            {
+                var newId = await _core.Data.AddProductModelAsync(new ProductModelFormDto { Name = ModelFilter });
+                var newModel = new ProductModel { ModelId = newId, Name = ModelFilter };
+                ModelList.Add(newModel);
+                FormModelId = newId;
+                ModelFilter = "";
+                RecomputeFilteredModelList();
+                FormErrorString = null;
+            }
+            catch (Exception ex)
+            {
+                FormErrorString = ex.Message;
+                _core.Log.AddLog($"SOP 管理 - 新增型號失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddErrorLog($"[CreateModelAsync] {ex.Message}");
+            }
+        }
 
         // ── 明細子表單命令 ───────────────────────────────────────────
         [RelayCommand]

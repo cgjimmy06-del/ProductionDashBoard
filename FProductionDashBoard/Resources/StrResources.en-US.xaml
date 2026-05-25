@@ -43,6 +43,9 @@
     <sys:String x:Key="FirstInsAllButtonTooltip">Do first inspection for all devices</sys:String>
     <sys:String x:Key="RoutineInsAllButtonTooltip">Do routine inspection for all devices</sys:String>
     <sys:String x:Key="AddDeviceButtonTooltip">Add new device card to the block</sys:String>
+    <sys:String x:Key="AddDeviceFilterBuilding">Building</sys:String>
+    <sys:String x:Key="AddDeviceFilterBuildingAll">All Buildings</sys:String>
+    <sys:String x:Key="AddDeviceFilterKeyword">Code / Name / IP</sys:String>
     <sys:String x:Key="FastUploadButtonTooltip">Fast upload default list to device block</sys:String>
     <sys:String x:Key="FastDownloadButtonTooltip">Fast download list to default file</sys:String>
     <sys:String x:Key="DeleteDevicesButtonTooltip">Delete device cards</sys:String>
@@ -94,13 +97,14 @@
     <!-- SOP Checklist -->
     <sys:String x:Key="SopTypeFilterAll">All</sys:String>
     <sys:String x:Key="SopModelFilter">Model filter</sys:String>
-    <sys:String x:Key="SopModelFilterHint">Model filter</sys:String>
+    <sys:String x:Key="SopModelFilterHint">Enter 3 chars to enable creation</sys:String>
     <sys:String x:Key="SopFilterHint">Part / Name / Process / Remark</sys:String>
     <sys:String x:Key="SopHeaderSection">Header</sys:String>
     <sys:String x:Key="SopItemsSection">Items</sys:String>
     <sys:String x:Key="SopPartFilter">Part Filter</sys:String>
     <sys:String x:Key="SopPartFilterHint">Enter 8 chars to enable creation</sys:String>
     <sys:String x:Key="SopAddPart">+ New Part</sys:String>
+    <sys:String x:Key="SopAddModel">+ Add Model</sys:String>
     <sys:String x:Key="SopNewPartTitle">New Part</sys:String>
     <sys:String x:Key="SopPartBrand">Brand</sys:String>
     <sys:String x:Key="SopPartName">Name</sys:String>
@@ -227,6 +231,7 @@
     <sys:String x:Key="EqprodProcessLabel">Process *</sys:String>
     <sys:String x:Key="EqprodSopTypeLabel">SOP Type</sys:String>
     <sys:String x:Key="EqprodSopSearchLabel">Search</sys:String>
+    <sys:String x:Key="EqprodSopSearchTooltip">Product / Process</sys:String>
     <sys:String x:Key="EqprodFilterType">Type</sys:String>
     <sys:String x:Key="EqprodFilterKeyword">Code / Name / IP</sys:String>
     <sys:String x:Key="EqprodTypeFilterAll">All Types</sys:String>
