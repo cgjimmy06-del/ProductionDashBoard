@@ -232,6 +232,7 @@
     <sys:String x:Key="EqprodTypeFilterAll">全部類型</sys:String>
     <sys:String x:Key="EqprodNewItemButton">+ 新增品項</sys:String>
     <sys:String x:Key="EqprodNoEquipmentSelected">請先從左側選取機台</sys:String>
+    <sys:String x:Key="EqprodEquipmentListTitle">機台清單</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

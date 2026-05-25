@@ -232,6 +232,7 @@
     <sys:String x:Key="EqprodTypeFilterAll">Tất cả</sys:String>
     <sys:String x:Key="EqprodNewItemButton">+ Thêm mục</sys:String>
     <sys:String x:Key="EqprodNoEquipmentSelected">Vui lòng chọn thiết bị từ bên trái</sys:String>
+    <sys:String x:Key="EqprodEquipmentListTitle">Danh sách thiết bị</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

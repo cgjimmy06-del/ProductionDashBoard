@@ -232,6 +232,7 @@
     <sys:String x:Key="EqprodTypeFilterAll">All Types</sys:String>
     <sys:String x:Key="EqprodNewItemButton">+ Add Item</sys:String>
     <sys:String x:Key="EqprodNoEquipmentSelected">Please select an equipment from the left</sys:String>
+    <sys:String x:Key="EqprodEquipmentListTitle">Equipment List</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

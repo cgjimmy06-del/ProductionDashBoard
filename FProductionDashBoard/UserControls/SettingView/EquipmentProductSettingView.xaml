@@ -27,34 +27,44 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- 類型篩選 ComboBox -->
-            <ComboBox Grid.Row="0" Margin="0,0,0,4"
-                      ItemsSource="{Binding EquipmentTypeFilterOptions}"
-                      SelectedValue="{Binding TypeFilter}"
-                      SelectedValuePath="Value"
-                      materialDesign:HintAssist.Hint="{DynamicResource EqprodFilterType}">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock>
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Text" Value="{Binding Value.Name}"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
-                                            <Setter Property="Text" Value="{DynamicResource EqprodTypeFilterAll}"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+            <!-- 標題 -->
+            <TextBlock Grid.Row="0" Text="{DynamicResource EqprodEquipmentListTitle}"
+                       Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       Margin="0,0,0,4"/>
 
-            <!-- 關鍵字篩選 TextBox -->
-            <TextBox Grid.Row="1" Margin="0,0,0,4"
-                     materialDesign:HintAssist.Hint="{DynamicResource EqprodFilterKeyword}"
-                     Text="{Binding KeywordFilter, UpdateSourceTrigger=PropertyChanged}"/>
+            <!-- 篩選列：關鍵字 TextBox + 類型 ComboBox（橫向排列） -->
+            <Grid Grid.Row="1" Margin="0,0,0,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Margin="0,0,4,0"
+                         materialDesign:HintAssist.Hint="{DynamicResource EqprodFilterKeyword}"
+                         Text="{Binding KeywordFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding EquipmentTypeFilterOptions}"
+                          SelectedValue="{Binding TypeFilter}"
+                          SelectedValuePath="Value"
+                          materialDesign:HintAssist.Hint="{DynamicResource EqprodFilterType}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="{Binding Value.Name}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
+                                                <Setter Property="Text" Value="{DynamicResource EqprodTypeFilterAll}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Grid>
 
             <!-- 機台清單 DataGrid -->
             <DataGrid Grid.Row="2"
