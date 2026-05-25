@@ -304,4 +304,22 @@
     <value>System User</value>
     <comment>共用字串: 系統初始登入人員</comment>
   </data>
+  <data name="EqprodValidationEquipment" xml:space="preserve">
+    <value>Please select an equipment first</value>
+  </data>
+  <data name="EqprodValidationProduct" xml:space="preserve">
+    <value>Please select a product</value>
+  </data>
+  <data name="EqprodValidationProcess" xml:space="preserve">
+    <value>Please select a process</value>
+  </data>
+  <data name="EqprodValidationSeqNo" xml:space="preserve">
+    <value>Seq No. must be greater than 0</value>
+  </data>
+  <data name="EqprodValidationSeqNoDuplicate" xml:space="preserve">
+    <value>This Seq No. is already used by this equipment</value>
+  </data>
+  <data name="EqprodValidationNoSop" xml:space="preserve">
+    <value>No matching SOP found for the selected product and process</value>
+  </data>
 </root>

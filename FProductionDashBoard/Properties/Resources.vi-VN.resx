@@ -261,4 +261,22 @@
   <data name="ComStrSystemUser" xml:space="preserve">
     <value>Người dùng hệ thống</value>
   </data>
+  <data name="EqprodValidationEquipment" xml:space="preserve">
+    <value>Vui lòng chọn thiết bị từ bên trái trước</value>
+  </data>
+  <data name="EqprodValidationProduct" xml:space="preserve">
+    <value>Vui lòng chọn sản phẩm</value>
+  </data>
+  <data name="EqprodValidationProcess" xml:space="preserve">
+    <value>Vui lòng chọn quá trình</value>
+  </data>
+  <data name="EqprodValidationSeqNo" xml:space="preserve">
+    <value>Số TT phải lớn hơn 0</value>
+  </data>
+  <data name="EqprodValidationSeqNoDuplicate" xml:space="preserve">
+    <value>Số TT này đã được dùng cho thiết bị này</value>
+  </data>
+  <data name="EqprodValidationNoSop" xml:space="preserve">
+    <value>Không tìm thấy SOP phù hợp với sản phẩm và quá trình đã chọn</value>
+  </data>
 </root>

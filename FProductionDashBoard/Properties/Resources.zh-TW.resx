@@ -261,4 +261,22 @@
   <data name="ComStrSystemUser" xml:space="preserve">
     <value>系統登入人員</value>
   </data>
+  <data name="EqprodValidationEquipment" xml:space="preserve">
+    <value>請先從左側選取機台</value>
+  </data>
+  <data name="EqprodValidationProduct" xml:space="preserve">
+    <value>請選擇產品</value>
+  </data>
+  <data name="EqprodValidationProcess" xml:space="preserve">
+    <value>請選擇工序</value>
+  </data>
+  <data name="EqprodValidationSeqNo" xml:space="preserve">
+    <value>順序必須大於 0</value>
+  </data>
+  <data name="EqprodValidationSeqNoDuplicate" xml:space="preserve">
+    <value>此機台的順序號已被使用</value>
+  </data>
+  <data name="EqprodValidationNoSop" xml:space="preserve">
+    <value>所選產品與工序沒有對應的 SOP</value>
+  </data>
 </root>

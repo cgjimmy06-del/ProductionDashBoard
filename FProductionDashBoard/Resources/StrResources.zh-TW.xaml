@@ -213,4 +213,26 @@
     <sys:String x:Key="LoadingExtendButton">延長登入</sys:String>
     <!--#endregion-->
 
+    <!--#region 機台可生產清單管理-->
+    <sys:String x:Key="SettingTabEquipmentProduct">可生產清單管理</sys:String>
+    <sys:String x:Key="EqprodSeqNo">順序</sys:String>
+    <sys:String x:Key="EqprodPartNo">件號</sys:String>
+    <sys:String x:Key="EqprodBrand">品牌</sys:String>
+    <sys:String x:Key="EqprodModel">型號</sys:String>
+    <sys:String x:Key="EqprodProcess">工序</sys:String>
+    <sys:String x:Key="EqprodSopType">類型</sys:String>
+    <sys:String x:Key="EqprodIp">IP</sys:String>
+    <sys:String x:Key="EqprodSeqNoLabel">順序 *</sys:String>
+    <sys:String x:Key="EqprodProductLabel">產品 *</sys:String>
+    <sys:String x:Key="EqprodProcessLabel">工序 *</sys:String>
+    <sys:String x:Key="EqprodSopTypeLabel">類型</sys:String>
+    <sys:String x:Key="EqprodSopSearchLabel">搜尋</sys:String>
+    <sys:String x:Key="EqprodFilterType">類型</sys:String>
+    <sys:String x:Key="EqprodFilterKeyword">設備編號/名稱/IP</sys:String>
+    <sys:String x:Key="EqprodTypeFilterAll">全部類型</sys:String>
+    <sys:String x:Key="EqprodNewItemButton">+ 新增品項</sys:String>
+    <sys:String x:Key="EqprodNoEquipmentSelected">請先從左側選取機台</sys:String>
+    <sys:String x:Key="EqprodEquipmentListTitle">機台清單</sys:String>
+    <!--#endregion-->
+
 </ResourceDictionary>

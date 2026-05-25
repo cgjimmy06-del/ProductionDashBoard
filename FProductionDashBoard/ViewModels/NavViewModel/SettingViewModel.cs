@@ -11,6 +11,7 @@ namespace FProductionDashBoard.ViewModels
         public TimeSlotSettingViewModel TimeSlot { get; }
         public RolePermissionSettingViewModel RolePermission { get; }
         public SopChecklistSettingViewModel SopChecklist { get; }
+        public EquipmentProductSettingViewModel EquipmentProduct { get; }
 
         public SettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
         {
@@ -21,6 +22,7 @@ namespace FProductionDashBoard.ViewModels
             TimeSlot = new TimeSlotSettingViewModel(core, dialog);
             RolePermission = new RolePermissionSettingViewModel(core, dialog);
             SopChecklist = new SopChecklistSettingViewModel(core, dialog);
+            EquipmentProduct = new EquipmentProductSettingViewModel(core, dialog);
         }
     }
 }

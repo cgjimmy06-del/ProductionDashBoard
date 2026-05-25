@@ -79,6 +79,20 @@
             </TabItem.Header>
             <localuc:SopChecklistSettingView DataContext="{Binding SopChecklist}"/>
         </TabItem>
+
+        <TabItem MinWidth="140">
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Margin="4,0">
+                    <materialDesign:PackIcon Kind="FormatListBulleted"
+                                             Width="20" Height="20"
+                                             VerticalAlignment="Center"
+                                             Margin="0,0,6,0"/>
+                    <TextBlock Text="{DynamicResource SettingTabEquipmentProduct}" VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </StackPanel>
+            </TabItem.Header>
+            <localuc:EquipmentProductSettingView DataContext="{Binding EquipmentProduct}"/>
+        </TabItem>
         
         <TabItem>
             <TabItem.Header>

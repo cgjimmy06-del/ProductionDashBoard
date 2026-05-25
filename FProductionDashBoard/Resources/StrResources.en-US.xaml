@@ -213,4 +213,26 @@
     <sys:String x:Key="LoadingExtendButton">Extend Session</sys:String>
     <!--#endregion-->
 
+    <!--#region Equipment Producible List-->
+    <sys:String x:Key="SettingTabEquipmentProduct">Producible List</sys:String>
+    <sys:String x:Key="EqprodSeqNo">Seq</sys:String>
+    <sys:String x:Key="EqprodPartNo">Part No.</sys:String>
+    <sys:String x:Key="EqprodBrand">Brand</sys:String>
+    <sys:String x:Key="EqprodModel">Model</sys:String>
+    <sys:String x:Key="EqprodProcess">Process</sys:String>
+    <sys:String x:Key="EqprodSopType">Type</sys:String>
+    <sys:String x:Key="EqprodIp">IP</sys:String>
+    <sys:String x:Key="EqprodSeqNoLabel">Seq No. *</sys:String>
+    <sys:String x:Key="EqprodProductLabel">Product *</sys:String>
+    <sys:String x:Key="EqprodProcessLabel">Process *</sys:String>
+    <sys:String x:Key="EqprodSopTypeLabel">SOP Type</sys:String>
+    <sys:String x:Key="EqprodSopSearchLabel">Search</sys:String>
+    <sys:String x:Key="EqprodFilterType">Type</sys:String>
+    <sys:String x:Key="EqprodFilterKeyword">Code / Name / IP</sys:String>
+    <sys:String x:Key="EqprodTypeFilterAll">All Types</sys:String>
+    <sys:String x:Key="EqprodNewItemButton">+ Add Item</sys:String>
+    <sys:String x:Key="EqprodNoEquipmentSelected">Please select an equipment from the left</sys:String>
+    <sys:String x:Key="EqprodEquipmentListTitle">Equipment List</sys:String>
+    <!--#endregion-->
+
 </ResourceDictionary>
