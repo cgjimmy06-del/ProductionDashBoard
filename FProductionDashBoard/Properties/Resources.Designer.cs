@@ -482,5 +482,41 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("TuningInProgressTeaching", resourceCulture);
             }
         }
+
+        internal static string EqprodValidationEquipment {
+            get {
+                return ResourceManager.GetString("EqprodValidationEquipment", resourceCulture);
+            }
+        }
+
+        internal static string EqprodValidationProduct {
+            get {
+                return ResourceManager.GetString("EqprodValidationProduct", resourceCulture);
+            }
+        }
+
+        internal static string EqprodValidationProcess {
+            get {
+                return ResourceManager.GetString("EqprodValidationProcess", resourceCulture);
+            }
+        }
+
+        internal static string EqprodValidationSeqNo {
+            get {
+                return ResourceManager.GetString("EqprodValidationSeqNo", resourceCulture);
+            }
+        }
+
+        internal static string EqprodValidationSeqNoDuplicate {
+            get {
+                return ResourceManager.GetString("EqprodValidationSeqNoDuplicate", resourceCulture);
+            }
+        }
+
+        internal static string EqprodValidationNoSop {
+            get {
+                return ResourceManager.GetString("EqprodValidationNoSop", resourceCulture);
+            }
+        }
     }
 }

@@ -213,4 +213,25 @@
     <sys:String x:Key="LoadingExtendButton">Gia hạn phiên</sys:String>
     <!--#endregion-->
 
+    <!--#region Danh sách có thể sản xuất-->
+    <sys:String x:Key="SettingTabEquipmentProduct">Quản lý có thể SX</sys:String>
+    <sys:String x:Key="EqprodSeqNo">TT</sys:String>
+    <sys:String x:Key="EqprodPartNo">Mã Part</sys:String>
+    <sys:String x:Key="EqprodBrand">Thương hiệu</sys:String>
+    <sys:String x:Key="EqprodModel">Model</sys:String>
+    <sys:String x:Key="EqprodProcess">Quá trình</sys:String>
+    <sys:String x:Key="EqprodSopType">Loại</sys:String>
+    <sys:String x:Key="EqprodIp">IP</sys:String>
+    <sys:String x:Key="EqprodSeqNoLabel">Số TT *</sys:String>
+    <sys:String x:Key="EqprodProductLabel">Sản phẩm *</sys:String>
+    <sys:String x:Key="EqprodProcessLabel">Quá trình *</sys:String>
+    <sys:String x:Key="EqprodSopTypeLabel">Loại SOP</sys:String>
+    <sys:String x:Key="EqprodSopSearchLabel">Tìm kiếm</sys:String>
+    <sys:String x:Key="EqprodFilterType">Loại</sys:String>
+    <sys:String x:Key="EqprodFilterKeyword">Mã/Tên/IP</sys:String>
+    <sys:String x:Key="EqprodTypeFilterAll">Tất cả</sys:String>
+    <sys:String x:Key="EqprodNewItemButton">+ Thêm mục</sys:String>
+    <sys:String x:Key="EqprodNoEquipmentSelected">Vui lòng chọn thiết bị từ bên trái</sys:String>
+    <!--#endregion-->
+
 </ResourceDictionary>
