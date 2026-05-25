@@ -43,6 +43,9 @@
     <sys:String x:Key="FirstInsAllButtonTooltip">Do first inspection for all devices</sys:String>
     <sys:String x:Key="RoutineInsAllButtonTooltip">Do routine inspection for all devices</sys:String>
     <sys:String x:Key="AddDeviceButtonTooltip">Add new device card to the block</sys:String>
+    <sys:String x:Key="AddDeviceFilterBuilding">Building</sys:String>
+    <sys:String x:Key="AddDeviceFilterBuildingAll">All Buildings</sys:String>
+    <sys:String x:Key="AddDeviceFilterKeyword">Code / Name / IP</sys:String>
     <sys:String x:Key="FastUploadButtonTooltip">Fast upload default list to device block</sys:String>
     <sys:String x:Key="FastDownloadButtonTooltip">Fast download list to default file</sys:String>
     <sys:String x:Key="DeleteDevicesButtonTooltip">Delete device cards</sys:String>

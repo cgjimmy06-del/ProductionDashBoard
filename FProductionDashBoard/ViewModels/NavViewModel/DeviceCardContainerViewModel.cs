@@ -152,8 +152,21 @@ namespace FProductionDashBoard.ViewModels
 
         private async Task AddDeviceCard()
         {
+            IEnumerable<EquipmentTypeFilterOption> typeOptions;
+            try
+            {
+                var types = await _core.Data.GetEquipmentTypesAsync();
+                typeOptions = new[] { new EquipmentTypeFilterOption(null) }
+                    .Concat(types.Select(t => new EquipmentTypeFilterOption(t)));
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddErrorLog($"[AddDeviceCard] {ex.Message}");
+                typeOptions = new[] { new EquipmentTypeFilterOption(null) };
+            }
+
             var vm = new AddDeviceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile,
-                                                    commonLists.DevicesList, [.. Devices]); // [.. X] = X.ToList()
+                                                    commonLists.DevicesList, [.. Devices], typeOptions);
             _dialog.ShowDialog(vm);
 
             if (vm.IsConfirmed)

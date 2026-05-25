@@ -10,25 +10,68 @@
              d:DesignHeight="500" d:DesignWidth="600">
     <Grid Width="Auto">
         <Grid.RowDefinitions>
-            <RowDefinition Height="40" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="10,0" Orientation="Horizontal">
-            <TextBox  Width="90" Height="30" Padding="2"
-                      Text="{Binding DeviceId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      materialDesign:HintAssist.Hint="ex. FSPROB..."/>
+        <!-- 第一排：類型 + 棟別 ComboBox -->
+        <Grid Grid.Row="0" Margin="10,6,10,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox Grid.Column="0" Margin="0,0,4,0"
+                      ItemsSource="{Binding TypeFilterOptions}"
+                      SelectedValue="{Binding TypeFilter}"
+                      SelectedValuePath="Value"
+                      materialDesign:HintAssist.Hint="{DynamicResource EqprodFilterType}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding Value.Name}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
+                                            <Setter Property="Text" Value="{DynamicResource EqprodTypeFilterAll}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ComboBox Grid.Column="1" Margin="4,0,0,0"
+                      ItemsSource="{Binding BuildingOptions}"
+                      SelectedItem="{Binding BuildingFilter}"
+                      materialDesign:HintAssist.Hint="{DynamicResource AddDeviceFilterBuilding}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding}" Value="">
+                                            <Setter Property="Text" Value="{DynamicResource AddDeviceFilterBuildingAll}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </Grid>
 
-            <TextBox  Width="90" Height="30" Padding="2"
-                      Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      materialDesign:HintAssist.Hint="ex. A01"/>
+        <!-- 第二排：模糊 Keyword TextBox -->
+        <TextBox Grid.Row="1" Margin="10,2,10,6"
+                 materialDesign:HintAssist.Hint="{DynamicResource AddDeviceFilterKeyword}"
+                 Text="{Binding KeywordFilter, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <TextBox  Width="90" Height="30" Padding="2"
-                      Text="{Binding Ip, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      materialDesign:HintAssist.Hint="ex. 0.0.0.0"/>
-
-        </StackPanel>
-        <StackPanel Grid.Row="1" Margin="5,0" Height="300" Orientation="Horizontal">
+        <StackPanel Grid.Row="2" Margin="5,0" Height="300" Orientation="Horizontal">
             <!-- 篩選清單 -->
             <DataGrid ItemsSource="{Binding FilteredDevices}"
                       local:DataGridSelectedItemsBehavior.SelectedItems="{Binding SelectedFromFiltered}">
