@@ -111,6 +111,7 @@ namespace FProductionDashBoard.Services
 
         // ─── 設定：SOP lookup（下拉用） ─────────────────────────────────────
         public Task<List<ProductModel>> GetProductModelsAsync();
+        public Task<int> AddProductModelAsync(ProductModelFormDto dto);
         public Task<List<WorkProcess>> GetWorkProcessesAsync();
         public Task<List<Material>> GetMaterialsByTypeAsync(int typeId);
 

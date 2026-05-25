@@ -43,6 +43,9 @@
     <sys:String x:Key="FirstInsAllButtonTooltip">Kiểm tra đầu tất cả thiết bị</sys:String>
     <sys:String x:Key="RoutineInsAllButtonTooltip">Tuần tra tất cả thiết bị</sys:String>
     <sys:String x:Key="AddDeviceButtonTooltip">Thêm thẻ thiết bị vào bảng</sys:String>
+    <sys:String x:Key="AddDeviceFilterBuilding">Tòa nhà</sys:String>
+    <sys:String x:Key="AddDeviceFilterBuildingAll">Tất cả tòa nhà</sys:String>
+    <sys:String x:Key="AddDeviceFilterKeyword">Code / Tên / IP</sys:String>
     <sys:String x:Key="FastUploadButtonTooltip">Tải nhanh danh sách mặc định</sys:String>
     <sys:String x:Key="FastDownloadButtonTooltip">Lưu nhanh danh sách vào tệp</sys:String>
     <sys:String x:Key="DeleteDevicesButtonTooltip">Xóa thẻ thiết bị</sys:String>
@@ -94,13 +97,14 @@
     <!-- Quản lý SOP -->
     <sys:String x:Key="SopTypeFilterAll">Tất cả</sys:String>
     <sys:String x:Key="SopModelFilter">Lọc Model</sys:String>
-    <sys:String x:Key="SopModelFilterHint">Lọc Model</sys:String>
+    <sys:String x:Key="SopModelFilterHint">Nhập 3 ký tự để tạo mới</sys:String>
     <sys:String x:Key="SopFilterHint">Part / Tên / Quá trình / Ghi chú</sys:String>
     <sys:String x:Key="SopHeaderSection">Đầu</sys:String>
     <sys:String x:Key="SopItemsSection">Chi tiết</sys:String>
     <sys:String x:Key="SopPartFilter">Lọc Part</sys:String>
     <sys:String x:Key="SopPartFilterHint">Nhập 8 ký tự để tạo mới</sys:String>
     <sys:String x:Key="SopAddPart">+ Thêm Part</sys:String>
+    <sys:String x:Key="SopAddModel">+ Thêm Model</sys:String>
     <sys:String x:Key="SopNewPartTitle">Thêm Part</sys:String>
     <sys:String x:Key="SopPartBrand">Thương hiệu</sys:String>
     <sys:String x:Key="SopPartName">Tên</sys:String>
@@ -227,6 +231,7 @@
     <sys:String x:Key="EqprodProcessLabel">Quá trình *</sys:String>
     <sys:String x:Key="EqprodSopTypeLabel">Loại SOP</sys:String>
     <sys:String x:Key="EqprodSopSearchLabel">Tìm kiếm</sys:String>
+    <sys:String x:Key="EqprodSopSearchTooltip">Sản phẩm / Quá trình</sys:String>
     <sys:String x:Key="EqprodFilterType">Loại</sys:String>
     <sys:String x:Key="EqprodFilterKeyword">Mã/Tên/IP</sys:String>
     <sys:String x:Key="EqprodTypeFilterAll">Tất cả</sys:String>

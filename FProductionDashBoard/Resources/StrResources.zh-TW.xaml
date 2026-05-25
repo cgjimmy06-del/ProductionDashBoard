@@ -43,6 +43,9 @@
     <sys:String x:Key="FirstInsAllButtonTooltip">所有設備統一做首件</sys:String>
     <sys:String x:Key="RoutineInsAllButtonTooltip">所有設備統一做巡檢</sys:String>
     <sys:String x:Key="AddDeviceButtonTooltip">新增設備卡片</sys:String>
+    <sys:String x:Key="AddDeviceFilterBuilding">棟別</sys:String>
+    <sys:String x:Key="AddDeviceFilterBuildingAll">全部棟別</sys:String>
+    <sys:String x:Key="AddDeviceFilterKeyword">Code / 名稱 / IP</sys:String>
     <sys:String x:Key="FastUploadButtonTooltip">快速上載設備卡片預設清單</sys:String>
     <sys:String x:Key="FastDownloadButtonTooltip">快速儲存設備卡片清單</sys:String>
     <sys:String x:Key="DeleteDevicesButtonTooltip">刪除設備卡片</sys:String>
@@ -94,13 +97,14 @@
     <!-- SOP 點檢表管理 -->
     <sys:String x:Key="SopTypeFilterAll">全部</sys:String>
     <sys:String x:Key="SopModelFilter">型號篩選</sys:String>
-    <sys:String x:Key="SopModelFilterHint">型號篩選</sys:String>
+    <sys:String x:Key="SopModelFilterHint">輸入 3 碼可新建</sys:String>
     <sys:String x:Key="SopFilterHint">件號 / 品名 / 工序 / 備註</sys:String>
     <sys:String x:Key="SopHeaderSection">表頭</sys:String>
     <sys:String x:Key="SopItemsSection">明細</sys:String>
     <sys:String x:Key="SopPartFilter">件號篩選</sys:String>
     <sys:String x:Key="SopPartFilterHint">輸入 8 碼可新建</sys:String>
     <sys:String x:Key="SopAddPart">+ 新增 Part</sys:String>
+    <sys:String x:Key="SopAddModel">+ 新增型號</sys:String>
     <sys:String x:Key="SopNewPartTitle">新增件號</sys:String>
     <sys:String x:Key="SopPartBrand">品牌</sys:String>
     <sys:String x:Key="SopPartName">品名</sys:String>
@@ -227,6 +231,7 @@
     <sys:String x:Key="EqprodProcessLabel">工序 *</sys:String>
     <sys:String x:Key="EqprodSopTypeLabel">類型</sys:String>
     <sys:String x:Key="EqprodSopSearchLabel">搜尋</sys:String>
+    <sys:String x:Key="EqprodSopSearchTooltip">產品 / 工序</sys:String>
     <sys:String x:Key="EqprodFilterType">類型</sys:String>
     <sys:String x:Key="EqprodFilterKeyword">設備編號/名稱/IP</sys:String>
     <sys:String x:Key="EqprodTypeFilterAll">全部類型</sys:String>

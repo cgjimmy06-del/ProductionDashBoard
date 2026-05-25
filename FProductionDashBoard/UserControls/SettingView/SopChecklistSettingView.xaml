@@ -209,9 +209,19 @@
                             <TextBlock Text="{DynamicResource SopModelFilter}"
                                        Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource SopModelFilterHint}"
-                                     Text="{Binding ModelFilter, UpdateSourceTrigger=PropertyChanged}"
-                                     Margin="0,0,0,4"/>
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Margin="0,0,4,0"
+                                         materialDesign:HintAssist.Hint="{DynamicResource SopModelFilterHint}"
+                                         Text="{Binding ModelFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                                <Button Grid.Column="1"
+                                        Style="{StaticResource FunctionButtonStyle}"
+                                        Command="{Binding CreateModelCommand}"
+                                        Content="{DynamicResource SopAddModel}"/>
+                            </Grid>
                             <TextBlock Text="{DynamicResource SopModel}"
                                        Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"
@@ -502,13 +512,32 @@
                     <!-- SOP 表單操作列 -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,4,4">
                         <Button Margin="0,0,8,0"
-                                Style="{StaticResource MaterialDesignOutlinedButton}"
-                                Foreground="{DynamicResource PrimaryBrush}"
-                                BorderBrush="{DynamicResource PrimaryBrush}"
                                 Command="{Binding CancelCommand}"
-                                Content="{DynamicResource CancelButton}"/>
+                                Content="{DynamicResource CancelButton}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsItemFormVisible}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <Button Command="{Binding SaveCommand}"
-                                Content="{DynamicResource SaveButton}"/>
+                                Content="{DynamicResource SaveButton}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsItemFormVisible}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
