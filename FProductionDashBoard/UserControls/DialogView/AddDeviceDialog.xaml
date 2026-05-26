@@ -71,7 +71,7 @@
                  materialDesign:HintAssist.Hint="{DynamicResource AddDeviceFilterKeyword}"
                  Text="{Binding KeywordFilter, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <StackPanel Grid.Row="2" Margin="5,0" Height="300" Orientation="Horizontal">
+        <StackPanel Grid.Row="2" Margin="5,0" Height="400" Orientation="Horizontal">
             <!-- 篩選清單 -->
             <DataGrid ItemsSource="{Binding FilteredDevices}"
                       local:DataGridSelectedItemsBehavior.SelectedItems="{Binding SelectedFromFiltered}">
@@ -95,13 +95,13 @@
                 </i:Interaction.Triggers>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="{DynamicResource DeivceIdDataGridHeader}" 
-                                        Width="100" Binding="{Binding DeviceID}"
+                                        Width="120" Binding="{Binding DeviceID}"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTextColumn Header="{DynamicResource NameDataGridHeader}" 
-                                        Width="100" Binding="{Binding Name}"
+                                        Width="120" Binding="{Binding Name}"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTextColumn Header="{DynamicResource IpDataGridHeader}" 
-                                        Width="100" Binding="{Binding IP}"
+                                        Width="120" Binding="{Binding IP}"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                 </DataGrid.Columns>
             </DataGrid>
@@ -143,25 +143,10 @@
                 </i:Interaction.Triggers>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="{DynamicResource LoadedDataGridHeader}" 
-                                        Width="100" Binding="{Binding Name}"
+                                        Width="120" Binding="{Binding Name}"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <!-- 上下載操作 -->
-            <StackPanel VerticalAlignment="Center">
-                <Button Margin="5" Height="40" Width="40" Padding="2"
-                        Command="{Binding UploadDevicesCommand}"
-                        ToolTip="{DynamicResource UploadButtonTooltip}">
-                    <materialDesign:PackIcon Kind="FileUpload"
-                                             Width="30" Height="30"/>
-                </Button>
-                <Button Margin="5" Height="40" Width="40" Padding="2"
-                        Command="{Binding DownloadDevicesCommand}"
-                        ToolTip="{DynamicResource DownloadButtonTooltip}">
-                    <materialDesign:PackIcon Kind="FileDownload"
-                                             Width="30" Height="30"/>
-                </Button>
-            </StackPanel>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -35,8 +35,6 @@ namespace FProductionDashBoard.ViewModels
 
         public ICommand AddToSelectedCommand { get; }
         public ICommand RemoveFromSelectedCommand { get; }
-        public ICommand DownloadDevicesCommand { get; }
-        public ICommand UploadDevicesCommand { get; }
 
         public AddDeviceDialogViewModel(string dialogstring, string defaultsfile,
             List<DeviceInfo> deviceslist, List<DeviceCardViewModel> existedDevicesList,
@@ -58,8 +56,6 @@ namespace FProductionDashBoard.ViewModels
 
             AddToSelectedCommand = new RelayCommand(() => AddToSelected());
             RemoveFromSelectedCommand = new RelayCommand(() => RemoveFromSelected());
-            DownloadDevicesCommand = new RelayCommand(() => DownloadDevices());
-            UploadDevicesCommand = new RelayCommand(() => UploadDevices());
 
             ConfirmCommand = new RelayCommand(() => OnConfirm());
             CancelCommand = new RelayCommand(() => OnCancel());
@@ -105,26 +101,6 @@ namespace FProductionDashBoard.ViewModels
         {
             foreach (var device in SelectedFromSelected.ToList())
                 SelectedDevices.Remove(device);
-            ApplyFilter();
-        }
-
-        public void DownloadDevices()
-        {
-            try
-            {
-                Services.JsonDataService.Save(SelectedDevices, defaultDevicesFile);
-                DialogErrorString = Properties.Resources.ComStrDownloaded;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"[DownloadDevices] {ex.Message}");
-                DialogErrorString = "設備清單儲存失敗";
-            }
-        }
-
-        public void UploadDevices()
-        {
-            SelectedDevices = Services.JsonDataService.Load<ObservableCollection<DeviceInfo>>(defaultDevicesFile);
             ApplyFilter();
         }
 
