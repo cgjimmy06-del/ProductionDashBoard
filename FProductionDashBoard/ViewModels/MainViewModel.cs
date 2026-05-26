@@ -134,7 +134,8 @@ namespace FProductionDashBoard.ViewModels
                 var t4 = FetchListAsync(() => _core.Data.GetErrorsAsync(Properties.Settings.Default.CultureCode));
                 var t5 = FetchListAsync(() => _core.Data.GetTimeSlotsAsync());
                 var t6 = FetchListAsync(() => _core.Data.GetAllRolesAsync());
-                await Task.WhenAll(t1, t2, t3, t4, t5, t6);
+                var t7 = FetchListAsync(() => _core.Data.GetAllEquipmentProductsAsync());
+                await Task.WhenAll(t1, t2, t3, t4, t5, t6, t7);
 
                 CommonLists.DevicesList   = t1.Result;
                 CommonLists.UsersList     = t2.Result;
@@ -144,6 +145,7 @@ namespace FProductionDashBoard.ViewModels
                 CommonLists.RolesList     = t6.Result;
                 if (CommonLists.RolesList.Any())
                     _core.Authorization.SetCachedRoles(CommonLists.RolesList);
+                CommonLists.EquipmentProductsList = t7.Result;
 
                 _core.Log.AddLog($"已載入清單: " +
                     $"Devices:[{CommonLists.DevicesList.Count}]-" +
@@ -151,7 +153,8 @@ namespace FProductionDashBoard.ViewModels
                     $"Materials:[{CommonLists.MaterialsList.Count}]-" +
                     $"Errors:[{CommonLists.ErrorsList.Count}]-" +
                     $"TimeSlots:[{CommonLists.TimeSlotsList.Count}]-" +
-                    $"Roles:[{CommonLists.RolesList.Count}]");
+                    $"Roles:[{CommonLists.RolesList.Count}]-" +
+                    $"EquipmentProducts:[{CommonLists.EquipmentProductsList.Count}]");
             }
             finally { loadingWin.Close(); }
         }

@@ -123,6 +123,7 @@ namespace FProductionDashBoard.Services
         public Task DeleteSopChecklistAsync(int id);
 
         // ─── 設定：機台可生產清單 CRUD ─────────────────────────────────────
+        public Task<List<EquipmentProduct>> GetAllEquipmentProductsAsync();
         public Task<List<EquipmentProduct>> GetEquipmentProductsByEquipmentAsync(int equipmentId);
         public Task AddEquipmentProductAsync(EquipmentProductFormDto dto);
         public Task UpdateEquipmentProductAsync(EquipmentProductFormDto dto);
