@@ -38,21 +38,23 @@ namespace FProductionDashBoard
                 
                 // 登入畫面 + 取得資訊
                 var loginWindow = new LoginWindow();
-                splash.Close(TimeSpan.FromSeconds(0.5)); // login載入完成後關閉
                 if (loginWindow.ShowDialog() != true) { Shutdown(); return; }
 
-                // 後續加入語言
+                // 取得登入資訊
                 string selectedServer = loginWindow.SelectedServer;
                 var user = loginWindow.User;
 
+                // 讀取設定檔 - 重用登入階段已讀取的 config（避免 ClickOnce 路徑不穩定造成二次讀取失敗）
+                var config = Services.LoginDapper.GetCachedConfig();
+
+                // 檢查目標資料夾
                 Directory.CreateDirectory(Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "FProductionDashBoard"));
 
-                // 讀取設定檔 // 重用登入階段已讀取的 config（避免 ClickOnce 路徑不穩定造成二次讀取失敗）
                 var services = new ServiceCollection();
-                var config = Services.LoginDapper.GetCachedConfig();
 
+                // 註冊 ConfigurationBuilder 資訊
                 services.AddSingleton(config);
 
                 // 註冊 DbContext
@@ -144,7 +146,7 @@ namespace FProductionDashBoard
                     var roles = await dataService.GetAllRolesAsync();
                     authService.SetCachedRoles(roles);
                 }
-                catch { }
+                catch { Debug.WriteLine("角色清單取得異常，進入離線模式..."); }
                 await authService.InitializeAsync(user);
                 // 預設啟動一台讀卡機 (以最後連線的設備為準)
                 _serviceProvider.GetRequiredService<Services.MultiCardReaderService>()
@@ -152,7 +154,8 @@ namespace FProductionDashBoard
                                FProductionDashBoard.Properties.Settings.Default.ReaderBaud);
 
                 // 取代在 App.xaml 中的 StartupUri
-                ShutdownMode = ShutdownMode.OnMainWindowClose; //「被設定為 MainWindow 之介面關閉則結束」
+                ShutdownMode = ShutdownMode.OnMainWindowClose; //「被設定為 MainWindow 的介面關閉則結束」
+                splash.Close(TimeSpan.FromSeconds(0.5)); // DI注入完成後關閉LOGO
                 var mainWindow = new MainWindow
                 { DataContext = _serviceProvider.GetRequiredService<ViewModels.MainViewModel>() };
                 MainWindow = mainWindow; // 設定 Application 的 MainWindow
