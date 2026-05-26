@@ -124,7 +124,7 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
-                    <TextBlock Text="{Binding EditingSopId, StringFormat=編輯 SOP (ID: {0}), TargetNullValue=新增 SOP}"
+                    <TextBlock Text="{Binding FormTitle}"
                                Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                Margin="0,0,0,8"/>

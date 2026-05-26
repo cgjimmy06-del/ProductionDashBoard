@@ -258,6 +258,42 @@ namespace FProductionDashBoard.Properties {
             }
         }
 
+        internal static string SopValidationRequiredFields {
+            get {
+                return ResourceManager.GetString("SopValidationRequiredFields", resourceCulture);
+            }
+        }
+
+        internal static string SopValidationMinItems {
+            get {
+                return ResourceManager.GetString("SopValidationMinItems", resourceCulture);
+            }
+        }
+
+        internal static string SopSuccessAdd {
+            get {
+                return ResourceManager.GetString("SopSuccessAdd", resourceCulture);
+            }
+        }
+
+        internal static string SopSuccessUpdate {
+            get {
+                return ResourceManager.GetString("SopSuccessUpdate", resourceCulture);
+            }
+        }
+
+        internal static string SopTitleNew {
+            get {
+                return ResourceManager.GetString("SopTitleNew", resourceCulture);
+            }
+        }
+
+        internal static string SopTitleEdit {
+            get {
+                return ResourceManager.GetString("SopTitleEdit", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   查詢類似 First Inspection Abnormal, please report according to procedure! 的當地語系化字串。
         /// </summary>

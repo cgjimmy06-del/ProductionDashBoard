@@ -1,11 +1,12 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using FProductionDashBoard.Models;
 
 namespace FProductionDashBoard.Dtos
 {
-    public class SopChecklistItemFormDto
+    public partial class SopChecklistItemFormDto : ObservableObject
     {
         public int? Id { get; set; }              // null = 新增
-        public int Seq { get; set; }
+        [ObservableProperty] private int seq;
         public CheckType CheckType { get; set; }
         public int? WorkstationNo { get; set; }   // Station 用，1~6
         public int? MaterialId { get; set; }      // Station / Fixture 用
