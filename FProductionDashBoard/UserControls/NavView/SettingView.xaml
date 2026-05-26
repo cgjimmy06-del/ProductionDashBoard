@@ -8,7 +8,7 @@
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="800">
 
-    <TabControl Style="{StaticResource MaterialDesignFilledTabControl}" Margin="4">
+    <TabControl Style="{StaticResource ScrollableTabControl}" Margin="4">
 
         <TabItem Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TabItem.Header>
