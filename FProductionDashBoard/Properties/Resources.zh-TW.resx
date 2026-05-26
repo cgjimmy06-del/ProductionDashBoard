@@ -183,6 +183,24 @@
   <data name="SopValidationOther" xml:space="preserve">
     <value>Other: 內容必填</value>
   </data>
+  <data name="SopValidationRequiredFields" xml:space="preserve">
+    <value>Part / Model / Process 為必填</value>
+  </data>
+  <data name="SopValidationMinItems" xml:space="preserve">
+    <value>至少需新增 1 筆明細</value>
+  </data>
+  <data name="SopSuccessAdd" xml:space="preserve">
+    <value>新增成功</value>
+  </data>
+  <data name="SopSuccessUpdate" xml:space="preserve">
+    <value>更新成功</value>
+  </data>
+  <data name="SopTitleNew" xml:space="preserve">
+    <value>新增 SOP</value>
+  </data>
+  <data name="SopTitleEdit" xml:space="preserve">
+    <value>編輯 SOP (ID: {0})</value>
+  </data>
   <data name="InsFirstAbnormal" xml:space="preserve">
     <value>首件異常，請依流程通報!</value>
   </data>

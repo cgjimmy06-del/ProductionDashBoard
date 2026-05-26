@@ -183,6 +183,24 @@
   <data name="SopValidationOther" xml:space="preserve">
     <value>Other: Nội dung là bắt buộc</value>
   </data>
+  <data name="SopValidationRequiredFields" xml:space="preserve">
+    <value>Part / Model / Process là bắt buộc</value>
+  </data>
+  <data name="SopValidationMinItems" xml:space="preserve">
+    <value>Cần ít nhất 1 mục chi tiết</value>
+  </data>
+  <data name="SopSuccessAdd" xml:space="preserve">
+    <value>Thêm thành công</value>
+  </data>
+  <data name="SopSuccessUpdate" xml:space="preserve">
+    <value>Cập nhật thành công</value>
+  </data>
+  <data name="SopTitleNew" xml:space="preserve">
+    <value>Thêm SOP mới</value>
+  </data>
+  <data name="SopTitleEdit" xml:space="preserve">
+    <value>Chỉnh sửa SOP (ID: {0})</value>
+  </data>
   <data name="InsFirstAbnormal" xml:space="preserve">
     <value>Kiểm tra đầu tiên bất thường, vui lòng báo cáo theo quy trình!</value>
   </data>

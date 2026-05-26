@@ -202,6 +202,24 @@
   <data name="SopValidationOther" xml:space="preserve">
     <value>Other: Content is required</value>
   </data>
+  <data name="SopValidationRequiredFields" xml:space="preserve">
+    <value>Part / Model / Process are required</value>
+  </data>
+  <data name="SopValidationMinItems" xml:space="preserve">
+    <value>At least 1 item is required</value>
+  </data>
+  <data name="SopSuccessAdd" xml:space="preserve">
+    <value>Added successfully</value>
+  </data>
+  <data name="SopSuccessUpdate" xml:space="preserve">
+    <value>Updated successfully</value>
+  </data>
+  <data name="SopTitleNew" xml:space="preserve">
+    <value>New SOP</value>
+  </data>
+  <data name="SopTitleEdit" xml:space="preserve">
+    <value>Edit SOP (ID: {0})</value>
+  </data>
   <data name="InsFirstAbnormal" xml:space="preserve">
     <value>First Inspection Abnormal, please report according to procedure!</value>
     <comment>品質檢驗: 首件-檢驗異常</comment>
