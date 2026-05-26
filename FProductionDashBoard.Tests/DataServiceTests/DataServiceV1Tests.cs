@@ -267,10 +267,10 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 .ReturnsAsync(false);
             _inspectionRecordRep
                 .Setup(r => r.AddInspectionRecordAsync(
-                    InspectionType.Routine, 1, 10, true, 2, "PROD-A", null, null, It.IsAny<DateTime?>()))
+                    InspectionType.Routine, 1, 10, true, 2, null, null, null, It.IsAny<DateTime?>()))
                 .ReturnsAsync(99);
 
-            var id = await CreateService(DateTime.Today).AddRoutineInspectionAsync(1, 10, true, 2, "PROD-A");
+            var id = await CreateService(DateTime.Today).AddRoutineInspectionAsync(1, 10, true, 2, null);
 
             Assert.Equal(99, id);
         }
@@ -283,11 +283,11 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 .ReturnsAsync(true);
 
             await Assert.ThrowsAsync<BusinessRuleException>(
-                () => CreateService(DateTime.Today).AddRoutineInspectionAsync(1, 10, true, 2, "PROD-A"));
+                () => CreateService(DateTime.Today).AddRoutineInspectionAsync(1, 10, true, 2, null));
 
             _inspectionRecordRep.Verify(r => r.AddInspectionRecordAsync(
                 It.IsAny<InspectionType>(), It.IsAny<int>(), It.IsAny<int>(),
-                It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<string?>(),
+                It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<int?>(),
                 It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Never);
         }
 
@@ -297,7 +297,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             _inspectionRecordRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
 
             var ex = await Assert.ThrowsAsync<OfflineOperationQueuedException>(
-                () => CreateService(DateTime.Today).AddRoutineInspectionAsync(1, 10, true, 2, "PROD-A"));
+                () => CreateService(DateTime.Today).AddRoutineInspectionAsync(1, 10, true, 2, null));
 
             _offlineCache.Verify(c => c.EnqueueAsync(
                 It.Is<PendingOperation>(op => op.OperationType == PendingOperationType.AddRoutineInspection)),
@@ -312,10 +312,10 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         {
             _inspectionRecordRep
                 .Setup(r => r.AddInspectionRecordAsync(
-                    InspectionType.First, 1, 10, true, null, "PROD-A", null, null, It.IsAny<DateTime?>()))
+                    InspectionType.First, 1, 10, true, null, null, null, null, It.IsAny<DateTime?>()))
                 .ReturnsAsync(42);
 
-            var id = await CreateService(DateTime.Today).AddFirstInspectionAsync(1, 10, true, "PROD-A");
+            var id = await CreateService(DateTime.Today).AddFirstInspectionAsync(1, 10, true, null);
 
             Assert.Equal(42, id);
         }
@@ -325,10 +325,10 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         {
             _inspectionRecordRep
                 .Setup(r => r.AddInspectionRecordAsync(
-                    InspectionType.First, 2, 5, false, null, "PROD-B", "INSP0001", "外觀不良", It.IsAny<DateTime?>()))
+                    InspectionType.First, 2, 5, false, null, 1, "INSP0001", "外觀不良", It.IsAny<DateTime?>()))
                 .ReturnsAsync(55);
 
-            var id = await CreateService(DateTime.Today).AddFirstInspectionAsync(2, 5, false, "PROD-B", "INSP0001", "外觀不良");
+            var id = await CreateService(DateTime.Today).AddFirstInspectionAsync(2, 5, false, 1, "INSP0001", "外觀不良");
 
             Assert.Equal(55, id);
         }
@@ -339,16 +339,16 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             _inspectionRecordRep
                 .Setup(r => r.AddInspectionRecordAsync(
                     InspectionType.First, It.IsAny<int>(), It.IsAny<int>(),
-                    It.IsAny<bool>(), null, It.IsAny<string?>(),
+                    It.IsAny<bool>(), null, It.IsAny<int?>(),
                     It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()))
                 .ReturnsAsync(1);
 
-            await CreateService(DateTime.Today).AddFirstInspectionAsync(1, 1, true, "P");
+            await CreateService(DateTime.Today).AddFirstInspectionAsync(1, 1, true, null);
 
             _inspectionRecordRep.Verify(r => r.AddInspectionRecordAsync(
                 InspectionType.First, It.IsAny<int>(), It.IsAny<int>(),
                 It.IsAny<bool>(), null,
-                It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Once);
+                It.IsAny<int?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Once);
         }
 
         [Fact]
@@ -357,7 +357,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             _inspectionRecordRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
 
             var ex = await Assert.ThrowsAsync<OfflineOperationQueuedException>(
-                () => CreateService(DateTime.Today).AddFirstInspectionAsync(1, 10, true, "PROD-A"));
+                () => CreateService(DateTime.Today).AddFirstInspectionAsync(1, 10, true, null));
 
             _offlineCache.Verify(c => c.EnqueueAsync(
                 It.Is<PendingOperation>(op => op.OperationType == PendingOperationType.AddFirstInspection)),
@@ -457,7 +457,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
 
             _inspectionRecordRep.Verify(r => r.AddInspectionRecordAsync(
                 It.IsAny<InspectionType>(), It.IsAny<int>(), It.IsAny<int>(),
-                It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<string?>(),
+                It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<int?>(),
                 It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Never);
         }
 
@@ -498,7 +498,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
 
             _inspectionRecordRep.Verify(r => r.AddInspectionRecordAsync(
                 It.IsAny<InspectionType>(), It.IsAny<int>(), It.IsAny<int>(),
-                It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<string?>(),
+                It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<int?>(),
                 It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Once);
         }
 
@@ -550,7 +550,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
 
             _inspectionRecordRep.Verify(r => r.AddInspectionRecordAsync(
                 It.IsAny<InspectionType>(), It.IsAny<int>(), It.IsAny<int>(),
-                It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<string?>(),
+                It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<int?>(),
                 It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Once);
         }
 

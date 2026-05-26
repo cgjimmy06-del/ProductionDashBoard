@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace FProductionDashBoard.UiModels
 {
-    public partial class ProductInfo : ObservableObject 
+    public partial class ProductInfo : ObservableObject
     {
         public string Name => $"{ModelCode}_{TypeCode}";
+        public int? ProductId { get; set; }
 
         [ObservableProperty]
         private string modelCode = string.Empty;

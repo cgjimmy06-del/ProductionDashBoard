@@ -53,7 +53,7 @@ namespace FProductionDashBoard.Tests.OfflineTests
             var repo = new Mock<IInspectionRecordRepository>();
             repo.Setup(r => r.AddInspectionRecordAsync(
                 It.IsAny<InspectionType>(), It.IsAny<int>(), It.IsAny<int>(),
-                It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<string>(),
+                It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<int>(),
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime?>()))
                 .ReturnsAsync(1);
 
@@ -61,7 +61,7 @@ namespace FProductionDashBoard.Tests.OfflineTests
             var payload = new FirstInspectionPayload
             {
                 EquipmentId = 11, EmployeeId = 21,
-                Result = true, Product = "ModelA",
+                Result = true, ProductId = 1,
                 ErrorCode = null, Description = "",
                 OperatedAt = operatedAt
             };
@@ -75,7 +75,7 @@ namespace FProductionDashBoard.Tests.OfflineTests
             await handler.HandleAsync(op);
 
             repo.Verify(r => r.AddInspectionRecordAsync(
-                InspectionType.First, 11, 21, true, null, "ModelA", null, "",
+                InspectionType.First, 11, 21, true, null, null, null, "",
                 operatedAt),
                 Times.Once);
         }
@@ -88,7 +88,7 @@ namespace FProductionDashBoard.Tests.OfflineTests
             var repo = new Mock<IInspectionRecordRepository>();
             repo.Setup(r => r.AddInspectionRecordAsync(
                 It.IsAny<InspectionType>(), It.IsAny<int>(), It.IsAny<int>(),
-                It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<string>(),
+                It.IsAny<bool>(), It.IsAny<int?>(), It.IsAny<int>(),
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime?>()))
                 .ReturnsAsync(1);
 
@@ -97,7 +97,7 @@ namespace FProductionDashBoard.Tests.OfflineTests
             {
                 EquipmentId = 12, EmployeeId = 22,
                 Result = false, TimeSlotId = 3,
-                Product = "ModelB", ErrorCode = "E001", Description = "Surface defect",
+                ProductId = 1, ErrorCode = "E001", Description = "Surface defect",
                 OperatedAt = operatedAt
             };
             var op = new PendingOperation
@@ -110,7 +110,7 @@ namespace FProductionDashBoard.Tests.OfflineTests
             await handler.HandleAsync(op);
 
             repo.Verify(r => r.AddInspectionRecordAsync(
-                InspectionType.Routine, 12, 22, false, 3, "ModelB", "E001", "Surface defect",
+                InspectionType.Routine, 12, 22, false, 3, 1, "E001", "Surface defect",
                 operatedAt),
                 Times.Once);
         }
