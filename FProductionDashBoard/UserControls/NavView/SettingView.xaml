@@ -10,7 +10,7 @@
 
     <TabControl Style="{StaticResource MaterialDesignFilledTabControl}" Margin="4">
 
-        <TabItem>
+        <TabItem Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="Memory"
@@ -24,7 +24,7 @@
             <localuc:EquipmentSettingView DataContext="{Binding Equipment}"/>
         </TabItem>
 
-        <TabItem>
+        <TabItem Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="Layers"
@@ -38,7 +38,7 @@
             <localuc:MaterialSettingView DataContext="{Binding Material}"/>
         </TabItem>
 
-        <TabItem>
+        <TabItem Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="AlertCircleOutline"
@@ -52,7 +52,7 @@
             <localuc:ErrorListSettingView DataContext="{Binding ErrorList}"/>
         </TabItem>
 
-        <TabItem>
+        <TabItem Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="ClockOutline"
@@ -66,7 +66,7 @@
             <localuc:TimeSlotSettingView DataContext="{Binding TimeSlot}"/>
         </TabItem>
 
-        <TabItem MinWidth="140">
+        <TabItem MinWidth="140" Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="ClipboardCheckOutline"
@@ -80,7 +80,7 @@
             <localuc:SopChecklistSettingView DataContext="{Binding SopChecklist}"/>
         </TabItem>
 
-        <TabItem MinWidth="140">
+        <TabItem MinWidth="140" Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="FormatListBulleted"
@@ -94,7 +94,7 @@
             <localuc:EquipmentProductSettingView DataContext="{Binding EquipmentProduct}"/>
         </TabItem>
         
-        <TabItem>
+        <TabItem Visibility="{Binding IsAdminTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="AccountGroup"
@@ -108,7 +108,7 @@
             <localuc:EmployeeSettingView DataContext="{Binding Employee}"/>
         </TabItem>
 
-        <TabItem>
+        <TabItem Visibility="{Binding IsAdminTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
                     <materialDesign:PackIcon Kind="ShieldAccount"
