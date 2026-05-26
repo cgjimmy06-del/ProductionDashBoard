@@ -18,7 +18,7 @@ namespace FProductionDashBoard.Services.Offline.Handlers
             var payload = JsonSerializer.Deserialize<TuningPayload>(op.PayloadJson)!;
             await _repo.AddTuningRecordAsync(
                 payload.TuningType, payload.EquipmentId, payload.EmployeeId,
-                payload.DurationSec, payload.Product, operatedAt: payload.OperatedAt);
+                payload.DurationSec, payload.ProductId, operatedAt: payload.OperatedAt);
         }
     }
 }

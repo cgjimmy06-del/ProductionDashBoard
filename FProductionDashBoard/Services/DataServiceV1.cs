@@ -207,7 +207,7 @@ namespace FProductionDashBoard.Services.V1
             return TimeSlotLookupRep.GetCurrentTimeSlotId(BusinessDay, timeslots);
         }
         public async Task<int> AddFirstInspectionAsync(int equipmentId, int employeeId, bool result,
-            string? product, string? errorCode = null, string? description = null)
+            int? productId, string? errorCode = null, string? description = null)
         {
             if (await InspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false))
             {
@@ -215,7 +215,7 @@ namespace FProductionDashBoard.Services.V1
                 {
                     return await InspectionRecordRep.AddInspectionRecordAsync(
                         InspectionType.First, equipmentId, employeeId, result,
-                        null, product, errorCode, description);
+                        null, productId, errorCode, description);
                 }
                 catch (SqlException ex)
                 {
@@ -229,7 +229,7 @@ namespace FProductionDashBoard.Services.V1
                 EquipmentId = equipmentId,
                 EmployeeId = employeeId,
                 Result = result,
-                Product = product,
+                ProductId = productId,
                 ErrorCode = errorCode,
                 Description = description,
                 OperatedAt = DateTime.Now
@@ -249,7 +249,7 @@ namespace FProductionDashBoard.Services.V1
         }
 
         public async Task<int> AddRoutineInspectionAsync(int equipmentId, int employeeId, bool result,
-            int timeSlotId, string? product, string? errorCode = null, string? description = null)
+            int timeSlotId, int? productId, string? errorCode = null, string? description = null)
         {
             if (await InspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false))
             {
@@ -261,7 +261,7 @@ namespace FProductionDashBoard.Services.V1
                 {
                     return await InspectionRecordRep.AddInspectionRecordAsync(
                         InspectionType.Routine, equipmentId, employeeId, result,
-                        timeSlotId, product, errorCode, description);
+                        timeSlotId, productId, errorCode, description);
                 }
                 catch (SqlException ex)
                 {
@@ -289,7 +289,7 @@ namespace FProductionDashBoard.Services.V1
                 EmployeeId = employeeId,
                 Result = result,
                 TimeSlotId = timeSlotId,
-                Product = product,
+                ProductId = productId,
                 ErrorCode = errorCode,
                 Description = description,
                 OperatedAt = DateTime.Now
@@ -373,14 +373,14 @@ namespace FProductionDashBoard.Services.V1
                 }
             }
         }
-        public async Task<int> AddTeachingRecordAsync(int equipmentId, int employeeId, int durationSec, string? product)
+        public async Task<int> AddTeachingRecordAsync(int equipmentId, int employeeId, int durationSec, int? productId)
         {
             if (await TuningRecordRep.CheckConnectionAsync().ConfigureAwait(false))
             {
                 try
                 {
                     return await TuningRecordRep.AddTuningRecordAsync(
-                        TuningType.Teaching, equipmentId, employeeId, durationSec, product);
+                        TuningType.Teaching, equipmentId, employeeId, durationSec, productId);
                 }
                 catch (SqlException ex)
                 {
@@ -396,7 +396,7 @@ namespace FProductionDashBoard.Services.V1
                 {
                     TuningType = TuningType.Teaching,
                     EquipmentId = equipmentId, EmployeeId = employeeId,
-                    DurationSec = durationSec, Product = product,
+                    DurationSec = durationSec, ProductId = productId,
                     OperatedAt = DateTime.Now
                 })
             };
@@ -407,14 +407,14 @@ namespace FProductionDashBoard.Services.V1
             });
             throw new OfflineOperationQueuedException(op.Id);
         }
-        public async Task<int> AddOffsetRecordAsync(int equipmentId, int employeeId, int durationSec, string? product)
+        public async Task<int> AddOffsetRecordAsync(int equipmentId, int employeeId, int durationSec, int? productId)
         {
             if (await TuningRecordRep.CheckConnectionAsync().ConfigureAwait(false))
             {
                 try
                 {
                     return await TuningRecordRep.AddTuningRecordAsync(
-                        TuningType.Offset, equipmentId, employeeId, durationSec, product);
+                        TuningType.Offset, equipmentId, employeeId, durationSec, productId);
                 }
                 catch (SqlException ex)
                 {
@@ -430,7 +430,7 @@ namespace FProductionDashBoard.Services.V1
                 {
                     TuningType = TuningType.Offset,
                     EquipmentId = equipmentId, EmployeeId = employeeId,
-                    DurationSec = durationSec, Product = product,
+                    DurationSec = durationSec, ProductId = productId,
                     OperatedAt = DateTime.Now
                 })
             };

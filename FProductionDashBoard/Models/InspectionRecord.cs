@@ -20,7 +20,7 @@ namespace FProductionDashBoard.Models
         public int EmployeeId { get; set; } // FK
         public InspectionType InspectionType { get; set; } // ENUM
         public bool Result { get; set; } // true=合格, false=不合格
-        public string? Product { get; set; }
+        public int? ProductId { get; set; }
         public int? TimeSlotId { get; set; } // FK (巡檢用)
         public string? ErrorCode { get; set; } // FK
         public string? Description { get; set; }
@@ -30,6 +30,7 @@ namespace FProductionDashBoard.Models
         public Employee? Employee { get; set; }
         public ErrorList? Error { get; set; }
         public TimeSlotLookup? TimeSlot { get; set; }
+        public Product? Product { get; set; }
     }
     public class InspectionRecordConfiguration : IEntityTypeConfiguration<InspectionRecord>
     {
@@ -44,7 +45,7 @@ namespace FProductionDashBoard.Models
             builder.Property(t => t.EmployeeId).HasColumnName("employee_id");
             builder.Property(t => t.InspectionType).HasColumnName("inspection_type").HasConversion<string>();
             builder.Property(t => t.Result).HasColumnName("result");
-            builder.Property(t => t.Product).HasColumnName("product");
+            builder.Property(t => t.ProductId).HasColumnName("product_id");
             builder.Property(t => t.TimeSlotId).HasColumnName("timeslot_id");
             builder.Property(t => t.ErrorCode).HasColumnName("error_code");
             builder.Property(t => t.Description).HasColumnName("description");
@@ -66,6 +67,11 @@ namespace FProductionDashBoard.Models
             builder.HasOne(t => t.TimeSlot)
                    .WithMany(e => e.InspectionRecords)
                    .HasForeignKey(t => t.TimeSlotId);
+
+            builder.HasOne(r => r.Product)
+                   .WithMany()
+                   .HasForeignKey(r => r.ProductId)
+                   .IsRequired(false);
         }
     }
 }

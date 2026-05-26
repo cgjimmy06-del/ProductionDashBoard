@@ -162,7 +162,7 @@ namespace FProductionDashBoard.ViewModels
                     FirstInspectionStatus = result.IsNormal;
 
                     await _core.Data.AddFirstInspectionAsync(Info.Id, CurrentUser.Id, result.IsNormal,
-                        CurrentProduct.Name, result.ErrorCode, result.Description);
+                        CurrentProduct.ProductId, result.ErrorCode, result.Description);
 
                     _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
                         $"首件紀錄上傳完成");
@@ -206,7 +206,7 @@ namespace FProductionDashBoard.ViewModels
                     }
 
                     await _core.Data.AddRoutineInspectionAsync(Info.Id, CurrentUser.Id, result.IsNormal, currentTimeSlot ?? 1,
-                        CurrentProduct.Name, result.ErrorCode, result.Description);
+                        CurrentProduct.ProductId, result.ErrorCode, result.Description);
                     await UpdateTimeSlotsStatusAsync();
                     _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
                         $"巡檢紀錄上傳完成");
@@ -304,9 +304,9 @@ namespace FProductionDashBoard.ViewModels
                 int elapsed = _tuningElapsedSeconds;
 
                 if (_activeTuningType == TuningType.Teaching)
-                    await _core.Data.AddTeachingRecordAsync(Info.Id, CurrentUser.Id, elapsed, CurrentProduct?.Name);
+                    await _core.Data.AddTeachingRecordAsync(Info.Id, CurrentUser.Id, elapsed, CurrentProduct?.ProductId);
                 else
-                    await _core.Data.AddOffsetRecordAsync(Info.Id, CurrentUser.Id, elapsed, CurrentProduct?.Name);
+                    await _core.Data.AddOffsetRecordAsync(Info.Id, CurrentUser.Id, elapsed, CurrentProduct?.ProductId);
 
                 var elapsedStr = TimeSpan.FromSeconds(elapsed);
                 _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +

@@ -14,8 +14,8 @@ namespace FProductionDashBoard.Repositories
         {
         }
 
-        public async Task<int> AddTuningRecordAsync(TuningType type, int equipmentId, int employeeId, 
-            int durationSec, string? productName, DateTime? operatedAt = null)
+        public async Task<int> AddTuningRecordAsync(TuningType type, int equipmentId, int employeeId,
+            int durationSec, int? productId, DateTime? operatedAt = null)
         {
             await using var ctx = _factory.CreateDbContext();
             var record = new TuningRecord
@@ -24,7 +24,7 @@ namespace FProductionDashBoard.Repositories
                 EquipmentId = equipmentId,
                 EmployeeId = employeeId,
                 DurationSec = durationSec,
-                Product = productName,
+                ProductId = productId,
                 CreateAt = operatedAt ?? DateTime.Now
             };
 
