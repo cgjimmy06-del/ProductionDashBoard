@@ -951,6 +951,20 @@ namespace FProductionDashBoard.Services.V1
 
         #region 設定：機台可生產清單 CRUD
 
+        public async Task<List<EquipmentProduct>> GetAllEquipmentProductsAsync()
+        {
+            if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetAllEquipmentProductsAsync] 機台可生產清單 Repository 連線失敗");
+            await using var ctx = _mesFactory.CreateDbContext();
+            return await ctx.EquipmentProducts
+                .Include(ep => ep.Equipment)
+                .Include(ep => ep.Sop).ThenInclude(s => s!.Product).ThenInclude(p => p!.Part)
+                .Include(ep => ep.Sop).ThenInclude(s => s!.Product).ThenInclude(p => p!.Model)
+                .Include(ep => ep.Sop).ThenInclude(s => s!.Process)
+                .OrderBy(ep => ep.EquipmentId).ThenBy(ep => ep.SeqNo)
+                .ToListAsync().ConfigureAwait(false);
+        }
+
         public async Task<List<EquipmentProduct>> GetEquipmentProductsByEquipmentAsync(int equipmentId)
         {
             if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
