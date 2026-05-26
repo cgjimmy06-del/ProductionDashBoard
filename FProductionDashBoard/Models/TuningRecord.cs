@@ -20,11 +20,12 @@ namespace FProductionDashBoard.Models
         public int EmployeeId { get; set; } // FK
         public TuningType TuningType { get; set; } // ENUM
         public int DurationSec { get; set; }
-        public string? Product { get; set; }
+        public int? ProductId { get; set; }
         public DateTime? CreateAt { get; set; }
 
         public Equipment? Equipment { get; set; }
         public Employee? Employee { get; set; }
+        public Product? Product { get; set; }
     }
     public class TuningRecordConfiguration : IEntityTypeConfiguration<TuningRecord>
     {
@@ -39,7 +40,7 @@ namespace FProductionDashBoard.Models
             builder.Property(t => t.EmployeeId).HasColumnName("employee_id");
             builder.Property(t => t.TuningType).HasColumnName("tuning_type").HasConversion<string>();
             builder.Property(t => t.DurationSec).HasColumnName("duration_sec");
-            builder.Property(t => t.Product).HasColumnName("product");
+            builder.Property(t => t.ProductId).HasColumnName("product_id");
             builder.Property(e => e.CreateAt).HasColumnName("create_at").HasDefaultValueSql("GETDATE()");
 
             builder.HasOne(r => r.Equipment)
@@ -49,6 +50,11 @@ namespace FProductionDashBoard.Models
             builder.HasOne(r => r.Employee)
                    .WithMany()
                    .HasForeignKey(r => r.EmployeeId);
+
+            builder.HasOne(r => r.Product)
+                   .WithMany()
+                   .HasForeignKey(r => r.ProductId)
+                   .IsRequired(false);
         }
     }
 

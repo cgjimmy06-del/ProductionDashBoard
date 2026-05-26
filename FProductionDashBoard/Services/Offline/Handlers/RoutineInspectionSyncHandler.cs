@@ -17,16 +17,16 @@ namespace FProductionDashBoard.Services.Offline.Handlers
         {
             var payload = JsonSerializer.Deserialize<RoutineInspectionPayload>(op.PayloadJson)!;
 
-            /// ­«·s³s½u¤W¶Ç«e¡A½T»{¸ê®Æ®w¬O§_¤w¦³¬Û¦P¬ö¿ý *** ¥Ø«e¤u§@¤é¿ù»~¡A·Q¿ìªk¶Ç¤J ***
+            /// ï¿½ï¿½ï¿½sï¿½sï¿½uï¿½Wï¿½Ç«eï¿½Aï¿½Tï¿½{ï¿½ï¿½Æ®wï¿½Oï¿½_ï¿½wï¿½ï¿½ï¿½Û¦Pï¿½ï¿½ï¿½ï¿½ *** ï¿½Ø«eï¿½uï¿½@ï¿½ï¿½ï¿½ï¿½~ï¿½Aï¿½Qï¿½ï¿½kï¿½Ç¤J ***
             //var businessDay = payload.OperatedAt.Date;
             //bool exists = await _repo.ExistsInspectionInSlotAsync(
             //    payload.EquipmentId, payload.TimeSlotId, businessDay).ConfigureAwait(false);
             //if (exists) return;
-            /// ­«·s³s½u¤W¶Ç«e¡A½T»{¸ê®Æ®w¬O§_¤w¦³¬Û¦P¬ö¿ý *** ¥Ø«e¤u§@¤é¿ù»~¡A·Q¿ìªk¶Ç¤J ***
+            /// ï¿½ï¿½ï¿½sï¿½sï¿½uï¿½Wï¿½Ç«eï¿½Aï¿½Tï¿½{ï¿½ï¿½Æ®wï¿½Oï¿½_ï¿½wï¿½ï¿½ï¿½Û¦Pï¿½ï¿½ï¿½ï¿½ *** ï¿½Ø«eï¿½uï¿½@ï¿½ï¿½ï¿½ï¿½~ï¿½Aï¿½Qï¿½ï¿½kï¿½Ç¤J ***
 
             await _repo.AddInspectionRecordAsync(
                 InspectionType.Routine, payload.EquipmentId, payload.EmployeeId,
-                payload.Result, payload.TimeSlotId, payload.Product, payload.ErrorCode, payload.Description,
+                payload.Result, payload.TimeSlotId, payload.ProductId, payload.ErrorCode, payload.Description,
                 operatedAt: payload.OperatedAt);
         }
     }

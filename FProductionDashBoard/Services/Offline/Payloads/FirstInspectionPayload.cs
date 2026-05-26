@@ -5,7 +5,7 @@ namespace FProductionDashBoard.Services.Offline.Payloads
         public int EquipmentId { get; set; }
         public int EmployeeId { get; set; }
         public bool Result { get; set; }
-        public string? Product { get; set; }
+        public int? ProductId { get; set; }
         public string? ErrorCode { get; set; }
         public string? Description { get; set; }
         public DateTime OperatedAt { get; set; } = DateTime.Now;

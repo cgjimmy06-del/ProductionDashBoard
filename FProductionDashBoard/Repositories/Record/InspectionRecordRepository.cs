@@ -16,7 +16,7 @@ namespace FProductionDashBoard.Repositories
         }
 
         public async Task<int> AddInspectionRecordAsync(InspectionType type, int equipmentId, int employeeId,
-            bool result, int? timeSlotId, string? productName, string? errorCode, string? description,
+            bool result, int? timeSlotId, int? productId, string? errorCode, string? description,
             DateTime? operatedAt = null)
         {
             await using var ctx = _factory.CreateDbContext();
@@ -26,7 +26,7 @@ namespace FProductionDashBoard.Repositories
                 EquipmentId = equipmentId,
                 EmployeeId = employeeId,
                 TimeSlotId = timeSlotId,
-                Product = productName,
+                ProductId = productId,
                 Result = result,
                 ErrorCode = errorCode,
                 Description = description,

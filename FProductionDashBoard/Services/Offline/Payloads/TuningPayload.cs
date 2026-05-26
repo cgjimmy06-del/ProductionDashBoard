@@ -9,7 +9,7 @@ namespace FProductionDashBoard.Services.Offline.Payloads
         public int EquipmentId { get; set; }
         public int EmployeeId { get; set; }
         public int DurationSec { get; set; }
-        public string? Product { get; set; }
+        public int? ProductId { get; set; }
         public DateTime OperatedAt { get; set; }
     }
 }

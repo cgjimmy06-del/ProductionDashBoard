@@ -41,12 +41,12 @@ namespace FProductionDashBoard.Services
         /// 新增首件紀錄 (支援離線暫存)
         /// </summary>
         public Task<int> AddFirstInspectionAsync(int equipmentId, int employeeId, bool result,
-            string? product, string? errorCode = null, string? description = null);
+            int? productId, string? errorCode = null, string? description = null);
         /// <summary>
         /// 新增巡檢紀錄 (支援離線暫存)
         /// </summary>
         public Task<int> AddRoutineInspectionAsync(int equipmentId, int employeeId, bool result,
-            int timeSlotId, string? product, string? errorCode = null, string? description = null);
+            int timeSlotId, int? productId, string? errorCode = null, string? description = null);
         /// <summary>
         /// 檢查某設備在每個時段的狀態 (TimeSlotStatus)
         /// </summary>
@@ -58,11 +58,11 @@ namespace FProductionDashBoard.Services
         /// <summary>
         /// 新增帶點紀錄 (支援離線暫存)
         /// </summary>
-        public Task<int> AddTeachingRecordAsync(int equipmentId, int employeeId, int durationSec, string? product);
+        public Task<int> AddTeachingRecordAsync(int equipmentId, int employeeId, int durationSec, int? productId);
         /// <summary>
         /// 新增調品質紀錄 (支援離線暫存)
         /// </summary>
-        public Task<int> AddOffsetRecordAsync(int equipmentId, int employeeId, int durationSec, string? product);
+        public Task<int> AddOffsetRecordAsync(int equipmentId, int employeeId, int durationSec, int? productId);
 
         // ─── 設定：設備 CRUD ─────────────────────────────────────────────────────────
         public Task<List<Equipment>> GetAllEquipmentAsync();
