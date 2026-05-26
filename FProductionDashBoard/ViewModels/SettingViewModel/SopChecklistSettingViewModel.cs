@@ -28,8 +28,13 @@ namespace FProductionDashBoard.ViewModels
 
         public IReadOnlyList<SopType> SopTypes { get; } = Enum.GetValues<SopType>();
         public IReadOnlyList<CheckType> CheckTypes { get; } = Enum.GetValues<CheckType>();
-        public IReadOnlyList<int> WorkstationNoOptions { get; } = new[] { 1, 2, 3, 4, 5, 6 };
+        public IReadOnlyList<int> WorkstationNoOptions { get; } = Enumerable.Range(1, 20).ToList();
         public IReadOnlyList<SopTypeFilterOption> SopTypeFilterOptions { get; }
+
+        // ── 表單標題（computed from EditingSopId） ──────────────────
+        public string FormTitle => EditingSopId == null
+            ? Properties.Resources.SopTitleNew
+            : string.Format(Properties.Resources.SopTitleEdit, EditingSopId);
 
         // ── SOP 左清單篩選 ──────────────────────────────────────────
         [ObservableProperty] private string sopFilter = "";
@@ -37,6 +42,7 @@ namespace FProductionDashBoard.ViewModels
 
         // ── 表頭欄位 ────────────────────────────────────────────────
         [ObservableProperty] private int? editingSopId;
+        partial void OnEditingSopIdChanged(int? value) => OnPropertyChanged(nameof(FormTitle));
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(BeginCreatePartCommand))]
         private string partFilter = "";
@@ -124,6 +130,18 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
+        private int AssignNextStationNo()
+        {
+            var stationCount = FormItems.Count(i => i.CheckType == CheckType.Station);
+            return stationCount < WorkstationNoOptions.Count
+                ? WorkstationNoOptions[stationCount]
+                : WorkstationNoOptions[^1];
+        }
+
+        private Material? FindMaterialById(int? id) =>
+            StationMaterials.FirstOrDefault(m => m.MaterialId == id)
+            ?? FixtureMaterials.FirstOrDefault(m => m.MaterialId == id);
+
         // ── CheckType 切換時清非當前類型欄位 ─────────────────────────
         partial void OnItemFormCheckTypeChanged(CheckType value)
         {
@@ -132,10 +150,7 @@ namespace FProductionDashBoard.ViewModels
                 case CheckType.Station:
                     ItemFormQuantity = null;
                     ItemFormContent = null;
-                    var stationCountOnSwitch = FormItems.Count(i => i.CheckType == CheckType.Station);
-                    ItemFormWorkstationNo = stationCountOnSwitch < WorkstationNoOptions.Count
-                        ? WorkstationNoOptions[stationCountOnSwitch]
-                        : WorkstationNoOptions[^1];
+                    ItemFormWorkstationNo = AssignNextStationNo();
                     ItemFormMaterialId = StationMaterials.FirstOrDefault()?.MaterialId;
                     break;
                 case CheckType.Fixture:
@@ -240,10 +255,7 @@ namespace FProductionDashBoard.ViewModels
             ItemFormSeq = FormItems.Count + 1;
             ItemFormCheckType = CheckType.Station;
             // Auto-preset for Station (most common)
-            var stationCount = FormItems.Count(i => i.CheckType == CheckType.Station);
-            ItemFormWorkstationNo = stationCount < WorkstationNoOptions.Count
-                ? WorkstationNoOptions[stationCount]
-                : WorkstationNoOptions[^1];
+            ItemFormWorkstationNo = AssignNextStationNo();
             ItemFormMaterialId = StationMaterials.FirstOrDefault()?.MaterialId;
             ItemFormQuantity = 0;
             ItemFormContent = null;
@@ -271,10 +283,8 @@ namespace FProductionDashBoard.ViewModels
             if (!ShowConfirm($"{Properties.Resources.DialogBaseConfirm} {Properties.Resources.DialogBaseDelete}?"))
                 return;
             FormItems.Remove(item);
-            // Renumber remaining items strictly sequential (no gaps)
-            var temp = FormItems.ToList();
-            FormItems.Clear();
-            for (int i = 0; i < temp.Count; i++) { temp[i].Seq = i + 1; FormItems.Add(temp[i]); }
+            for (int i = 0; i < FormItems.Count; i++)
+                FormItems[i].Seq = i + 1;
         }
 
         [RelayCommand]
@@ -300,8 +310,7 @@ namespace FProductionDashBoard.ViewModels
             }
 
             var mat = (ItemFormCheckType == CheckType.Station || ItemFormCheckType == CheckType.Fixture)
-                ? StationMaterials.FirstOrDefault(m => m.MaterialId == ItemFormMaterialId)
-                  ?? FixtureMaterials.FirstOrDefault(m => m.MaterialId == ItemFormMaterialId)
+                ? FindMaterialById(ItemFormMaterialId)
                 : null;
             var item = new SopChecklistItemFormDto
             {
@@ -343,8 +352,7 @@ namespace FProductionDashBoard.ViewModels
                 FormItems.Clear();
                 foreach (var i in detail.Items.OrderBy(x => x.Seq))
                 {
-                    var mat = StationMaterials.FirstOrDefault(m => m.MaterialId == i.MaterialId)
-                           ?? FixtureMaterials.FirstOrDefault(m => m.MaterialId == i.MaterialId);
+                    var mat = FindMaterialById(i.MaterialId);
                     FormItems.Add(new SopChecklistItemFormDto
                     {
                         Id = i.ItemId,
@@ -395,31 +403,25 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                if (!PartList.Any())
-                {
-                    var parts = await _core.Data.GetAllProductPartsAsync();
-                    foreach (var p in parts) PartList.Add(p);
-                }
-                if (!ModelList.Any())
-                {
-                    var models = await _core.Data.GetProductModelsAsync();
-                    foreach (var m in models) ModelList.Add(m);
-                }
-                if (!ProcessList.Any())
-                {
-                    var processes = await _core.Data.GetWorkProcessesAsync();
-                    foreach (var w in processes) ProcessList.Add(w);
-                }
-                if (!StationMaterials.Any())
-                {
-                    var mats = await _core.Data.GetMaterialsByTypeAsync(MaterialTypeIds.Station);
-                    foreach (var m in mats) StationMaterials.Add(m);
-                }
-                if (!FixtureMaterials.Any())
-                {
-                    var mats = await _core.Data.GetMaterialsByTypeAsync(MaterialTypeIds.Fixture);
-                    foreach (var m in mats) FixtureMaterials.Add(m);
-                }
+                if (PartList.Any()) PartList.Clear();
+                var parts = await _core.Data.GetAllProductPartsAsync();
+                foreach (var p in parts) PartList.Add(p);
+
+                if (ModelList.Any()) ModelList.Clear();
+                var models = await _core.Data.GetProductModelsAsync();
+                foreach (var m in models) ModelList.Add(m);
+
+                if (ProcessList.Any()) ProcessList.Clear();
+                var processes = await _core.Data.GetWorkProcessesAsync();
+                foreach (var w in processes) ProcessList.Add(w);
+
+                if (StationMaterials.Any()) StationMaterials.Clear();
+                var stationMats = await _core.Data.GetMaterialsByTypeAsync(MaterialTypeIds.Station);
+                foreach (var m in stationMats) StationMaterials.Add(m);
+
+                if (FixtureMaterials.Any()) FixtureMaterials.Clear();
+                var fixtureMats = await _core.Data.GetMaterialsByTypeAsync(MaterialTypeIds.Fixture);
+                foreach (var m in fixtureMats) FixtureMaterials.Add(m);
 
                 var list = await _core.Data.GetAllSopChecklistsAsync();
                 SopList.Clear();
@@ -451,9 +453,9 @@ namespace FProductionDashBoard.ViewModels
         protected override async Task SaveAsync()
         {
             if (FormPartId == null || FormModelId == null || FormProcessId == null)
-            { FormErrorString = "Part / Model / Process 為必填"; return; }
+            { FormErrorString = Properties.Resources.SopValidationRequiredFields; return; }
             if (!FormItems.Any())
-            { FormErrorString = "至少需新增 1 筆明細"; return; }
+            { FormErrorString = Properties.Resources.SopValidationMinItems; return; }
 
             try
             {
@@ -472,7 +474,7 @@ namespace FProductionDashBoard.ViewModels
                 else
                     await _core.Data.UpdateSopChecklistAsync(dto);
 
-                FormSuccessString = EditingSopId == null ? "新增成功" : "更新成功";
+                FormSuccessString = EditingSopId == null ? Properties.Resources.SopSuccessAdd : Properties.Resources.SopSuccessUpdate;
                 FormErrorString = null;
                 CloseForm();
                 await LoadAsync();

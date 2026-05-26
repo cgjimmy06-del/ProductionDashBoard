@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.UiModels;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -199,6 +200,7 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
+        // Expected to match exactly one SOP; multiple matches indicate upstream data integrity issue (enforce via DB constraints)
         private SopChecklist? ResolveMatchedSop()
         {
             if (FormProduct == null || FormProcess == null || FormSopType == null) return null;
@@ -331,7 +333,7 @@ namespace FProductionDashBoard.ViewModels
                 bool wasNew = EditingProductId == null;
                 await LoadProductListAsync(SelectedEquipment.Id);
                 CloseForm();
-                FormSuccessString = wasNew ? "新增成功" : "更新成功";
+                FormSuccessString = wasNew ? Properties.Resources.SopSuccessAdd : Properties.Resources.SopSuccessUpdate;
             }
             catch (Exception ex)
             {
@@ -353,5 +355,4 @@ namespace FProductionDashBoard.ViewModels
         }
     }
 
-    public sealed record EquipmentTypeFilterOption(EquipmentType? Value);
 }
