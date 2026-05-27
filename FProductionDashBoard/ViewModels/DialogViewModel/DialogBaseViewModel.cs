@@ -21,6 +21,8 @@ namespace FProductionDashBoard.ViewModels
         public string? dialogInfoString;
         [ObservableProperty]
         public string? dialogErrorString;
+        [ObservableProperty]
+        protected bool isConfirmVisible = true;
 
         public bool IsConfirmed { get; protected set; }
 

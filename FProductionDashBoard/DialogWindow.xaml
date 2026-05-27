@@ -31,8 +31,9 @@
         <!-- 確認/取消 -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Margin="40, 10" Style="{DynamicResource ConfirmButtonStyle}"
-                    Content="{DynamicResource ConfirmButton}" 
-                    Command="{Binding ConfirmCommand}">
+                    Content="{DynamicResource ConfirmButton}"
+                    Command="{Binding ConfirmCommand}"
+                    Visibility="{Binding IsConfirmVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             </Button>
             <Button Margin="40, 10" Style="{DynamicResource ConfirmButtonStyle}"
                     Content="{DynamicResource CancelButton}" 

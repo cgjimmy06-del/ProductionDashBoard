@@ -88,6 +88,7 @@
                 <Button Width="25" Height="25" Margin="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
+                        Padding="0"
                         Style="{StaticResource FunctionButtonStyle}"
                         Command="{Binding SaveLogsCommand}"
                         ToolTip="{DynamicResource LogSaveButtonTooltip}">

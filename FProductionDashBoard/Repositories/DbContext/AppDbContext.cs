@@ -29,6 +29,7 @@ namespace FProductionDashBoard.Repositories
         public DbSet<SopChecklist> SopChecklists { get; set; }
         public DbSet<SopChecklistItem> SopChecklistItems { get; set; }
         public DbSet<EquipmentProduct> EquipmentProducts { get; set; }
+        public DbSet<OrderProduction> OrderProductions { get; set; }
 
         public DbSet<Role> Roles => Set<Role>();
         public DbSet<Permission> Permissions => Set<Permission>();

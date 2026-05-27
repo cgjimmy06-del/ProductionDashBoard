@@ -239,5 +239,17 @@
     <sys:String x:Key="EqprodNoEquipmentSelected">Vui lòng chọn thiết bị từ bên trái</sys:String>
     <sys:String x:Key="EqprodEquipmentListTitle">Danh sách thiết bị</sys:String>
     <!--#endregion-->
+    <!--#region 接單服務-->
+    <sys:String x:Key="DeviceInProduction">Đang sản xuất</sys:String>
+    <sys:String x:Key="QuickOrderButton">+ Đặt hàng nhanh</sys:String>
+    <sys:String x:Key="StartProductionButton">Bắt đầu sản xuất</sys:String>
+    <sys:String x:Key="EndProductionButton">Kết thúc sản xuất</sys:String>
+    <sys:String x:Key="CancelOrderButton">Hủy đơn hàng</sys:String>
+    <sys:String x:Key="CancelOrderConfirmButton">Xác nhận hủy</sys:String>
+    <sys:String x:Key="AbortCancelButton">Bỏ qua</sys:String>
+    <sys:String x:Key="CancelReasonPrompt">Lý do hủy (có thể để trống)</sys:String>
+    <sys:String x:Key="SopChecklistTitle">Kiểm tra SOP</sys:String>
+    <sys:String x:Key="ProductionDetailTitle">Thông tin sản xuất</sys:String>
+    <!--#endregion-->
 
 </ResourceDictionary>

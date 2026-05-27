@@ -297,4 +297,16 @@
   <data name="EqprodValidationNoSop" xml:space="preserve">
     <value>Không tìm thấy SOP phù hợp với sản phẩm và quá trình đã chọn</value>
   </data>
+  <data name="NoCurrentProduct" xml:space="preserve">
+    <value>Không có sản phẩm</value>
+  </data>
+  <data name="OrderListTitle" xml:space="preserve">
+    <value>Quản lý đơn hàng</value>
+  </data>
+  <data name="OnlyOneProductionError" xml:space="preserve">
+    <value>Chỉ có thể có một đơn đang sản xuất</value>
+  </data>
+  <data name="ConfirmCancelOrder" xml:space="preserve">
+    <value>Xác nhận hủy đơn hàng này?</value>
+  </data>
 </root>

@@ -47,7 +47,7 @@ namespace FProductionDashBoard.ViewModels
         {
             CurrentDevice = $"{Properties.Resources.ComStrDevice}: {getinfo.Info.Name}";
             CurrentUser = $"{Properties.Resources.ComStrUser}: {getinfo.CurrentUser.Name}";
-            CurrentProduct = $"{Properties.Resources.ComStrProduct}: {getinfo.CurrentProduct.Name}";
+            CurrentProduct = $"{Properties.Resources.ComStrProduct}: {getinfo.CurrentProduct?.Name}";
 
             ErrorCodes = new ObservableCollection<ErrorInfo>(sqlerrorslist.Where(e => errorCategoryIds.Contains(e.TypeId ?? 1)));
             SelectionCode = (ErrorCodes.FirstOrDefault() ?? new()).ErrorCode;

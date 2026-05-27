@@ -34,6 +34,7 @@ namespace FProductionDashBoard.Services.V1
         private readonly IProductRepository ProductRep;
         private readonly ISopChecklistRepository SopChecklistRep;
         private readonly IEquipmentProductRepository EquipmentProductRep;
+        private readonly IOrderProductionRepository OrderProductionRep;
         private readonly IDbContextFactory<MesDbContext> _mesFactory;
 
         private readonly IOfflineCacheService _offlineCache;
@@ -43,7 +44,8 @@ namespace FProductionDashBoard.Services.V1
             IInspectionRecordRepository inspectionRecordRep, ITimeSlotLookupRepository timeSlotLookupRep,
             IOfflineCacheService offlineCache, IRolePermissionRepository rolePermissionRep, ITuningRecordRepository tuningRecordRep,
             IProductPartRepository productPartRep, IProductRepository productRep, ISopChecklistRepository sopChecklistRep,
-            IEquipmentProductRepository equipmentProductRep, IDbContextFactory<MesDbContext> mesFactory)
+            IEquipmentProductRepository equipmentProductRep, IOrderProductionRepository orderProductionRep,
+            IDbContextFactory<MesDbContext> mesFactory)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
@@ -59,6 +61,7 @@ namespace FProductionDashBoard.Services.V1
             ProductRep = productRep;
             SopChecklistRep = sopChecklistRep;
             EquipmentProductRep = equipmentProductRep;
+            OrderProductionRep = orderProductionRep;
             _mesFactory = mesFactory;
         }
 
@@ -1009,6 +1012,52 @@ namespace FProductionDashBoard.Services.V1
             if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[DeleteEquipmentProductAsync] 機台可生產清單 Repository 連線失敗");
             await EquipmentProductRep.DeleteAsync(id).ConfigureAwait(false);
+        }
+
+        #endregion
+
+        #region 接單服務
+
+        public async Task<List<OrderProduction>> GetOrdersByEquipmentAsync(int equipmentId)
+        {
+            if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetOrdersByEquipmentAsync] 接單 Repository 連線失敗");
+            return await OrderProductionRep.GetByEquipmentAsync(equipmentId).ConfigureAwait(false);
+        }
+
+        public async Task<OrderProduction?> GetInProductionOrderAsync(int equipmentId)
+        {
+            if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetInProductionOrderAsync] 接單 Repository 連線失敗");
+            return await OrderProductionRep.GetInProductionByEquipmentAsync(equipmentId).ConfigureAwait(false);
+        }
+
+        public async Task<int> AddOrderAsync(int equipmentId, int equipmentProductId, int? quantity, int createdBy)
+        {
+            if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[AddOrderAsync] 接單 Repository 連線失敗");
+            return await OrderProductionRep.AddAsync(equipmentId, equipmentProductId, quantity, createdBy).ConfigureAwait(false);
+        }
+
+        public async Task StartProductionAsync(int orderId, int startedBy)
+        {
+            if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[StartProductionAsync] 接單 Repository 連線失敗");
+            await OrderProductionRep.StartAsync(orderId, startedBy, DateTime.Now).ConfigureAwait(false);
+        }
+
+        public async Task EndProductionAsync(int orderId)
+        {
+            if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[EndProductionAsync] 接單 Repository 連線失敗");
+            await OrderProductionRep.EndAsync(orderId, DateTime.Now).ConfigureAwait(false);
+        }
+
+        public async Task CancelOrderAsync(int orderId, string? description)
+        {
+            if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[CancelOrderAsync] 接單 Repository 連線失敗");
+            await OrderProductionRep.CancelAsync(orderId, description).ConfigureAwait(false);
         }
 
         #endregion

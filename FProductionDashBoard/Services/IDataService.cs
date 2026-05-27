@@ -128,5 +128,13 @@ namespace FProductionDashBoard.Services
         public Task AddEquipmentProductAsync(EquipmentProductFormDto dto);
         public Task UpdateEquipmentProductAsync(EquipmentProductFormDto dto);
         public Task DeleteEquipmentProductAsync(int id);
+
+        // ─── 接單服務 ─────────────────────────────────────────────────────────
+        public Task<List<OrderProduction>> GetOrdersByEquipmentAsync(int equipmentId);
+        public Task<OrderProduction?> GetInProductionOrderAsync(int equipmentId);
+        public Task<int> AddOrderAsync(int equipmentId, int equipmentProductId, int? quantity, int createdBy);
+        public Task StartProductionAsync(int orderId, int startedBy);
+        public Task EndProductionAsync(int orderId);
+        public Task CancelOrderAsync(int orderId, string? description);
     }
 }
