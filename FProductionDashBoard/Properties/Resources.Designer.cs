@@ -572,5 +572,11 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("OnlyOneProductionError", resourceCulture);
             }
         }
+
+        internal static string ConfirmCancelOrder {
+            get {
+                return ResourceManager.GetString("ConfirmCancelOrder", resourceCulture);
+            }
+        }
     }
 }

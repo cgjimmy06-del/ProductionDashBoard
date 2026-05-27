@@ -349,4 +349,7 @@
   <data name="OnlyOneProductionError" xml:space="preserve">
     <value>Only one order can be in production</value>
   </data>
+  <data name="ConfirmCancelOrder" xml:space="preserve">
+    <value>Confirm cancel this order?</value>
+  </data>
 </root>

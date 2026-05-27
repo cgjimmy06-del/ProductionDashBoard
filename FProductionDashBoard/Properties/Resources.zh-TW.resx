@@ -306,4 +306,7 @@
   <data name="OnlyOneProductionError" xml:space="preserve">
     <value>目前已有生產中訂單</value>
   </data>
+  <data name="ConfirmCancelOrder" xml:space="preserve">
+    <value>確認取消此訂單？</value>
+  </data>
 </root>

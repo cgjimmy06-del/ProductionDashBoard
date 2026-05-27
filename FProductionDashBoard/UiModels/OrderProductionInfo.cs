@@ -15,6 +15,7 @@ namespace FProductionDashBoard.UiModels
         public int? Quantity { get; set; }
         public string? Description { get; set; }
         public DateTime? StartedAt { get; set; }
+        public string StartedByName { get; set; } = string.Empty;
         public bool IsInProduction => Status == OrderProductionStatus.InProduction;
 
         public static OrderProductionInfo FromEntity(OrderProduction o) => new()
@@ -31,7 +32,8 @@ namespace FProductionDashBoard.UiModels
             ProcessName = o.EquipmentProduct?.Sop?.Process?.Name ?? string.Empty,
             Quantity = o.Quantity,
             Description = o.Description,
-            StartedAt = o.StartedAt
+            StartedAt = o.StartedAt,
+            StartedByName = o.StartedByEmployee?.Name ?? string.Empty
         };
     }
 }

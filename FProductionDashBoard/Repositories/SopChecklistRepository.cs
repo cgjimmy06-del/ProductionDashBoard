@@ -16,6 +16,7 @@ namespace FProductionDashBoard.Repositories
             await using var ctx = _factory.CreateDbContext();
             return await ctx.SopChecklists
                 .Include(s => s.Items)
+                    .ThenInclude(i => i.Material)
                 .FirstOrDefaultAsync(s => s.SopId == sopId)
                 .ConfigureAwait(false);
         }

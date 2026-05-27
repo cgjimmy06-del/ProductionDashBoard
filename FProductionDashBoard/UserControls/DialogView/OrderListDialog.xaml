@@ -67,23 +67,6 @@
                                     <!-- 按鈕區 -->
                                     <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
 
-                                        <!-- 生產中 chip（InProduction 才顯示） -->
-                                        <Border CornerRadius="8" Background="{DynamicResource PrimaryBrush}"
-                                                Padding="8,2" Margin="0,0,8,0">
-                                            <Border.Style>
-                                                <Style TargetType="Border">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsInProduction}" Value="True">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                            <TextBlock Text="{DynamicResource DeviceInProduction}"
-                                                       FontSize="11" Foreground="White"/>
-                                        </Border>
-
                                         <!-- 開始生產（Pending 才顯示） -->
                                         <Button Content="{DynamicResource StartProductionButton}"
                                                 Command="{Binding DataContext.NavigateToChecklistCommand,
@@ -218,11 +201,36 @@
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                     <materialDesign:PackIcon Kind="ClockOutline" Width="16" Height="16"
                                             Foreground="{DynamicResource SecondaryBrush}"
                                             VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <TextBlock Text="{Binding ActiveOrder.StartedAt, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <materialDesign:PackIcon Kind="AccountOutline" Width="16" Height="16"
+                                            Foreground="{DynamicResource SecondaryBrush}"
+                                            VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <TextBlock Text="{Binding ActiveOrder.StartedByName}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActiveOrder.Quantity}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <materialDesign:PackIcon Kind="PackageVariantClosed" Width="16" Height="16"
+                                            Foreground="{DynamicResource SecondaryBrush}"
+                                            VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <TextBlock Text="{Binding ActiveOrder.Quantity}"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"/>
                 </StackPanel>

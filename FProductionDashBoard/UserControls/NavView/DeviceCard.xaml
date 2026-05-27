@@ -126,7 +126,7 @@
                     </Border>
                     <!-- 生產中 chip -->
                     <Border CornerRadius="8"
-                            Background="{DynamicResource PrimaryBrush}"
+                            Background="{DynamicResource SuccessBrush}"
                             Padding="8,2"
                             Visibility="{Binding IsProducing, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBlock Text="{DynamicResource DeviceInProduction}"

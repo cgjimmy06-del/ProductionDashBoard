@@ -296,6 +296,13 @@ namespace FProductionDashBoard.ViewModels
         private async Task OnCancelPendingOrderAsync(OrderProductionInfo? order)
         {
             if (order == null || order.IsInProduction) return;
+
+            var confirm = MessageBox.Show(
+                $"#{order.SeqNo} {order.ProductName}\n{Resources.ConfirmCancelOrder}",
+                Resources.ConfirmCancelOrder,
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes) return;
+
             try
             {
                 var description = $"由{_currentUser.Name}取消訂單";

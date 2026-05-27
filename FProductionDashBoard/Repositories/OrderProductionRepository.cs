@@ -17,7 +17,9 @@ namespace FProductionDashBoard.Repositories
         {
             await using var ctx = _factory.CreateDbContext();
             return await ctx.OrderProductions
-                .Where(o => o.EquipmentId == equipmentId && o.Status != OrderProductionStatus.Cancelled)
+                .Where(o => o.EquipmentId == equipmentId
+                    && (o.Status == OrderProductionStatus.Pending
+                        || o.Status == OrderProductionStatus.InProduction))
                 .Include(o => o.EquipmentProduct)
                     .ThenInclude(ep => ep!.Sop)
                     .ThenInclude(s => s!.Product)
@@ -29,6 +31,7 @@ namespace FProductionDashBoard.Repositories
                 .Include(o => o.EquipmentProduct)
                     .ThenInclude(ep => ep!.Sop)
                     .ThenInclude(s => s!.Process)
+                .Include(o => o.StartedByEmployee)
                 .OrderBy(o => o.CreateAt)
                 .ToListAsync()
                 .ConfigureAwait(false);
