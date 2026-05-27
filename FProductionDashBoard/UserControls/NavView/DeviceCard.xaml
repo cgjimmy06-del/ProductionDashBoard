@@ -72,21 +72,68 @@
             <!-- 主體內容 -->
             <StackPanel Grid.Column="1" Margin="5,0,0,0" Orientation="Vertical">
 
-                <!-- 機台名稱 -->
-                <TextBlock Text="{Binding Info.Name}" d:Text="A1"
-                           FontWeight="Bold" FontSize="30" Cursor="Hand"
-                           TextDecorations="Underline"/>
+                <!-- 機台名稱列 -->
+                <DockPanel Margin="0,5,5,0">
+                    <Button DockPanel.Dock="Right"
+                            Style="{StaticResource MaterialDesignIconButton}"
+                            Command="{Binding OrderCommand}"
+                            VerticalAlignment="Center"
+                            Width="36" Height="36"
+                            Padding="6">
+                        <materialDesign:PackIcon Kind="ClipboardListOutline" Width="20" Height="20"/>
+                    </Button>
+                    <TextBlock Text="{Binding Info.Name}" d:Text="A1"
+                               FontWeight="Bold" FontSize="30" Cursor="Hand"
+                               TextDecorations="Underline"
+                               VerticalAlignment="Center"/>
+                </DockPanel>
 
                 <!-- 資訊列 -->
-                <!-- language -->
-                <StackPanel Orientation="Horizontal" Margin="5">
-                    <TextBlock d:Text="default 123" Margin="5,0"
-                               Text="{Binding CurrentProduct.Name, StringFormat=:Pruduct: {0}}"/>
+                <StackPanel Orientation="Horizontal" Margin="5,2,5,0">
+                    <materialDesign:PackIcon Kind="TagOutline"
+                                            Width="16" Height="16"
+                                            Foreground="{DynamicResource TextLightBrush}"
+                                            VerticalAlignment="Center"
+                                            Margin="0,0,4,0"/>
+                    <TextBlock Text="{Binding CurrentProductDisplayName}"
+                               FontWeight="SemiBold" FontSize="14"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0"/>
+                    <materialDesign:PackIcon Kind="AccountOutline"
+                                            Width="16" Height="16"
+                                            Foreground="{DynamicResource TextLightBrush}"
+                                            VerticalAlignment="Center"
+                                            Margin="0,0,4,0"/>
+                    <TextBlock Text="{Binding CurrentUser.Name}"
+                               Foreground="{DynamicResource TextLightBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
 
-                    <TextBlock d:Text="yun" Margin="5,0"
-                               Text="{Binding CurrentUser.Name, StringFormat=:User: {0}}"/>
-                    <!--<TextBlock Text="產量: 1200 件" 
-                               Foreground="{DynamicResource SecondaryHueMidBrush}"/>-->
+                <!-- 狀態列 -->
+                <StackPanel Orientation="Horizontal" Margin="5,4,5,2">
+                    <!-- 時段 chip -->
+                    <Border CornerRadius="8"
+                            BorderBrush="{DynamicResource SecondaryBrush}"
+                            BorderThickness="1"
+                            Padding="8,2"
+                            Margin="0,0,6,0"
+                            Visibility="{Binding HasCurrentTimeSlot, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock Text="{Binding CurrentTimeSlotLabel}"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource SecondaryBrush}"
+                                   VerticalAlignment="Center"/>
+                    </Border>
+                    <!-- 生產中 chip -->
+                    <Border CornerRadius="8"
+                            Background="{DynamicResource PrimaryBrush}"
+                            Padding="8,2"
+                            Visibility="{Binding IsProducing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock Text="{DynamicResource DeviceInProduction}"
+                                   FontSize="11"
+                                   Foreground="White"
+                                   VerticalAlignment="Center"/>
+                    </Border>
                 </StackPanel>
 
                 <!-- 按鈕列 -->

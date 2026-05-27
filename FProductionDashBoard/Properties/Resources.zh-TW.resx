@@ -297,4 +297,7 @@
   <data name="EqprodValidationNoSop" xml:space="preserve">
     <value>所選產品與工序沒有對應的 SOP</value>
   </data>
+  <data name="NoCurrentProduct" xml:space="preserve">
+    <value>當前無產品</value>
+  </data>
 </root>

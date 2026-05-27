@@ -340,4 +340,7 @@
   <data name="EqprodValidationNoSop" xml:space="preserve">
     <value>No matching SOP found for the selected product and process</value>
   </data>
+  <data name="NoCurrentProduct" xml:space="preserve">
+    <value>No current product</value>
+  </data>
 </root>

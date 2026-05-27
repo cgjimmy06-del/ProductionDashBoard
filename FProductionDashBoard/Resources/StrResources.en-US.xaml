@@ -239,5 +239,8 @@
     <sys:String x:Key="EqprodNoEquipmentSelected">Please select an equipment from the left</sys:String>
     <sys:String x:Key="EqprodEquipmentListTitle">Equipment List</sys:String>
     <!--#endregion-->
+    <!--#region 接單服務-->
+    <sys:String x:Key="DeviceInProduction">In Production</sys:String>
+    <!--#endregion-->
 
 </ResourceDictionary>
