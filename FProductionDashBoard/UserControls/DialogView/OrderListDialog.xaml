@@ -21,7 +21,7 @@
                     Margin="0,0,0,8"/>
 
             <!-- 訂單卡片清單 -->
-            <ScrollViewer MaxHeight="340" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Height="300" VerticalScrollBarVisibility="Auto">
                 <ItemsControl ItemsSource="{Binding Orders}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -58,11 +58,11 @@
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                         <TextBlock Text="{Binding ProductName}"
                                                    Foreground="{DynamicResource TextPrimaryBrush}"
-                                                   FontWeight="SemiBold" FontSize="13"/>
+                                                   FontWeight="SemiBold" FontSize="16"/>
                                         <TextBlock Text="{Binding ProcessName}"
                                                    Foreground="{DynamicResource TextPrimaryBrush}"
-                                                   FontSize="11"/>
-                                        <TextBlock Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11">
+                                                   FontSize="13"/>
+                                        <TextBlock Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Style.Triggers>
@@ -148,18 +148,24 @@
         <StackPanel Visibility="{Binding IsOnQuickOrder, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Margin="10,5">
 
+            <!-- 篩選 -->
+            <TextBox Text="{Binding QuickOrderFilterText, UpdateSourceTrigger=PropertyChanged}"
+                     materialDesign:HintAssist.Hint="{DynamicResource EqprodSopSearchTooltip}"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     Padding="5" Margin="0,0,0,8"/>
+
             <!-- 品項選擇 -->
-            <ListBox ItemsSource="{Binding EquipmentProducts}"
+            <ListBox ItemsSource="{Binding FilteredEquipmentProducts}"
                      SelectedItem="{Binding SelectedEquipmentProduct}"
                      Background="{DynamicResource MaterialDesignPaper}"
-                     MaxHeight="300"
+                     Height="280"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      Margin="0,0,0,10">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding DisplayLabel}"
                                    Foreground="{DynamicResource TextPrimaryBrush}"
-                                   Padding="4,2"/>
+                                   FontSize="16" Padding="4,2"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
@@ -182,6 +188,7 @@
                             <CheckBox Content="{Binding DisplayText}"
                                       IsChecked="{Binding IsChecked, Mode=TwoWay}"
                                       Margin="0,4"
+                                      FontSize="16"
                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -195,38 +202,41 @@
                     Margin="10,5">
 
             <TextBlock Text="{DynamicResource ProductionDetailTitle}"
-                       FontWeight="SemiBold" FontSize="14"
+                       FontWeight="SemiBold" FontSize="28"
                        Foreground="{DynamicResource TextPrimaryBrush}"
                        Margin="0,0,0,12"/>
 
             <!-- 訂單資訊 -->
             <StackPanel Margin="0,0,0,16">
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                    <materialDesign:PackIcon Kind="TagOutline" Width="16" Height="16"
+                    <materialDesign:PackIcon Kind="TagOutline" Width="26" Height="26"
                                             Foreground="{DynamicResource SecondaryBrush}"
                                             VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <TextBlock Text="{Binding ActiveOrder.ProductName}"
-                               FontWeight="SemiBold" FontSize="14"
+                               FontSize="22"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"/>
-                    <TextBlock Text=" · " Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text=" · " FontSize="20" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding ActiveOrder.ProcessName}"
+                               FontSize="20"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                    <materialDesign:PackIcon Kind="ClockOutline" Width="16" Height="16"
+                    <materialDesign:PackIcon Kind="ClockOutline" Width="26" Height="26"
                                             Foreground="{DynamicResource SecondaryBrush}"
                                             VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <TextBlock Text="{Binding ActiveOrder.StartedAt, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"
+                               FontSize="20"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                    <materialDesign:PackIcon Kind="AccountOutline" Width="16" Height="16"
+                    <materialDesign:PackIcon Kind="AccountOutline" Width="26" Height="26"
                                             Foreground="{DynamicResource SecondaryBrush}"
                                             VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <TextBlock Text="{Binding ActiveOrder.StartedByName}"
+                               FontSize="20"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
@@ -240,10 +250,11 @@
                             </Style.Triggers>
                         </Style>
                     </StackPanel.Style>
-                    <materialDesign:PackIcon Kind="PackageVariantClosed" Width="16" Height="16"
+                    <materialDesign:PackIcon Kind="PackageVariantClosed" Width="26" Height="26"
                                             Foreground="{DynamicResource SecondaryBrush}"
                                             VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <TextBlock Text="{Binding ActiveOrder.Quantity}"
+                               FontSize="20"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
@@ -255,7 +266,7 @@
                     Style="{DynamicResource FunctionButtonStyle}"
                     Background="{DynamicResource PrimaryBrush}"
                     HorizontalAlignment="Center"
-                    Margin="0,0,0,8"/>
+                    FontSize="16" Margin="0,0,0,8"/>
 
             <!-- 取消訂單區域（Setting 權限限定） -->
             <StackPanel Visibility="{Binding HasSettingPermission, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -264,7 +275,7 @@
                 <Button Content="{DynamicResource CancelOrderButton}"
                         Command="{Binding ShowCancelInputCommand}"
                         HorizontalAlignment="Center"
-                        Margin="0,0,0,8">
+                        FontSize="16" Margin="0,0,0,8">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
                             <Setter Property="Background" Value="{DynamicResource ErrorBrush}"/>
@@ -283,7 +294,7 @@
                     <TextBox Text="{Binding CancelReason, UpdateSourceTrigger=PropertyChanged}"
                              materialDesign:HintAssist.Hint="{DynamicResource CancelReasonPrompt}"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Margin="0,0,0,8"/>
+                             Padding="5" Margin="0,0,0,8"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button Content="{DynamicResource CancelOrderConfirmButton}"
                                 Command="{Binding ConfirmCancelCommand}"

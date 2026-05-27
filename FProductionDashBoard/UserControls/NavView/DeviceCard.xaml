@@ -90,22 +90,22 @@
                 <!-- 資訊列 -->
                 <StackPanel Orientation="Horizontal" Margin="5,2,5,0">
                     <materialDesign:PackIcon Kind="TagOutline"
-                                            Width="16" Height="16"
+                                            Width="22" Height="22"
                                             Foreground="{DynamicResource SecondaryBrush}"
                                             VerticalAlignment="Center"
                                             Margin="0,0,4,0"/>
                     <TextBlock Text="{Binding CurrentProductDisplayName}"
-                               FontWeight="SemiBold" FontSize="14"
+                               FontWeight="SemiBold" FontSize="20"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"
                                Margin="0,0,12,0"/>
                     <materialDesign:PackIcon Kind="AccountOutline"
-                                            Width="16" Height="16"
+                                            Width="22" Height="22"
                                             Foreground="{DynamicResource SecondaryBrush}"
                                             VerticalAlignment="Center"
                                             Margin="0,0,4,0"/>
                     <TextBlock Text="{Binding CurrentUser.Name}"
-                               FontWeight="SemiBold" FontSize="14"
+                               FontWeight="SemiBold" FontSize="20"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"
                                Margin="0,0,12,0"/>
