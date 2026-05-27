@@ -75,6 +75,8 @@ namespace FProductionDashBoard.ViewModels
 
         // ─ QuickOrder Page
         public List<EquipmentProductItem> EquipmentProducts { get; }
+        public ObservableCollection<EquipmentProductItem> FilteredEquipmentProducts { get; } = new();
+        [ObservableProperty] private string quickOrderFilterText = string.Empty;
         [ObservableProperty] private EquipmentProductItem? selectedEquipmentProduct;
         [ObservableProperty] private int? quantity;
 
@@ -118,6 +120,7 @@ namespace FProductionDashBoard.ViewModels
                     DisplayLabel = BuildEquipmentProductLabel(ep)
                 })
                 .ToList();
+            RecomputeFilteredProducts();
 
             // 覆蓋 ConfirmCommand（async + CanExecute）
             ConfirmCommand = new AsyncRelayCommand(OnConfirmAsync, () => CanConfirm);
@@ -144,8 +147,23 @@ namespace FProductionDashBoard.ViewModels
         {
             SelectedEquipmentProduct = null;
             Quantity = null;
+            QuickOrderFilterText = string.Empty;
             DialogErrorString = null;
             SetPage(OrderListPage.QuickOrder);
+        }
+
+        partial void OnQuickOrderFilterTextChanged(string value) => RecomputeFilteredProducts();
+
+        private void RecomputeFilteredProducts()
+        {
+            FilteredEquipmentProducts.Clear();
+            var filter = QuickOrderFilterText?.Trim();
+            foreach (var item in EquipmentProducts)
+            {
+                if (string.IsNullOrEmpty(filter) ||
+                    item.DisplayLabel.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0)
+                    FilteredEquipmentProducts.Add(item);
+            }
         }
 
         private void NavigateToChecklist(OrderProductionInfo? order)
