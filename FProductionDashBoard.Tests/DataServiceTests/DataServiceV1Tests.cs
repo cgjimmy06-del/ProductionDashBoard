@@ -26,6 +26,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         private readonly Mock<IProductRepository> _productRep = new();
         private readonly Mock<ISopChecklistRepository> _sopChecklistRep = new();
         private readonly Mock<IEquipmentProductRepository> _equipmentProductRep = new();
+        private readonly Mock<IOrderProductionRepository> _orderProductionRep = new();
         private readonly Mock<IDbContextFactory<MesDbContext>> _mesFactory = new();
         public DataServiceV1Tests()
         {
@@ -58,6 +59,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 _productRep.Object,
                 _sopChecklistRep.Object,
                 _equipmentProductRep.Object,
+                _orderProductionRep.Object,
                 _mesFactory.Object
             );
             service.BusinessDay = businessDay ?? DateTime.Today;
