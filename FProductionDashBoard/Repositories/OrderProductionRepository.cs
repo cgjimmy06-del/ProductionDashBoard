@@ -78,8 +78,10 @@ namespace FProductionDashBoard.Repositories
         public async Task StartAsync(int orderId, int startedBy, DateTime startedAt)
         {
             await using var ctx = _factory.CreateDbContext();
-            var order = await ctx.OrderProductions.FindAsync(orderId).ConfigureAwait(false);
-            if (order is null) return;
+            var order = await ctx.OrderProductions.FindAsync(orderId).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"[StartAsync] OrderId {orderId} not found");
+            if (order.Status != OrderProductionStatus.Pending)
+                throw new InvalidOperationException($"[StartAsync] 狀態不允許：{order.Status}");
             order.Status = OrderProductionStatus.InProduction;
             order.StartedBy = startedBy;
             order.StartedAt = startedAt;
@@ -90,8 +92,10 @@ namespace FProductionDashBoard.Repositories
         public async Task EndAsync(int orderId, DateTime endedAt)
         {
             await using var ctx = _factory.CreateDbContext();
-            var order = await ctx.OrderProductions.FindAsync(orderId).ConfigureAwait(false);
-            if (order is null) return;
+            var order = await ctx.OrderProductions.FindAsync(orderId).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"[EndAsync] OrderId {orderId} not found");
+            if (order.Status != OrderProductionStatus.InProduction)
+                throw new InvalidOperationException($"[EndAsync] 狀態不允許：{order.Status}");
             order.Status = OrderProductionStatus.Completed;
             order.EndedAt = endedAt;
             order.UpdateAt = DateTime.Now;
@@ -101,8 +105,10 @@ namespace FProductionDashBoard.Repositories
         public async Task CancelAsync(int orderId, string? description)
         {
             await using var ctx = _factory.CreateDbContext();
-            var order = await ctx.OrderProductions.FindAsync(orderId).ConfigureAwait(false);
-            if (order is null) return;
+            var order = await ctx.OrderProductions.FindAsync(orderId).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"[CancelAsync] OrderId {orderId} not found");
+            if (order.Status != OrderProductionStatus.Pending && order.Status != OrderProductionStatus.InProduction)
+                throw new InvalidOperationException($"[CancelAsync] 狀態不允許：{order.Status}");
             order.Status = OrderProductionStatus.Cancelled;
             order.Description = description;
             order.UpdateAt = DateTime.Now;
