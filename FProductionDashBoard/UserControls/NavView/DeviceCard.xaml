@@ -78,6 +78,7 @@
                             Style="{StaticResource MaterialDesignIconButton}"
                             Command="{Binding OrderCommand}"
                             VerticalAlignment="Center"
+                            ToolTip="{DynamicResource OrderListButtonTooltip}"
                             Width="44" Height="44">
                         <materialDesign:PackIcon Kind="ClipboardListOutline" Width="26" Height="26"/>
                     </Button>

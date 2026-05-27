@@ -309,4 +309,7 @@
   <data name="ConfirmCancelOrder" xml:space="preserve">
     <value>確認取消此訂單？</value>
   </data>
+  <data name="ConfirmEndOrder" xml:space="preserve">
+    <value>確認結束此訂單?</value>
+  </data>
 </root>

@@ -352,4 +352,7 @@
   <data name="ConfirmCancelOrder" xml:space="preserve">
     <value>Confirm cancel this order?</value>
   </data>
+  <data name="ConfirmEndOrder" xml:space="preserve">
+    <value>Confirm end this order?</value>
+  </data>
 </root>

@@ -169,6 +169,24 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Confirm cancel this order? 的當地語系化字串。
+        /// </summary>
+        internal static string ConfirmCancelOrder {
+            get {
+                return ResourceManager.GetString("ConfirmCancelOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Confirm end this order? 的當地語系化字串。
+        /// </summary>
+        internal static string ConfirmEndOrder {
+            get {
+                return ResourceManager.GetString("ConfirmEndOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Device Card Management 的當地語系化字串。
         /// </summary>
         internal static string DeviceCardManageDialog {
@@ -239,61 +257,61 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("DialogBaseSave", resourceCulture);
             }
         }
-
-        internal static string SopValidationStation {
+        
+        /// <summary>
+        ///   查詢類似 Please select an equipment first 的當地語系化字串。
+        /// </summary>
+        internal static string EqprodValidationEquipment {
             get {
-                return ResourceManager.GetString("SopValidationStation", resourceCulture);
+                return ResourceManager.GetString("EqprodValidationEquipment", resourceCulture);
             }
         }
-
-        internal static string SopValidationFixture {
+        
+        /// <summary>
+        ///   查詢類似 No matching SOP found for the selected product and process 的當地語系化字串。
+        /// </summary>
+        internal static string EqprodValidationNoSop {
             get {
-                return ResourceManager.GetString("SopValidationFixture", resourceCulture);
+                return ResourceManager.GetString("EqprodValidationNoSop", resourceCulture);
             }
         }
-
-        internal static string SopValidationOther {
+        
+        /// <summary>
+        ///   查詢類似 Please select a process 的當地語系化字串。
+        /// </summary>
+        internal static string EqprodValidationProcess {
             get {
-                return ResourceManager.GetString("SopValidationOther", resourceCulture);
+                return ResourceManager.GetString("EqprodValidationProcess", resourceCulture);
             }
         }
-
-        internal static string SopValidationRequiredFields {
+        
+        /// <summary>
+        ///   查詢類似 Please select a product 的當地語系化字串。
+        /// </summary>
+        internal static string EqprodValidationProduct {
             get {
-                return ResourceManager.GetString("SopValidationRequiredFields", resourceCulture);
+                return ResourceManager.GetString("EqprodValidationProduct", resourceCulture);
             }
         }
-
-        internal static string SopValidationMinItems {
+        
+        /// <summary>
+        ///   查詢類似 Seq No. must be greater than 0 的當地語系化字串。
+        /// </summary>
+        internal static string EqprodValidationSeqNo {
             get {
-                return ResourceManager.GetString("SopValidationMinItems", resourceCulture);
+                return ResourceManager.GetString("EqprodValidationSeqNo", resourceCulture);
             }
         }
-
-        internal static string SopSuccessAdd {
+        
+        /// <summary>
+        ///   查詢類似 This Seq No. is already used by this equipment 的當地語系化字串。
+        /// </summary>
+        internal static string EqprodValidationSeqNoDuplicate {
             get {
-                return ResourceManager.GetString("SopSuccessAdd", resourceCulture);
+                return ResourceManager.GetString("EqprodValidationSeqNoDuplicate", resourceCulture);
             }
         }
-
-        internal static string SopSuccessUpdate {
-            get {
-                return ResourceManager.GetString("SopSuccessUpdate", resourceCulture);
-            }
-        }
-
-        internal static string SopTitleNew {
-            get {
-                return ResourceManager.GetString("SopTitleNew", resourceCulture);
-            }
-        }
-
-        internal static string SopTitleEdit {
-            get {
-                return ResourceManager.GetString("SopTitleEdit", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   查詢類似 First Inspection Abnormal, please report according to procedure! 的當地語系化字串。
         /// </summary>
@@ -466,6 +484,114 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 No current product 的當地語系化字串。
+        /// </summary>
+        internal static string NoCurrentProduct {
+            get {
+                return ResourceManager.GetString("NoCurrentProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Only one order can be in production 的當地語系化字串。
+        /// </summary>
+        internal static string OnlyOneProductionError {
+            get {
+                return ResourceManager.GetString("OnlyOneProductionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Order Management 的當地語系化字串。
+        /// </summary>
+        internal static string OrderListTitle {
+            get {
+                return ResourceManager.GetString("OrderListTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Added successfully 的當地語系化字串。
+        /// </summary>
+        internal static string SopSuccessAdd {
+            get {
+                return ResourceManager.GetString("SopSuccessAdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Updated successfully 的當地語系化字串。
+        /// </summary>
+        internal static string SopSuccessUpdate {
+            get {
+                return ResourceManager.GetString("SopSuccessUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Edit SOP (ID: {0}) 的當地語系化字串。
+        /// </summary>
+        internal static string SopTitleEdit {
+            get {
+                return ResourceManager.GetString("SopTitleEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 New SOP 的當地語系化字串。
+        /// </summary>
+        internal static string SopTitleNew {
+            get {
+                return ResourceManager.GetString("SopTitleNew", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Fixture: Material is required 的當地語系化字串。
+        /// </summary>
+        internal static string SopValidationFixture {
+            get {
+                return ResourceManager.GetString("SopValidationFixture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 At least 1 item is required 的當地語系化字串。
+        /// </summary>
+        internal static string SopValidationMinItems {
+            get {
+                return ResourceManager.GetString("SopValidationMinItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Other: Content is required 的當地語系化字串。
+        /// </summary>
+        internal static string SopValidationOther {
+            get {
+                return ResourceManager.GetString("SopValidationOther", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Part / Model / Process are required 的當地語系化字串。
+        /// </summary>
+        internal static string SopValidationRequiredFields {
+            get {
+                return ResourceManager.GetString("SopValidationRequiredFields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Station: Workstation No. and material are required 的當地語系化字串。
+        /// </summary>
+        internal static string SopValidationStation {
+            get {
+                return ResourceManager.GetString("SopValidationStation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Swipe card to confirm end of tuning 的當地語系化字串。
         /// </summary>
         internal static string TuningCardConfirm {
@@ -516,66 +642,6 @@ namespace FProductionDashBoard.Properties {
         internal static string TuningInProgressTeaching {
             get {
                 return ResourceManager.GetString("TuningInProgressTeaching", resourceCulture);
-            }
-        }
-
-        internal static string EqprodValidationEquipment {
-            get {
-                return ResourceManager.GetString("EqprodValidationEquipment", resourceCulture);
-            }
-        }
-
-        internal static string EqprodValidationProduct {
-            get {
-                return ResourceManager.GetString("EqprodValidationProduct", resourceCulture);
-            }
-        }
-
-        internal static string EqprodValidationProcess {
-            get {
-                return ResourceManager.GetString("EqprodValidationProcess", resourceCulture);
-            }
-        }
-
-        internal static string EqprodValidationSeqNo {
-            get {
-                return ResourceManager.GetString("EqprodValidationSeqNo", resourceCulture);
-            }
-        }
-
-        internal static string EqprodValidationSeqNoDuplicate {
-            get {
-                return ResourceManager.GetString("EqprodValidationSeqNoDuplicate", resourceCulture);
-            }
-        }
-
-        internal static string EqprodValidationNoSop {
-            get {
-                return ResourceManager.GetString("EqprodValidationNoSop", resourceCulture);
-            }
-        }
-
-        internal static string NoCurrentProduct {
-            get {
-                return ResourceManager.GetString("NoCurrentProduct", resourceCulture);
-            }
-        }
-
-        internal static string OrderListTitle {
-            get {
-                return ResourceManager.GetString("OrderListTitle", resourceCulture);
-            }
-        }
-
-        internal static string OnlyOneProductionError {
-            get {
-                return ResourceManager.GetString("OnlyOneProductionError", resourceCulture);
-            }
-        }
-
-        internal static string ConfirmCancelOrder {
-            get {
-                return ResourceManager.GetString("ConfirmCancelOrder", resourceCulture);
             }
         }
     }
