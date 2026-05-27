@@ -309,4 +309,7 @@
   <data name="ConfirmCancelOrder" xml:space="preserve">
     <value>Xác nhận hủy đơn hàng này?</value>
   </data>
+  <data name="ConfirmEndOrder" xml:space="preserve">
+    <value>Xác nhận hoàn tất đơn hàng này?</value>
+  </data>
 </root>

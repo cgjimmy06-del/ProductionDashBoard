@@ -57,6 +57,7 @@
     <sys:String x:Key="OperationButton">Operation</sys:String>
     <sys:String x:Key="TuningTeachingButton">Teaching</sys:String>
     <sys:String x:Key="TuningOffsetButton">Offset</sys:String>
+    <sys:String x:Key="OrderListButtonTooltip">Open the order list page</sys:String>
     <sys:String x:Key="TuningClickToEnd">Click anywhere to end</sys:String>
     <!--#endregion-->
     <!--#region dialog window 彈出視窗 -->

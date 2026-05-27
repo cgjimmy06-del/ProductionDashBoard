@@ -57,6 +57,7 @@
     <sys:String x:Key="OperationButton">Điều chỉnh</sys:String>
     <sys:String x:Key="TuningTeachingButton">Dạy điểm</sys:String>
     <sys:String x:Key="TuningOffsetButton">Tinh chỉnh</sys:String>
+    <sys:String x:Key="OrderListButtonTooltip">Vào trang danh sách đơn hàng</sys:String>
     <sys:String x:Key="TuningClickToEnd">Nhấn bất kỳ để kết thúc</sys:String>
     <!--#endregion-->
     <!--#region dialog window 彈出視窗 -->

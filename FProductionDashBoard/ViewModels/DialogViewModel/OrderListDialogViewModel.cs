@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace FProductionDashBoard.ViewModels
@@ -340,6 +341,13 @@ namespace FProductionDashBoard.ViewModels
         private async Task OnEndProductionAsync()
         {
             if (ActiveOrder == null) return;
+
+            var confirm = MessageBox.Show(
+                $"#{ActiveOrder.SeqNo} {ActiveOrder.ProductName}\n{Resources.ConfirmEndOrder}",
+                Resources.ConfirmEndOrder,
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes) return;
+
             Result = new OrderListResult
             {
                 Action  = OrderListAction.EndProduction,
