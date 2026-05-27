@@ -554,5 +554,29 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("EqprodValidationNoSop", resourceCulture);
             }
         }
+
+        internal static string NoCurrentProduct {
+            get {
+                return ResourceManager.GetString("NoCurrentProduct", resourceCulture);
+            }
+        }
+
+        internal static string OrderListTitle {
+            get {
+                return ResourceManager.GetString("OrderListTitle", resourceCulture);
+            }
+        }
+
+        internal static string OnlyOneProductionError {
+            get {
+                return ResourceManager.GetString("OnlyOneProductionError", resourceCulture);
+            }
+        }
+
+        internal static string ConfirmCancelOrder {
+            get {
+                return ResourceManager.GetString("ConfirmCancelOrder", resourceCulture);
+            }
+        }
     }
 }

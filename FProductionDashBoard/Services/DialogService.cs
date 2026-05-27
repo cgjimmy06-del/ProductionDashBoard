@@ -1,4 +1,5 @@
 using FProductionDashBoard.UserControls;
+using FProductionDashBoard.UserControls.DialogView;
 using FProductionDashBoard.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace FProductionDashBoard.Services
             [typeof(InspectionDialogViewModel)] = vm => new InspectionDialog { DataContext = vm },
             [typeof(TuningDialogViewModel)]     = vm => new TuningDialog { DataContext = vm },
             [typeof(AddDeviceDialogViewModel)]  = vm => new AddDeviceDialog { DataContext = vm },
+            [typeof(OrderListDialogViewModel)]  = vm => new OrderListDialog { DataContext = vm },
         };
 
         public bool ShowConfirm(string message)

@@ -75,7 +75,7 @@ namespace FProductionDashBoard.ViewModels
                         idevice.FirstInspectionStatus = result.IsNormal;
 
                         await _core.Data.AddFirstInspectionAsync(idevice.Info.Id, CurrentUser!.Id, result.IsNormal,
-                        idevice.CurrentProduct.ProductId, result.ErrorCode, result.Description);
+                        idevice.CurrentProduct?.ProductId, result.ErrorCode, result.Description);
 
                         _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
                         $"首件紀錄上傳完成");
@@ -125,7 +125,7 @@ namespace FProductionDashBoard.ViewModels
                     try
                     {
                         await _core.Data.AddRoutineInspectionAsync(idevice.Info.Id, CurrentUser!.Id, result.IsNormal,
-                            currentTimeSlot ?? 1, idevice.CurrentProduct.ProductId, result.ErrorCode, result.Description);
+                            currentTimeSlot ?? 1, idevice.CurrentProduct?.ProductId, result.ErrorCode, result.Description);
                         await idevice.UpdateTimeSlotsStatusAsync();
 
                         _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
