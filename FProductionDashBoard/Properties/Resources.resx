@@ -343,4 +343,10 @@
   <data name="NoCurrentProduct" xml:space="preserve">
     <value>No current product</value>
   </data>
+  <data name="OrderListTitle" xml:space="preserve">
+    <value>Order Management</value>
+  </data>
+  <data name="OnlyOneProductionError" xml:space="preserve">
+    <value>Only one order can be in production</value>
+  </data>
 </root>

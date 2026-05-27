@@ -1,0 +1,283 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.DialogView.OrderListDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             Width="560" d:DesignHeight="400" d:DesignWidth="560" d:Background="White">
+
+    <Grid>
+
+        <!-- ══ Page 1: OrderList ══════════════════════════════════════════════ -->
+        <StackPanel Visibility="{Binding IsOnOrderList, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Margin="10,5">
+
+            <!-- 快速接單按鈕 -->
+            <Button HorizontalAlignment="Left"
+                    Content="{DynamicResource QuickOrderButton}"
+                    Command="{Binding NavigateToQuickOrderCommand}"
+                    Style="{DynamicResource FunctionButtonStyle}"
+                    Margin="0,0,0,8"/>
+
+            <!-- 訂單卡片清單 -->
+            <ScrollViewer MaxHeight="340" VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding Orders}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="8" Margin="0,4" Padding="10,8" BorderThickness="1">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBrush}"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsInProduction}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+                                                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- SeqNo badge -->
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding SeqNo, StringFormat='#{0}'}"
+                                               Foreground="{DynamicResource SecondaryBrush}"
+                                               FontWeight="Bold" FontSize="14"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,12,0"/>
+
+                                    <!-- 品號 · 工序 -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding ProductName}"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   FontWeight="SemiBold" FontSize="13"/>
+                                        <TextBlock Text="{Binding ProcessName}"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   FontSize="11"/>
+                                    </StackPanel>
+
+                                    <!-- 按鈕區 -->
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+
+                                        <!-- 生產中 chip（InProduction 才顯示） -->
+                                        <Border CornerRadius="8" Background="{DynamicResource PrimaryBrush}"
+                                                Padding="8,2" Margin="0,0,8,0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsInProduction}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{DynamicResource DeviceInProduction}"
+                                                       FontSize="11" Foreground="White"/>
+                                        </Border>
+
+                                        <!-- 開始生產（Pending 才顯示） -->
+                                        <Button Content="{DynamicResource StartProductionButton}"
+                                                Command="{Binding DataContext.NavigateToChecklistCommand,
+                                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Margin="0,0,4,0">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsInProduction}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
+                                        <!-- 生產詳情（InProduction 才顯示） -->
+                                        <Button Content="{DynamicResource ProductionDetailTitle}"
+                                                Command="{Binding DataContext.NavigateToDetailCommand,
+                                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Margin="0,0,4,0">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsInProduction}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
+                                        <!-- 取消訂單（Setting 權限 + Pending 才顯示） -->
+                                        <StackPanel Visibility="{Binding DataContext.HasSettingPermission,
+                                                                  RelativeSource={RelativeSource AncestorType=UserControl},
+                                                                  Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <Button Content="{DynamicResource CancelOrderButton}"
+                                                    Command="{Binding DataContext.CancelPendingOrderCommand,
+                                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                                                        <Setter Property="Background" Value="{DynamicResource ErrorBrush}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsInProduction}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                        </StackPanel>
+
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </StackPanel>
+
+        <!-- ══ Page 2: QuickOrder ═════════════════════════════════════════════ -->
+        <StackPanel Visibility="{Binding IsOnQuickOrder, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Margin="10,5">
+
+            <!-- 品項選擇 -->
+            <ListBox ItemsSource="{Binding EquipmentProducts}"
+                     SelectedItem="{Binding SelectedEquipmentProduct}"
+                     MaxHeight="300"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     Margin="0,0,0,10">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayLabel}"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Padding="4,2"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+        </StackPanel>
+
+        <!-- ══ Page 3: SopChecklist ═══════════════════════════════════════════ -->
+        <StackPanel Visibility="{Binding IsOnSopChecklist, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Margin="10,5">
+
+            <TextBlock Text="{DynamicResource SopChecklistTitle}"
+                       FontWeight="SemiBold" FontSize="14"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       Margin="0,0,0,10"/>
+
+            <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding ChecklistItems}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding DisplayText}"
+                                      IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                      Margin="0,4"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+        </StackPanel>
+
+        <!-- ══ Page 4: ProductionDetail ══════════════════════════════════════ -->
+        <StackPanel Visibility="{Binding IsOnProductionDetail, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Margin="10,5">
+
+            <TextBlock Text="{DynamicResource ProductionDetailTitle}"
+                       FontWeight="SemiBold" FontSize="14"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       Margin="0,0,0,12"/>
+
+            <!-- 訂單資訊 -->
+            <StackPanel Margin="0,0,0,16">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                    <materialDesign:PackIcon Kind="TagOutline" Width="16" Height="16"
+                                            Foreground="{DynamicResource SecondaryBrush}"
+                                            VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <TextBlock Text="{Binding ActiveOrder.ProductName}"
+                               FontWeight="SemiBold" FontSize="14"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Text=" · " Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ActiveOrder.ProcessName}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ClockOutline" Width="16" Height="16"
+                                            Foreground="{DynamicResource SecondaryBrush}"
+                                            VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <TextBlock Text="{Binding ActiveOrder.StartedAt, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- 結束生產按鈕 -->
+            <Button Content="{DynamicResource EndProductionButton}"
+                    Command="{Binding EndProductionCommand}"
+                    Style="{DynamicResource FunctionButtonStyle}"
+                    Background="{DynamicResource PrimaryBrush}"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,8"/>
+
+            <!-- 取消訂單區域（Setting 權限限定） -->
+            <StackPanel Visibility="{Binding HasSettingPermission, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                <!-- 取消訂單按鈕（未展開輸入時顯示） -->
+                <Button Content="{DynamicResource CancelOrderButton}"
+                        Command="{Binding ShowCancelInputCommand}"
+                        HorizontalAlignment="Center"
+                        Margin="0,0,0,8">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                            <Setter Property="Background" Value="{DynamicResource ErrorBrush}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCancelInputVisible}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <!-- 取消原因輸入區（展開後顯示） -->
+                <StackPanel Visibility="{Binding IsCancelInputVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Margin="0,4,0,0">
+                    <TextBox Text="{Binding CancelReason, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="{DynamicResource CancelReasonPrompt}"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Margin="0,0,0,8"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="{DynamicResource CancelOrderConfirmButton}"
+                                Command="{Binding ConfirmCancelCommand}"
+                                Style="{DynamicResource FunctionButtonStyle}"
+                                Background="{DynamicResource ErrorBrush}"
+                                Margin="0,0,8,0"/>
+                        <Button Content="{DynamicResource AbortCancelButton}"
+                                Command="{Binding AbortCancelCommand}"
+                                Style="{DynamicResource FunctionButtonStyle}"/>
+                    </StackPanel>
+                </StackPanel>
+
+            </StackPanel>
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>

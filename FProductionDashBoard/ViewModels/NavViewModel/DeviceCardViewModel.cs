@@ -160,8 +160,44 @@ namespace FProductionDashBoard.ViewModels
 
         private async Task OpenOrderDialogAsync()
         {
-            // Dialog implemented in Commit 3 (OrderListDialog)
-            await Task.CompletedTask;
+            var vm = new OrderListDialogViewModel(
+                _core,
+                Info.Id,
+                _commonLists.EquipmentProductsList
+                    .Where(ep => ep.EquipmentId == Info.Id).ToList(),
+                CurrentUser,
+                $"{Properties.Resources.OrderListTitle}: {Info.Name}");
+            _dialog.ShowDialog(vm);
+
+            if (vm.IsConfirmed && vm.Result != null)
+            {
+                try
+                {
+                    switch (vm.Result.Action)
+                    {
+                        case OrderListAction.StartProduction:
+                            await _core.Data.StartProductionAsync(vm.Result.OrderId, CurrentUser.Id);
+                            break;
+                        case OrderListAction.EndProduction:
+                            await _core.Data.EndProductionAsync(vm.Result.OrderId);
+                            break;
+                        case OrderListAction.CancelProduction:
+                            await _core.Data.CancelOrderAsync(vm.Result.OrderId, vm.Result.Description);
+                            break;
+                    }
+                }
+                catch (OfflineOperationQueuedException)
+                {
+                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
+                        "操作已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                }
+                catch (Exception ex)
+                {
+                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - 接單操作失敗", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[OpenOrderDialogAsync] {ex.Message}");
+                }
+            }
+            await LoadOrdersAsync();
         }
 
         private void ApplyProductionState(OrderProductionInfo? order)

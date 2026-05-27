@@ -300,4 +300,10 @@
   <data name="NoCurrentProduct" xml:space="preserve">
     <value>Không có sản phẩm</value>
   </data>
+  <data name="OrderListTitle" xml:space="preserve">
+    <value>Quản lý đơn hàng</value>
+  </data>
+  <data name="OnlyOneProductionError" xml:space="preserve">
+    <value>Chỉ có thể có một đơn đang sản xuất</value>
+  </data>
 </root>

@@ -241,6 +241,15 @@
     <!--#endregion-->
     <!--#region 接單服務-->
     <sys:String x:Key="DeviceInProduction">In Production</sys:String>
+    <sys:String x:Key="QuickOrderButton">+ Quick Order</sys:String>
+    <sys:String x:Key="StartProductionButton">Start Production</sys:String>
+    <sys:String x:Key="EndProductionButton">End Production</sys:String>
+    <sys:String x:Key="CancelOrderButton">Cancel Order</sys:String>
+    <sys:String x:Key="CancelOrderConfirmButton">Confirm Cancel</sys:String>
+    <sys:String x:Key="AbortCancelButton">Abort</sys:String>
+    <sys:String x:Key="CancelReasonPrompt">Cancel reason (optional)</sys:String>
+    <sys:String x:Key="SopChecklistTitle">SOP Checklist</sys:String>
+    <sys:String x:Key="ProductionDetailTitle">Production Details</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

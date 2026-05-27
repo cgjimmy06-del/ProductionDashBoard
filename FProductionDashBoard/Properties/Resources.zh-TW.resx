@@ -300,4 +300,10 @@
   <data name="NoCurrentProduct" xml:space="preserve">
     <value>當前無產品</value>
   </data>
+  <data name="OrderListTitle" xml:space="preserve">
+    <value>訂單管理</value>
+  </data>
+  <data name="OnlyOneProductionError" xml:space="preserve">
+    <value>目前已有生產中訂單</value>
+  </data>
 </root>

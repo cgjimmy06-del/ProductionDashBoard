@@ -560,5 +560,17 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("NoCurrentProduct", resourceCulture);
             }
         }
+
+        internal static string OrderListTitle {
+            get {
+                return ResourceManager.GetString("OrderListTitle", resourceCulture);
+            }
+        }
+
+        internal static string OnlyOneProductionError {
+            get {
+                return ResourceManager.GetString("OnlyOneProductionError", resourceCulture);
+            }
+        }
     }
 }
