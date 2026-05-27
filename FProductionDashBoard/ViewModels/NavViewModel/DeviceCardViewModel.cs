@@ -57,14 +57,14 @@ namespace FProductionDashBoard.ViewModels
 
         // 操作按鈕及狀態顯示
         [ObservableProperty]
-        private bool isSelected = false;
+        private bool isSelected = false; // 是否被選擇
         [ObservableProperty]
-        private bool routineCycleEnable = false;
+        private bool routineCycleEnable = false; // 是否開啟巡檢功能
         [ObservableProperty]
-        private bool firstInspectionStatus = false;
-        public ObservableCollection<int> TimeSlotsStatus { get; } = new ObservableCollection<int>();
+        private bool firstInspectionStatus = false; // 首件狀態
+        public ObservableCollection<int> TimeSlotsStatus { get; } = new ObservableCollection<int>(); // 各時段狀態
         [ObservableProperty]
-        private int currentAction = (int)UserAction.Producing;
+        private int currentAction = (int)UserAction.Producing; // 調試狀態
 
         // 調試計時
         [ObservableProperty]
@@ -337,10 +337,12 @@ namespace FProductionDashBoard.ViewModels
             await Task.CompletedTask;
         }
 
+        // 調試視窗與結束事件
         private async Task EndTuningAsync()
         {
             if (!IsTuning) return;
 
+            // 呼叫loading視窗 - 刷卡確認結束調試計時
             bool confirmed = false;
             var loadingVm = new LoadingViewModel
             {
@@ -350,6 +352,7 @@ namespace FProductionDashBoard.ViewModels
             };
             var loadingWin = new LoadingWindow(loadingVm);
 
+            // 讀卡機事件 - 確認是否與當前登入人員一致
             void OnCardConfirm(object? s, CardReadEventArgs e)
             {
                 if (e.CardId == CurrentUser.CardId)
@@ -363,11 +366,14 @@ namespace FProductionDashBoard.ViewModels
 
             _core.CardReader.ResetLastCard();
             _core.CardReader.CardRead += OnCardConfirm;
+
+            //開啟並等待視窗
             loadingWin.ShowDialog();
             _core.CardReader.CardRead -= OnCardConfirm;
 
             if (!confirmed) return;
 
+            // 調試紀錄流程
             try
             {
                 if (_tuningTimer != null)
