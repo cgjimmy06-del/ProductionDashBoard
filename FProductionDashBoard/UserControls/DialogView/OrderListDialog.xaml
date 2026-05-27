@@ -21,7 +21,7 @@
                     Margin="0,0,0,8"/>
 
             <!-- 訂單卡片清單 -->
-            <ScrollViewer MaxHeight="340" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Height="300" VerticalScrollBarVisibility="Auto">
                 <ItemsControl ItemsSource="{Binding Orders}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -58,11 +58,11 @@
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                         <TextBlock Text="{Binding ProductName}"
                                                    Foreground="{DynamicResource TextPrimaryBrush}"
-                                                   FontWeight="SemiBold" FontSize="13"/>
+                                                   FontWeight="SemiBold" FontSize="16"/>
                                         <TextBlock Text="{Binding ProcessName}"
                                                    Foreground="{DynamicResource TextPrimaryBrush}"
-                                                   FontSize="11"/>
-                                        <TextBlock Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11">
+                                                   FontSize="13"/>
+                                        <TextBlock Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Style.Triggers>
@@ -148,11 +148,17 @@
         <StackPanel Visibility="{Binding IsOnQuickOrder, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Margin="10,5">
 
+            <!-- 篩選 -->
+            <TextBox Text="{Binding QuickOrderFilterText, UpdateSourceTrigger=PropertyChanged}"
+                     materialDesign:HintAssist.Hint="{DynamicResource EqprodSopSearchTooltip}"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     Margin="0,0,0,8"/>
+
             <!-- 品項選擇 -->
-            <ListBox ItemsSource="{Binding EquipmentProducts}"
+            <ListBox ItemsSource="{Binding FilteredEquipmentProducts}"
                      SelectedItem="{Binding SelectedEquipmentProduct}"
                      Background="{DynamicResource MaterialDesignPaper}"
-                     MaxHeight="300"
+                     MaxHeight="280"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      Margin="0,0,0,10">
                 <ListBox.ItemTemplate>
@@ -195,38 +201,41 @@
                     Margin="10,5">
 
             <TextBlock Text="{DynamicResource ProductionDetailTitle}"
-                       FontWeight="SemiBold" FontSize="14"
+                       FontWeight="SemiBold" FontSize="28"
                        Foreground="{DynamicResource TextPrimaryBrush}"
                        Margin="0,0,0,12"/>
 
             <!-- 訂單資訊 -->
             <StackPanel Margin="0,0,0,16">
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                    <materialDesign:PackIcon Kind="TagOutline" Width="16" Height="16"
+                    <materialDesign:PackIcon Kind="TagOutline" Width="32" Height="32"
                                             Foreground="{DynamicResource SecondaryBrush}"
                                             VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <TextBlock Text="{Binding ActiveOrder.ProductName}"
-                               FontWeight="SemiBold" FontSize="14"
+                               FontWeight="SemiBold" FontSize="28"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"/>
-                    <TextBlock Text=" · " Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text=" · " FontSize="24" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding ActiveOrder.ProcessName}"
+                               FontSize="24"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                    <materialDesign:PackIcon Kind="ClockOutline" Width="16" Height="16"
+                    <materialDesign:PackIcon Kind="ClockOutline" Width="32" Height="32"
                                             Foreground="{DynamicResource SecondaryBrush}"
                                             VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <TextBlock Text="{Binding ActiveOrder.StartedAt, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"
+                               FontSize="24"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                    <materialDesign:PackIcon Kind="AccountOutline" Width="16" Height="16"
+                    <materialDesign:PackIcon Kind="AccountOutline" Width="32" Height="32"
                                             Foreground="{DynamicResource SecondaryBrush}"
                                             VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <TextBlock Text="{Binding ActiveOrder.StartedByName}"
+                               FontSize="24"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
@@ -240,10 +249,11 @@
                             </Style.Triggers>
                         </Style>
                     </StackPanel.Style>
-                    <materialDesign:PackIcon Kind="PackageVariantClosed" Width="16" Height="16"
+                    <materialDesign:PackIcon Kind="PackageVariantClosed" Width="32" Height="32"
                                             Foreground="{DynamicResource SecondaryBrush}"
                                             VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <TextBlock Text="{Binding ActiveOrder.Quantity}"
+                               FontSize="24"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"/>
                 </StackPanel>

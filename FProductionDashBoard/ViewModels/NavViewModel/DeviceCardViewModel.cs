@@ -209,12 +209,13 @@ namespace FProductionDashBoard.ViewModels
                 CurrentProductDisplayName = $"{order.ProductName} · {order.ProcessName}";
                 if (CurrentProduct == null) CurrentProduct = new ProductInfo();
                 CurrentProduct.ProductId = order.SopProductId;
+                CurrentProduct.ProductName = CurrentProductDisplayName;
             }
             else
             {
                 IsProducing = false;
                 CurrentProductDisplayName = Resources.NoCurrentProduct;
-                if (CurrentProduct != null) CurrentProduct.ProductId = null;
+                if (CurrentProduct != null) CurrentProduct = null;
             }
         }
 
@@ -231,7 +232,30 @@ namespace FProductionDashBoard.ViewModels
         private async Task MaterialsChangeAsync()
         {
             CurrentUser = _core.Authorization.CurrentUser!;
-            var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this, _commonLists.MaterialsList);
+
+            List<MaterialInfo> materials = _commonLists.MaterialsList;
+            if (_activeOrder != null)
+            {
+                try
+                {
+                    var checklist = await _core.Data.GetSopChecklistWithItemsAsync(_activeOrder.SopId)
+                        .ConfigureAwait(false);
+                    var sopMaterialIds = checklist?.Items
+                        .Where(i => i.CheckType == CheckType.Station || i.CheckType == CheckType.Fixture)
+                        .Select(i => i.MaterialId)
+                        .Where(id => id.HasValue)
+                        .Select(id => id!.Value)
+                        .ToHashSet() ?? new HashSet<int>();
+                    if (sopMaterialIds.Count > 0)
+                        materials = _commonLists.MaterialsList.Where(m => sopMaterialIds.Contains(m.Id)).ToList();
+                }
+                catch (Exception ex)
+                {
+                    _core.Log.AddErrorLog($"[MaterialsChangeAsync] SOP 物料載入失敗，改為顯示全部：{ex.Message}");
+                }
+            }
+
+            var vm = new MaterialDialogViewModel(Properties.Resources.DeviceMaterialDialog, this, materials);
             _dialog.ShowDialog(vm);
 
             if (vm.IsConfirmed)
@@ -352,7 +376,7 @@ namespace FProductionDashBoard.ViewModels
             var vm = new TuningDialogViewModel(
                 $"{Properties.Resources.ComStrDevice}: {Info.Name}",
                 $"{Properties.Resources.ComStrUser}: {CurrentUser!.Name}",
-                $"{Properties.Resources.ComStrProduct}: {CurrentProduct?.Name ?? string.Empty}");
+                $"{Properties.Resources.ComStrProduct}: {CurrentProduct?.ProductName ?? string.Empty}");
             _dialog.ShowDialog(vm);
 
             if (!vm.IsConfirmed || vm.Result == null) return;
