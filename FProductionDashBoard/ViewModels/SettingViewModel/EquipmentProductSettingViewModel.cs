@@ -27,7 +27,7 @@ namespace FProductionDashBoard.ViewModels
         public ObservableCollection<WorkProcess> FormProcessOptions { get; } = new();
         public ObservableCollection<SopType> FormSopTypeOptions { get; } = new();
         public IReadOnlyList<TuningType> ProductionStatusOptions { get; } =
-            new[] { TuningType.Teaching, TuningType.Offset, TuningType.Feasible, TuningType.Infeasible };
+            new[] { TuningType.Teaching, TuningType.Offset, TuningType.Feasible, TuningType.Infeasible, TuningType.Pending };
 
         // ── 左側 filter ──────────────────────────────────────────────
         [ObservableProperty] private string keywordFilter = "";

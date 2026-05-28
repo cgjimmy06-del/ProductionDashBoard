@@ -13,7 +13,8 @@ namespace FProductionDashBoard.Models
         Teaching = 1,   // 帶點
         Offset = 2,     // 調品質
         Feasible = 3,   // 可生產
-        Infeasible = 4  // 不可生產
+        Infeasible = 4,  // 不可生產
+        Pending = 5
     }
     public class TuningRecord
     {
