@@ -990,7 +990,8 @@ namespace FProductionDashBoard.Services.V1
             {
                 EquipmentId = dto.EquipmentId,
                 SopId = dto.SopId,
-                SeqNo = dto.SeqNo
+                SeqNo = dto.SeqNo,
+                ProductionStatus = dto.ProductionStatus
             };
             await EquipmentProductRep.AddAsync(entity).ConfigureAwait(false);
         }
@@ -1003,6 +1004,7 @@ namespace FProductionDashBoard.Services.V1
                 ?? throw new InvalidOperationException($"[UpdateEquipmentProductAsync] 找不到 EquipmentProduct ID={dto.Id}");
             entity.SopId = dto.SopId;
             entity.SeqNo = dto.SeqNo;
+            entity.ProductionStatus = dto.ProductionStatus;
             entity.UpdateAt = DateTime.Now;
             await EquipmentProductRep.UpdateAsync(entity).ConfigureAwait(false);
         }

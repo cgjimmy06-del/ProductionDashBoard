@@ -26,6 +26,8 @@ namespace FProductionDashBoard.ViewModels
         public ObservableCollection<Product> FormProductOptions { get; } = new();
         public ObservableCollection<WorkProcess> FormProcessOptions { get; } = new();
         public ObservableCollection<SopType> FormSopTypeOptions { get; } = new();
+        public IReadOnlyList<TuningType> ProductionStatusOptions { get; } =
+            new[] { TuningType.Teaching, TuningType.Offset, TuningType.Feasible, TuningType.Infeasible };
 
         // ── 左側 filter ──────────────────────────────────────────────
         [ObservableProperty] private string keywordFilter = "";
@@ -42,6 +44,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private WorkProcess? formProcess;
         [ObservableProperty] private SopType? formSopType;
         [ObservableProperty] private bool isSopTypeVisible;
+        [ObservableProperty] private TuningType formProductionStatus = TuningType.Infeasible;
         [ObservableProperty] private bool isProductListLoading;
 
         public EquipmentProductSettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
@@ -223,6 +226,7 @@ namespace FProductionDashBoard.ViewModels
             FormProcess = FormProcessOptions.FirstOrDefault(p => p.ProcessId == ep.Sop?.ProcessId);
             // FormProcess 設定後 cascade 重建 FormSopTypeOptions
             FormSopType = ep.Sop?.SopType;
+            FormProductionStatus = ep.ProductionStatus;
             FormErrorString = null;
             FormSuccessString = null;
             IsFormVisible = true;
@@ -289,6 +293,7 @@ namespace FProductionDashBoard.ViewModels
             FormProcess = null;
             FormSopType = null;
             IsSopTypeVisible = false;
+            FormProductionStatus = TuningType.Infeasible;
             FormErrorString = null;
             FormSuccessString = null;
             IsFormVisible = true;
@@ -322,7 +327,8 @@ namespace FProductionDashBoard.ViewModels
                     Id = EditingProductId,
                     EquipmentId = SelectedEquipment.Id,
                     SopId = matched.SopId,
-                    SeqNo = FormSeqNo
+                    SeqNo = FormSeqNo,
+                    ProductionStatus = FormProductionStatus
                 };
 
                 if (EditingProductId == null)
@@ -352,6 +358,7 @@ namespace FProductionDashBoard.ViewModels
             FormProcess = null;
             FormSopType = null;
             IsSopTypeVisible = false;
+            FormProductionStatus = TuningType.Infeasible;
         }
     }
 

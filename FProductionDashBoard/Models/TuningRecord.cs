@@ -10,8 +10,10 @@ namespace FProductionDashBoard.Models
 {
     public enum TuningType
     {
-        Teaching = 1,   // 首件檢驗
-        Offset = 2  // 巡檢
+        Teaching = 1,   // 帶點
+        Offset = 2,     // 調品質
+        Feasible = 3,   // 可生產
+        Infeasible = 4  // 不可生產
     }
     public class TuningRecord
     {

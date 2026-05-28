@@ -161,6 +161,8 @@
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                             <DataGridTextColumn Header="{DynamicResource EqprodSopType}" Binding="{Binding Sop.SopType}" Width="60"
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                            <DataGridTextColumn Header="{DynamicResource EqprodProductionStatus}" Binding="{Binding ProductionStatus}" Width="80"
+                                                ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                             <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -266,15 +268,29 @@
                                 </StackPanel>
                             </Grid>
 
-                            <!-- Row 2: 類型（多 SopType 時才顯示） -->
-                            <StackPanel Grid.Row="2" Margin="4,0,4,4"
-                                        Visibility="{Binding IsSopTypeVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <TextBlock Text="{DynamicResource EqprodSopTypeLabel}"
-                                           Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                <ComboBox ItemsSource="{Binding FormSopTypeOptions}"
-                                          SelectedItem="{Binding FormSopType}"/>
-                            </StackPanel>
+                            <!-- Row 2: 生產狀態（常顯示）+ 類型（多 SopType 時才顯示） -->
+                            <Grid Grid.Row="2" Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Margin="4">
+                                    <TextBlock Text="{DynamicResource EqprodProductionStatusLabel}"
+                                               Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <ComboBox ItemsSource="{Binding ProductionStatusOptions}"
+                                              SelectedItem="{Binding FormProductionStatus}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Margin="4"
+                                            Visibility="{Binding IsSopTypeVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <TextBlock Text="{DynamicResource EqprodSopTypeLabel}"
+                                               Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <ComboBox ItemsSource="{Binding FormSopTypeOptions}"
+                                              SelectedItem="{Binding FormSopType}"/>
+                                </StackPanel>
+                            </Grid>
 
                             <!-- Row 3: 訊息 -->
                             <StackPanel Grid.Row="3">

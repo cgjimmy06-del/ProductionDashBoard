@@ -239,6 +239,8 @@
     <sys:String x:Key="EqprodNewItemButton">+ Thêm mục</sys:String>
     <sys:String x:Key="EqprodNoEquipmentSelected">Vui lòng chọn thiết bị từ bên trái</sys:String>
     <sys:String x:Key="EqprodEquipmentListTitle">Danh sách thiết bị</sys:String>
+    <sys:String x:Key="EqprodProductionStatus">Trạng thái</sys:String>
+    <sys:String x:Key="EqprodProductionStatusLabel">Trạng thái SX</sys:String>
     <!--#endregion-->
     <!--#region 接單服務-->
     <sys:String x:Key="DeviceInProduction">Đang sản xuất</sys:String>
