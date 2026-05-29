@@ -136,5 +136,10 @@ namespace FProductionDashBoard.Services
         public Task StartProductionAsync(int orderId, int startedBy);
         public Task EndProductionAsync(int orderId);
         public Task CancelOrderAsync(int orderId, string? description);
+
+        // ─── 調試服務 ─────────────────────────────────────────────────────────
+        public Task<int> StartProgramTuningAsync(int equipmentId, int equipmentProductId, TuningType type, int startedBy, DateTime startedAt);
+        public Task EndProgramTuningAsync(int programTuningId, DateTime endedAt, string? description = null);
+        public Task<ProgramTuningRecord?> GetInProgressProgramTuningAsync(int equipmentId);
     }
 }

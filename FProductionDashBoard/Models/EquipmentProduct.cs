@@ -12,6 +12,7 @@ namespace FProductionDashBoard.Models
         public int SopId { get; set; } // FK
         public DateTime? CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
+        public TuningType ProductionStatus { get; set; }
 
         public Equipment? Equipment { get; set; }
         public SopChecklist? Sop { get; set; }
@@ -31,6 +32,7 @@ namespace FProductionDashBoard.Models
             builder.Property(e => e.SopId).HasColumnName("sop_id");
             builder.Property(e => e.CreateAt).HasColumnName("create_at").HasDefaultValueSql("GETDATE()");
             builder.Property(e => e.UpdateAt).HasColumnName("update_at").HasDefaultValueSql("GETDATE()");
+            builder.Property(e => e.ProductionStatus).HasColumnName("production_status").HasConversion<string>();
 
             builder.HasOne(e => e.Equipment)
                    .WithMany()

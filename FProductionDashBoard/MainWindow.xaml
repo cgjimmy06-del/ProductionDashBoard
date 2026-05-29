@@ -37,8 +37,8 @@
             </Storyboard>
 
             <!-- ViewModel 綁定 User Control -->
-            <DataTemplate DataType="{x:Type localvm:DeviceCardContainerViewModel}">
-                <localuc:DeviceCardContainer />
+            <DataTemplate DataType="{x:Type localvm:OperationViewModel}">
+                <localuc:OperationView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type localvm:SettingViewModel}">
                 <localuc:SettingView />

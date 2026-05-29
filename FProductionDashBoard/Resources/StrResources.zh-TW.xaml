@@ -239,6 +239,8 @@
     <sys:String x:Key="EqprodNewItemButton">+ 新增品項</sys:String>
     <sys:String x:Key="EqprodNoEquipmentSelected">請先從左側選取機台</sys:String>
     <sys:String x:Key="EqprodEquipmentListTitle">機台清單</sys:String>
+    <sys:String x:Key="EqprodProductionStatus">狀態</sys:String>
+    <sys:String x:Key="EqprodProductionStatusLabel">生產狀態</sys:String>
     <!--#endregion-->
     <!--#region 接單服務-->
     <sys:String x:Key="DeviceInProduction">生產中</sys:String>

@@ -83,7 +83,7 @@ namespace FProductionDashBoard.ViewModels
                 var containerSnapshot = new[] { _deviceContainer }
                     .Concat(_panelContainers.Values)
                     .Where(c => c != null)
-                    .Cast<DeviceCardContainerViewModel>()
+                    .Cast<OperationViewModel>()
                     .ToList();
                 _ = Task.Run(async () =>
                 {
@@ -120,7 +120,7 @@ namespace FProductionDashBoard.ViewModels
             { Interlocked.Exchange(ref _isSyncing, 0); }
         }
 
-        private async Task CheckMissedInspectionsAsync(IReadOnlyList<DeviceCardContainerViewModel> containers)
+        private async Task CheckMissedInspectionsAsync(IReadOnlyList<OperationViewModel> containers)
         {
             if (CommonLists.TimeSlotsList.Count == 0) return;
             var activeDevices = containers

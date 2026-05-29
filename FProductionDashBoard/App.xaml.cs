@@ -79,6 +79,7 @@ namespace FProductionDashBoard
                 services.AddScoped<Repositories.ISopChecklistRepository, Repositories.SopChecklistRepository>();
                 services.AddScoped<Repositories.IEquipmentProductRepository, Repositories.EquipmentProductRepository>();
                 services.AddScoped<Repositories.IOrderProductionRepository, Repositories.OrderProductionRepository>();
+                services.AddScoped<Repositories.IProgramTuningRecordRepository, Repositories.ProgramTuningRecordRepository>();
 
                 // 離線暫存服務
                 services.AddDbContextFactory<Repositories.LocalDbContext>(opt =>
@@ -135,7 +136,7 @@ namespace FProductionDashBoard
                 services.AddScoped<ViewModels.LogPanelViewModel>();
                 services.AddScoped<ViewModels.SystemSettingsViewModel>();
                 services.AddScoped<ViewModels.HomeViewModel>();
-                services.AddTransient<ViewModels.DeviceCardContainerViewModel>();
+                services.AddTransient<ViewModels.OperationViewModel>();
 
                 _serviceProvider = services.BuildServiceProvider();
                 // 啟動登入權限

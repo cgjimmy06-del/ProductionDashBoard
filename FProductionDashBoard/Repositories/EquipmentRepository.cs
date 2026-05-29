@@ -17,16 +17,6 @@ namespace FProductionDashBoard.Repositories
         {
         }
 
-        public async Task<IEnumerable<DeviceDto>> GetDevicesAllDapperAsync()
-        {
-            using (var connection = new SqlConnection(CurrectConnStr))
-            {
-                string sql = @" SELECT * FROM [dashboard_db].[dbo].[equipment]";
-
-                return await connection.QueryAsync<DeviceDto>(sql, commandTimeout: 5).ConfigureAwait(false);
-            }
-        }
-
         public async Task<List<EquipmentType>> GetEquipmentTypesAsync()
         {
             await using var ctx = _factory.CreateDbContext();

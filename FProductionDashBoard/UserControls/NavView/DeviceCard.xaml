@@ -194,6 +194,16 @@
                                FontSize="18" FontWeight="Bold"
                                Foreground="#333333"
                                HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding TuningUserName}"
+                               FontSize="13"
+                               Foreground="#444444"
+                               HorizontalAlignment="Center"
+                               Margin="0,4,0,0"/>
+                    <TextBlock Text="{Binding TuningProductLabel}"
+                               FontSize="13"
+                               Foreground="#444444"
+                               HorizontalAlignment="Center"
+                               Margin="0,2,0,0"/>
                     <TextBlock Text="{DynamicResource TuningClickToEnd}"
                                FontSize="12"
                                Foreground="#555555"

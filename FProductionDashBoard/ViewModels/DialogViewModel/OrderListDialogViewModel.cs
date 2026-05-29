@@ -38,6 +38,7 @@ namespace FProductionDashBoard.ViewModels
         public int SopId { get; set; }
         public int SeqNo { get; set; }
         public string DisplayLabel { get; set; } = string.Empty;
+        public TuningType ProductionStatus { get; set; }
     }
 
     public partial class SopChecklistDisplayItem : ObservableObject
@@ -118,7 +119,8 @@ namespace FProductionDashBoard.ViewModels
                     EquipmentProductId = ep.EquipmentProductId,
                     SopId = ep.SopId,
                     SeqNo = ep.SeqNo,
-                    DisplayLabel = BuildEquipmentProductLabel(ep)
+                    DisplayLabel = BuildEquipmentProductLabel(ep),
+                    ProductionStatus = ep.ProductionStatus
                 })
                 .ToList();
             RecomputeFilteredProducts();

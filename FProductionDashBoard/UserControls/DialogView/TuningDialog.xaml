@@ -4,19 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" Height="Auto" Width="400"
-             d:DesignHeight="200" d:DesignWidth="400" d:Background="White">
+             d:DesignHeight="340" d:DesignWidth="400" d:Background="White">
 
     <StackPanel Margin="20,5">
         <!-- 當前操作資訊 -->
         <TextBlock Margin="0,0,0,10" d:Text="機台"
                    Text="{Binding CurrentDevice}"/>
-        <TextBlock Margin="0,0,0,10" d:Text="操作人員"
+        <TextBlock Margin="0,0,0,16" d:Text="操作人員"
                    Text="{Binding CurrentUser}"/>
-        <TextBlock Margin="0,0,0,20" d:Text="產品"
-                   Text="{Binding CurrentProduct}"/>
 
         <!-- 選擇按鈕 -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" 
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
                     Margin="0,0,0,10" Height="40">
             <Button Content="{DynamicResource TuningTeachingButton}"
                     Command="{Binding TeachingCommand}"
@@ -45,5 +43,21 @@
                 </Button.Style>
             </Button>
         </StackPanel>
+
+        <!-- 品項選擇清單 -->
+        <ListBox ItemsSource="{Binding FilteredEquipmentProducts}"
+                 SelectedItem="{Binding SelectedEquipmentProduct}"
+                 Background="{DynamicResource MaterialDesignPaper}"
+                 Height="200"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 Margin="0,0,0,10">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding DisplayLabel}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               FontSize="16" Padding="4,2"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </StackPanel>
 </UserControl>

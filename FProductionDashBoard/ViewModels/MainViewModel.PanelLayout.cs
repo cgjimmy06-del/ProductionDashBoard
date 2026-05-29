@@ -17,8 +17,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private LayoutMode currentLayout = LayoutMode.Single;
         [ObservableProperty] private NavMode currentNavMode = NavMode.Home;
 
-        private DeviceCardContainerViewModel? _deviceContainer;
-        private readonly Dictionary<PanelViewModel, DeviceCardContainerViewModel> _panelContainers = new();
+        private OperationViewModel? _deviceContainer;
+        private readonly Dictionary<PanelViewModel, OperationViewModel> _panelContainers = new();
 
         public PanelViewModel Panel1 { get; private set; } = null!;
         public PanelViewModel Panel2 { get; private set; } = null!;
@@ -102,15 +102,15 @@ namespace FProductionDashBoard.ViewModels
             return true;
         }
 
-        private DeviceCardContainerViewModel GetOrCreateContainer(PanelViewModel panel)
+        private OperationViewModel GetOrCreateContainer(PanelViewModel panel)
         {
             if (panel == Panel1)
             {
-                _deviceContainer ??= _serviceProvider.GetRequiredService<DeviceCardContainerViewModel>();
+                _deviceContainer ??= _serviceProvider.GetRequiredService<OperationViewModel>();
                 return _deviceContainer;
             }
             if (!_panelContainers.TryGetValue(panel, out var vm))
-                _panelContainers[panel] = vm = _serviceProvider.GetRequiredService<DeviceCardContainerViewModel>();
+                _panelContainers[panel] = vm = _serviceProvider.GetRequiredService<OperationViewModel>();
             return vm;
         }
 

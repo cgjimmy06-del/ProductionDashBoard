@@ -9,16 +9,8 @@ using System.Windows.Controls;
 
 namespace FProductionDashBoard.Repositories
 {
-    public class DeviceDto
-    {
-        public string? DeviceID { get; set; }
-        public string? Name { get; set; }
-        public string? IP { get; set; }
-    }
-
     public interface IEquipmentRepository : IRepository<Equipment, MesDbContext>
     {
-        public Task<IEnumerable<DeviceDto>> GetDevicesAllDapperAsync();
         public Task<List<EquipmentType>> GetEquipmentTypesAsync();
         public Task<List<Equipment>> GetAllWithTypeAsync();
     }
