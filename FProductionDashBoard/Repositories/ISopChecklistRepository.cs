@@ -8,6 +8,6 @@ namespace FProductionDashBoard.Repositories
     {
         Task<SopChecklist?> GetWithItemsAsync(int sopId);
         Task<List<WorkProcess>> GetProcessesAsync();
-        Task<int> AddProductModelAsync(string name);
+        Task<int> AddProductModelAsync(string name, string? remark);
     }
 }

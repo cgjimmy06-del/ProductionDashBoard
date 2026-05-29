@@ -728,7 +728,7 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddProductModelAsync] SOP Repository 連線失敗");
-            return await SopChecklistRep.AddProductModelAsync(dto.Name).ConfigureAwait(false);
+            return await SopChecklistRep.AddProductModelAsync(dto.Name, dto.Remark).ConfigureAwait(false);
         }
 
         public async Task<List<WorkProcess>> GetWorkProcessesAsync()
