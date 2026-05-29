@@ -35,7 +35,7 @@ namespace FProductionDashBoard.Models
         public DateTime? UpdateAt { get; set; }
 
         public Equipment? Equipment { get; set; }
-        public EquipmentProduct? EquipmentProductNav { get; set; }
+        public EquipmentProduct? EquipmentProduct { get; set; }
         public Employee? StartedByEmployee { get; set; }
     }
 
@@ -63,7 +63,7 @@ namespace FProductionDashBoard.Models
                    .WithMany()
                    .HasForeignKey(r => r.EquipmentId);
 
-            builder.HasOne(r => r.EquipmentProductNav)
+            builder.HasOne(r => r.EquipmentProduct)
                    .WithMany()
                    .HasForeignKey(r => r.EquipmentProductId);
 
