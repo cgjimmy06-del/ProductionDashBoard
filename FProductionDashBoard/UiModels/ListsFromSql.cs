@@ -10,5 +10,4 @@ public class ListsFromSql
     public List<UserInfo> UsersList = new();
     public List<TimeSlotLookup> TimeSlotsList = new();
     public List<Role> RolesList = new();
-    public List<EquipmentProduct> EquipmentProductsList = new();
 }

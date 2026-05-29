@@ -21,7 +21,6 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         private readonly Mock<ITimeSlotLookupRepository> _timeSlotLookupRep = new();
         private readonly Mock<IOfflineCacheService> _offlineCache = new();
         private readonly Mock<IRolePermissionRepository> _rolePermissionRep = new();
-        private readonly Mock<ITuningRecordRepository> _tuningRecordRep = new();
         private readonly Mock<IProductPartRepository> _productPartRep = new();
         private readonly Mock<IProductRepository> _productRep = new();
         private readonly Mock<ISopChecklistRepository> _sopChecklistRep = new();
@@ -55,7 +54,6 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 _timeSlotLookupRep.Object,
                 _offlineCache.Object,
                 _rolePermissionRep.Object,
-                _tuningRecordRep.Object,
                 _productPartRep.Object,
                 _productRep.Object,
                 _sopChecklistRep.Object,
