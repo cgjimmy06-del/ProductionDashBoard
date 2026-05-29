@@ -1000,6 +1000,8 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<int> StartProgramTuningAsync(int equipmentId, int equipmentProductId, TuningType type, int startedBy, DateTime startedAt)
         {
+            if (type != TuningType.Teaching && type != TuningType.Offset)
+                throw new ArgumentException($"[StartProgramTuningAsync] 不支援的調試模式 type={type}");
             if (!await ProgramTuningRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[StartProgramTuningAsync] 調試 Repository 連線失敗");
             return await ProgramTuningRep.StartAsync(equipmentId, equipmentProductId, type, startedBy, startedAt).ConfigureAwait(false);
@@ -1009,15 +1011,7 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await ProgramTuningRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[EndProgramTuningAsync] 調試 Repository 連線失敗");
-            var equipmentProductId = await ProgramTuningRep.EndAsync(programTuningId, endedAt, description).ConfigureAwait(false);
-            await using var ctx = _mesFactory.CreateDbContext();
-            var ep = await ctx.EquipmentProducts.FindAsync(equipmentProductId).ConfigureAwait(false);
-            if (ep != null)
-            {
-                ep.ProductionStatus = TuningType.Pending;
-                ep.UpdateAt = DateTime.Now;
-                await ctx.SaveChangesAsync().ConfigureAwait(false);
-            }
+            await ProgramTuningRep.EndAsync(programTuningId, endedAt, description).ConfigureAwait(false);
         }
 
         public async Task<ProgramTuningRecord?> GetInProgressProgramTuningAsync(int equipmentId)
