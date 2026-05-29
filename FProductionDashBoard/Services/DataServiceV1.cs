@@ -1000,6 +1000,8 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<int> StartProgramTuningAsync(int equipmentId, int equipmentProductId, TuningType type, int startedBy, DateTime startedAt)
         {
+            if (type != TuningType.Teaching && type != TuningType.Offset)
+                throw new ArgumentException($"[StartProgramTuningAsync] 不支援的調試模式 type={type}");
             if (!await ProgramTuningRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[StartProgramTuningAsync] 調試 Repository 連線失敗");
             return await ProgramTuningRep.StartAsync(equipmentId, equipmentProductId, type, startedBy, startedAt).ConfigureAwait(false);

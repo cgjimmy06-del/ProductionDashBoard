@@ -500,13 +500,6 @@ namespace FProductionDashBoard.ViewModels
 
             if (!confirmed) return;
 
-            if (_tuningTimer != null)
-            {
-                _tuningTimer.Stop();
-                _tuningTimer.Tick -= OnTuningTimerTick;
-                _tuningTimer = null;
-            }
-            IsTuning = false;
             int elapsed = _tuningElapsedSeconds;
 
             try
@@ -523,21 +516,28 @@ namespace FProductionDashBoard.ViewModels
                 if (_activeProgramTuningId.HasValue)
                     await _core.Data.EndProgramTuningAsync(_activeProgramTuningId.Value, DateTime.Now, description);
 
+                // DB 成功才清除狀態
+                if (_tuningTimer != null)
+                {
+                    _tuningTimer.Stop();
+                    _tuningTimer.Tick -= OnTuningTimerTick;
+                    _tuningTimer = null;
+                }
+                IsTuning = false;
+                _activeProgramTuningId = null;
+                _activeTuningStartedByEmployee = null;
+                TuningUserName = string.Empty;
+                TuningProductLabel = string.Empty;
+
                 var elapsedStr = TimeSpan.FromSeconds(elapsed);
                 _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
                     $"調試完成（{_activeTuningType}，{elapsedStr:hh\\:mm\\:ss}）", LogLevel.Success);
             }
             catch (Exception ex)
             {
-                _core.Log.AddLog($"[{Info.Name}] 調試結束失敗，請檢查連線", LogLevel.Error);
+                // 失敗保留調試狀態（IsTuning 維持 true、timer 續跑），可重試
+                _core.Log.AddLog($"[{Info.Name}] 調試結束失敗，狀態保留可重試，請檢查連線", LogLevel.Error);
                 _core.Log.AddErrorLog($"[EndTuningAsync] {ex.Message}");
-            }
-            finally
-            {
-                _activeProgramTuningId = null;
-                _activeTuningStartedByEmployee = null;
-                TuningUserName = string.Empty;
-                TuningProductLabel = string.Empty;
             }
         }
 
