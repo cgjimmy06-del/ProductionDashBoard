@@ -35,6 +35,7 @@ namespace FProductionDashBoard.Services.V1
         private readonly ISopChecklistRepository SopChecklistRep;
         private readonly IEquipmentProductRepository EquipmentProductRep;
         private readonly IOrderProductionRepository OrderProductionRep;
+        private readonly IProgramTuningRecordRepository ProgramTuningRep;
         private readonly IDbContextFactory<MesDbContext> _mesFactory;
 
         private readonly IOfflineCacheService _offlineCache;
@@ -45,6 +46,7 @@ namespace FProductionDashBoard.Services.V1
             IOfflineCacheService offlineCache, IRolePermissionRepository rolePermissionRep, ITuningRecordRepository tuningRecordRep,
             IProductPartRepository productPartRep, IProductRepository productRep, ISopChecklistRepository sopChecklistRep,
             IEquipmentProductRepository equipmentProductRep, IOrderProductionRepository orderProductionRep,
+            IProgramTuningRecordRepository programTuningRep,
             IDbContextFactory<MesDbContext> mesFactory)
         {
             EquipmentRep = equipmentrep;
@@ -62,6 +64,7 @@ namespace FProductionDashBoard.Services.V1
             SopChecklistRep = sopChecklistRep;
             EquipmentProductRep = equipmentProductRep;
             OrderProductionRep = orderProductionRep;
+            ProgramTuningRep = programTuningRep;
             _mesFactory = mesFactory;
         }
 
@@ -990,7 +993,8 @@ namespace FProductionDashBoard.Services.V1
             {
                 EquipmentId = dto.EquipmentId,
                 SopId = dto.SopId,
-                SeqNo = dto.SeqNo
+                SeqNo = dto.SeqNo,
+                ProductionStatus = dto.ProductionStatus
             };
             await EquipmentProductRep.AddAsync(entity).ConfigureAwait(false);
         }
@@ -1003,6 +1007,7 @@ namespace FProductionDashBoard.Services.V1
                 ?? throw new InvalidOperationException($"[UpdateEquipmentProductAsync] 找不到 EquipmentProduct ID={dto.Id}");
             entity.SopId = dto.SopId;
             entity.SeqNo = dto.SeqNo;
+            entity.ProductionStatus = dto.ProductionStatus;
             entity.UpdateAt = DateTime.Now;
             await EquipmentProductRep.UpdateAsync(entity).ConfigureAwait(false);
         }
@@ -1058,6 +1063,39 @@ namespace FProductionDashBoard.Services.V1
             if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[CancelOrderAsync] 接單 Repository 連線失敗");
             await OrderProductionRep.CancelAsync(orderId, description).ConfigureAwait(false);
+        }
+
+        #endregion
+
+        #region 調試服務
+
+        public async Task<int> StartProgramTuningAsync(int equipmentId, int equipmentProductId, TuningType type, int startedBy, DateTime startedAt)
+        {
+            if (!await ProgramTuningRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[StartProgramTuningAsync] 調試 Repository 連線失敗");
+            return await ProgramTuningRep.StartAsync(equipmentId, equipmentProductId, type, startedBy, startedAt).ConfigureAwait(false);
+        }
+
+        public async Task EndProgramTuningAsync(int programTuningId, DateTime endedAt, string? description = null)
+        {
+            if (!await ProgramTuningRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[EndProgramTuningAsync] 調試 Repository 連線失敗");
+            var equipmentProductId = await ProgramTuningRep.EndAsync(programTuningId, endedAt, description).ConfigureAwait(false);
+            await using var ctx = _mesFactory.CreateDbContext();
+            var ep = await ctx.EquipmentProducts.FindAsync(equipmentProductId).ConfigureAwait(false);
+            if (ep != null)
+            {
+                ep.ProductionStatus = TuningType.Pending;
+                ep.UpdateAt = DateTime.Now;
+                await ctx.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task<ProgramTuningRecord?> GetInProgressProgramTuningAsync(int equipmentId)
+        {
+            if (!await ProgramTuningRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetInProgressProgramTuningAsync] 調試 Repository 連線失敗");
+            return await ProgramTuningRep.GetInProgressByEquipmentAsync(equipmentId).ConfigureAwait(false);
         }
 
         #endregion

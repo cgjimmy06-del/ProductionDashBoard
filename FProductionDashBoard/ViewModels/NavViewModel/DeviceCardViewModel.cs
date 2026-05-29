@@ -67,13 +67,15 @@ namespace FProductionDashBoard.ViewModels
         private int currentAction = (int)UserAction.Producing; // 調試狀態
 
         // 調試計時
-        [ObservableProperty]
-        private bool isTuning = false;
-        [ObservableProperty]
-        private string tuningStatusText = string.Empty;
+        [ObservableProperty] private bool isTuning = false;
+        [ObservableProperty] private string tuningStatusText = string.Empty;
+        [ObservableProperty] private string tuningUserName = string.Empty;
+        [ObservableProperty] private string tuningProductLabel = string.Empty;
         private TuningType _activeTuningType;
         private int _tuningElapsedSeconds;
         private DispatcherTimer? _tuningTimer;
+        private int? _activeProgramTuningId;
+        private UiModels.UserInfo? _activeTuningStartedByEmployee;
 
         // 介面邏輯
         public ICommand OrderCommand { get; }
@@ -109,6 +111,7 @@ namespace FProductionDashBoard.ViewModels
                 () => _core.Authorization.HasPermission(PermissionId.OperateTuning));
 
             _ = LoadOrdersAsync();
+            _ = LoadProgramTuningStateAsync();
         }
 
         public async Task UpdateTimeSlotsStatusAsync()
@@ -372,16 +375,47 @@ namespace FProductionDashBoard.ViewModels
         private async Task TuningAsync()
         {
             CurrentUser = _core.Authorization.CurrentUser!;
+
+            var items = _commonLists.EquipmentProductsList
+                .Where(ep => ep.EquipmentId == Info.Id)
+                .OrderBy(ep => ep.SeqNo)
+                .Select(ep => new EquipmentProductItem
+                {
+                    EquipmentProductId = ep.EquipmentProductId,
+                    SopId = ep.SopId,
+                    SeqNo = ep.SeqNo,
+                    DisplayLabel = BuildTuningProductLabel(ep),
+                    ProductionStatus = ep.ProductionStatus
+                })
+                .ToList();
+
             var vm = new TuningDialogViewModel(
                 $"{Properties.Resources.ComStrDevice}: {Info.Name}",
                 $"{Properties.Resources.ComStrUser}: {CurrentUser!.Name}",
-                $"{Properties.Resources.ComStrProduct}: {CurrentProduct?.ProductName ?? string.Empty}");
+                items);
             _dialog.ShowDialog(vm);
 
             if (!vm.IsConfirmed || vm.Result == null) return;
 
-            _activeTuningType = vm.Result.TuningType;
+            var result = vm.Result;
+            _activeTuningType = result.TuningType;
             _tuningElapsedSeconds = 0;
+
+            try
+            {
+                _activeProgramTuningId = await _core.Data.StartProgramTuningAsync(
+                    Info.Id, result.EquipmentProductId, result.TuningType, CurrentUser.Id, DateTime.Now);
+                _activeTuningStartedByEmployee = CurrentUser;
+                TuningUserName = CurrentUser.Name;
+                TuningProductLabel = items.FirstOrDefault(i => i.EquipmentProductId == result.EquipmentProductId)?.DisplayLabel ?? string.Empty;
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog($"[{Info.Name}] 調試啟動失敗，請檢查連線", LogLevel.Error);
+                _core.Log.AddErrorLog($"[TuningAsync] {ex.Message}");
+                return;
+            }
+
             IsTuning = true;
             UpdateTuningText();
 
@@ -393,7 +427,6 @@ namespace FProductionDashBoard.ViewModels
             _tuningTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _tuningTimer.Tick += OnTuningTimerTick;
             _tuningTimer.Start();
-            await Task.CompletedTask;
         }
 
         // 調試視窗與結束事件
@@ -401,8 +434,9 @@ namespace FProductionDashBoard.ViewModels
         {
             if (!IsTuning) return;
 
-            // 呼叫loading視窗 - 刷卡確認結束調試計時
             bool confirmed = false;
+            UiModels.UserInfo? endedBy = null;
+
             var loadingVm = new LoadingViewModel
             {
                 Mode = LoadingMode.CardReader,
@@ -411,58 +445,121 @@ namespace FProductionDashBoard.ViewModels
             };
             var loadingWin = new LoadingWindow(loadingVm);
 
-            // 讀卡機事件 - 確認是否與當前登入人員一致
             void OnCardConfirm(object? s, CardReadEventArgs e)
             {
-                if (e.CardId == CurrentUser.CardId)
+                // 原始啟動者
+                if (e.CardId == _activeTuningStartedByEmployee?.CardId)
                 {
-                    Application.Current.Dispatcher.BeginInvoke(() => {
+                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    {
                         confirmed = true;
+                        endedBy = _activeTuningStartedByEmployee;
                         loadingWin.Close();
                     });
+                }
+                else
+                {
+                    // 具 Setting 權限者
+                    var userInfo = _commonLists.UsersList.FirstOrDefault(u => u.CardId == e.CardId);
+                    if (userInfo != null)
+                    {
+                        var role = _commonLists.RolesList.FirstOrDefault(r => r.RoleId == userInfo.RoleId);
+                        if (role?.RolePermissions.Any(rp => rp.PermissionId == PermissionId.Setting) == true)
+                        {
+                            Application.Current.Dispatcher.BeginInvoke(() =>
+                            {
+                                confirmed = true;
+                                endedBy = userInfo;
+                                loadingWin.Close();
+                            });
+                        }
+                    }
                 }
             }
 
             _core.CardReader.ResetLastCard();
             _core.CardReader.CardRead += OnCardConfirm;
-
-            //開啟並等待視窗
             loadingWin.ShowDialog();
             _core.CardReader.CardRead -= OnCardConfirm;
 
             if (!confirmed) return;
 
-            // 調試紀錄流程
+            if (_tuningTimer != null)
+            {
+                _tuningTimer.Stop();
+                _tuningTimer.Tick -= OnTuningTimerTick;
+                _tuningTimer = null;
+            }
+            IsTuning = false;
+            int elapsed = _tuningElapsedSeconds;
+
             try
             {
-                if (_tuningTimer != null)
+                string? description = null;
+                if (endedBy?.Id != _activeTuningStartedByEmployee?.Id)
                 {
-                    _tuningTimer.Stop();
-                    _tuningTimer.Tick -= OnTuningTimerTick;
-                    _tuningTimer = null;
+                    var typeLabel = _activeTuningType == TuningType.Teaching
+                        ? Properties.Resources.TuningInProgressTeaching
+                        : Properties.Resources.TuningInProgressOffset;
+                    description = $"由{endedBy?.Name}結束{typeLabel}";
                 }
-                IsTuning = false;
-                int elapsed = _tuningElapsedSeconds;
 
-                if (_activeTuningType == TuningType.Teaching)
-                    await _core.Data.AddTeachingRecordAsync(Info.Id, CurrentUser.Id, elapsed, CurrentProduct?.ProductId);
-                else
-                    await _core.Data.AddOffsetRecordAsync(Info.Id, CurrentUser.Id, elapsed, CurrentProduct?.ProductId);
+                if (_activeProgramTuningId.HasValue)
+                    await _core.Data.EndProgramTuningAsync(_activeProgramTuningId.Value, DateTime.Now, description);
 
                 var elapsedStr = TimeSpan.FromSeconds(elapsed);
                 _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
-                    $"調試紀錄上傳完成（{_activeTuningType}，{elapsedStr:hh\\:mm\\:ss}）", LogLevel.Success);
-            }
-            catch (OfflineOperationQueuedException)
-            {
-                _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
-                    $"調試紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
+                    $"調試完成（{_activeTuningType}，{elapsedStr:hh\\:mm\\:ss}）", LogLevel.Success);
             }
             catch (Exception ex)
             {
-                _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - 調試紀錄上傳失敗", LogLevel.Error);
+                _core.Log.AddLog($"[{Info.Name}] 調試結束失敗，請檢查連線", LogLevel.Error);
                 _core.Log.AddErrorLog($"[EndTuningAsync] {ex.Message}");
             }
+            finally
+            {
+                _activeProgramTuningId = null;
+                _activeTuningStartedByEmployee = null;
+                TuningUserName = string.Empty;
+                TuningProductLabel = string.Empty;
+            }
+        }
+
+        private async Task LoadProgramTuningStateAsync()
+        {
+            try
+            {
+                var record = await _core.Data.GetInProgressProgramTuningAsync(Info.Id);
+                if (record == null) return;
+
+                _activeProgramTuningId = record.ProgramTuningId;
+                _activeTuningType = record.TuningType;
+                _activeTuningStartedByEmployee = _commonLists.UsersList.FirstOrDefault(u => u.Id == record.StartedBy);
+                _tuningElapsedSeconds = (int)(DateTime.Now - record.StartedAt).TotalSeconds;
+                TuningUserName = record.StartedByEmployee?.Name ?? string.Empty;
+                TuningProductLabel = BuildTuningProductLabel(record.EquipmentProductNav);
+                IsTuning = true;
+                UpdateTuningText();
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _tuningTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+                    _tuningTimer.Tick += OnTuningTimerTick;
+                    _tuningTimer.Start();
+                });
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddErrorLog($"[LoadProgramTuningStateAsync] {ex.Message}");
+            }
+        }
+
+        private static string BuildTuningProductLabel(EquipmentProduct? ep)
+        {
+            if (ep?.Sop?.Product == null) return string.Empty;
+            var product = ep.Sop.Product;
+            var productName = $"{product.Part?.PartNo}_{product.Model?.Name}";
+            var processName = ep.Sop.Process?.Name ?? string.Empty;
+            return $"#{ep.SeqNo}  {productName} · {processName}";
         }
 
         private void OnTuningTimerTick(object? s, EventArgs e)
