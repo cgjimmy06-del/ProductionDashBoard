@@ -13,7 +13,7 @@
     <Compile Update="LoadingWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="UserControls\NavView\DeviceCardContainer.xaml.cs">
+    <Compile Update="UserControls\NavView\OperationView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

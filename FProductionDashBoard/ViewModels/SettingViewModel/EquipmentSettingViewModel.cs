@@ -54,6 +54,7 @@ namespace FProductionDashBoard.ViewModels
         {
             EditingId = null;
             ClearForm();
+            FormTypeId = 1;
             FormErrorString = null;
             FormSuccessString = null;
             IsFormVisible = true;

@@ -17,7 +17,7 @@ using System.Windows.Input;
 
 namespace FProductionDashBoard.ViewModels
 {
-    public partial class DeviceCardContainerViewModel : ObservableObject, IDisposable
+    public partial class OperationViewModel : ObservableObject, IDisposable
     {
         private string defaultDevicesFile = "DefaultDevices.json"; // 預設設備檔案
         private readonly ListsFromSql commonLists;
@@ -36,7 +36,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand FastUploadDevicesCommand { get; }
         public ICommand DeleteDevicesCommand { get; }
 
-        public DeviceCardContainerViewModel(DashboardCoreServices core, Services.IDialogService dialog, ListsFromSql getlists)
+        public OperationViewModel(DashboardCoreServices core, Services.IDialogService dialog, ListsFromSql getlists)
         {
             _core = core;
             _dialog = dialog;
