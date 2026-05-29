@@ -46,7 +46,7 @@ namespace FProductionDashBoard.ViewModels
         [NotifyCanExecuteChangedFor(nameof(BeginCreatePartCommand))]
         private string partFilter = "";
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(CreateModelCommand))]
+        [NotifyCanExecuteChangedFor(nameof(BeginCreateModelCommand))]
         private string modelFilter = "";
         [ObservableProperty] private int? formPartId;
         [ObservableProperty] private int? formModelId;
@@ -58,6 +58,10 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private bool isCreatingPart;
         [ObservableProperty] private string? newPartBrand;
         [ObservableProperty] private string? newPartName;
+
+        // ── inline Model 新增 ───────────────────────────────────────
+        [ObservableProperty] private bool isCreatingModel;
+        [ObservableProperty] private string? newModelRemark;
 
         // ── 明細子表單欄位 ───────────────────────────────────────────
         [ObservableProperty] private bool isItemFormVisible;
@@ -225,15 +229,22 @@ namespace FProductionDashBoard.ViewModels
             ModelFilter?.Length == 3 && !FilteredModelList.Any();
 
         [RelayCommand(CanExecute = nameof(CanCreateModel))]
-        private async Task CreateModelAsync()
+        private void BeginCreateModel()
         {
-            if (!ShowConfirm($"型號「{ModelFilter}」不存在，是否新增？")) return;
+            NewModelRemark = null;
+            IsCreatingModel = true;
+        }
+
+        [RelayCommand]
+        private async Task ConfirmCreateModelAsync()
+        {
             try
             {
-                var newId = await _core.Data.AddProductModelAsync(new ProductModelFormDto { Name = ModelFilter });
-                var newModel = new ProductModel { ModelId = newId, Name = ModelFilter };
-                ModelList.Add(newModel);
+                var dto = new ProductModelFormDto { Name = ModelFilter, Remark = NewModelRemark };
+                var newId = await _core.Data.AddProductModelAsync(dto);
+                ModelList.Add(new ProductModel { ModelId = newId, Name = dto.Name, Remark = dto.Remark });
                 FormModelId = newId;
+                IsCreatingModel = false;
                 ModelFilter = "";
                 RecomputeFilteredModelList();
                 FormErrorString = null;
@@ -242,9 +253,12 @@ namespace FProductionDashBoard.ViewModels
             {
                 FormErrorString = ex.Message;
                 _core.Log.AddLog($"SOP 管理 - 新增型號失敗: {ex.Message}", LogLevel.Error);
-                _core.Log.AddErrorLog($"[CreateModelAsync] {ex.Message}");
+                _core.Log.AddErrorLog($"[ConfirmCreateModelAsync] {ex.Message}");
             }
         }
+
+        [RelayCommand]
+        private void CancelCreateModel() => IsCreatingModel = false;
 
         // ── 明細子表單命令 ───────────────────────────────────────────
         [RelayCommand]
@@ -501,6 +515,8 @@ namespace FProductionDashBoard.ViewModels
             IsCreatingPart = false;
             NewPartBrand = null;
             NewPartName = null;
+            IsCreatingModel = false;
+            NewModelRemark = null;
             IsItemFormVisible = false;
         }
     }

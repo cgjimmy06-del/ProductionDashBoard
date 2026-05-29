@@ -219,9 +219,39 @@
                                          Text="{Binding ModelFilter, UpdateSourceTrigger=PropertyChanged}"/>
                                 <Button Grid.Column="1"
                                         Style="{StaticResource FunctionButtonStyle}"
-                                        Command="{Binding CreateModelCommand}"
+                                        Command="{Binding BeginCreateModelCommand}"
                                         Content="{DynamicResource SopAddModel}"/>
                             </Grid>
+
+                            <!-- inline Model 新增卡片 -->
+                            <Border Margin="0,8,0,0" Padding="8"
+                                    Background="{DynamicResource PrimaryBackgroundBrush}"
+                                    BorderBrush="{DynamicResource MaterialDesignDivider}"
+                                    BorderThickness="1"
+                                    Visibility="{Binding IsCreatingModel, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource SopNewModelTitle}"
+                                               Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Margin="0,4,0,0"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                               Text="{Binding ModelFilter, StringFormat=型號: {0}}"/>
+                                    <TextBox Margin="0,4,0,0"
+                                             MaxLength="20"
+                                             materialDesign:HintAssist.Hint="{DynamicResource SopModelRemark}"
+                                             Text="{Binding NewModelRemark, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                                        <Button Margin="0,0,8,0"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                Foreground="{DynamicResource PrimaryBrush}"
+                                                BorderBrush="{DynamicResource PrimaryBrush}"
+                                                Command="{Binding CancelCreateModelCommand}"
+                                                Content="{DynamicResource CancelButton}"/>
+                                        <Button Command="{Binding ConfirmCreateModelCommand}"
+                                                Content="{DynamicResource SaveButton}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
                             <TextBlock Text="{DynamicResource SopModel}"
                                        Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"

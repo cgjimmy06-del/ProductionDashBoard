@@ -107,6 +107,8 @@
     <sys:String x:Key="SopAddPart">+ New Part</sys:String>
     <sys:String x:Key="SopAddModel">+ Add Model</sys:String>
     <sys:String x:Key="SopNewPartTitle">New Part</sys:String>
+    <sys:String x:Key="SopNewModelTitle">New Model</sys:String>
+    <sys:String x:Key="SopModelRemark">Remark</sys:String>
     <sys:String x:Key="SopPartBrand">Brand</sys:String>
     <sys:String x:Key="SopPartName">Name</sys:String>
     <sys:String x:Key="SopPart">Part</sys:String>

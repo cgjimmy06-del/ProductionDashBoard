@@ -107,6 +107,8 @@
     <sys:String x:Key="SopAddPart">+ Thêm Part</sys:String>
     <sys:String x:Key="SopAddModel">+ Thêm Model</sys:String>
     <sys:String x:Key="SopNewPartTitle">Thêm Part</sys:String>
+    <sys:String x:Key="SopNewModelTitle">Thêm Model</sys:String>
+    <sys:String x:Key="SopModelRemark">Ghi chú</sys:String>
     <sys:String x:Key="SopPartBrand">Thương hiệu</sys:String>
     <sys:String x:Key="SopPartName">Tên</sys:String>
     <sys:String x:Key="SopPart">Part</sys:String>
