@@ -19,7 +19,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -199,11 +198,6 @@ namespace FProductionDashBoard.ViewModels
                             await _core.Data.CancelOrderAsync(vm.Result.OrderId, vm.Result.Description);
                             break;
                     }
-                }
-                catch (OfflineOperationQueuedException)
-                {
-                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
-                        "操作已暫存，待連線恢復後自動上傳", LogLevel.Warning);
                 }
                 catch (Exception ex)
                 {
@@ -559,15 +553,12 @@ namespace FProductionDashBoard.ViewModels
                 _activeTuningStartedByEmployee = _commonLists.UsersList.FirstOrDefault(u => u.Id == record.StartedBy);
                 _tuningElapsedSeconds = (int)(DateTime.Now - record.StartedAt).TotalSeconds;
                 TuningUserName = record.StartedByEmployee?.Name ?? string.Empty;
-                TuningProductLabel = BuildTuningProductLabel(record.EquipmentProductNav);
+                TuningProductLabel = BuildTuningProductLabel(record.EquipmentProduct);
                 IsTuning = true;
                 UpdateTuningText();
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    _tuningTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-                    _tuningTimer.Tick += OnTuningTimerTick;
-                    _tuningTimer.Start();
-                });
+                _tuningTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+                _tuningTimer.Tick += OnTuningTimerTick;
+                _tuningTimer.Start();
             }
             catch (Exception ex)
             {

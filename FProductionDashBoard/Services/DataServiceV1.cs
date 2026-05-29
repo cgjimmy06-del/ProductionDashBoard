@@ -1009,15 +1009,7 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await ProgramTuningRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[EndProgramTuningAsync] 調試 Repository 連線失敗");
-            var equipmentProductId = await ProgramTuningRep.EndAsync(programTuningId, endedAt, description).ConfigureAwait(false);
-            await using var ctx = _mesFactory.CreateDbContext();
-            var ep = await ctx.EquipmentProducts.FindAsync(equipmentProductId).ConfigureAwait(false);
-            if (ep != null)
-            {
-                ep.ProductionStatus = TuningType.Pending;
-                ep.UpdateAt = DateTime.Now;
-                await ctx.SaveChangesAsync().ConfigureAwait(false);
-            }
+            await ProgramTuningRep.EndAsync(programTuningId, endedAt, description).ConfigureAwait(false);
         }
 
         public async Task<ProgramTuningRecord?> GetInProgressProgramTuningAsync(int equipmentId)

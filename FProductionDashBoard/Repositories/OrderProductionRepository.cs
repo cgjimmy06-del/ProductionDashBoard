@@ -79,7 +79,7 @@ namespace FProductionDashBoard.Repositories
         {
             await using var ctx = _factory.CreateDbContext();
             var order = await ctx.OrderProductions.FindAsync(orderId).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"[StartAsync] OrderId {orderId} not found");
+                ?? throw new InvalidOperationException($"[StartAsync] 找不到接單 OrderId={orderId}");
             if (order.Status != OrderProductionStatus.Pending)
                 throw new InvalidOperationException($"[StartAsync] 狀態不允許：{order.Status}");
             order.Status = OrderProductionStatus.InProduction;
@@ -93,7 +93,7 @@ namespace FProductionDashBoard.Repositories
         {
             await using var ctx = _factory.CreateDbContext();
             var order = await ctx.OrderProductions.FindAsync(orderId).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"[EndAsync] OrderId {orderId} not found");
+                ?? throw new InvalidOperationException($"[EndAsync] 找不到接單 OrderId={orderId}");
             if (order.Status != OrderProductionStatus.InProduction)
                 throw new InvalidOperationException($"[EndAsync] 狀態不允許：{order.Status}");
             order.Status = OrderProductionStatus.Completed;
@@ -106,7 +106,7 @@ namespace FProductionDashBoard.Repositories
         {
             await using var ctx = _factory.CreateDbContext();
             var order = await ctx.OrderProductions.FindAsync(orderId).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"[CancelAsync] OrderId {orderId} not found");
+                ?? throw new InvalidOperationException($"[CancelAsync] 找不到接單 OrderId={orderId}");
             if (order.Status != OrderProductionStatus.Pending && order.Status != OrderProductionStatus.InProduction)
                 throw new InvalidOperationException($"[CancelAsync] 狀態不允許：{order.Status}");
             order.Status = OrderProductionStatus.Cancelled;
