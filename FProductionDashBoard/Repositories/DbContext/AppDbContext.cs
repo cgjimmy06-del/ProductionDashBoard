@@ -22,8 +22,6 @@ namespace FProductionDashBoard.Repositories
         public DbSet<MaterialReplacementDetail> MaterialReplacementDetails { get; set; }
         public DbSet<InspectionRecord> InspectionRecords { get; set; }
         public DbSet<TimeSlotLookup> TimeSlotLookups { get; set; }
-        public DbSet<TuningRecord> TuningRecords { get; set; }
-
         public DbSet<ProductPart> ProductParts { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<SopChecklist> SopChecklists { get; set; }

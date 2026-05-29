@@ -28,7 +28,6 @@ namespace FProductionDashBoard.Services.V1
         private readonly IMaterialReplacementRepository MaterialReplacementRep;
         private readonly ITimeSlotLookupRepository TimeSlotLookupRep;
         private readonly IInspectionRecordRepository InspectionRecordRep;
-        private readonly ITuningRecordRepository TuningRecordRep;
         private readonly IRolePermissionRepository RolePermissionRep;
         private readonly IProductPartRepository ProductPartRep;
         private readonly IProductRepository ProductRep;
@@ -43,7 +42,7 @@ namespace FProductionDashBoard.Services.V1
         public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep,
             IErrorListRepository errorListRep, IMaterialReplacementRepository materialReplacementRep,
             IInspectionRecordRepository inspectionRecordRep, ITimeSlotLookupRepository timeSlotLookupRep,
-            IOfflineCacheService offlineCache, IRolePermissionRepository rolePermissionRep, ITuningRecordRepository tuningRecordRep,
+            IOfflineCacheService offlineCache, IRolePermissionRepository rolePermissionRep,
             IProductPartRepository productPartRep, IProductRepository productRep, ISopChecklistRepository sopChecklistRep,
             IEquipmentProductRepository equipmentProductRep, IOrderProductionRepository orderProductionRep,
             IProgramTuningRecordRepository programTuningRep,
@@ -58,7 +57,6 @@ namespace FProductionDashBoard.Services.V1
             TimeSlotLookupRep = timeSlotLookupRep;
             _offlineCache = offlineCache;
             RolePermissionRep = rolePermissionRep;
-            TuningRecordRep = tuningRecordRep;
             ProductPartRep = productPartRep;
             ProductRep = productRep;
             SopChecklistRep = sopChecklistRep;
@@ -379,75 +377,6 @@ namespace FProductionDashBoard.Services.V1
                 }
             }
         }
-        public async Task<int> AddTeachingRecordAsync(int equipmentId, int employeeId, int durationSec, int? productId)
-        {
-            if (await TuningRecordRep.CheckConnectionAsync().ConfigureAwait(false))
-            {
-                try
-                {
-                    return await TuningRecordRep.AddTuningRecordAsync(
-                        TuningType.Teaching, equipmentId, employeeId, durationSec, productId);
-                }
-                catch (SqlException ex)
-                {
-                    throw new DatabaseConnectionException("[AddTeachingRecordAsync] 新增帶點紀錄失敗：資料庫錯誤", ex);
-                }
-                catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddTeachingRecordAsync] 新增帶點紀錄失敗：連線逾時", tex); }
-            }
-
-            var op = new PendingOperation
-            {
-                OperationType = PendingOperationType.AddTuning,
-                PayloadJson = JsonSerializer.Serialize(new TuningPayload
-                {
-                    TuningType = TuningType.Teaching,
-                    EquipmentId = equipmentId, EmployeeId = employeeId,
-                    DurationSec = durationSec, ProductId = productId,
-                    OperatedAt = DateTime.Now
-                })
-            };
-            _ = Task.Run(async () =>
-            {
-                try { await _offlineCache.EnqueueAsync(op).ConfigureAwait(false); }
-                catch (Exception ex) { Debug.WriteLine($"[OfflineCache] EnqueueAsync failed: {ex.Message}"); }
-            });
-            throw new OfflineOperationQueuedException(op.Id);
-        }
-        public async Task<int> AddOffsetRecordAsync(int equipmentId, int employeeId, int durationSec, int? productId)
-        {
-            if (await TuningRecordRep.CheckConnectionAsync().ConfigureAwait(false))
-            {
-                try
-                {
-                    return await TuningRecordRep.AddTuningRecordAsync(
-                        TuningType.Offset, equipmentId, employeeId, durationSec, productId);
-                }
-                catch (SqlException ex)
-                {
-                    throw new DatabaseConnectionException("[AddOffsetRecordAsync] 新增調品質紀錄失敗：資料庫錯誤", ex);
-                }
-                catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddOffsetRecordAsync] 新增調品質紀錄失敗：連線逾時", tex); }
-            }
-
-            var op = new PendingOperation
-            {
-                OperationType = PendingOperationType.AddTuning,
-                PayloadJson = JsonSerializer.Serialize(new TuningPayload
-                {
-                    TuningType = TuningType.Offset,
-                    EquipmentId = equipmentId, EmployeeId = employeeId,
-                    DurationSec = durationSec, ProductId = productId,
-                    OperatedAt = DateTime.Now
-                })
-            };
-            _ = Task.Run(async () =>
-            {
-                try { await _offlineCache.EnqueueAsync(op).ConfigureAwait(false); }
-                catch (Exception ex) { Debug.WriteLine($"[OfflineCache] EnqueueAsync failed: {ex.Message}"); }
-            });
-            throw new OfflineOperationQueuedException(op.Id);
-        }
-
         #endregion
 
         #region 設定：設備 CRUD
