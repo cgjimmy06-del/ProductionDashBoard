@@ -163,11 +163,22 @@ namespace FProductionDashBoard.ViewModels
 
         private async Task OpenOrderDialogAsync()
         {
+            List<EquipmentProduct> products;
+            try
+            {
+                products = await _core.Data.GetEquipmentProductsByEquipmentAsync(Info.Id);
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog($"[{Info.Name}] 接單品項載入失敗，操作中止，請檢查連線", LogLevel.Error);
+                _core.Log.AddErrorLog($"[OpenOrderDialogAsync] {ex.Message}");
+                return;
+            }
+
             var vm = new OrderListDialogViewModel(
                 _core,
                 Info.Id,
-                _commonLists.EquipmentProductsList
-                    .Where(ep => ep.EquipmentId == Info.Id).ToList(),
+                products,
                 CurrentUser,
                 $"{Properties.Resources.OrderListTitle}: {Info.Name}");
             _dialog.ShowDialog(vm);
@@ -376,8 +387,19 @@ namespace FProductionDashBoard.ViewModels
         {
             CurrentUser = _core.Authorization.CurrentUser!;
 
-            var items = _commonLists.EquipmentProductsList
-                .Where(ep => ep.EquipmentId == Info.Id)
+            List<EquipmentProduct> rawList;
+            try
+            {
+                rawList = await _core.Data.GetEquipmentProductsByEquipmentAsync(Info.Id);
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog($"[{Info.Name}] 調試品項載入失敗，操作中止，請檢查連線", LogLevel.Error);
+                _core.Log.AddErrorLog($"[TuningAsync] {ex.Message}");
+                return;
+            }
+
+            var items = rawList
                 .OrderBy(ep => ep.SeqNo)
                 .Select(ep => new EquipmentProductItem
                 {
