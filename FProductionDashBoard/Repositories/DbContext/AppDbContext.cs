@@ -49,8 +49,8 @@ namespace FProductionDashBoard.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataDbContext).Assembly);
-            //modelBuilder.ApplyConfiguration(new DeviceInfoConfiguration());
+            // 不使用 ApplyConfigurationsFromAssembly，避免污染 MesDbContext 的 model
+            // 新增 Dapper View 對應的 EF Configuration 時，在此明確 ApplyConfiguration
             base.OnModelCreating(modelBuilder);
         }
     }
