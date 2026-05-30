@@ -1,5 +1,6 @@
 ﻿using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
+using FProductionDashBoard.Models.Extra;
 using FProductionDashBoard.Repositories;
 using FProductionDashBoard.UiModels;
 using Microsoft.Data.SqlClient;
@@ -132,5 +133,17 @@ namespace FProductionDashBoard.Services
         public Task<int> StartProgramTuningAsync(int equipmentId, int equipmentProductId, TuningType type, int startedBy, DateTime startedAt);
         public Task EndProgramTuningAsync(int programTuningId, DateTime endedAt, string? description = null);
         public Task<ProgramTuningRecord?> GetInProgressProgramTuningAsync(int equipmentId);
+
+        // ─── MESInformation：客戶代碼 & MES 設備 ────────────────────────────
+        /// <summary>
+        /// 輸入固定 8 碼字串，取第 3、4 碼比對 Medium_categories，回傳第一筆 Customer（無符合則 null）
+        /// </summary>
+        public Task<string?> GetCustomerByCodeAsync(string code);
+        public Task<IEnumerable<MesDevice>> GetAllMesDevicesAsync();
+        public Task AddMesDeviceAsync(MesDevice entity);
+        public Task UpdateMesDeviceAsync(MesDevice entity);
+
+        // ─── MESData：製程資料 View ───��──────────────────────────────────────
+        public Task<IEnumerable<VwMesDailyProcessData>> GetDailyProcessDataAsync();
     }
 }

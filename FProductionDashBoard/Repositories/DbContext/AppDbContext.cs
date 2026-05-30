@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory; // 主要應用於 EF Core 應用程式的啟動配置或需要深入診斷 SQL 執行時的場景
 using FProductionDashBoard.Models;
+using FProductionDashBoard.Models.Extra;
 
 namespace FProductionDashBoard.Repositories
 {
@@ -48,8 +49,24 @@ namespace FProductionDashBoard.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataDbContext).Assembly);
-            //modelBuilder.ApplyConfiguration(new DeviceInfoConfiguration());
+            // 不使用 ApplyConfigurationsFromAssembly，避免污染 MesDbContext 的 model
+            // 新增 Dapper View 對應的 EF Configuration 時，在此明確 ApplyConfiguration
+            base.OnModelCreating(modelBuilder);
+        }
+    }
+
+    public class InfoDbContext : DbContext
+    {
+        public DbSet<MesCustomerCode> MesCustomerCodes { get; set; }
+        public DbSet<MesDevice> MesDevices { get; set; }
+
+        public InfoDbContext(DbContextOptions<InfoDbContext> options) : base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // 不使用 ApplyConfigurationsFromAssembly，避免污染 MesDbContext/DataDbContext 的 model
+            modelBuilder.ApplyConfiguration(new MesCustomerCodeConfiguration());
+            modelBuilder.ApplyConfiguration(new MesDeviceConfiguration());
             base.OnModelCreating(modelBuilder);
         }
     }

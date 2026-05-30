@@ -456,7 +456,6 @@ namespace FProductionDashBoard.ViewModels
         {
             EditingSopId = null;
             ClearForm();
-            if (ModelList.Any()) FormModelId = ModelList[0].ModelId;
             if (ProcessList.Any()) FormProcessId = ProcessList[0].ProcessId;
             FormErrorString = null;
             FormSuccessString = null;

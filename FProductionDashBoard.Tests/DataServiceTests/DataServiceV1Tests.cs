@@ -1,6 +1,7 @@
 using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
+using FProductionDashBoard.Repositories.ExtraDb;
 using FProductionDashBoard.Services.Exceptions;
 using FProductionDashBoard.Services.Offline;
 using FProductionDashBoard.Services.V1;
@@ -28,6 +29,8 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         private readonly Mock<IOrderProductionRepository> _orderProductionRep = new();
         private readonly Mock<IProgramTuningRecordRepository> _programTuningRep = new();
         private readonly Mock<IDbContextFactory<MesDbContext>> _mesFactory = new();
+        private readonly Mock<IInfoDbRepository> _infoRep = new();
+        private readonly Mock<IDataDbRepository> _dataRep = new();
         public DataServiceV1Tests()
         {
             // 預設連線正常
@@ -60,7 +63,9 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 _equipmentProductRep.Object,
                 _orderProductionRep.Object,
                 _programTuningRep.Object,
-                _mesFactory.Object
+                _mesFactory.Object,
+                _infoRep.Object,
+                _dataRep.Object
             );
             service.BusinessDay = businessDay ?? DateTime.Today;
             return service;
