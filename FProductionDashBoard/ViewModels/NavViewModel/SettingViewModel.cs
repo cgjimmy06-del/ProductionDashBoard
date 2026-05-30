@@ -31,6 +31,8 @@ namespace FProductionDashBoard.ViewModels
             SopChecklist = new SopChecklistSettingViewModel(core, dialog);
             EquipmentProduct = new EquipmentProductSettingViewModel(core, dialog);
 
+            // 依賴單例生命週期（scoped + 單一 root scope，訂閱僅一次）；
+            // 若日後改 transient/多 scope，需讓本 VM 實作 IDisposable 解除此訂閱
             _core.Authorization.UserChanged += RefreshTabVisibility;
             RefreshTabVisibility();
         }

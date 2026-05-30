@@ -29,6 +29,13 @@ public interface IAbbRobotClient : IDisposable
     /// 連線至指定控制器。若先前未經 <see cref="DiscoverControllers"/> 探索到，
     /// 會以該 IP 為提示重新探索一次。
     /// </summary>
+    /// <remarks>
+    /// <b>同步阻塞</b>：網路不通時底層連線會阻塞至逾時（可能數秒）。離線後的定期重連請在
+    /// <b>背景執行緒</b>呼叫，勿在 UI 執行緒，以免畫面凍結。<br/>
+    /// 失敗時內部狀態保持乾淨（<see cref="IsConnected"/> 為 <c>false</c>、不殘留半死連線），
+    /// 呼叫端只要 catch <see cref="AbbRobotException"/> 即可稍後重試，單一設備連線失敗不影響進程運行。<br/>
+    /// 配合類別層級「非執行緒安全」約束，勿與其他方法跨執行緒併用同一實例。
+    /// </remarks>
     /// <exception cref="AbbRobotException">連線失敗，<see cref="AbbRobotException.Kind"/> 為
     /// <see cref="AbbRobotErrorKind.ConnectionFailed"/>；呼叫端可稍後再次呼叫本方法重連。</exception>
     void Connect(AbbControllerInfo controller);

@@ -53,7 +53,18 @@ public sealed class AbbRobotClient : IAbbRobotClient
             ControllerInfo native = ResolveNative(controller.IpAddress);
             DisposeController();   // 重連前先釋放舊的 Controller，避免洩漏
             Controller connected = Controller.Connect(native, ConnectionType.Standalone);
-            connected.Logon(UserInfo.DefaultUser);
+            try
+            {
+                connected.Logon(UserInfo.DefaultUser);
+            }
+            catch
+            {
+                // Logon 失敗時 connected 尚未指派給 _controller，DisposeController 無法觸及，
+                // 必須在此就地釋放，否則反覆重連會洩漏已開連線 session 的 Controller。
+                // 釋放本身的例外不可掩蓋原始 Logon 失敗例外，故吞掉後以 throw; 重拋原例外。
+                try { connected.Dispose(); } catch { /* 釋放失敗不影響重拋原例外 */ }
+                throw;
+            }
             _controller = connected;
         }
         catch (AbbRobotException)
@@ -111,9 +122,10 @@ public sealed class AbbRobotClient : IAbbRobotClient
                     foreach (var module in task.GetModules())
                         modules.Add(module.Name);
                 }
-                catch
+                catch (Exception)
                 {
-                    // 個別 task 無法列出模組時略過，不影響其他 task。
+                    // 個別 task 無法列出模組時略過該 task 的模組清單（留空），不影響其他 task。
+                    // 接住 ex 而非無參數 catch，保留可診斷的例外型別資訊。
                 }
 
                 result.Add(new AbbTaskInfo
