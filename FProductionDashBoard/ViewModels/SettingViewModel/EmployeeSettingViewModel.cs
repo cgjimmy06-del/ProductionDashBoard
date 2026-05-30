@@ -47,7 +47,8 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _core.Log.AddLog($"載入員工清單失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog($"員工設定 - 載入員工清單失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddErrorLog($"[LoadAsync] {ex.Message}");
             }
         }
 

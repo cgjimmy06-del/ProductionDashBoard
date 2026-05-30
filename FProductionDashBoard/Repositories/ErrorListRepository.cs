@@ -58,13 +58,13 @@ namespace FProductionDashBoard.Repositories
                 .FirstOrDefaultAsync(e => e.ErrorCode == errorCode).ConfigureAwait(false);
 
             if (error == null)
-                throw new InvalidOperationException($"ErrorCode {errorCode} 不存在");
+                throw new InvalidOperationException($"[UpdateTranslationAsync] 找不到錯誤碼 {errorCode}");
 
             var translation = error.Translations
                 .FirstOrDefault(t => t.LanguageCode == languageCode);
 
             if (translation == null)
-                throw new InvalidOperationException($"ErrorCode {errorCode} 的語言 {languageCode} 翻譯不存在");
+                throw new InvalidOperationException($"[UpdateTranslationAsync] 找不到錯誤碼 {errorCode} 的語言 {languageCode} 翻譯");
 
             translation.Message = newMessage;
             translation.UpdateAt = DateTime.Now;
@@ -81,13 +81,13 @@ namespace FProductionDashBoard.Repositories
                 .FirstOrDefaultAsync(e => e.ErrorCode == errorCode).ConfigureAwait(false);
 
             if (error == null)
-                throw new InvalidOperationException($"ErrorCode {errorCode} 不存在");
+                throw new InvalidOperationException($"[DeleteTranslationAsync] 找不到錯誤碼 {errorCode}");
 
             var translation = error.Translations
                 .FirstOrDefault(t => t.LanguageCode == languageCode);
 
             if (translation == null)
-                throw new InvalidOperationException($"ErrorCode {errorCode} 的語言 {languageCode} 翻譯不存在");
+                throw new InvalidOperationException($"[DeleteTranslationAsync] 找不到錯誤碼 {errorCode} 的語言 {languageCode} 翻譯");
 
             ctx.ErrorTranslations.Remove(translation);
             await ctx.SaveChangesAsync().ConfigureAwait(false);
@@ -101,7 +101,7 @@ namespace FProductionDashBoard.Repositories
                 .FirstOrDefaultAsync(e => e.ErrorCode == errorCode).ConfigureAwait(false);
 
             if (error == null)
-                throw new InvalidOperationException($"ErrorCode {errorCode} 不存在");
+                throw new InvalidOperationException($"[DeleteErrorAsync] 找不到錯誤碼 {errorCode}");
 
             ctx.ErrorLists.Remove(error);
             await ctx.SaveChangesAsync().ConfigureAwait(false);
@@ -199,7 +199,7 @@ namespace FProductionDashBoard.Repositories
             var entity = await ctx.ErrorLists
                 .Include(e => e.Translations)
                 .FirstOrDefaultAsync(e => e.ErrorId == dto.Id!.Value).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"ErrorList id={dto.Id} not found");
+                ?? throw new InvalidOperationException($"[UpdateErrorListAsync] 找不到錯誤清單 id={dto.Id}");
             entity.TypeId = dto.TypeId;
             entity.Severity = dto.Severity;
             entity.UpdateAt = DateTime.Now;

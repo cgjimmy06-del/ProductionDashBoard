@@ -105,7 +105,7 @@ namespace FProductionDashBoard.ViewModels
             _core.Authorization.UserChanged += _onUserChanged;
 
 #if DEBUG
-            TestCommand = new AsyncRelayCommand(() => SqlTestFunc(),
+            TestCommand = new RelayCommand(() => SqlTestFunc(),
                 () => _core.Authorization.HasPermission(PermissionId.Test));
 #endif
         }
@@ -267,11 +267,11 @@ namespace FProductionDashBoard.ViewModels
         private void ClearProgress() => SetProgress(Properties.Resources.MainProgressIdle, visible: false);
 
 #if DEBUG
-        private async Task SqlTestFunc()
+        private void SqlTestFunc()
         {
             try
             {
-                await _core.Data.Demo();
+
             }
             catch (SqlException sqlex)
             {
