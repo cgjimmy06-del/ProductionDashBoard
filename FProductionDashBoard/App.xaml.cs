@@ -62,6 +62,8 @@ namespace FProductionDashBoard
                     options.UseSqlServer(config.GetConnectionString($"{selectedServer}_MESDashboard") ?? ""));
                 services.AddDbContextFactory<Repositories.DataDbContext>(options =>
                     options.UseSqlServer(config.GetConnectionString($"{selectedServer}_MESData") ?? ""));
+                services.AddDbContextFactory<Repositories.InfoDbContext>(options =>
+                    options.UseSqlServer(config.GetConnectionString($"{selectedServer}_MESInfo") ?? ""));
 
                 // 註冊 泛型 Repository / 專用 Repository
                 services.AddScoped(typeof(Repositories.IRepository<,>), typeof(Repositories.Repository<,>));
@@ -79,6 +81,8 @@ namespace FProductionDashBoard
                 services.AddScoped<Repositories.IEquipmentProductRepository, Repositories.EquipmentProductRepository>();
                 services.AddScoped<Repositories.IOrderProductionRepository, Repositories.OrderProductionRepository>();
                 services.AddScoped<Repositories.IProgramTuningRecordRepository, Repositories.ProgramTuningRecordRepository>();
+                services.AddScoped<Repositories.ExtraDb.IInfoDbRepository, Repositories.ExtraDb.InfoDbRepository>();
+                services.AddScoped<Repositories.ExtraDb.IDataDbRepository, Repositories.ExtraDb.DataDbRepository>();
 
                 // 離線暫存服務
                 services.AddDbContextFactory<Repositories.LocalDbContext>(opt =>
