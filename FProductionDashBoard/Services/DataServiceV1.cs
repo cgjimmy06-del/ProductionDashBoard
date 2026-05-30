@@ -1,6 +1,8 @@
 using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
+using FProductionDashBoard.Models.Extra;
 using FProductionDashBoard.Repositories;
+using FProductionDashBoard.Repositories.ExtraDb;
 using FProductionDashBoard.Services.Exceptions;
 using FProductionDashBoard.Services.Offline;
 using FProductionDashBoard.Services.Offline.Payloads;
@@ -36,6 +38,7 @@ namespace FProductionDashBoard.Services.V1
         private readonly IOrderProductionRepository OrderProductionRep;
         private readonly IProgramTuningRecordRepository ProgramTuningRep;
         private readonly IDbContextFactory<MesDbContext> _mesFactory;
+        private readonly IInfoDbRepository _infoRep;
 
         private readonly IOfflineCacheService _offlineCache;
 
@@ -46,7 +49,8 @@ namespace FProductionDashBoard.Services.V1
             IProductPartRepository productPartRep, IProductRepository productRep, ISopChecklistRepository sopChecklistRep,
             IEquipmentProductRepository equipmentProductRep, IOrderProductionRepository orderProductionRep,
             IProgramTuningRecordRepository programTuningRep,
-            IDbContextFactory<MesDbContext> mesFactory)
+            IDbContextFactory<MesDbContext> mesFactory,
+            IInfoDbRepository infoRep)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
@@ -64,6 +68,7 @@ namespace FProductionDashBoard.Services.V1
             OrderProductionRep = orderProductionRep;
             ProgramTuningRep = programTuningRep;
             _mesFactory = mesFactory;
+            _infoRep = infoRep;
         }
 
 #if DEBUG
@@ -1019,6 +1024,31 @@ namespace FProductionDashBoard.Services.V1
             if (!await ProgramTuningRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetInProgressProgramTuningAsync] 調試 Repository 連線失敗");
             return await ProgramTuningRep.GetInProgressByEquipmentAsync(equipmentId).ConfigureAwait(false);
+        }
+
+        #endregion
+
+        #region MESInformation：客戶代碼 & MES 設備
+
+        public async Task<string?> GetCustomerByCodeAsync(string code)
+        {
+            var medium = code.Substring(2, 2);
+            return await _infoRep.GetCustomerByMediumAsync(medium).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<MesDevice>> GetAllMesDevicesAsync()
+        {
+            return await _infoRep.GetAllMesDevicesAsync().ConfigureAwait(false);
+        }
+
+        public async Task AddMesDeviceAsync(MesDevice entity)
+        {
+            await _infoRep.AddMesDeviceAsync(entity).ConfigureAwait(false);
+        }
+
+        public async Task UpdateMesDeviceAsync(MesDevice entity)
+        {
+            await _infoRep.UpdateMesDeviceAsync(entity).ConfigureAwait(false);
         }
 
         #endregion
