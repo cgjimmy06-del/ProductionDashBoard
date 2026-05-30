@@ -142,5 +142,8 @@ namespace FProductionDashBoard.Services
         public Task<IEnumerable<MesDevice>> GetAllMesDevicesAsync();
         public Task AddMesDeviceAsync(MesDevice entity);
         public Task UpdateMesDeviceAsync(MesDevice entity);
+
+        // ─── MESData：製程資料 View ───��──────────────────────────────────────
+        public Task<IEnumerable<VwMesDailyProcessData>> GetDailyProcessDataAsync();
     }
 }

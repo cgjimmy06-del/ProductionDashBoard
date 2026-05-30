@@ -39,6 +39,7 @@ namespace FProductionDashBoard.Services.V1
         private readonly IProgramTuningRecordRepository ProgramTuningRep;
         private readonly IDbContextFactory<MesDbContext> _mesFactory;
         private readonly IInfoDbRepository _infoRep;
+        private readonly IDataDbRepository _dataRep;
 
         private readonly IOfflineCacheService _offlineCache;
 
@@ -50,7 +51,8 @@ namespace FProductionDashBoard.Services.V1
             IEquipmentProductRepository equipmentProductRep, IOrderProductionRepository orderProductionRep,
             IProgramTuningRecordRepository programTuningRep,
             IDbContextFactory<MesDbContext> mesFactory,
-            IInfoDbRepository infoRep)
+            IInfoDbRepository infoRep,
+            IDataDbRepository dataRep)
         {
             EquipmentRep = equipmentrep;
             EmployeeRep = workerrep;
@@ -69,6 +71,7 @@ namespace FProductionDashBoard.Services.V1
             ProgramTuningRep = programTuningRep;
             _mesFactory = mesFactory;
             _infoRep = infoRep;
+            _dataRep = dataRep;
         }
 
 #if DEBUG
@@ -1025,6 +1028,13 @@ namespace FProductionDashBoard.Services.V1
                 throw new InvalidOperationException("[GetInProgressProgramTuningAsync] 調試 Repository 連線失敗");
             return await ProgramTuningRep.GetInProgressByEquipmentAsync(equipmentId).ConfigureAwait(false);
         }
+
+        #endregion
+
+        #region MESData：製程資料 View
+
+        public async Task<IEnumerable<VwMesDailyProcessData>> GetDailyProcessDataAsync()
+            => await _dataRep.GetDailyProcessDataAsync().ConfigureAwait(false);
 
         #endregion
 

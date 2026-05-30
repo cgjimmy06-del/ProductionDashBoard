@@ -82,6 +82,7 @@ namespace FProductionDashBoard
                 services.AddScoped<Repositories.IOrderProductionRepository, Repositories.OrderProductionRepository>();
                 services.AddScoped<Repositories.IProgramTuningRecordRepository, Repositories.ProgramTuningRecordRepository>();
                 services.AddScoped<Repositories.ExtraDb.IInfoDbRepository, Repositories.ExtraDb.InfoDbRepository>();
+                services.AddScoped<Repositories.ExtraDb.IDataDbRepository, Repositories.ExtraDb.DataDbRepository>();
 
                 // 離線暫存服務
                 services.AddDbContextFactory<Repositories.LocalDbContext>(opt =>
