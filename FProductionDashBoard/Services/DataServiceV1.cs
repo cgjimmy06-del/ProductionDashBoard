@@ -23,20 +23,20 @@ namespace FProductionDashBoard.Services.V1
     public class DataService : IDataService
     {
         public DateTime BusinessDay { get; set; }
-        private readonly IEquipmentRepository EquipmentRep;
-        private readonly IEmployeeRepository EmployeeRep;
-        private readonly IMaterialRepository MaterialRep;
-        private readonly IErrorListRepository ErrorListRep;
-        private readonly IMaterialReplacementRepository MaterialReplacementRep;
-        private readonly ITimeSlotLookupRepository TimeSlotLookupRep;
-        private readonly IInspectionRecordRepository InspectionRecordRep;
-        private readonly IRolePermissionRepository RolePermissionRep;
-        private readonly IProductPartRepository ProductPartRep;
-        private readonly IProductRepository ProductRep;
-        private readonly ISopChecklistRepository SopChecklistRep;
-        private readonly IEquipmentProductRepository EquipmentProductRep;
-        private readonly IOrderProductionRepository OrderProductionRep;
-        private readonly IProgramTuningRecordRepository ProgramTuningRep;
+        private readonly IEquipmentRepository _equipmentRep;
+        private readonly IEmployeeRepository _employeeRep;
+        private readonly IMaterialRepository _materialRep;
+        private readonly IErrorListRepository _errorListRep;
+        private readonly IMaterialReplacementRepository _materialReplacementRep;
+        private readonly ITimeSlotLookupRepository _timeSlotLookupRep;
+        private readonly IInspectionRecordRepository _inspectionRecordRep;
+        private readonly IRolePermissionRepository _rolePermissionRep;
+        private readonly IProductPartRepository _productPartRep;
+        private readonly IProductRepository _productRep;
+        private readonly ISopChecklistRepository _sopChecklistRep;
+        private readonly IEquipmentProductRepository _equipmentProductRep;
+        private readonly IOrderProductionRepository _orderProductionRep;
+        private readonly IProgramTuningRecordRepository _programTuningRep;
         private readonly IDbContextFactory<MesDbContext> _mesFactory;
         private readonly IInfoDbRepository _infoRep;
         private readonly IDataDbRepository _dataRep;
@@ -52,21 +52,21 @@ namespace FProductionDashBoard.Services.V1
             IProgramTuningRecordRepository programTuningRep,
             IDbContextFactory<MesDbContext> mesFactory, IInfoDbRepository infoRep, IDataDbRepository dataRep)
         {
-            EquipmentRep = equipmentrep;
-            EmployeeRep = workerrep;
-            MaterialRep = materialrep;
-            ErrorListRep = errorListRep;
-            MaterialReplacementRep = materialReplacementRep;
-            InspectionRecordRep = inspectionRecordRep;
-            TimeSlotLookupRep = timeSlotLookupRep;
+            _equipmentRep = equipmentrep;
+            _employeeRep = workerrep;
+            _materialRep = materialrep;
+            _errorListRep = errorListRep;
+            _materialReplacementRep = materialReplacementRep;
+            _inspectionRecordRep = inspectionRecordRep;
+            _timeSlotLookupRep = timeSlotLookupRep;
             _offlineCache = offlineCache;
-            RolePermissionRep = rolePermissionRep;
-            ProductPartRep = productPartRep;
-            ProductRep = productRep;
-            SopChecklistRep = sopChecklistRep;
-            EquipmentProductRep = equipmentProductRep;
-            OrderProductionRep = orderProductionRep;
-            ProgramTuningRep = programTuningRep;
+            _rolePermissionRep = rolePermissionRep;
+            _productPartRep = productPartRep;
+            _productRep = productRep;
+            _sopChecklistRep = sopChecklistRep;
+            _equipmentProductRep = equipmentProductRep;
+            _orderProductionRep = orderProductionRep;
+            _programTuningRep = programTuningRep;
             _mesFactory = mesFactory;
             _infoRep = infoRep;
             _dataRep = dataRep;
@@ -76,12 +76,12 @@ namespace FProductionDashBoard.Services.V1
         public async Task Demo()
         {
             // 查詢
-            //var devs = await ErrorListRep.GetMessagesWithOtherAsync("zh-TW"); //zh-TW INSP0001
+            //var devs = await _errorListRep.GetMessagesWithOtherAsync("zh-TW"); //zh-TW INSP0001
             //foreach (var dev in devs) { Debug.WriteLine($"{dev.LanguageCode} - {dev.Message}"); }
             //Debug.WriteLine($"{devs}");
             //foreach (var (ErrorCode, Message, Category) in devs) { Debug.WriteLine($"{ErrorCode} - {Message}"); }
 
-            var roles = (await RolePermissionRep.GetAllRolesAsync().ConfigureAwait(false)).ToList();
+            var roles = (await _rolePermissionRep.GetAllRolesAsync().ConfigureAwait(false)).ToList();
             Debug.WriteLine($"roles.Count = {roles.Count}");
             //foreach (var nrole in roles)
             //{
@@ -96,9 +96,9 @@ namespace FProductionDashBoard.Services.V1
         #region 清單查詢與 Mapping
         public async Task<List<DeviceInfo>> GetDevicesAsync()
         {
-            if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _equipmentRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetDevicesAsync] 設備清單 Repository 連線失敗");
-            var list = await EquipmentRep.GetAllAsync().ConfigureAwait(false);
+            var list = await _equipmentRep.GetAllAsync().ConfigureAwait(false);
             return list.Select(eq => new DeviceInfo
             {
                 Id = eq.Id,
@@ -115,9 +115,9 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<UserInfo>> GetUsersAsync()
         {
-            if (!await EmployeeRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _employeeRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetUsersAsync] 人員清單 Repository 連線失敗");
-            var list = await EmployeeRep.GetAllAsync().ConfigureAwait(false);
+            var list = await _employeeRep.GetAllAsync().ConfigureAwait(false);
             return list.Select(us => new UserInfo
             {
                 Id = us.EmployeeId,
@@ -132,9 +132,9 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<MaterialInfo>> GetMaterialsAsync()
         {
-            if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _materialRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetMaterialsAsync] 材料清單 Repository 連線失敗");
-            var list = await MaterialRep.GetAllAsync().ConfigureAwait(false);
+            var list = await _materialRep.GetAllAsync().ConfigureAwait(false);
             return list.Select(ma => new MaterialInfo
             {
                 Id = ma.MaterialId,
@@ -150,9 +150,9 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<ErrorInfo>> GetErrorsAsync(string languageCode)
         {
-            if (!await ErrorListRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _errorListRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetErrorsAsync] 錯誤清單 Repository 連線失敗");
-            var list = await ErrorListRep.GetMessagesWithOtherAsync(languageCode).ConfigureAwait(false);
+            var list = await _errorListRep.GetMessagesWithOtherAsync(languageCode).ConfigureAwait(false);
             return list.Select(er => new ErrorInfo
             {
                 ErrorCode = er.ErrorCode,
@@ -162,9 +162,9 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<TimeSlotLookup>> GetTimeSlotsAsync()
         {
-            if (!await TimeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _timeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetTimeSlotsAsync] 時段清單 Repository 連線失敗");
-            var list = (await TimeSlotLookupRep.GetAllAsync().ConfigureAwait(false)).OrderBy(s => s.TimeSlotId);
+            var list = (await _timeSlotLookupRep.GetAllAsync().ConfigureAwait(false)).OrderBy(s => s.TimeSlotId);
             return list.ToList();
         }
         #endregion
@@ -173,11 +173,11 @@ namespace FProductionDashBoard.Services.V1
         public async Task<int> AddReplacementRecordAsync(int equipmentId, int employeeId,
             List<(int materialId, int quantity)> materialDetails)
         {
-            if (await MaterialReplacementRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (await _materialReplacementRep.CheckConnectionAsync().ConfigureAwait(false))
             {
                 try
                 {
-                    return await MaterialReplacementRep.AddReplacementRecordAsync(
+                    return await _materialReplacementRep.AddReplacementRecordAsync(
                         equipmentId, employeeId, "MTRP0001", materialDetails);
                 }
                 catch (SqlException ex)
@@ -210,20 +210,20 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<int?> GetCurrentTimeSlotIdAsync()
         {
-            return await TimeSlotLookupRep.GetCurrentTimeSlotIdAsync(BusinessDay).ConfigureAwait(false);
+            return await _timeSlotLookupRep.GetCurrentTimeSlotIdAsync(BusinessDay).ConfigureAwait(false);
         }
         public int? GetCurrentTimeSlotId(List<TimeSlotLookup> timeslots)
         {
-            return TimeSlotLookupRep.GetCurrentTimeSlotId(BusinessDay, timeslots);
+            return _timeSlotLookupRep.GetCurrentTimeSlotId(BusinessDay, timeslots);
         }
         public async Task<int> AddFirstInspectionAsync(int equipmentId, int employeeId, bool result,
             int? productId, string? errorCode = null, string? description = null)
         {
-            if (await InspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (await _inspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false))
             {
                 try
                 {
-                    return await InspectionRecordRep.AddInspectionRecordAsync(
+                    return await _inspectionRecordRep.AddInspectionRecordAsync(
                         InspectionType.First, equipmentId, employeeId, result,
                         null, productId, errorCode, description);
                 }
@@ -261,15 +261,15 @@ namespace FProductionDashBoard.Services.V1
         public async Task<int> AddRoutineInspectionAsync(int equipmentId, int employeeId, bool result,
             int timeSlotId, int? productId, string? errorCode = null, string? description = null)
         {
-            if (await InspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (await _inspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false))
             {
-                bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, timeSlotId, BusinessDay).ConfigureAwait(false);
+                bool exists = await _inspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, timeSlotId, BusinessDay).ConfigureAwait(false);
                 if (exists)
                     throw new BusinessRuleException("[AddRoutineInspectionAsync] 同一設備同一時段已有紀錄，不能重複新增");
 
                 try
                 {
-                    return await InspectionRecordRep.AddInspectionRecordAsync(
+                    return await _inspectionRecordRep.AddInspectionRecordAsync(
                         InspectionType.Routine, equipmentId, employeeId, result,
                         timeSlotId, productId, errorCode, description);
                 }
@@ -319,10 +319,10 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task<List<int>> GetAllSlotsStatusAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {
-            if (!await TimeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _timeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllSlotsStatusAsync] 時段 Repository 連線失敗");
 
-            var slotsResult = await InspectionRecordRep.GetStatusForAllSlotsAsync(equipmentId, BusinessDay).ConfigureAwait(false);
+            var slotsResult = await _inspectionRecordRep.GetStatusForAllSlotsAsync(equipmentId, BusinessDay).ConfigureAwait(false);
 
             var now = DateTime.Now;
             var result = new List<int>();
@@ -349,7 +349,7 @@ namespace FProductionDashBoard.Services.V1
         }
         public async Task CheckAndInsertMissedInspectionAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {
-            if (!(await InspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false)))
+            if (!(await _inspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false)))
                 throw new InvalidOperationException("[CheckAndInsertMissedInspectionAsync] 巡檢紀錄 Repository 連線失敗");
 
             // 搜尋已結束的時段
@@ -364,11 +364,11 @@ namespace FProductionDashBoard.Services.V1
             {
                 try
                 {
-                    bool exists = await InspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, slot.TimeSlotId, BusinessDay).ConfigureAwait(false);
+                    bool exists = await _inspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, slot.TimeSlotId, BusinessDay).ConfigureAwait(false);
                     if (!exists)
                     {
                         // 補上一筆逾時未巡檢紀錄 (以管理員為記錄)
-                        await InspectionRecordRep.AddInspectionRecordAsync(
+                        await _inspectionRecordRep.AddInspectionRecordAsync(
                             InspectionType.Routine, equipmentId, 1, false,
                             slot.TimeSlotId, null, "RTIN0001", null);
                     }
@@ -389,14 +389,14 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<List<Equipment>> GetAllEquipmentAsync()
         {
-            if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _equipmentRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllEquipmentAsync] 設備 Repository 連線失敗");
-            return await EquipmentRep.GetAllWithTypeAsync().ConfigureAwait(false);
+            return await _equipmentRep.GetAllWithTypeAsync().ConfigureAwait(false);
         }
 
         public async Task AddEquipmentAsync(EquipmentFormDto dto)
         {
-            if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _equipmentRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddEquipmentAsync] 設備 Repository 連線失敗");
             var entity = new Equipment
             {
@@ -411,14 +411,14 @@ namespace FProductionDashBoard.Services.V1
                 DepartmentId = dto.DepartmentId,
                 Description = dto.Description
             };
-            await EquipmentRep.AddAsync(entity).ConfigureAwait(false);
+            await _equipmentRep.AddAsync(entity).ConfigureAwait(false);
         }
 
         public async Task UpdateEquipmentAsync(EquipmentFormDto dto)
         {
-            if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _equipmentRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[UpdateEquipmentAsync] 設備 Repository 連線失敗");
-            var entity = await EquipmentRep.GetByIdAsync(dto.Id!.Value).ConfigureAwait(false)
+            var entity = await _equipmentRep.GetByIdAsync(dto.Id!.Value).ConfigureAwait(false)
                 ?? throw new InvalidOperationException($"[UpdateEquipmentAsync] 找不到設備 ID={dto.Id}");
             entity.Code = dto.Code;
             entity.Name = dto.Name;
@@ -431,21 +431,21 @@ namespace FProductionDashBoard.Services.V1
             entity.DepartmentId = dto.DepartmentId;
             entity.Description = dto.Description;
             entity.UpdateAt = DateTime.Now;
-            await EquipmentRep.UpdateAsync(entity).ConfigureAwait(false);
+            await _equipmentRep.UpdateAsync(entity).ConfigureAwait(false);
         }
 
         public async Task DeleteEquipmentAsync(int id)
         {
-            if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _equipmentRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[DeleteEquipmentAsync] 設備 Repository 連線失敗");
-            await EquipmentRep.DeleteAsync(id).ConfigureAwait(false);
+            await _equipmentRep.DeleteAsync(id).ConfigureAwait(false);
         }
 
         public async Task<List<EquipmentType>> GetEquipmentTypesAsync()
         {
-            if (!await EquipmentRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _equipmentRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetEquipmentTypesAsync] 設備 Repository 連線失敗");
-            return await EquipmentRep.GetEquipmentTypesAsync().ConfigureAwait(false);
+            return await _equipmentRep.GetEquipmentTypesAsync().ConfigureAwait(false);
         }
 
         #endregion
@@ -454,14 +454,14 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<List<Employee>> GetAllEmployeesAsync()
         {
-            if (!await EmployeeRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _employeeRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllEmployeesAsync] 人員 Repository 連線失敗");
-            return (await EmployeeRep.GetAllAsync().ConfigureAwait(false)).ToList();
+            return (await _employeeRep.GetAllAsync().ConfigureAwait(false)).ToList();
         }
 
         public async Task AddEmployeeAsync(EmployeeFormDto dto)
         {
-            if (!await EmployeeRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _employeeRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddEmployeeAsync] 人員 Repository 連線失敗");
             var entity = new Employee
             {
@@ -473,14 +473,14 @@ namespace FProductionDashBoard.Services.V1
                 Email = dto.Email,
                 DepartmentId = dto.DepartmentId
             };
-            await EmployeeRep.AddAsync(entity).ConfigureAwait(false);
+            await _employeeRep.AddAsync(entity).ConfigureAwait(false);
         }
 
         public async Task UpdateEmployeeAsync(EmployeeFormDto dto)
         {
-            if (!await EmployeeRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _employeeRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[UpdateEmployeeAsync] 人員 Repository 連線失敗");
-            var entity = await EmployeeRep.GetByIdAsync(dto.Id!.Value).ConfigureAwait(false)
+            var entity = await _employeeRep.GetByIdAsync(dto.Id!.Value).ConfigureAwait(false)
                 ?? throw new InvalidOperationException($"[UpdateEmployeeAsync] 找不到人員 ID={dto.Id}");
             entity.UserId = dto.UserId;
             entity.Name = dto.Name;
@@ -491,14 +491,14 @@ namespace FProductionDashBoard.Services.V1
             entity.Email = dto.Email;
             entity.DepartmentId = dto.DepartmentId;
             entity.UpdateAt = DateTime.Now;
-            await EmployeeRep.UpdateAsync(entity).ConfigureAwait(false);
+            await _employeeRep.UpdateAsync(entity).ConfigureAwait(false);
         }
 
         public async Task DeleteEmployeeAsync(int id)
         {
-            if (!await EmployeeRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _employeeRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[DeleteEmployeeAsync] 人員 Repository 連線失敗");
-            await EmployeeRep.DeleteAsync(id).ConfigureAwait(false);
+            await _employeeRep.DeleteAsync(id).ConfigureAwait(false);
         }
 
         #endregion
@@ -507,21 +507,21 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<List<Material>> GetAllMaterialsAsync()
         {
-            if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _materialRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllMaterialsAsync] 材料 Repository 連線失敗");
-            return await MaterialRep.GetAllWithTypeAsync().ConfigureAwait(false);
+            return await _materialRep.GetAllWithTypeAsync().ConfigureAwait(false);
         }
 
         public async Task<List<MaterialType>> GetMaterialTypesAsync()
         {
-            if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _materialRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetMaterialTypesAsync] 材料 Repository 連線失敗");
-            return await MaterialRep.GetMaterialTypesAsync().ConfigureAwait(false);
+            return await _materialRep.GetMaterialTypesAsync().ConfigureAwait(false);
         }
 
         public async Task AddMaterialAsync(MaterialFormDto dto)
         {
-            if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _materialRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddMaterialAsync] 材料 Repository 連線失敗");
             var entity = new Material
             {
@@ -534,14 +534,14 @@ namespace FProductionDashBoard.Services.V1
                 MinimumStock = dto.MinimumStock,
                 QuantityInStock = dto.QuantityInStock
             };
-            await MaterialRep.AddAsync(entity).ConfigureAwait(false);
+            await _materialRep.AddAsync(entity).ConfigureAwait(false);
         }
 
         public async Task UpdateMaterialAsync(MaterialFormDto dto)
         {
-            if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _materialRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[UpdateMaterialAsync] 材料 Repository 連線失敗");
-            var entity = await MaterialRep.GetByIdAsync(dto.Id!.Value).ConfigureAwait(false)
+            var entity = await _materialRep.GetByIdAsync(dto.Id!.Value).ConfigureAwait(false)
                 ?? throw new InvalidOperationException($"[UpdateMaterialAsync] 找不到材料 ID={dto.Id}");
             entity.MaterialCode = dto.MaterialCode;
             entity.Name = dto.Name;
@@ -552,14 +552,14 @@ namespace FProductionDashBoard.Services.V1
             entity.MinimumStock = dto.MinimumStock;
             entity.QuantityInStock = dto.QuantityInStock;
             entity.UpdateAt = DateTime.Now;
-            await MaterialRep.UpdateAsync(entity).ConfigureAwait(false);
+            await _materialRep.UpdateAsync(entity).ConfigureAwait(false);
         }
 
         public async Task DeleteMaterialAsync(int id)
         {
-            if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _materialRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[DeleteMaterialAsync] 材料 Repository 連線失敗");
-            await MaterialRep.DeleteAsync(id).ConfigureAwait(false);
+            await _materialRep.DeleteAsync(id).ConfigureAwait(false);
         }
 
         #endregion
@@ -568,20 +568,20 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<List<ErrorList>> GetAllErrorListsAsync()
         {
-            if (!await ErrorListRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _errorListRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllErrorListsAsync] 錯誤清單 Repository 連線失敗");
-            return await ErrorListRep.GetAllWithTranslationsAsync().ConfigureAwait(false);
+            return await _errorListRep.GetAllWithTranslationsAsync().ConfigureAwait(false);
         }
         public async Task<List<ListType>> GetListTypesAsync()
         {
-            if (!await ErrorListRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _errorListRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetListTypesAsync] 錯誤清單 Repository 連線失敗");
-            return await ErrorListRep.GetListTypesAsync().ConfigureAwait(false);
+            return await _errorListRep.GetListTypesAsync().ConfigureAwait(false);
         }
 
         public async Task AddErrorListAsync(ErrorListFormDto dto)
         {
-            if (!await ErrorListRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _errorListRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddErrorListAsync] 錯誤清單 Repository 連線失敗");
             var error = new ErrorList
             {
@@ -596,23 +596,23 @@ namespace FProductionDashBoard.Services.V1
                 translations.Add(new ErrorTranslation { ErrorCode = dto.ErrorCode, LanguageCode = "en-US", Message = dto.MessageEnUs });
             if (!string.IsNullOrWhiteSpace(dto.MessageViVn))
                 translations.Add(new ErrorTranslation { ErrorCode = dto.ErrorCode, LanguageCode = "vi-VN", Message = dto.MessageViVn });
-            await ErrorListRep.AddErrorAsync(error, translations).ConfigureAwait(false);
+            await _errorListRep.AddErrorAsync(error, translations).ConfigureAwait(false);
         }
 
         public async Task UpdateErrorListAsync(ErrorListFormDto dto)
         {
-            if (!await ErrorListRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _errorListRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[UpdateErrorListAsync] 錯誤清單 Repository 連線失敗");
-            await ErrorListRep.UpdateErrorListAsync(dto).ConfigureAwait(false);
+            await _errorListRep.UpdateErrorListAsync(dto).ConfigureAwait(false);
         }
 
         public async Task DeleteErrorListAsync(int id)
         {
-            if (!await ErrorListRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _errorListRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[DeleteErrorListAsync] 錯誤清單 Repository 連線失敗");
-            var entity = await ErrorListRep.GetByIdAsync(id).ConfigureAwait(false)
+            var entity = await _errorListRep.GetByIdAsync(id).ConfigureAwait(false)
                 ?? throw new InvalidOperationException($"[DeleteErrorListAsync] 找不到錯誤清單 ID={id}");
-            await ErrorListRep.DeleteErrorAsync(entity.ErrorCode).ConfigureAwait(false);
+            await _errorListRep.DeleteErrorAsync(entity.ErrorCode).ConfigureAwait(false);
         }
 
         #endregion
@@ -620,7 +620,7 @@ namespace FProductionDashBoard.Services.V1
         #region 設定：巡檢時段 CRUD 
         public async Task AddTimeSlotAsync(TimeSlotFormDto dto)
         {
-            if (!await TimeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _timeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddTimeSlotAsync] 時段 Repository 連線失敗");
             var entity = new TimeSlotLookup
             {
@@ -630,25 +630,25 @@ namespace FProductionDashBoard.Services.V1
                 IsCrossDay = dto.IsCrossDay,
                 Label = dto.Label
             };
-            await TimeSlotLookupRep.AddAsync(entity).ConfigureAwait(false);
+            await _timeSlotLookupRep.AddAsync(entity).ConfigureAwait(false);
         }
         public async Task UpdateTimeSlotAsync(TimeSlotFormDto dto)
         {
-            if (!await TimeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _timeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[UpdateTimeSlotAsync] 時段 Repository 連線失敗");
-            var entity = await TimeSlotLookupRep.GetByIdAsync(dto.TimeSlotId).ConfigureAwait(false)
+            var entity = await _timeSlotLookupRep.GetByIdAsync(dto.TimeSlotId).ConfigureAwait(false)
                 ?? throw new InvalidOperationException($"[UpdateTimeSlotAsync] 找不到時段 ID={dto.TimeSlotId}");
             entity.StartAt = dto.StartAt;
             entity.EndAt = dto.EndAt;
             entity.IsCrossDay = dto.IsCrossDay;
             entity.Label = dto.Label;
-            await TimeSlotLookupRep.UpdateAsync(entity).ConfigureAwait(false);
+            await _timeSlotLookupRep.UpdateAsync(entity).ConfigureAwait(false);
         }
         public async Task DeleteTimeSlotAsync(int timeSlotId)
         {
-            if (!await TimeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _timeSlotLookupRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[DeleteTimeSlotAsync] 時段 Repository 連線失敗");
-            await TimeSlotLookupRep.DeleteAsync(timeSlotId).ConfigureAwait(false);
+            await _timeSlotLookupRep.DeleteAsync(timeSlotId).ConfigureAwait(false);
         }
 
         #endregion
@@ -656,9 +656,9 @@ namespace FProductionDashBoard.Services.V1
         #region 角色與權限 
         public async Task<List<Models.Role>> GetAllRolesAsync()
         {
-            if (!await RolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _rolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllRolesAsync] 角色權限 Repository 連線失敗");
-            return await RolePermissionRep.GetAllRolesAsync().ConfigureAwait(false);
+            return await _rolePermissionRep.GetAllRolesAsync().ConfigureAwait(false);
         }
 
         #endregion
@@ -666,32 +666,32 @@ namespace FProductionDashBoard.Services.V1
         #region 設定：角色權限 CRUD
         public async Task<List<Models.Permission>> GetAllPermissionsAsync()
         {
-            if (!await RolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _rolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllPermissionsAsync] 角色權限 Repository 連線失敗");
-            return await RolePermissionRep.GetAllPermissionsAsync().ConfigureAwait(false);
+            return await _rolePermissionRep.GetAllPermissionsAsync().ConfigureAwait(false);
         }
 
         public async Task AddRoleAsync(RoleFormDto dto)
         {
-            if (!await RolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _rolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddRoleAsync] 角色權限 Repository 連線失敗");
-            await RolePermissionRep.AddRoleWithPermissionsAsync(dto.RoleId, dto.Name, dto.Description, dto.SelectedPermissionIds).ConfigureAwait(false);
+            await _rolePermissionRep.AddRoleWithPermissionsAsync(dto.RoleId, dto.Name, dto.Description, dto.SelectedPermissionIds).ConfigureAwait(false);
         }
 
         public async Task UpdateRoleAsync(RoleFormDto dto)
         {
-            if (!await RolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _rolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[UpdateRoleAsync] 角色權限 Repository 連線失敗");
-            await RolePermissionRep.UpdateRoleWithPermissionsAsync(dto.Id!.Value, dto.Name, dto.Description, dto.SelectedPermissionIds).ConfigureAwait(false);
+            await _rolePermissionRep.UpdateRoleWithPermissionsAsync(dto.Id!.Value, dto.Name, dto.Description, dto.SelectedPermissionIds).ConfigureAwait(false);
         }
 
         public async Task DeleteRoleAsync(int id)
         {
-            if (!await RolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _rolePermissionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[DeleteRoleAsync] 角色權限 Repository 連線失敗");
-            if (await RolePermissionRep.HasEmployeesByRoleAsync(id).ConfigureAwait(false))
+            if (await _rolePermissionRep.HasEmployeesByRoleAsync(id).ConfigureAwait(false))
                 throw new InvalidOperationException("[DeleteRoleAsync] 此角色有員工使用，無法刪除");
-            await RolePermissionRep.DeleteAsync(id).ConfigureAwait(false);
+            await _rolePermissionRep.DeleteAsync(id).ConfigureAwait(false);
         }
 
         #endregion
@@ -700,14 +700,14 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<List<ProductPart>> GetAllProductPartsAsync()
         {
-            if (!await ProductPartRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _productPartRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllProductPartsAsync] 件號 Repository 連線失敗");
-            return (await ProductPartRep.GetAllAsync().ConfigureAwait(false)).ToList();
+            return (await _productPartRep.GetAllAsync().ConfigureAwait(false)).ToList();
         }
 
         public async Task<int> AddProductPartAsync(ProductPartFormDto dto)
         {
-            if (!await ProductPartRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _productPartRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddProductPartAsync] 件號 Repository 連線失敗");
             var entity = new ProductPart
             {
@@ -715,7 +715,7 @@ namespace FProductionDashBoard.Services.V1
                 Brand = dto.Brand,
                 Name = dto.Name
             };
-            await ProductPartRep.AddAsync(entity).ConfigureAwait(false);
+            await _productPartRep.AddAsync(entity).ConfigureAwait(false);
             return entity.PartId; // EF 回填 PK
         }
 
@@ -725,30 +725,30 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<List<ProductModel>> GetProductModelsAsync()
         {
-            if (!await ProductRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _productRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetProductModelsAsync] 產品 Repository 連線失敗");
-            return await ProductRep.GetModelsAsync().ConfigureAwait(false);
+            return await _productRep.GetModelsAsync().ConfigureAwait(false);
         }
 
         public async Task<int> AddProductModelAsync(ProductModelFormDto dto)
         {
-            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _sopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddProductModelAsync] SOP Repository 連線失敗");
-            return await SopChecklistRep.AddProductModelAsync(dto.Name, dto.Remark).ConfigureAwait(false);
+            return await _sopChecklistRep.AddProductModelAsync(dto.Name, dto.Remark).ConfigureAwait(false);
         }
 
         public async Task<List<WorkProcess>> GetWorkProcessesAsync()
         {
-            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _sopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetWorkProcessesAsync] SOP Repository 連線失敗");
-            return await SopChecklistRep.GetProcessesAsync().ConfigureAwait(false);
+            return await _sopChecklistRep.GetProcessesAsync().ConfigureAwait(false);
         }
 
         public async Task<List<Material>> GetMaterialsByTypeAsync(int typeId)
         {
-            if (!await MaterialRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _materialRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetMaterialsByTypeAsync] 物料 Repository 連線失敗");
-            var all = await MaterialRep.GetAllAsync().ConfigureAwait(false);
+            var all = await _materialRep.GetAllAsync().ConfigureAwait(false);
             return all.Where(m => m.TypeId == typeId).ToList();
         }
 
@@ -758,7 +758,7 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<List<SopChecklist>> GetAllSopChecklistsAsync()
         {
-            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _sopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllSopChecklistsAsync] SOP Repository 連線失敗");
             await using var ctx = _mesFactory.CreateDbContext();
             return await ctx.SopChecklists
@@ -770,14 +770,14 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<SopChecklist?> GetSopChecklistWithItemsAsync(int sopId)
         {
-            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _sopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetSopChecklistWithItemsAsync] SOP Repository 連線失敗");
-            return await SopChecklistRep.GetWithItemsAsync(sopId).ConfigureAwait(false);
+            return await _sopChecklistRep.GetWithItemsAsync(sopId).ConfigureAwait(false);
         }
 
         public async Task AddSopChecklistAsync(SopChecklistFormDto dto)
         {
-            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _sopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddSopChecklistAsync] SOP Repository 連線失敗");
 
             await using var ctx = _mesFactory.CreateDbContext();
@@ -809,7 +809,7 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task UpdateSopChecklistAsync(SopChecklistFormDto dto)
         {
-            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _sopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[UpdateSopChecklistAsync] SOP Repository 連線失敗");
             if (dto.Id == null)
                 throw new InvalidOperationException("[UpdateSopChecklistAsync] dto.Id 不可為空");
@@ -869,9 +869,9 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task DeleteSopChecklistAsync(int id)
         {
-            if (!await SopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _sopChecklistRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[DeleteSopChecklistAsync] SOP Repository 連線失敗");
-            await SopChecklistRep.DeleteAsync(id).ConfigureAwait(false);
+            await _sopChecklistRep.DeleteAsync(id).ConfigureAwait(false);
         }
 
         // 取或建 Product：UI 不暴露 Product；EnsureProductAsync 由 SOP 寫入時自動處理
@@ -894,7 +894,7 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<List<EquipmentProduct>> GetAllEquipmentProductsAsync()
         {
-            if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _equipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllEquipmentProductsAsync] 機台可生產清單 Repository 連線失敗");
             await using var ctx = _mesFactory.CreateDbContext();
             return await ctx.EquipmentProducts
@@ -908,7 +908,7 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<List<EquipmentProduct>> GetEquipmentProductsByEquipmentAsync(int equipmentId)
         {
-            if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _equipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetEquipmentProductsByEquipmentAsync] 機台可生產清單 Repository 連線失敗");
             await using var ctx = _mesFactory.CreateDbContext();
             return await ctx.EquipmentProducts
@@ -922,7 +922,7 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task AddEquipmentProductAsync(EquipmentProductFormDto dto)
         {
-            if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _equipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddEquipmentProductAsync] 機台可生產清單 Repository 連線失敗");
             var entity = new EquipmentProduct
             {
@@ -931,27 +931,27 @@ namespace FProductionDashBoard.Services.V1
                 SeqNo = dto.SeqNo,
                 ProductionStatus = dto.ProductionStatus
             };
-            await EquipmentProductRep.AddAsync(entity).ConfigureAwait(false);
+            await _equipmentProductRep.AddAsync(entity).ConfigureAwait(false);
         }
 
         public async Task UpdateEquipmentProductAsync(EquipmentProductFormDto dto)
         {
-            if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _equipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[UpdateEquipmentProductAsync] 機台可生產清單 Repository 連線失敗");
-            var entity = await EquipmentProductRep.GetByIdAsync(dto.Id!.Value).ConfigureAwait(false)
+            var entity = await _equipmentProductRep.GetByIdAsync(dto.Id!.Value).ConfigureAwait(false)
                 ?? throw new InvalidOperationException($"[UpdateEquipmentProductAsync] 找不到 EquipmentProduct ID={dto.Id}");
             entity.SopId = dto.SopId;
             entity.SeqNo = dto.SeqNo;
             entity.ProductionStatus = dto.ProductionStatus;
             entity.UpdateAt = DateTime.Now;
-            await EquipmentProductRep.UpdateAsync(entity).ConfigureAwait(false);
+            await _equipmentProductRep.UpdateAsync(entity).ConfigureAwait(false);
         }
 
         public async Task DeleteEquipmentProductAsync(int id)
         {
-            if (!await EquipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _equipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[DeleteEquipmentProductAsync] 機台可生產清單 Repository 連線失敗");
-            await EquipmentProductRep.DeleteAsync(id).ConfigureAwait(false);
+            await _equipmentProductRep.DeleteAsync(id).ConfigureAwait(false);
         }
 
         #endregion
@@ -960,44 +960,44 @@ namespace FProductionDashBoard.Services.V1
 
         public async Task<List<OrderProduction>> GetOrdersByEquipmentAsync(int equipmentId)
         {
-            if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetOrdersByEquipmentAsync] 接單 Repository 連線失敗");
-            return await OrderProductionRep.GetByEquipmentAsync(equipmentId).ConfigureAwait(false);
+            return await _orderProductionRep.GetByEquipmentAsync(equipmentId).ConfigureAwait(false);
         }
 
         public async Task<OrderProduction?> GetInProductionOrderAsync(int equipmentId)
         {
-            if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetInProductionOrderAsync] 接單 Repository 連線失敗");
-            return await OrderProductionRep.GetInProductionByEquipmentAsync(equipmentId).ConfigureAwait(false);
+            return await _orderProductionRep.GetInProductionByEquipmentAsync(equipmentId).ConfigureAwait(false);
         }
 
         public async Task<int> AddOrderAsync(int equipmentId, int equipmentProductId, int? quantity, int createdBy)
         {
-            if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddOrderAsync] 接單 Repository 連線失敗");
-            return await OrderProductionRep.AddAsync(equipmentId, equipmentProductId, quantity, createdBy).ConfigureAwait(false);
+            return await _orderProductionRep.AddAsync(equipmentId, equipmentProductId, quantity, createdBy).ConfigureAwait(false);
         }
 
         public async Task StartProductionAsync(int orderId, int startedBy)
         {
-            if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[StartProductionAsync] 接單 Repository 連線失敗");
-            await OrderProductionRep.StartAsync(orderId, startedBy, DateTime.Now).ConfigureAwait(false);
+            await _orderProductionRep.StartAsync(orderId, startedBy, DateTime.Now).ConfigureAwait(false);
         }
 
         public async Task EndProductionAsync(int orderId)
         {
-            if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[EndProductionAsync] 接單 Repository 連線失敗");
-            await OrderProductionRep.EndAsync(orderId, DateTime.Now).ConfigureAwait(false);
+            await _orderProductionRep.EndAsync(orderId, DateTime.Now).ConfigureAwait(false);
         }
 
         public async Task CancelOrderAsync(int orderId, string? description)
         {
-            if (!await OrderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[CancelOrderAsync] 接單 Repository 連線失敗");
-            await OrderProductionRep.CancelAsync(orderId, description).ConfigureAwait(false);
+            await _orderProductionRep.CancelAsync(orderId, description).ConfigureAwait(false);
         }
 
         #endregion
@@ -1008,23 +1008,23 @@ namespace FProductionDashBoard.Services.V1
         {
             if (type != TuningType.Teaching && type != TuningType.Offset)
                 throw new ArgumentException($"[StartProgramTuningAsync] 不支援的調試模式 type={type}");
-            if (!await ProgramTuningRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _programTuningRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[StartProgramTuningAsync] 調試 Repository 連線失敗");
-            return await ProgramTuningRep.StartAsync(equipmentId, equipmentProductId, type, startedBy, startedAt).ConfigureAwait(false);
+            return await _programTuningRep.StartAsync(equipmentId, equipmentProductId, type, startedBy, startedAt).ConfigureAwait(false);
         }
 
         public async Task EndProgramTuningAsync(int programTuningId, DateTime endedAt, string? description = null)
         {
-            if (!await ProgramTuningRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _programTuningRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[EndProgramTuningAsync] 調試 Repository 連線失敗");
-            await ProgramTuningRep.EndAsync(programTuningId, endedAt, description).ConfigureAwait(false);
+            await _programTuningRep.EndAsync(programTuningId, endedAt, description).ConfigureAwait(false);
         }
 
         public async Task<ProgramTuningRecord?> GetInProgressProgramTuningAsync(int equipmentId)
         {
-            if (!await ProgramTuningRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _programTuningRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetInProgressProgramTuningAsync] 調試 Repository 連線失敗");
-            return await ProgramTuningRep.GetInProgressByEquipmentAsync(equipmentId).ConfigureAwait(false);
+            return await _programTuningRep.GetInProgressByEquipmentAsync(equipmentId).ConfigureAwait(false);
         }
 
         #endregion
