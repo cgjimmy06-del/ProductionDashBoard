@@ -9,8 +9,6 @@ namespace FProductionDashBoard.Repositories
 {
     public interface IRepository<T, TContext> where T : class where TContext : DbContext
     {
-        public string CurrectConnStr { get; set; }
-        bool CheckConnection();
         Task<bool> CheckConnectionAsync();
 
         public Task<IEnumerable<T>> GetAllAsync();
@@ -24,19 +22,9 @@ namespace FProductionDashBoard.Repositories
     {
         protected readonly IDbContextFactory<TContext> _factory;
 
-        public string CurrectConnStr { get; set; } = "";
-
         public Repository(IDbContextFactory<TContext> factory)
         {
             _factory = factory;
-            using var ctx = factory.CreateDbContext();
-            CurrectConnStr = ctx.Database.GetDbConnection().ConnectionString;
-        }
-
-        public bool CheckConnection()
-        {
-            using var ctx = _factory.CreateDbContext();
-            return ctx.Database.CanConnect();
         }
 
         public async Task<bool> CheckConnectionAsync()

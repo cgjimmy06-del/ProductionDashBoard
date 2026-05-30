@@ -124,8 +124,11 @@ namespace FProductionDashBoard.ViewModels
                     _core.Log.AddLog("時間區段數量有問題"); return;
                 }
 
-                for (int i = 0; i < ideviceslots.Count; i++)
-                    Application.Current.Dispatcher.Invoke(() => TimeSlotsStatus[i] = ideviceslots[i]);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    for (int i = 0; i < ideviceslots.Count; i++)
+                        TimeSlotsStatus[i] = ideviceslots[i];
+                });
 
                 RefreshCurrentTimeSlotLabel();
             }
