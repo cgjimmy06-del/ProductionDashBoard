@@ -32,8 +32,9 @@ namespace FProductionDashBoard.Tests.Repositories
         {
             var repository = CreateRepository();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => repository.StartAsync(9999, 1, DateTime.Today));
+            Assert.Contains("找不到", ex.Message);
         }
 
         [Fact]
@@ -70,8 +71,9 @@ namespace FProductionDashBoard.Tests.Repositories
             var orderId = await InsertOrderAsync(OrderProductionStatus.InProduction);
             var repository = CreateRepository();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => repository.StartAsync(orderId, 1, DateTime.Today));
+            Assert.Contains("狀態不允許", ex.Message);
         }
 
         [Fact]
@@ -80,8 +82,9 @@ namespace FProductionDashBoard.Tests.Repositories
             var orderId = await InsertOrderAsync(OrderProductionStatus.Completed);
             var repository = CreateRepository();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => repository.StartAsync(orderId, 1, DateTime.Today));
+            Assert.Contains("狀態不允許", ex.Message);
         }
 
         [Fact]
@@ -90,8 +93,9 @@ namespace FProductionDashBoard.Tests.Repositories
             var orderId = await InsertOrderAsync(OrderProductionStatus.Cancelled);
             var repository = CreateRepository();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => repository.StartAsync(orderId, 1, DateTime.Today));
+            Assert.Contains("狀態不允許", ex.Message);
         }
 
         [Fact]
@@ -99,8 +103,9 @@ namespace FProductionDashBoard.Tests.Repositories
         {
             var repository = CreateRepository();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => repository.EndAsync(9999, DateTime.Today));
+            Assert.Contains("找不到", ex.Message);
         }
 
         [Fact]
@@ -122,8 +127,9 @@ namespace FProductionDashBoard.Tests.Repositories
             var orderId = await InsertOrderAsync(OrderProductionStatus.Pending);
             var repository = CreateRepository();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => repository.EndAsync(orderId, DateTime.Today));
+            Assert.Contains("狀態不允許", ex.Message);
         }
 
         [Fact]
@@ -132,8 +138,9 @@ namespace FProductionDashBoard.Tests.Repositories
             var orderId = await InsertOrderAsync(OrderProductionStatus.Completed);
             var repository = CreateRepository();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => repository.EndAsync(orderId, DateTime.Today));
+            Assert.Contains("狀態不允許", ex.Message);
         }
 
         [Fact]
@@ -142,8 +149,9 @@ namespace FProductionDashBoard.Tests.Repositories
             var orderId = await InsertOrderAsync(OrderProductionStatus.Cancelled);
             var repository = CreateRepository();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => repository.EndAsync(orderId, DateTime.Today));
+            Assert.Contains("狀態不允許", ex.Message);
         }
 
         [Fact]
@@ -151,8 +159,9 @@ namespace FProductionDashBoard.Tests.Repositories
         {
             var repository = CreateRepository();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => repository.CancelAsync(9999, "cancelled"));
+            Assert.Contains("找不到", ex.Message);
         }
 
         [Fact]
@@ -187,8 +196,9 @@ namespace FProductionDashBoard.Tests.Repositories
             var orderId = await InsertOrderAsync(OrderProductionStatus.Completed);
             var repository = CreateRepository();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => repository.CancelAsync(orderId, "cancelled"));
+            Assert.Contains("狀態不允許", ex.Message);
         }
 
         [Fact]
@@ -197,8 +207,9 @@ namespace FProductionDashBoard.Tests.Repositories
             var orderId = await InsertOrderAsync(OrderProductionStatus.Cancelled);
             var repository = CreateRepository();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => repository.CancelAsync(orderId, "cancelled"));
+            Assert.Contains("狀態不允許", ex.Message);
         }
 
         private OrderProductionRepository CreateRepository() => new(CreateFactory());
