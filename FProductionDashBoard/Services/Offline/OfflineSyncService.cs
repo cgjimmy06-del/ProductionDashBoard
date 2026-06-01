@@ -36,7 +36,7 @@ namespace FProductionDashBoard.Services.Offline
                 var handler = handlers.FirstOrDefault(h => h.OperationType == op.OperationType);
                 if (handler is null) continue;
 
-                bool handled = false;
+                bool handled = false; // true = HandleAsync 已寫入 DB，MarkSyncedAsync 失敗時仍會重試，有重複寫入風險
                 try
                 {
                     await handler.HandleAsync(op).ConfigureAwait(false);
