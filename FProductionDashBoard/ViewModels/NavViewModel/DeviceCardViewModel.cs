@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DeviceDrivers.Abb;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Properties;
 using FProductionDashBoard.Services;
@@ -29,8 +30,9 @@ namespace FProductionDashBoard.ViewModels
         Maintaining = 2
     }
 
-    public partial class DeviceCardViewModel : ObservableObject
+    public partial class DeviceCardViewModel : ObservableObject, IDisposable
     {
+        private bool _disposed;
         public DeviceInfo Info { get; }
         private readonly DashboardCoreServices _core;
         private readonly ListsFromSql _commonLists;
@@ -84,7 +86,8 @@ namespace FProductionDashBoard.ViewModels
         public ICommand TuningCommand { get; }
         public ICommand EndTuningCommand { get; }
 
-        public DeviceCardViewModel(DashboardCoreServices core, Services.IDialogService dialog, DeviceInfo info, UserInfo currentUser, ListsFromSql getLists)
+        public DeviceCardViewModel(DashboardCoreServices core, Services.IDialogService dialog, DeviceInfo info,
+            UserInfo currentUser, ListsFromSql getLists, IAbbRobotClient? abbClient = null)
         {
             _core = core;
             _dialog = dialog;
@@ -111,6 +114,15 @@ namespace FProductionDashBoard.ViewModels
 
             _ = LoadOrdersAsync();
             _ = LoadProgramTuningStateAsync();
+            InitAbb(abbClient);
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _disposed = true;
+            DisposeAbb();
+            _tuningTimer?.Stop();
         }
 
         public async Task UpdateTimeSlotsStatusAsync()
