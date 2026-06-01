@@ -28,9 +28,11 @@ namespace FProductionDashBoard.ViewModels
         private readonly DashboardCoreServices _core;
         private readonly Services.IDialogService _dialog;
         private readonly Action _onUserChanged; // 可被取消註冊
-        private readonly Func<IAbbRobotClient> _abbClientFactory;
 
+        // 硬體設備連線方法
+        private readonly Func<IAbbRobotClient> _abbClientFactory;
         private const int AbbEquipmentTypeId = 1;
+
         public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
 
         public ICommand FirstArticleInsAllCommand { get; }

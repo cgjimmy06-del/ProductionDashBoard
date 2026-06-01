@@ -335,7 +335,10 @@ public sealed class AbbRobotClient : IAbbRobotClient
             };
             StatusChanged?.Invoke(this, status);
         }
-        catch { /* SDK 已釋放時靜默忽略 */ try { StatusChanged?.Invoke(this, AbbRobotStatus.Disconnected); } catch { } }
+        catch {
+            // 斷線後讀取其他屬性的競態例外 : 仍發射 Disconnected 確保 UI 狀態更新
+            try { StatusChanged?.Invoke(this, AbbRobotStatus.Disconnected); } catch { } 
+        }
     }
 
     /// <summary>釋放目前的 <see cref="Controller"/>（先登出再 Dispose），欄位歸 null。可重入。</summary>
