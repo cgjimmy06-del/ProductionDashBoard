@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace FProductionDashBoard.Repositories
@@ -30,12 +31,22 @@ namespace FProductionDashBoard.Repositories
         public async Task<bool> CheckConnectionAsync()
         {
             using var cts = new CancellationTokenSource(2000);
+            await using var ctx = _factory.CreateDbContext();
+            var connStr = ctx.Database.GetConnectionString()!;
             try
             {
-                await using var ctx = _factory.CreateDbContext();
-                return await ctx.Database.CanConnectAsync(cts.Token).ConfigureAwait(false);
+                var result = await ctx.Database.CanConnectAsync(cts.Token).ConfigureAwait(false);
+                if (!result)
+                    using (var c = new SqlConnection(connStr))
+                        SqlConnection.ClearPool(c);
+                return result;
             }
-            catch { return false; }
+            catch
+            {
+                using (var c = new SqlConnection(connStr))
+                    SqlConnection.ClearPool(c);
+                return false;
+            }
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
