@@ -17,13 +17,25 @@ namespace DeviceDrivers.Abb;
 /// 皆為包裝 COM 資源的 <see cref="IDisposable"/>，本類別一律以 <c>using</c> 釋放；重連前會先
 /// 釋放舊的 <see cref="Controller"/>，反覆連線不會洩漏。
 /// </para>
-/// <para><b>非執行緒安全</b>：限單一執行緒使用。</para>
+/// <para>
+/// <b>執行緒注意</b>：Connect / Disconnect / Read / Write 等方法限單一執行緒使用。
+/// <see cref="IAbbRobotClient.StatusChanged"/> 由 ABB SDK 內部執行緒觸發，此為設計預期行為；
+/// 消費者必須自行 dispatch 至 UI 執行緒，且勿在其 handler 內呼叫 Read/Write 方法。
+/// </para>
 /// </summary>
 public sealed class AbbRobotClient : IAbbRobotClient
 {
     private Controller? _controller;
     private IReadOnlyList<ControllerInfo> _lastScan = Array.Empty<ControllerInfo>();
     private bool _disposed;
+
+    private EventHandler<ConnectionChangedEventArgs>?      _onConnectionChanged;
+    private EventHandler<OperatingModeChangeEventArgs>?    _onOperatingModeChanged;
+    private EventHandler<StateChangedEventArgs>?           _onStateChanged;
+    private EventHandler<ExecutionStatusChangedEventArgs>? _onExecutionStatusChanged;
+
+    /// <inheritdoc/>
+    public event EventHandler<AbbRobotStatus>? StatusChanged;
 
     /// <inheritdoc/>
     public bool IsConnected => !_disposed && _controller is { Connected: true };
@@ -66,6 +78,7 @@ public sealed class AbbRobotClient : IAbbRobotClient
                 throw;
             }
             _controller = connected;
+            StartMonitoring();
         }
         catch (AbbRobotException)
         {
@@ -81,7 +94,11 @@ public sealed class AbbRobotClient : IAbbRobotClient
     public void Disconnect()
     {
         if (_disposed) return;
-        try { DisposeController(); }
+        try
+        {
+            StopMonitoring();
+            DisposeController();
+        }
         catch { /* 斷線容錯：本來就未連線也不拋例外 */ }
     }
 
@@ -172,7 +189,11 @@ public sealed class AbbRobotClient : IAbbRobotClient
     {
         if (_disposed) return;
         _disposed = true;
-        try { DisposeController(); }
+        try
+        {
+            StopMonitoring();
+            DisposeController();
+        }
         catch { /* Dispose 不拋例外 */ }
     }
 
@@ -269,6 +290,56 @@ public sealed class AbbRobotClient : IAbbRobotClient
     private static AbbRobotException Wrap(string method, AbbRobotErrorKind kind, Exception ex)
         => ex as AbbRobotException
            ?? new AbbRobotException(kind, $"[{method}] {ex.Message}", ex);
+
+    private void StartMonitoring()
+    {
+        _onConnectionChanged      = (_, _) => FireStatus();
+        _onOperatingModeChanged   = (_, _) => FireStatus();
+        _onStateChanged           = (_, _) => FireStatus();
+        _onExecutionStatusChanged = (_, _) => FireStatus();
+
+        _controller!.ConnectionChanged               += _onConnectionChanged;
+        _controller!.OperatingModeChanged            += _onOperatingModeChanged;
+        _controller!.StateChanged                    += _onStateChanged;
+        _controller!.Rapid.ExecutionStatusChanged    += _onExecutionStatusChanged;
+    }
+
+    private void StopMonitoring()
+    {
+        var c = _controller;
+        if (c == null) return;
+        c.ConnectionChanged               -= _onConnectionChanged;
+        c.OperatingModeChanged            -= _onOperatingModeChanged;
+        c.StateChanged                    -= _onStateChanged;
+        c.Rapid.ExecutionStatusChanged    -= _onExecutionStatusChanged;
+        _onConnectionChanged      = null;
+        _onOperatingModeChanged   = null;
+        _onStateChanged           = null;
+        _onExecutionStatusChanged = null;
+    }
+
+    private void FireStatus()
+    {
+        var ctrl = _controller;
+        if (ctrl == null) return;
+        try
+        {
+            var status = new AbbRobotStatus
+            {
+                IsConnected          = ctrl.Connected,
+                ControllerName       = ctrl.Name ?? string.Empty,
+                SystemName           = ctrl.SystemName ?? string.Empty,
+                State                = ParseEnum<AbbControllerState>(ctrl.State.ToString()),
+                OperatingMode        = ParseEnum<AbbOperatingMode>(ctrl.OperatingMode.ToString()),
+                RapidExecutionStatus = ParseEnum<AbbExecutionStatus>(ctrl.Rapid.ExecutionStatus.ToString()),
+            };
+            StatusChanged?.Invoke(this, status);
+        }
+        catch {
+            // 斷線後讀取其他屬性的競態例外 : 仍發射 Disconnected 確保 UI 狀態更新
+            try { StatusChanged?.Invoke(this, AbbRobotStatus.Disconnected); } catch { } 
+        }
+    }
 
     /// <summary>釋放目前的 <see cref="Controller"/>（先登出再 Dispose），欄位歸 null。可重入。</summary>
     private void DisposeController()

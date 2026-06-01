@@ -1,21 +1,31 @@
 namespace DeviceDrivers.Abb;
 
 /// <summary>
-/// ABB 機器人控制器用戶端。Stage 1 範圍：控制器探索、連線/斷線、狀態快照、
+/// ABB 機器人控制器用戶端。Stage 1：控制器探索、連線/斷線、狀態快照、
 /// Task/Module 查詢、RAPID 變數讀寫（bool / string / num）。
+/// Stage 2：新增 <see cref="StatusChanged"/> 事件，連線後自動訂閱四種 SDK 狀態事件。
 /// <para>
 /// 所有失敗一律以 <see cref="AbbRobotException"/> 回報，不漏出 ABB SDK 型別；
 /// 連線失敗不會讓進程崩潰，呼叫端可持續運行並隨時再次 <see cref="Connect"/> 重連。
 /// </para>
 /// <para>
-/// <b>非執行緒安全</b>：限單一執行緒使用，呼叫端自行確保。完整執行緒模型留待
-/// Stage 2 加入事件訂閱時再設計。
+/// <b>執行緒注意</b>：<see cref="Connect"/>、<see cref="Disconnect"/>、Read/Write 等方法
+/// 限單一執行緒使用。<see cref="StatusChanged"/> 由 ABB SDK 內部執行緒觸發——
+/// 消費者必須自行 dispatch 至 UI 執行緒，且勿在其 handler 內呼叫 Read/Write 方法。
 /// </para>
 /// </summary>
 public interface IAbbRobotClient : IDisposable
 {
     /// <summary>目前是否已連線至控制器。此屬性不會拋出例外，可隨時輪詢。</summary>
     bool IsConnected { get; }
+
+    /// <summary>
+    /// 在 ABB SDK 內部執行緒上觸發，當連線狀態、Controller State、Operating Mode 或
+    /// Execution Status 任一發生變化時發射。消費者必須自行 dispatch 至 UI 執行緒。
+    /// 訂閱由 <see cref="Connect"/> 後自動開始、<see cref="Disconnect"/>/<see cref="IDisposable.Dispose"/>
+    /// 後自動取消。勿在 handler 內呼叫 ReadBool/ReadNum/ReadString/Write* 方法。
+    /// </summary>
+    event EventHandler<AbbRobotStatus>? StatusChanged;
 
     /// <summary>
     /// 探索網路上的 ABB 控制器。同網段的控制器會被自動掃描到；
