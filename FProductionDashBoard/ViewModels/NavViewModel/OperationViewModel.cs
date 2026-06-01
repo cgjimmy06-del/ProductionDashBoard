@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DeviceDrivers.Abb;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.Services.Exceptions;
 using FProductionDashBoard.UiModels;
@@ -27,6 +28,9 @@ namespace FProductionDashBoard.ViewModels
         private readonly DashboardCoreServices _core;
         private readonly Services.IDialogService _dialog;
         private readonly Action _onUserChanged; // 可被取消註冊
+        private readonly Func<IAbbRobotClient> _abbClientFactory;
+
+        private const int AbbEquipmentTypeId = 1;
         public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
 
         public ICommand FirstArticleInsAllCommand { get; }
@@ -36,11 +40,13 @@ namespace FProductionDashBoard.ViewModels
         public ICommand FastUploadDevicesCommand { get; }
         public ICommand DeleteDevicesCommand { get; }
 
-        public OperationViewModel(DashboardCoreServices core, Services.IDialogService dialog, ListsFromSql getlists)
+        public OperationViewModel(DashboardCoreServices core, Services.IDialogService dialog, ListsFromSql getlists,
+            Func<IAbbRobotClient> abbClientFactory)
         {
             _core = core;
             _dialog = dialog;
             commonLists = getlists;
+            _abbClientFactory = abbClientFactory;
 
             FirstArticleInsAllCommand = new AsyncRelayCommand(() => FirstArticleInsAll(),
                 () => _core.Authorization.HasPermission(PermissionId.OperateInspection));
@@ -175,7 +181,8 @@ namespace FProductionDashBoard.ViewModels
                 var result = vm.Result ?? new();
                 foreach (var iselection in result.Selections)
                 {
-                    var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists);
+                    var abbClient = iselection.TypeId == AbbEquipmentTypeId ? _abbClientFactory() : null;
+                    var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, abbClient);
                     await idevice.UpdateTimeSlotsStatusAsync();
                     Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                     _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
@@ -205,7 +212,8 @@ namespace FProductionDashBoard.ViewModels
             }
             foreach (var iselection in result)
             {
-                var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists);
+                var abbClient = iselection.TypeId == AbbEquipmentTypeId ? _abbClientFactory() : null;
+                var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, abbClient);
                 await idevice.UpdateTimeSlotsStatusAsync();
                 Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                 _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
@@ -213,12 +221,17 @@ namespace FProductionDashBoard.ViewModels
         }
         private void DeleteDevices()
         {
-            if (Devices.Any()) Application.Current.Dispatcher.Invoke(() => Devices.Clear());
+            if (Devices.Any()) Application.Current.Dispatcher.Invoke(() => 
+            {
+                foreach (var device in Devices) device.Dispose();
+                Devices.Clear(); 
+            });
         }
 
         public void Dispose()
         {
             _core.Authorization.UserChanged -= _onUserChanged;
+            foreach (var device in Devices) device.Dispose();
         }
     }
 }
