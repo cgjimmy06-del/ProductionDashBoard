@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -178,12 +177,7 @@ namespace FProductionDashBoard.Services.V1
                 OperationType = PendingOperationType.AddReplacement,
                 PayloadJson = JsonSerializer.Serialize(payload)
             };
-            _ = Task.Run(async () =>
-            {
-                try { await _offlineCache.EnqueueAsync(op).ConfigureAwait(false); }
-                catch (Exception ex) { Debug.WriteLine($"[OfflineCache] EnqueueAsync failed: {ex.Message}"); }
-            });
-
+            await _offlineCache.EnqueueAsync(op).ConfigureAwait(false);
             throw new OfflineOperationQueuedException(op.Id);
         }
 
@@ -228,12 +222,7 @@ namespace FProductionDashBoard.Services.V1
                 OperationType = PendingOperationType.AddFirstInspection,
                 PayloadJson = JsonSerializer.Serialize(payload)
             };
-            _ = Task.Run(async () =>
-            {
-                try { await _offlineCache.EnqueueAsync(op).ConfigureAwait(false); }
-                catch (Exception ex) { Debug.WriteLine($"[OfflineCache] EnqueueAsync failed: {ex.Message}"); }
-            });
-
+            await _offlineCache.EnqueueAsync(op).ConfigureAwait(false);
             throw new OfflineOperationQueuedException(op.Id);
         }
 
@@ -288,12 +277,7 @@ namespace FProductionDashBoard.Services.V1
                 OperationType = PendingOperationType.AddRoutineInspection,
                 PayloadJson = JsonSerializer.Serialize(payload)
             };
-            _ = Task.Run(async () =>
-            {
-                try { await _offlineCache.EnqueueAsync(op).ConfigureAwait(false); }
-                catch (Exception ex) { Debug.WriteLine($"[OfflineCache] EnqueueAsync failed: {ex.Message}"); }
-            });
-
+            await _offlineCache.EnqueueAsync(op).ConfigureAwait(false);
             throw new OfflineOperationQueuedException(op.Id);
         }
         public async Task<List<int>> GetAllSlotsStatusAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
