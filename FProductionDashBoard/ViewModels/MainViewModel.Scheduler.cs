@@ -107,9 +107,12 @@ namespace FProductionDashBoard.ViewModels
             {
                 var result = await _syncService.SyncPendingAsync();
                 if (result?.SyncedCount > 0)
-                    _core.Log.AddLog($"已重新連線: 上傳{result?.SyncedCount}筆暫存資料");
+                    _core.Log.AddLog($"已重新連線: 上傳{result.SyncedCount}筆暫存資料");
                 if (result?.FailedCount > 0)
-                    _core.Log.AddLog($"連線失敗: {result?.FailedCount}筆資料等待上傳", LogLevel.Warning);
+                    _core.Log.AddLog($"連線失敗: {result.FailedCount}筆資料等待上傳", LogLevel.Warning);
+                if (result?.Errors?.Count > 0)
+                    foreach (var err in result.Errors)
+                        _core.Log.AddErrorLog(err);
             }
             catch (Exception ex)
             {
