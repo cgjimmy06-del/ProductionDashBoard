@@ -204,6 +204,9 @@
     <sys:String x:Key="AbbSettingModuleFilterHint">Lọc Module</sys:String>
     <sys:String x:Key="AbbSettingRapidLabel">Biến RAPID</sys:String>
     <sys:String x:Key="AbbSettingRapidFilterHint">Lọc biến</sys:String>
+    <sys:String x:Key="AbbSettingReadValueTooltip">Đọc biến</sys:String>
+    <sys:String x:Key="AbbSettingWriteValueTooltip">Ghi biến</sys:String>
+    <sys:String x:Key="AbbSettingNewValueHint">Giá trị mới</sys:String>
     <!--#endregion-->
     <!--#region system settings view -->
     <sys:String x:Key="SsAppearanceHeader">Ngoại hình</sys:String>

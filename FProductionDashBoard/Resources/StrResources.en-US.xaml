@@ -204,6 +204,9 @@
     <sys:String x:Key="AbbSettingModuleFilterHint">Filter Module</sys:String>
     <sys:String x:Key="AbbSettingRapidLabel">RAPID Variable</sys:String>
     <sys:String x:Key="AbbSettingRapidFilterHint">Filter variable</sys:String>
+    <sys:String x:Key="AbbSettingReadValueTooltip">Read variable</sys:String>
+    <sys:String x:Key="AbbSettingWriteValueTooltip">Write variable</sys:String>
+    <sys:String x:Key="AbbSettingNewValueHint">New value</sys:String>
     <!--#endregion-->
     <!--#region system settings view -->
     <sys:String x:Key="SsAppearanceHeader">Appearance</sys:String>

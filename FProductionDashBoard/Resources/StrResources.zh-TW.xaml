@@ -204,6 +204,9 @@
     <sys:String x:Key="AbbSettingModuleFilterHint">篩選 Module</sys:String>
     <sys:String x:Key="AbbSettingRapidLabel">RAPID 變數</sys:String>
     <sys:String x:Key="AbbSettingRapidFilterHint">篩選變數</sys:String>
+    <sys:String x:Key="AbbSettingReadValueTooltip">讀取變數值</sys:String>
+    <sys:String x:Key="AbbSettingWriteValueTooltip">寫入變數值</sys:String>
+    <sys:String x:Key="AbbSettingNewValueHint">新值</sys:String>
     <!--#endregion-->
     <!--#region system settings view 系統設定視窗 -->
     <sys:String x:Key="SsAppearanceHeader">外觀</sys:String>

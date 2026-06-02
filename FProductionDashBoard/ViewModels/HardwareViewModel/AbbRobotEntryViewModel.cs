@@ -47,11 +47,27 @@ namespace FProductionDashBoard.ViewModels
 
         [ObservableProperty] private string? rapidFilterText;
         public ObservableCollection<AbbRapidSymbolInfo> FilteredRapidSymbols { get; } = new();
-        [ObservableProperty] private AbbRapidSymbolInfo? selectedRapidSymbol;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasSelectedRapidSymbol), nameof(CanWrite))]
+        private AbbRapidSymbolInfo? selectedRapidSymbol;
+
+        // ── 讀寫 ────────────────────────────────────────────────────────────
+        [ObservableProperty] private string? rapidValue;
+        [ObservableProperty] private string? newValueText;
+
+        public bool HasSelectedRapidSymbol => SelectedRapidSymbol is not null;
+
+        /// <summary>VAR / PERS 且型別為 bool / num / string 時才可寫入。</summary>
+        public bool CanWrite =>
+            SelectedRapidSymbol?.Kind is "VAR" or "PERS" &&
+            SelectedRapidSymbol?.DataType is "bool" or "num" or "string";
 
         public IAsyncRelayCommand ConnectCommand { get; }
         public IRelayCommand DisconnectCommand { get; }
         public IRelayCommand DeleteCommand { get; }
+        public IAsyncRelayCommand ReadValueCommand { get; }
+        public IAsyncRelayCommand WriteValueCommand { get; }
 
         public AbbRobotEntryViewModel(
             IAbbRobotClient client,
@@ -67,9 +83,11 @@ namespace FProductionDashBoard.ViewModels
             _client.StatusChanged += OnStatusChanged;
             _discovered.CollectionChanged += OnDiscoveredChanged;
 
-            ConnectCommand = new AsyncRelayCommand(ConnectAsync);
+            ConnectCommand    = new AsyncRelayCommand(ConnectAsync);
             DisconnectCommand = new RelayCommand(Disconnect);
-            DeleteCommand = new RelayCommand(Delete);
+            DeleteCommand     = new RelayCommand(Delete);
+            ReadValueCommand  = new AsyncRelayCommand(ReadValueAsync);
+            WriteValueCommand = new AsyncRelayCommand(WriteValueAsync);
 
             RebuildFilteredControllers();
         }
@@ -202,6 +220,12 @@ namespace FProductionDashBoard.ViewModels
 
         partial void OnRapidFilterTextChanged(string? value) => RebuildFilteredRapidSymbols();
 
+        partial void OnSelectedRapidSymbolChanged(AbbRapidSymbolInfo? value)
+        {
+            RapidValue = null;
+            NewValueText = null;
+        }
+
         private void RebuildFilteredRapidSymbols()
         {
             var filter = RapidFilterText?.Trim();
@@ -212,6 +236,61 @@ namespace FProductionDashBoard.ViewModels
 
             FilteredRapidSymbols.Clear();
             foreach (var s in matches) FilteredRapidSymbols.Add(s);
+        }
+
+        // ── RAPID 讀寫 ───────────────────────────────────────────────────────
+        private async Task ReadValueAsync()
+        {
+            if (SelectedRapidSymbol is null || SelectedTask is null || SelectedModule is null) return;
+            var addr = new RapidVariableAddress(SelectedTask.Name, SelectedModule, SelectedRapidSymbol.Name);
+            try
+            {
+                RapidValue = SelectedRapidSymbol.DataType switch
+                {
+                    "bool"   => (await Task.Run(() => _client.ReadBool(addr))).ToString().ToLower(),
+                    "num"    => (await Task.Run(() => _client.ReadNum(addr))).ToString(),
+                    "string" => await Task.Run(() => _client.ReadString(addr)),
+                    _        => "（不支援，待後續階段）"
+                };
+            }
+            catch (AbbRobotException ex) { StatusMessage = $"讀取失敗：{ex.Message}"; }
+        }
+
+        private async Task WriteValueAsync()
+        {
+            if (SelectedRapidSymbol is null || SelectedTask is null || SelectedModule is null) return;
+            var addr = new RapidVariableAddress(SelectedTask.Name, SelectedModule, SelectedRapidSymbol.Name);
+
+            var confirm = MessageBox.Show(
+                $"確定要將 {SelectedRapidSymbol.Name} 的值改為「{NewValueText}」？",
+                "確認寫入", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.OK) return;
+
+            try
+            {
+                switch (SelectedRapidSymbol.DataType)
+                {
+                    case "bool":
+                        if (!bool.TryParse(NewValueText, out var bv))
+                        { StatusMessage = "請輸入 true 或 false"; return; }
+                        await Task.Run(() => _client.WriteBool(addr, bv));
+                        break;
+                    case "num":
+                        if (!double.TryParse(NewValueText,
+                                System.Globalization.NumberStyles.Any,
+                                System.Globalization.CultureInfo.InvariantCulture, out var nv))
+                        { StatusMessage = "請輸入數字"; return; }
+                        await Task.Run(() => _client.WriteNum(addr, nv));
+                        break;
+                    case "string":
+                        await Task.Run(() => _client.WriteString(addr, NewValueText ?? string.Empty));
+                        break;
+                    default: return;
+                }
+                StatusMessage = "寫入成功";
+                await ReadValueAsync();
+            }
+            catch (AbbRobotException ex) { StatusMessage = $"寫入失敗：{ex.Message}"; }
         }
 
         // ── 狀態事件（ABB SDK 內部執行緒觸發，需 dispatch 至 UI 執行緒）──────────

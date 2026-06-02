@@ -264,6 +264,58 @@
                                         <Run Text="{Binding SelectedRapidSymbol.Kind, Mode=OneWay}"/>
                                     </TextBlock>
                                 </Grid>
+
+                                <!-- 列 3：RAPID 變數讀寫（選定 RAPID 後顯示）-->
+                                <Grid Margin="0,8,0,0"
+                                      Visibility="{Binding HasSelectedRapidSymbol,
+                                                   Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>   <!-- 讀取按鈕 -->
+                                        <ColumnDefinition Width="*"/>      <!-- Name : Value (type · kind) -->
+                                        <ColumnDefinition Width="160"/>    <!-- 新值 TextBox -->
+                                        <ColumnDefinition Width="Auto"/>   <!-- 寫入按鈕 -->
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Grid.Column="0"
+                                            Style="{StaticResource GridEditButtonStyle}"
+                                            Command="{Binding ReadValueCommand}"
+                                            ToolTip="{DynamicResource AbbSettingReadValueTooltip}"
+                                            Foreground="{DynamicResource PrimaryBrush}">
+                                        <materialDesign:PackIcon Kind="DatabaseSearch" Width="18" Height="18"/>
+                                    </Button>
+
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                                VerticalAlignment="Center" Margin="8,0">
+                                        <TextBlock FontWeight="SemiBold"
+                                                   Text="{Binding SelectedRapidSymbol.Name, Mode=OneWay}"/>
+                                        <TextBlock Text=" : "
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding RapidValue}"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock Margin="8,0,0,0" FontSize="11" VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource SecondaryBrush}">
+                                            <Run Text="("/>
+                                            <Run Text="{Binding SelectedRapidSymbol.DataType, Mode=OneWay}"/>
+                                            <Run Text=" · "/>
+                                            <Run Text="{Binding SelectedRapidSymbol.Kind, Mode=OneWay}"/>
+                                            <Run Text=")"/>
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <TextBox Grid.Column="2" Margin="0,0,8,0"
+                                             Text="{Binding NewValueText, UpdateSourceTrigger=PropertyChanged}"
+                                             materialDesign:HintAssist.Hint="{DynamicResource AbbSettingNewValueHint}"
+                                             IsEnabled="{Binding CanWrite}"/>
+
+                                    <Button Grid.Column="3"
+                                            Style="{StaticResource GridEditButtonStyle}"
+                                            Command="{Binding WriteValueCommand}"
+                                            ToolTip="{DynamicResource AbbSettingWriteValueTooltip}"
+                                            Foreground="{DynamicResource SecondaryBrush}"
+                                            IsEnabled="{Binding CanWrite}">
+                                        <materialDesign:PackIcon Kind="DatabaseEdit" Width="18" Height="18"/>
+                                    </Button>
+                                </Grid>
                             </StackPanel>
                         </Border>
                     </DataTemplate>
