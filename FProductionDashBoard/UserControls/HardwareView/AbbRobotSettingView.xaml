@@ -74,7 +74,8 @@
                                         <TextBlock Text="{DynamicResource AbbSettingIpFilterHint}"
                                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                        <TextBox Text="{Binding IpFilterText, UpdateSourceTrigger=PropertyChanged}"
+                                        <TextBox Margin="0" Padding="0,3"
+                                                 Text="{Binding IpFilterText, UpdateSourceTrigger=PropertyChanged}"
                                                  materialDesign:HintAssist.Hint="{DynamicResource AbbSettingIpFilterHint}"/>
                                     </StackPanel>
 
@@ -216,7 +217,8 @@
 
                                     <!-- Module 篩選 -->
                                     <StackPanel Grid.Column="1" Margin="0,0,8,0">
-                                        <TextBlock Text="{DynamicResource AbbSettingModuleFilterHint}"
+                                        <TextBlock Margin="0" Padding="0,3"
+                                                   Text="{DynamicResource AbbSettingModuleFilterHint}"
                                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
                                         <TextBox Text="{Binding ModuleFilterText, UpdateSourceTrigger=PropertyChanged}"
@@ -234,7 +236,8 @@
 
                                     <!-- RAPID 篩選 -->
                                     <StackPanel Grid.Column="3" Margin="0,0,8,0">
-                                        <TextBlock Text="{DynamicResource AbbSettingRapidFilterHint}"
+                                        <TextBlock Margin="0" Padding="0,3"
+                                                   Text="{DynamicResource AbbSettingRapidFilterHint}"
                                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
                                         <TextBox Text="{Binding RapidFilterText, UpdateSourceTrigger=PropertyChanged}"

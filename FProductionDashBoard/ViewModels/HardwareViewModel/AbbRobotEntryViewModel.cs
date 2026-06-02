@@ -145,6 +145,10 @@ namespace FProductionDashBoard.ViewModels
             SelectedTask = null;
             SelectedModule = null;
             SelectedRapidSymbol = null;
+            IsConnected = false;
+            ControllerState = AbbControllerState.Unknown;
+            OperatingMode = AbbOperatingMode.Unknown;
+            ExecutionStatus = AbbExecutionStatus.Unknown;
             StatusMessage = "已斷線";
         }
 
