@@ -204,10 +204,12 @@ namespace FProductionDashBoard.ViewModels
                     switch (vm.Result.Action)
                     {
                         case OrderListAction.StartProduction:
-                            await _core.Data.StartProductionAsync(vm.Result.OrderId, CurrentUser.Id);
+                            // 開始生產前先寫 SeqNo 至 ABB 設備，成功才更新訂單（見方法內說明）
+                            await StartProductionWithSeqNoAsync(vm.Result.OrderId, vm.Result.SeqNo);
                             break;
                         case OrderListAction.EndProduction:
                             await _core.Data.EndProductionAsync(vm.Result.OrderId);
+                            ResetSeqNoFireAndForget();   // 結束生產：ABB 變數歸 0（fire-and-forget）
                             break;
                         case OrderListAction.CancelProduction:
                             await _core.Data.CancelOrderAsync(vm.Result.OrderId, vm.Result.Description);
@@ -221,6 +223,41 @@ namespace FProductionDashBoard.ViewModels
                 }
             }
             await LoadOrdersAsync();
+        }
+
+        /// <summary>
+        /// 開始生產：ABB 設備先寫入 SeqNo（非 ABB 設備直接跳過），成功才更新 DB 訂單狀態。
+        /// 寫入失敗 → 不更新訂單；DB 更新失敗 → 將已寫入的 SeqNo 復原為 0。
+        /// </summary>
+        private async Task StartProductionWithSeqNoAsync(int orderId, int seqNo)
+        {
+            // 1) ABB 設備：先寫入 SeqNo，失敗則中止、不更新訂單（不做任何狀態阻擋，由設備決定成敗）
+            if (_abbClient != null)
+            {
+                try
+                {
+                    await WriteSeqNoAsync(seqNo);
+                }
+                catch (Exception ex)
+                {
+                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - SeqNo#{seqNo} 寫入設備失敗，未開始生產", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[StartProductionWithSeqNoAsync] {ex.Message}");
+                    return;
+                }
+            }
+
+            // 2) 更新 DB 訂單狀態
+            try
+            {
+                await _core.Data.StartProductionAsync(orderId, CurrentUser.Id);
+            }
+            catch (Exception ex)
+            {
+                // DB 失敗但 SeqNo 已寫入 → 復原為 0，避免機器人留著無對應訂單的 SeqNo
+                if (_abbClient != null) ResetSeqNoFireAndForget();
+                _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - 接單操作失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[StartProductionWithSeqNoAsync] {ex.Message}");
+            }
         }
 
         private void ApplyProductionState(OrderProductionInfo? order)

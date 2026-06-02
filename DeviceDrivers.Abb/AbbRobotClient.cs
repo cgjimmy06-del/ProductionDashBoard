@@ -18,8 +18,11 @@ namespace DeviceDrivers.Abb;
 /// 釋放舊的 <see cref="Controller"/>，反覆連線不會洩漏。
 /// </para>
 /// <para>
-/// <b>執行緒注意</b>：Connect / Disconnect / Read / Write 等方法限單一執行緒使用。
+/// <b>執行緒安全</b>：Connect / Disconnect / Dispose / GetStatus / GetTasks /
+/// GetModuleVariables / Read / Write 等操作方法皆以內部 <c>lock</c> 序列化，可安全地由不同
+/// 執行緒呼叫（同一時間只會有一個操作觸及底層 COM <see cref="Controller"/>）。
 /// <see cref="IAbbRobotClient.StatusChanged"/> 由 ABB SDK 內部執行緒觸發，此為設計預期行為；
+/// 其發射（FireStatus）刻意不進入鎖（避免阻塞 SDK callback 執行緒），只讀狀態快照、為 best-effort；
 /// 消費者必須自行 dispatch 至 UI 執行緒，且勿在其 handler 內呼叫 Read/Write 方法。
 /// </para>
 /// </summary>
@@ -28,6 +31,9 @@ public sealed class AbbRobotClient : IAbbRobotClient
     private Controller? _controller;
     private IReadOnlyList<ControllerInfo> _lastScan = Array.Empty<ControllerInfo>();
     private bool _disposed;
+
+    /// <summary>序列化所有觸及底層 COM <see cref="Controller"/> 的操作；FireStatus 刻意不取用。</summary>
+    private readonly object _gate = new();
 
     private EventHandler<ConnectionChangedEventArgs>?      _onConnectionChanged;
     private EventHandler<OperatingModeChangeEventArgs>?    _onOperatingModeChanged;
@@ -60,33 +66,36 @@ public sealed class AbbRobotClient : IAbbRobotClient
     {
         ThrowIfDisposed();
         ArgumentNullException.ThrowIfNull(controller);
-        try
+        lock (_gate)
         {
-            ControllerInfo native = ResolveNative(controller.IpAddress);
-            DisposeController();   // 重連前先釋放舊的 Controller，避免洩漏
-            Controller connected = Controller.Connect(native, ConnectionType.Standalone);
             try
             {
-                connected.Logon(UserInfo.DefaultUser);
+                ControllerInfo native = ResolveNative(controller.IpAddress);
+                DisposeController();   // 重連前先釋放舊的 Controller，避免洩漏
+                Controller connected = Controller.Connect(native, ConnectionType.Standalone);
+                try
+                {
+                    connected.Logon(UserInfo.DefaultUser);
+                }
+                catch
+                {
+                    // Logon 失敗時 connected 尚未指派給 _controller，DisposeController 無法觸及，
+                    // 必須在此就地釋放，否則反覆重連會洩漏已開連線 session 的 Controller。
+                    // 釋放本身的例外不可掩蓋原始 Logon 失敗例外，故吞掉後以 throw; 重拋原例外。
+                    try { connected.Dispose(); } catch { /* 釋放失敗不影響重拋原例外 */ }
+                    throw;
+                }
+                _controller = connected;
+                StartMonitoring();
             }
-            catch
+            catch (AbbRobotException)
             {
-                // Logon 失敗時 connected 尚未指派給 _controller，DisposeController 無法觸及，
-                // 必須在此就地釋放，否則反覆重連會洩漏已開連線 session 的 Controller。
-                // 釋放本身的例外不可掩蓋原始 Logon 失敗例外，故吞掉後以 throw; 重拋原例外。
-                try { connected.Dispose(); } catch { /* 釋放失敗不影響重拋原例外 */ }
-                throw;
+                throw;   // ResolveNative 丟出的已分類例外，原樣傳遞
             }
-            _controller = connected;
-            StartMonitoring();
-        }
-        catch (AbbRobotException)
-        {
-            throw;   // ResolveNative 丟出的已分類例外，原樣傳遞
-        }
-        catch (Exception ex)
-        {
-            throw Wrap(nameof(Connect), AbbRobotErrorKind.ConnectionFailed, ex);
+            catch (Exception ex)
+            {
+                throw Wrap(nameof(Connect), AbbRobotErrorKind.ConnectionFailed, ex);
+            }
         }
     }
 
@@ -94,61 +103,70 @@ public sealed class AbbRobotClient : IAbbRobotClient
     public void Disconnect()
     {
         if (_disposed) return;
-        try
+        lock (_gate)
         {
-            StopMonitoring();
-            DisposeController();
+            try
+            {
+                StopMonitoring();
+                DisposeController();
+            }
+            catch { /* 斷線容錯：本來就未連線也不拋例外 */ }
         }
-        catch { /* 斷線容錯：本來就未連線也不拋例外 */ }
     }
 
     /// <inheritdoc/>
     public AbbRobotStatus GetStatus()
     {
-        Controller c = RequireConnected(nameof(GetStatus));
-        try
+        lock (_gate)
         {
-            return BuildStatus(c);
-        }
-        catch (Exception ex)
-        {
-            throw Wrap(nameof(GetStatus), AbbRobotErrorKind.OperationFailed, ex);
+            Controller c = RequireConnected(nameof(GetStatus));
+            try
+            {
+                return BuildStatus(c);
+            }
+            catch (Exception ex)
+            {
+                throw Wrap(nameof(GetStatus), AbbRobotErrorKind.OperationFailed, ex);
+            }
         }
     }
 
     /// <inheritdoc/>
     public IReadOnlyList<AbbTaskInfo> GetTasks()
     {
-        Controller c = RequireConnected(nameof(GetTasks));
-        try
+        lock (_gate)
         {
-            var result = new List<AbbTaskInfo>();
-            foreach (var task in c.Rapid.GetTasks())
+            Controller c = RequireConnected(nameof(GetTasks));
+            try
             {
-                var modules = new List<string>();
-                try
+                var result = new List<AbbTaskInfo>();
+                foreach (var task in c.Rapid.GetTasks())
                 {
-                    foreach (var module in task.GetModules())
-                        modules.Add(module.Name);
-                }
-                catch (Exception)
-                {
-                    // 個別 task 無法列出模組時略過該 task 的模組清單（留空），不影響其他 task。
-                    // 接住 ex 而非無參數 catch，保留可診斷的例外型別資訊。
-                }
+                    var modules = new List<string>();
+                    try
+                    {
+                        foreach (var module in task.GetModules())
+                            modules.Add(module.Name);
+                    }
+                    catch (Exception)
+                    {
+                        // 個別 task 無法列出模組時略過該 task 的模組清單（留空），不影響其他 task。
+                        // 接住 ex 而非無參數 catch，保留可診斷的例外型別資訊。
+                    }
 
-                result.Add(new AbbTaskInfo
-                {
-                    Name = task.Name,
-                    ExecutionStatus = ParseEnum<AbbExecutionStatus>(task.ExecutionStatus.ToString()),
-                    Modules = modules,
-                });
+                    result.Add(new AbbTaskInfo
+                    {
+                        Name = task.Name,
+                        ExecutionStatus = ParseEnum<AbbExecutionStatus>(task.ExecutionStatus.ToString()),
+                        Modules = modules,
+                    });
+                }
+                return result;
             }
-            return result;
-        }
-        catch (Exception ex)
-        {
-            throw Wrap(nameof(GetTasks), AbbRobotErrorKind.OperationFailed, ex);
+            catch (Exception ex)
+            {
+                throw Wrap(nameof(GetTasks), AbbRobotErrorKind.OperationFailed, ex);
+            }
         }
     }
 
@@ -157,45 +175,48 @@ public sealed class AbbRobotClient : IAbbRobotClient
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(taskName);
         ArgumentException.ThrowIfNullOrWhiteSpace(moduleName);
-        Controller c = RequireConnected(nameof(GetModuleVariables));
-        try
+        lock (_gate)
         {
-            var task = c.Rapid.GetTask(taskName)
-                ?? throw new AbbRobotException(AbbRobotErrorKind.OperationFailed,
-                       $"[GetModuleVariables] 找不到 Task {taskName}。");
-            var module = task.GetModule(moduleName)
-                ?? throw new AbbRobotException(AbbRobotErrorKind.OperationFailed,
-                       $"[GetModuleVariables] 找不到 Module {moduleName}。");
-
-            // 只搜當前 module 層級的資料變數（recursive: false），不含 routine。
-            var props = RapidSymbolSearchProperties.CreateDefaultForData(recursive: false);
-            var result = new List<AbbRapidSymbolInfo>();
-            foreach (RapidSymbol symbol in module.SearchRapidSymbol(props))
+            Controller c = RequireConnected(nameof(GetModuleVariables));
+            try
             {
-                string dataType = string.Empty;
-                try
-                {
-                    using RapidData rd = module.GetRapidData(symbol);
-                    dataType = rd.RapidType ?? string.Empty;
-                }
-                catch (Exception)
-                {
-                    // 個別變數型別讀取失敗時留空，不影響其他變數列舉。
-                    // 接住 ex 而非無參數 catch，保留可診斷的例外型別資訊。
-                }
+                var task = c.Rapid.GetTask(taskName)
+                    ?? throw new AbbRobotException(AbbRobotErrorKind.OperationFailed,
+                           $"[GetModuleVariables] 找不到 Task {taskName}。");
+                var module = task.GetModule(moduleName)
+                    ?? throw new AbbRobotException(AbbRobotErrorKind.OperationFailed,
+                           $"[GetModuleVariables] 找不到 Module {moduleName}。");
 
-                result.Add(new AbbRapidSymbolInfo
+                // 只搜當前 module 層級的資料變數（recursive: false），不含 routine。
+                var props = RapidSymbolSearchProperties.CreateDefaultForData(recursive: false);
+                var result = new List<AbbRapidSymbolInfo>();
+                foreach (RapidSymbol symbol in module.SearchRapidSymbol(props))
                 {
-                    Name = symbol.Name,
-                    DataType = dataType,
-                    Kind = ToSymbolKind(symbol.Type),
-                });
+                    string dataType = string.Empty;
+                    try
+                    {
+                        using RapidData rd = module.GetRapidData(symbol);
+                        dataType = rd.RapidType ?? string.Empty;
+                    }
+                    catch (Exception)
+                    {
+                        // 個別變數型別讀取失敗時留空，不影響其他變數列舉。
+                        // 接住 ex 而非無參數 catch，保留可診斷的例外型別資訊。
+                    }
+
+                    result.Add(new AbbRapidSymbolInfo
+                    {
+                        Name = symbol.Name,
+                        DataType = dataType,
+                        Kind = ToSymbolKind(symbol.Type),
+                    });
+                }
+                return result;
             }
-            return result;
-        }
-        catch (Exception ex)
-        {
-            throw Wrap(nameof(GetModuleVariables), AbbRobotErrorKind.OperationFailed, ex);
+            catch (Exception ex)
+            {
+                throw Wrap(nameof(GetModuleVariables), AbbRobotErrorKind.OperationFailed, ex);
+            }
         }
     }
 
@@ -226,14 +247,17 @@ public sealed class AbbRobotClient : IAbbRobotClient
     /// <inheritdoc/>
     public void Dispose()
     {
-        if (_disposed) return;
-        _disposed = true;
-        try
+        lock (_gate)
         {
-            StopMonitoring();
-            DisposeController();
+            if (_disposed) return;
+            _disposed = true;
+            try
+            {
+                StopMonitoring();
+                DisposeController();
+            }
+            catch { /* Dispose 不拋例外 */ }
         }
-        catch { /* Dispose 不拋例外 */ }
     }
 
     // --- 內部輔助 -----------------------------------------------------------------
@@ -241,31 +265,37 @@ public sealed class AbbRobotClient : IAbbRobotClient
     private T Read<T>(RapidVariableAddress address, string method, Func<RapidData, T> extract)
     {
         ArgumentNullException.ThrowIfNull(address);
-        Controller c = RequireConnected(method);
-        try
+        lock (_gate)
         {
-            using RapidData rd = c.Rapid.GetRapidData(address.Task, address.Module, address.Variable);
-            return extract(rd);
-        }
-        catch (Exception ex)
-        {
-            throw Wrap($"{method}({address})", AbbRobotErrorKind.OperationFailed, ex);
+            Controller c = RequireConnected(method);
+            try
+            {
+                using RapidData rd = c.Rapid.GetRapidData(address.Task, address.Module, address.Variable);
+                return extract(rd);
+            }
+            catch (Exception ex)
+            {
+                throw Wrap($"{method}({address})", AbbRobotErrorKind.OperationFailed, ex);
+            }
         }
     }
 
     private void Write(RapidVariableAddress address, string method, IRapidData value)
     {
         ArgumentNullException.ThrowIfNull(address);
-        Controller c = RequireConnected(method);
-        try
+        lock (_gate)
         {
-            using Mastership mastership = Mastership.Request(c);
-            using RapidData rd = c.Rapid.GetRapidData(address.Task, address.Module, address.Variable);
-            rd.Value = value;
-        }
-        catch (Exception ex)
-        {
-            throw Wrap($"{method}({address})", AbbRobotErrorKind.OperationFailed, ex);
+            Controller c = RequireConnected(method);
+            try
+            {
+                using Mastership mastership = Mastership.Request(c);
+                using RapidData rd = c.Rapid.GetRapidData(address.Task, address.Module, address.Variable);
+                rd.Value = value;
+            }
+            catch (Exception ex)
+            {
+                throw Wrap($"{method}({address})", AbbRobotErrorKind.OperationFailed, ex);
+            }
         }
     }
 

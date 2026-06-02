@@ -27,6 +27,7 @@ namespace FProductionDashBoard.ViewModels
     {
         public OrderListAction Action { get; set; }
         public int OrderId { get; set; }
+        public int SeqNo { get; set; }   // 開始生產時供卡片寫入 ABB 設備
         public string? Description { get; set; }
     }
 
@@ -57,6 +58,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly UserInfo _currentUser;
         private int _pendingOrderId;
         private int _pendingSopId;
+        private int _pendingSeqNo;
 
         // ─ Page 切換
         [ObservableProperty]
@@ -183,6 +185,7 @@ namespace FProductionDashBoard.ViewModels
             DialogErrorString = null;
             _pendingOrderId = order.OrderId;
             _pendingSopId = order.SopId;
+            _pendingSeqNo = order.SeqNo;
             _ = LoadChecklistAsync(_pendingSopId);
         }
 
@@ -223,7 +226,8 @@ namespace FProductionDashBoard.ViewModels
                     Result = new OrderListResult
                     {
                         Action  = OrderListAction.StartProduction,
-                        OrderId = _pendingOrderId
+                        OrderId = _pendingOrderId,
+                        SeqNo   = _pendingSeqNo
                     };
                     IsConfirmed = true;
                     OnRequestClose();
