@@ -185,6 +185,28 @@
     <sys:String x:Key="CardReaderTestTooltip">測試連線</sys:String>
     <sys:String x:Key="CardReaderApplyTooltip">套用設定並重連</sys:String>
     <sys:String x:Key="CardReaderDeleteTooltip">移除讀卡機</sys:String>
+    <sys:String x:Key="HardwareTabAbbRobot">ABB機械手</sys:String>
+    <sys:String x:Key="AbbSettingRescanTooltip">重新探索控制器</sys:String>
+    <sys:String x:Key="AbbSettingAddTooltip">新增 ABB 設備</sys:String>
+    <sys:String x:Key="AbbSettingConnectTooltip">連線</sys:String>
+    <sys:String x:Key="AbbSettingDisconnectTooltip">斷線</sys:String>
+    <sys:String x:Key="AbbSettingDeleteTooltip">移除設備</sys:String>
+    <sys:String x:Key="AbbSettingIpFilterHint">篩選 IP</sys:String>
+    <sys:String x:Key="AbbSettingIpHint">控制器 IP</sys:String>
+    <sys:String x:Key="AbbSettingConnLabel">連線</sys:String>
+    <sys:String x:Key="AbbSettingStateLabel">狀態</sys:String>
+    <sys:String x:Key="AbbSettingModeLabel">模式</sys:String>
+    <sys:String x:Key="AbbSettingExecLabel">執行</sys:String>
+    <sys:String x:Key="AbbSettingConnected">已連線</sys:String>
+    <sys:String x:Key="AbbSettingDisconnected">未連線</sys:String>
+    <sys:String x:Key="AbbSettingTaskLabel">Task</sys:String>
+    <sys:String x:Key="AbbSettingModuleLabel">Module</sys:String>
+    <sys:String x:Key="AbbSettingModuleFilterHint">篩選 Module</sys:String>
+    <sys:String x:Key="AbbSettingRapidLabel">RAPID 變數</sys:String>
+    <sys:String x:Key="AbbSettingRapidFilterHint">篩選變數</sys:String>
+    <sys:String x:Key="AbbSettingReadValueTooltip">讀取變數值</sys:String>
+    <sys:String x:Key="AbbSettingWriteValueTooltip">寫入變數值</sys:String>
+    <sys:String x:Key="AbbSettingNewValueHint">新值</sys:String>
     <!--#endregion-->
     <!--#region system settings view 系統設定視窗 -->
     <sys:String x:Key="SsAppearanceHeader">外觀</sys:String>
