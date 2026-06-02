@@ -108,15 +108,7 @@ public sealed class AbbRobotClient : IAbbRobotClient
         Controller c = RequireConnected(nameof(GetStatus));
         try
         {
-            return new AbbRobotStatus
-            {
-                IsConnected = c.Connected,
-                ControllerName = c.Name ?? string.Empty,
-                SystemName = c.SystemName ?? string.Empty,
-                State = ParseEnum<AbbControllerState>(c.State.ToString()),
-                OperatingMode = ParseEnum<AbbOperatingMode>(c.OperatingMode.ToString()),
-                RapidExecutionStatus = ParseEnum<AbbExecutionStatus>(c.Rapid.ExecutionStatus.ToString()),
-            };
+            return BuildStatus(c);
         }
         catch (Exception ex)
         {
@@ -286,6 +278,17 @@ public sealed class AbbRobotClient : IAbbRobotClient
     private static TEnum ParseEnum<TEnum>(string raw) where TEnum : struct, Enum
         => Enum.TryParse(raw, ignoreCase: true, out TEnum value) ? value : default;
 
+    /// <summary>由 <see cref="Controller"/> 組出狀態快照。<see cref="GetStatus"/> 與 <see cref="FireStatus"/> 共用。</summary>
+    private static AbbRobotStatus BuildStatus(Controller c) => new()
+    {
+        IsConnected          = c.Connected,
+        ControllerName       = c.Name ?? string.Empty,
+        SystemName           = c.SystemName ?? string.Empty,
+        State                = ParseEnum<AbbControllerState>(c.State.ToString()),
+        OperatingMode        = ParseEnum<AbbOperatingMode>(c.OperatingMode.ToString()),
+        RapidExecutionStatus = ParseEnum<AbbExecutionStatus>(c.Rapid.ExecutionStatus.ToString()),
+    };
+
     /// <summary>把底層例外包成 <see cref="AbbRobotException"/>；已是該型別則原樣回傳。</summary>
     private static AbbRobotException Wrap(string method, AbbRobotErrorKind kind, Exception ex)
         => ex as AbbRobotException
@@ -324,16 +327,7 @@ public sealed class AbbRobotClient : IAbbRobotClient
         if (ctrl == null) return;
         try
         {
-            var status = new AbbRobotStatus
-            {
-                IsConnected          = ctrl.Connected,
-                ControllerName       = ctrl.Name ?? string.Empty,
-                SystemName           = ctrl.SystemName ?? string.Empty,
-                State                = ParseEnum<AbbControllerState>(ctrl.State.ToString()),
-                OperatingMode        = ParseEnum<AbbOperatingMode>(ctrl.OperatingMode.ToString()),
-                RapidExecutionStatus = ParseEnum<AbbExecutionStatus>(ctrl.Rapid.ExecutionStatus.ToString()),
-            };
-            StatusChanged?.Invoke(this, status);
+            StatusChanged?.Invoke(this, BuildStatus(ctrl));
         }
         catch {
             // 斷線後讀取其他屬性的競態例外 : 仍發射 Disconnected 確保 UI 狀態更新
