@@ -1,0 +1,335 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.AbbRobotSettingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d"
+             d:Background="White"
+             d:DesignHeight="600" d:DesignWidth="1000">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Toolbar -->
+        <DockPanel Grid.Row="0" Margin="8,6">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                             Width="22" Height="22" Margin="0,0,8,0"
+                             IsIndeterminate="True"
+                             VerticalAlignment="Center"
+                             Visibility="{Binding IsScanning, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <Button Margin="0,0,8,0"
+                        Command="{Binding RescanCommand}"
+                        ToolTip="{DynamicResource AbbSettingRescanTooltip}"
+                        Style="{StaticResource FunctionButtonStyle}">
+                    <materialDesign:PackIcon Kind="Refresh" Width="24" Height="24"
+                                             VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Button>
+                <Button Command="{Binding AddCommand}"
+                        ToolTip="{DynamicResource AbbSettingAddTooltip}"
+                        Style="{StaticResource FunctionButtonStyle}">
+                    <materialDesign:PackIcon Kind="Plus" Width="40" Height="40"
+                                             VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Button>
+            </StackPanel>
+            <TextBlock Text="{Binding ScanMessage}"
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       Style="{StaticResource MaterialDesignCaptionTextBlock}"/>
+        </DockPanel>
+
+        <!-- Robot card list -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Robots}" Margin="8,0,8,8">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,6"
+                                BorderThickness="1"
+                                BorderBrush="{DynamicResource MaterialDesignDivider}"
+                                CornerRadius="4"
+                                Padding="12,8"
+                                Background="{DynamicResource PrimaryBackgroundBrush}">
+                            <StackPanel>
+                                <!-- 列 1：IP 選取 + 連線 + 狀態 chip -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120"/>   <!-- IP 篩選 -->
+                                        <ColumnDefinition Width="200"/>   <!-- IP ComboBox -->
+                                        <ColumnDefinition Width="Auto"/>  <!-- 連線/斷線 -->
+                                        <ColumnDefinition Width="*"/>     <!-- 狀態 chip -->
+                                        <ColumnDefinition Width="Auto"/>  <!-- 刪除 -->
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- IP 篩選 TextBox -->
+                                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                        <TextBlock Text="{DynamicResource AbbSettingIpFilterHint}"
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBox Margin="0" Padding="0,3"
+                                                 Text="{Binding IpFilterText, UpdateSourceTrigger=PropertyChanged}"
+                                                 materialDesign:HintAssist.Hint="{DynamicResource AbbSettingIpFilterHint}"/>
+                                    </StackPanel>
+
+                                    <!-- IP ComboBox -->
+                                    <StackPanel Grid.Column="1" Margin="0,0,8,0">
+                                        <TextBlock Text="{DynamicResource AbbSettingIpHint}"
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <ComboBox ItemsSource="{Binding FilteredControllers}"
+                                                  SelectedItem="{Binding SelectedController}"
+                                                  materialDesign:HintAssist.Hint="{DynamicResource AbbSettingIpHint}">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock>
+                                                        <Run Text="{Binding IpAddress, Mode=OneWay}"/>
+                                                        <Run Text="  ("/><Run Text="{Binding ControllerName, Mode=OneWay}"/><Run Text=")"/>
+                                                    </TextBlock>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                    </StackPanel>
+
+                                    <!-- 連線 / 斷線 -->
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                                VerticalAlignment="Bottom">
+                                        <Button Style="{StaticResource GridEditButtonStyle}"
+                                                Command="{Binding ConnectCommand}"
+                                                ToolTip="{DynamicResource AbbSettingConnectTooltip}"
+                                                Foreground="{DynamicResource PrimaryBrush}">
+                                            <materialDesign:PackIcon Kind="LanConnect" Width="18" Height="18"/>
+                                        </Button>
+                                        <Button Style="{StaticResource GridEditButtonStyle}"
+                                                Command="{Binding DisconnectCommand}"
+                                                ToolTip="{DynamicResource AbbSettingDisconnectTooltip}"
+                                                Foreground="{DynamicResource SecondaryBrush}">
+                                            <materialDesign:PackIcon Kind="LanDisconnect" Width="18" Height="18"/>
+                                        </Button>
+                                    </StackPanel>
+
+                                    <!-- 狀態 chip（直接顯示狀態名稱，無燈號）-->
+                                    <WrapPanel Grid.Column="3" Orientation="Horizontal"
+                                               VerticalAlignment="Center" Margin="12,0,0,0">
+                                        <!-- 連線狀態 -->
+                                        <Border CornerRadius="8" Padding="8,2" Margin="0,0,6,2"
+                                                BorderThickness="1"
+                                                BorderBrush="{DynamicResource SecondaryBrush}">
+                                            <StackPanel>
+                                                <TextBlock Text="{DynamicResource AbbSettingConnLabel}"
+                                                           FontSize="10"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                                <TextBlock FontSize="13" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="{DynamicResource AbbSettingDisconnected}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                                                    <Setter Property="Text" Value="{DynamicResource AbbSettingConnected}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Border>
+                                        <!-- ControllerState -->
+                                        <Border CornerRadius="8" Padding="8,2" Margin="0,0,6,2"
+                                                BorderThickness="1"
+                                                BorderBrush="{DynamicResource SecondaryBrush}">
+                                            <StackPanel>
+                                                <TextBlock Text="{DynamicResource AbbSettingStateLabel}"
+                                                           FontSize="10"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                                <TextBlock Text="{Binding ControllerState}"
+                                                           FontSize="13" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <!-- OperatingMode -->
+                                        <Border CornerRadius="8" Padding="8,2" Margin="0,0,6,2"
+                                                BorderThickness="1"
+                                                BorderBrush="{DynamicResource SecondaryBrush}">
+                                            <StackPanel>
+                                                <TextBlock Text="{DynamicResource AbbSettingModeLabel}"
+                                                           FontSize="10"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                                <TextBlock Text="{Binding OperatingMode}"
+                                                           FontSize="13" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <!-- ExecutionStatus -->
+                                        <Border CornerRadius="8" Padding="8,2" Margin="0,0,6,2"
+                                                BorderThickness="1"
+                                                BorderBrush="{DynamicResource SecondaryBrush}">
+                                            <StackPanel>
+                                                <TextBlock Text="{DynamicResource AbbSettingExecLabel}"
+                                                           FontSize="10"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                                <TextBlock Text="{Binding ExecutionStatus}"
+                                                           FontSize="13" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </WrapPanel>
+
+                                    <!-- 刪除 -->
+                                    <Button Grid.Column="4"
+                                            VerticalAlignment="Bottom"
+                                            Style="{StaticResource GridEditButtonStyle}"
+                                            Command="{Binding DeleteCommand}"
+                                            ToolTip="{DynamicResource AbbSettingDeleteTooltip}"
+                                            Foreground="{DynamicResource ErrorBrush}">
+                                        <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
+                                    </Button>
+                                </Grid>
+
+                                <!-- 列 2：Task / Module / RAPID（連線後顯示）-->
+                                <Grid Margin="0,10,0,0"
+                                      Visibility="{Binding IsConnected, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>   <!-- Task -->
+                                        <ColumnDefinition Width="100"/>   <!-- Module 篩選 -->
+                                        <ColumnDefinition Width="160"/>   <!-- Module -->
+                                        <ColumnDefinition Width="100"/>   <!-- RAPID 篩選 -->
+                                        <ColumnDefinition Width="180"/>   <!-- RAPID -->
+                                        <ColumnDefinition Width="*"/>     <!-- 選定變數提示 -->
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Task -->
+                                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                        <TextBlock Text="{DynamicResource AbbSettingTaskLabel}"
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <ComboBox ItemsSource="{Binding Tasks}"
+                                                  SelectedItem="{Binding SelectedTask}"
+                                                  DisplayMemberPath="Name"/>
+                                    </StackPanel>
+
+                                    <!-- Module 篩選 -->
+                                    <StackPanel Grid.Column="1" Margin="0,0,8,0">
+                                        <TextBlock Text="{DynamicResource AbbSettingModuleFilterHint}"
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBox Margin="0" Padding="0,3"
+                                                 Text="{Binding ModuleFilterText, UpdateSourceTrigger=PropertyChanged}"
+                                                 materialDesign:HintAssist.Hint="{DynamicResource AbbSettingModuleFilterHint}"/>
+                                    </StackPanel>
+
+                                    <!-- Module -->
+                                    <StackPanel Grid.Column="2" Margin="0,0,8,0">
+                                        <TextBlock Text="{DynamicResource AbbSettingModuleLabel}"
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <ComboBox ItemsSource="{Binding FilteredModules}"
+                                                  SelectedItem="{Binding SelectedModule}"/>
+                                    </StackPanel>
+
+                                    <!-- RAPID 篩選 -->
+                                    <StackPanel Grid.Column="3" Margin="0,0,8,0">
+                                        <TextBlock Text="{DynamicResource AbbSettingRapidFilterHint}"
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBox Margin="0" Padding="0,3"
+                                                 Text="{Binding RapidFilterText, UpdateSourceTrigger=PropertyChanged}"
+                                                 materialDesign:HintAssist.Hint="{DynamicResource AbbSettingRapidFilterHint}"/>
+                                    </StackPanel>
+
+                                    <!-- RAPID -->
+                                    <StackPanel Grid.Column="4" Margin="0,0,8,0">
+                                        <TextBlock Text="{DynamicResource AbbSettingRapidLabel}"
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <ComboBox ItemsSource="{Binding FilteredRapidSymbols}"
+                                                  SelectedItem="{Binding SelectedRapidSymbol}"
+                                                  DisplayMemberPath="Name"/>
+                                    </StackPanel>
+
+                                    <!-- 選定變數的型別 / 種類提示（小字）-->
+                                    <TextBlock Grid.Column="5" VerticalAlignment="Bottom" Margin="0,0,0,6"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource SecondaryBrush}"
+                                               TextTrimming="CharacterEllipsis">
+                                        <Run Text="{Binding SelectedRapidSymbol.DataType, Mode=OneWay}"/>
+                                        <Run Text=" · "/>
+                                        <Run Text="{Binding SelectedRapidSymbol.Kind, Mode=OneWay}"/>
+                                    </TextBlock>
+                                </Grid>
+
+                                <!-- 列 3：RAPID 變數讀寫（選定 RAPID 後顯示）-->
+                                <Grid Margin="0,8,0,0"
+                                      Visibility="{Binding HasSelectedRapidSymbol,
+                                                   Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>   <!-- 讀取按鈕 -->
+                                        <ColumnDefinition Width="*"/>      <!-- Name : Value (type · kind) -->
+                                        <ColumnDefinition Width="160"/>    <!-- 新值 TextBox -->
+                                        <ColumnDefinition Width="Auto"/>   <!-- 寫入按鈕 -->
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Grid.Column="0"
+                                            Style="{StaticResource GridEditButtonStyle}"
+                                            Command="{Binding ReadValueCommand}"
+                                            ToolTip="{DynamicResource AbbSettingReadValueTooltip}"
+                                            Foreground="{DynamicResource PrimaryBrush}">
+                                        <materialDesign:PackIcon Kind="DatabaseSearch" Width="18" Height="18"/>
+                                    </Button>
+
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                                VerticalAlignment="Center" Margin="8,0">
+                                        <TextBlock FontWeight="SemiBold"
+                                                   Text="{Binding SelectedRapidSymbol.Name, Mode=OneWay}"/>
+                                        <TextBlock Text=" : "
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding RapidValue}"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock Margin="8,0,0,0" FontSize="11" VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource SecondaryBrush}">
+                                            <Run Text="("/>
+                                            <Run Text="{Binding SelectedRapidSymbol.DataType, Mode=OneWay}"/>
+                                            <Run Text=" · "/>
+                                            <Run Text="{Binding SelectedRapidSymbol.Kind, Mode=OneWay}"/>
+                                            <Run Text=")"/>
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <TextBox Grid.Column="2" Margin="0,0,8,0"
+                                             Text="{Binding NewValueText, UpdateSourceTrigger=PropertyChanged}"
+                                             materialDesign:HintAssist.Hint="{DynamicResource AbbSettingNewValueHint}"
+                                             IsEnabled="{Binding CanWrite}"/>
+
+                                    <Button Grid.Column="3"
+                                            Style="{StaticResource GridEditButtonStyle}"
+                                            Command="{Binding WriteValueCommand}"
+                                            ToolTip="{DynamicResource AbbSettingWriteValueTooltip}"
+                                            Foreground="{DynamicResource SecondaryBrush}"
+                                            IsEnabled="{Binding CanWrite}">
+                                        <materialDesign:PackIcon Kind="DatabaseEdit" Width="18" Height="18"/>
+                                    </Button>
+                                </Grid>
+
+                                <!-- 狀態訊息 -->
+                                <TextBlock Text="{Binding StatusMessage}"
+                                           Margin="0,4,0,0"
+                                           FontSize="11"
+                                           TextTrimming="CharacterEllipsis"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                           Style="{StaticResource MaterialDesignCaptionTextBlock}"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
