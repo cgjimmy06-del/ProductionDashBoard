@@ -105,10 +105,9 @@ namespace FProductionDashBoard
                 services.AddSingleton<Services.ICardReaderService>(sp =>
                     sp.GetRequiredService<Services.MultiCardReaderService>());
 
-                // 註冊 ABB 機器人用戶端（每台設備卡片各自持有獨立實例）
-                services.AddTransient<DeviceDrivers.Abb.IAbbRobotClient, DeviceDrivers.Abb.AbbRobotClient>();
+                // 註冊 ABB 機器人用戶端工廠（每台設備卡片各自持有獨立實例，由 ViewModel 負責釋放）
                 services.AddSingleton<Func<DeviceDrivers.Abb.IAbbRobotClient>>(
-                    sp => () => sp.GetRequiredService<DeviceDrivers.Abb.IAbbRobotClient>());
+                    _ => () => new DeviceDrivers.Abb.AbbRobotClient());
 
                 // 註冊 WebApi 服務
                 var factoryArea = config[$"EriApi:{selectedServer}"] ?? selectedServer;
