@@ -153,6 +153,53 @@ public sealed class AbbRobotClient : IAbbRobotClient
     }
 
     /// <inheritdoc/>
+    public IReadOnlyList<AbbRapidSymbolInfo> GetModuleVariables(string taskName, string moduleName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(taskName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(moduleName);
+        Controller c = RequireConnected(nameof(GetModuleVariables));
+        try
+        {
+            var task = c.Rapid.GetTask(taskName)
+                ?? throw new AbbRobotException(AbbRobotErrorKind.OperationFailed,
+                       $"[GetModuleVariables] 找不到 Task {taskName}。");
+            var module = task.GetModule(moduleName)
+                ?? throw new AbbRobotException(AbbRobotErrorKind.OperationFailed,
+                       $"[GetModuleVariables] 找不到 Module {moduleName}。");
+
+            // 只搜當前 module 層級的資料變數（recursive: false），不含 routine。
+            var props = RapidSymbolSearchProperties.CreateDefaultForData(recursive: false);
+            var result = new List<AbbRapidSymbolInfo>();
+            foreach (RapidSymbol symbol in module.SearchRapidSymbol(props))
+            {
+                string dataType = string.Empty;
+                try
+                {
+                    using RapidData rd = module.GetRapidData(symbol);
+                    dataType = rd.RapidType ?? string.Empty;
+                }
+                catch (Exception)
+                {
+                    // 個別變數型別讀取失敗時留空，不影響其他變數列舉。
+                    // 接住 ex 而非無參數 catch，保留可診斷的例外型別資訊。
+                }
+
+                result.Add(new AbbRapidSymbolInfo
+                {
+                    Name = symbol.Name,
+                    DataType = dataType,
+                    Kind = ToSymbolKind(symbol.Type),
+                });
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            throw Wrap(nameof(GetModuleVariables), AbbRobotErrorKind.OperationFailed, ex);
+        }
+    }
+
+    /// <inheritdoc/>
     public bool ReadBool(RapidVariableAddress address)
         => Read(address, nameof(ReadBool), rd => ((Bool)rd.Value).Value);
 
@@ -277,6 +324,13 @@ public sealed class AbbRobotClient : IAbbRobotClient
     /// <summary>把 ABB SDK enum 的字串表示對映成本專案 enum；對映不到時回 <c>Unknown</c>（= 0）。</summary>
     private static TEnum ParseEnum<TEnum>(string raw) where TEnum : struct, Enum
         => Enum.TryParse(raw, ignoreCase: true, out TEnum value) ? value : default;
+
+    /// <summary>把 RAPID 符號類型（flags）對映為簡短的變數種類字串；非資料變數回空字串。</summary>
+    private static string ToSymbolKind(SymbolTypes type) =>
+        type.HasFlag(SymbolTypes.Constant)   ? "CONST" :
+        type.HasFlag(SymbolTypes.Persistent) ? "PERS"  :
+        type.HasFlag(SymbolTypes.Variable)   ? "VAR"   :
+        string.Empty;
 
     /// <summary>由 <see cref="Controller"/> 組出狀態快照。<see cref="GetStatus"/> 與 <see cref="FireStatus"/> 共用。</summary>
     private static AbbRobotStatus BuildStatus(Controller c) => new()

@@ -45,6 +45,16 @@ public class AbbRobotClientGuardTests
     }
 
     [Fact]
+    public void GetModuleVariables_WhenNotConnected_ThrowsNotConnected()
+    {
+        using var client = new AbbRobotClient();
+
+        var ex = Assert.Throws<AbbRobotException>(
+            () => client.GetModuleVariables("T_ROB1", "Module1"));
+        Assert.Equal(AbbRobotErrorKind.NotConnected, ex.Kind);
+    }
+
+    [Fact]
     public void ReadWriteOperations_WhenNotConnected_ThrowNotConnected()
     {
         using var client = new AbbRobotClient();

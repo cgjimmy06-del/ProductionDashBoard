@@ -185,6 +185,25 @@
     <sys:String x:Key="CardReaderTestTooltip">Test connection</sys:String>
     <sys:String x:Key="CardReaderApplyTooltip">Apply and reconnect</sys:String>
     <sys:String x:Key="CardReaderDeleteTooltip">Remove card reader</sys:String>
+    <sys:String x:Key="HardwareTabAbbRobot">ABB Robot</sys:String>
+    <sys:String x:Key="AbbSettingRescanTooltip">Rescan controllers</sys:String>
+    <sys:String x:Key="AbbSettingAddTooltip">Add ABB device</sys:String>
+    <sys:String x:Key="AbbSettingConnectTooltip">Connect</sys:String>
+    <sys:String x:Key="AbbSettingDisconnectTooltip">Disconnect</sys:String>
+    <sys:String x:Key="AbbSettingDeleteTooltip">Remove device</sys:String>
+    <sys:String x:Key="AbbSettingIpFilterHint">Filter IP</sys:String>
+    <sys:String x:Key="AbbSettingIpHint">Controller IP</sys:String>
+    <sys:String x:Key="AbbSettingConnLabel">Connection</sys:String>
+    <sys:String x:Key="AbbSettingStateLabel">State</sys:String>
+    <sys:String x:Key="AbbSettingModeLabel">Mode</sys:String>
+    <sys:String x:Key="AbbSettingExecLabel">Execution</sys:String>
+    <sys:String x:Key="AbbSettingConnected">Connected</sys:String>
+    <sys:String x:Key="AbbSettingDisconnected">Disconnected</sys:String>
+    <sys:String x:Key="AbbSettingTaskLabel">Task</sys:String>
+    <sys:String x:Key="AbbSettingModuleLabel">Module</sys:String>
+    <sys:String x:Key="AbbSettingModuleFilterHint">Filter Module</sys:String>
+    <sys:String x:Key="AbbSettingRapidLabel">RAPID Variable</sys:String>
+    <sys:String x:Key="AbbSettingRapidFilterHint">Filter variable</sys:String>
     <!--#endregion-->
     <!--#region system settings view -->
     <sys:String x:Key="SsAppearanceHeader">Appearance</sys:String>

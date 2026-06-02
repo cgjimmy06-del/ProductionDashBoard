@@ -185,6 +185,25 @@
     <sys:String x:Key="CardReaderTestTooltip">Kiểm tra kết nối</sys:String>
     <sys:String x:Key="CardReaderApplyTooltip">Áp dụng và kết nối lại</sys:String>
     <sys:String x:Key="CardReaderDeleteTooltip">Xóa đầu đọc thẻ</sys:String>
+    <sys:String x:Key="HardwareTabAbbRobot">Robot ABB</sys:String>
+    <sys:String x:Key="AbbSettingRescanTooltip">Quét lại bộ điều khiển</sys:String>
+    <sys:String x:Key="AbbSettingAddTooltip">Thêm thiết bị ABB</sys:String>
+    <sys:String x:Key="AbbSettingConnectTooltip">Kết nối</sys:String>
+    <sys:String x:Key="AbbSettingDisconnectTooltip">Ngắt kết nối</sys:String>
+    <sys:String x:Key="AbbSettingDeleteTooltip">Xóa thiết bị</sys:String>
+    <sys:String x:Key="AbbSettingIpFilterHint">Lọc IP</sys:String>
+    <sys:String x:Key="AbbSettingIpHint">IP bộ điều khiển</sys:String>
+    <sys:String x:Key="AbbSettingConnLabel">Kết nối</sys:String>
+    <sys:String x:Key="AbbSettingStateLabel">Trạng thái</sys:String>
+    <sys:String x:Key="AbbSettingModeLabel">Chế độ</sys:String>
+    <sys:String x:Key="AbbSettingExecLabel">Thực thi</sys:String>
+    <sys:String x:Key="AbbSettingConnected">Đã kết nối</sys:String>
+    <sys:String x:Key="AbbSettingDisconnected">Chưa kết nối</sys:String>
+    <sys:String x:Key="AbbSettingTaskLabel">Task</sys:String>
+    <sys:String x:Key="AbbSettingModuleLabel">Module</sys:String>
+    <sys:String x:Key="AbbSettingModuleFilterHint">Lọc Module</sys:String>
+    <sys:String x:Key="AbbSettingRapidLabel">Biến RAPID</sys:String>
+    <sys:String x:Key="AbbSettingRapidFilterHint">Lọc biến</sys:String>
     <!--#endregion-->
     <!--#region system settings view -->
     <sys:String x:Key="SsAppearanceHeader">Ngoại hình</sys:String>

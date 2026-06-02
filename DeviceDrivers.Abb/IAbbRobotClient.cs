@@ -61,6 +61,15 @@ public interface IAbbRobotClient : IDisposable
     /// <exception cref="AbbRobotException">尚未連線（<see cref="AbbRobotErrorKind.NotConnected"/>）或讀取失敗。</exception>
     IReadOnlyList<AbbTaskInfo> GetTasks();
 
+    /// <summary>
+    /// 列出指定 Task / Module 之下的 RAPID 資料變數（僅當前 module 層級，不遞迴）。
+    /// 每筆含變數名稱、資料型別與種類（VAR / PERS / CONST）。
+    /// </summary>
+    /// <param name="taskName">Task 名稱。</param>
+    /// <param name="moduleName">Module 名稱。</param>
+    /// <exception cref="AbbRobotException">尚未連線（<see cref="AbbRobotErrorKind.NotConnected"/>）或讀取失敗。</exception>
+    IReadOnlyList<AbbRapidSymbolInfo> GetModuleVariables(string taskName, string moduleName);
+
     /// <summary>讀取一個 RAPID <c>bool</c> 變數。</summary>
     /// <exception cref="AbbRobotException">尚未連線或讀取失敗。</exception>
     bool ReadBool(RapidVariableAddress address);
