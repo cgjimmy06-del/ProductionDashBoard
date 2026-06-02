@@ -65,7 +65,7 @@
 
             <!-- 狀態燈號 -->
             <Border Grid.Column="0"
-                    Background="{Binding Info.Status, Converter={StaticResource IntToColorConverter}}"
+                    Background="{Binding AbbStatusLevel, Converter={StaticResource IntToColorConverter}}"
                     d:Background="Green"
                     CornerRadius="3"/>
 
@@ -124,6 +124,17 @@
                         <TextBlock Text="{Binding CurrentTimeSlotLabel}"
                                    FontSize="13" FontWeight="SemiBold"
                                    Foreground="{DynamicResource SecondaryBrush}"
+                                   VerticalAlignment="Center"/>
+                    </Border>
+                    <!-- ABB Auto 模式 chip -->
+                    <Border CornerRadius="8"
+                            Background="{DynamicResource WarningBrush}"
+                            Padding="8,2"
+                            Margin="0,0,6,0"
+                            Visibility="{Binding IsAbbAutoMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock Text="{DynamicResource AbbAutoModeChip}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextDarkBrush}"
                                    VerticalAlignment="Center"/>
                     </Border>
                     <!-- 生產中 chip -->
