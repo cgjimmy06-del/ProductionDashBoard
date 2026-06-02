@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeviceDrivers.Abb;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace FProductionDashBoard.ViewModels
     {
         private readonly Func<IAbbRobotClient> _clientFactory;
         private readonly IAbbRobotClient _scanner;   // 僅用於 DiscoverControllers，不連線
+        private readonly HashSet<string> _registeredRemotes = new();   // 已 AddRemote 的 IP（去重）
         private bool _disposed;
 
         [ObservableProperty] private ObservableCollection<AbbRobotEntryViewModel> robots = new();
@@ -64,8 +66,14 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
-        /// <summary>卡片要求以指定 IP 加入 remote 並重掃（同網段掃不到的控制器）。</summary>
-        private Task DiscoverWithHintAsync(string ipHint) => DiscoverAsync(ipHint);
+        /// <summary>
+        /// 卡片要求以指定 IP 加入 remote 並重掃（同網段掃不到的控制器）。
+        /// <c>AddRemoteController</c> 為進程全域且無法移除，故同一 IP 只註冊一次，之後僅重掃。
+        /// </summary>
+        private Task DiscoverWithHintAsync(string ipHint) =>
+            _registeredRemotes.Add(ipHint)
+                ? DiscoverAsync(ipHint)   // 首次 → 傳 hint（驅動內 AddRemoteController）+ 重掃
+                : DiscoverAsync();        // 已註冊 → 只重掃，不重複 AddRemote
 
         private void AddRobot()
         {

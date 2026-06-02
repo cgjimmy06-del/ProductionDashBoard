@@ -75,18 +75,9 @@ namespace FProductionDashBoard.ViewModels
         }
 
         // ── IP 篩選 ─────────────────────────────────────────────────────────
-        partial void OnIpFilterTextChanged(string? value)
-        {
-            RebuildFilteredControllers();
-
-            // 篩選後無結果，且輸入文字為合法 IP → 加入 remote 並重掃
-            if (FilteredControllers.Count == 0
-                && !string.IsNullOrWhiteSpace(value)
-                && IPAddress.TryParse(value.Trim(), out _))
-            {
-                _ = _discoverWithHint(value.Trim());
-            }
-        }
+        // 僅做清單過濾；remote 註冊改在「按連線」時才觸發（見 ConnectAsync），
+        // 避免逐字輸入時對進程全域且無法移除的 AddRemoteController 反覆註冊中間 IP。
+        partial void OnIpFilterTextChanged(string? value) => RebuildFilteredControllers();
 
         private void OnDiscoveredChanged(object? sender, NotifyCollectionChangedEventArgs e)
             => RebuildFilteredControllers();
@@ -106,10 +97,30 @@ namespace FProductionDashBoard.ViewModels
         // ── 連線 / 斷線 ──────────────────────────────────────────────────────
         private async Task ConnectAsync()
         {
-            if (SelectedController is null) { StatusMessage = "請先選擇控制器"; return; }
+            var target = SelectedController;
+
+            // 未選控制器但篩選框是合法 IP → 此時才加入 remote 並重掃，再選取該 IP（原需求「加入 remote 並嘗試連線」）
+            if (target is null)
+            {
+                var ip = IpFilterText?.Trim();
+                if (string.IsNullOrEmpty(ip) || !IPAddress.TryParse(ip, out _))
+                {
+                    StatusMessage = "請選擇控制器或輸入有效 IP";
+                    return;
+                }
+                await _discoverWithHint(ip).ConfigureAwait(true);
+                target = _discovered.FirstOrDefault(c => c.IpAddress == ip);
+                if (target is null)
+                {
+                    StatusMessage = $"找不到控制器 {ip}";
+                    return;
+                }
+                SelectedController = target;
+            }
+
             try
             {
-                var ctrl = SelectedController;
+                var ctrl = target;
                 await Task.Run(() => _client.Connect(ctrl)).ConfigureAwait(true);
                 StatusMessage = $"已連線 {ctrl.IpAddress}";
 
