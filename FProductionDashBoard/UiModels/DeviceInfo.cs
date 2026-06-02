@@ -23,7 +23,5 @@ namespace FProductionDashBoard.UiModels
         public string? Building { get; set; }
         public string? Floor { get; set; }
         public string? Description { get; set; }
-        [ObservableProperty]
-        private int status;
     }
 }

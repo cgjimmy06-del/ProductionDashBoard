@@ -246,6 +246,7 @@
     <!--#endregion-->
     <!--#region 接單服務-->
     <sys:String x:Key="DeviceInProduction">生產中</sys:String>
+    <sys:String x:Key="AbbAutoModeChip">自動</sys:String>
     <sys:String x:Key="QuickOrderButton">+ 快速接單</sys:String>
     <sys:String x:Key="StartProductionButton">開始生產</sys:String>
     <sys:String x:Key="EndProductionButton">結束生產</sys:String>

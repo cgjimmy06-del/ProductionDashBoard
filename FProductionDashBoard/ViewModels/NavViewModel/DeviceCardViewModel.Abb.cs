@@ -15,10 +15,36 @@ namespace FProductionDashBoard.ViewModels
         private CancellationTokenSource? _abbLoopCts;
         private Task? _abbLoopTask;
 
-        [ObservableProperty] private bool isAbbConnected;
-        [ObservableProperty] private AbbControllerState abbControllerState;
-        [ObservableProperty] private AbbOperatingMode abbOperatingMode;
-        [ObservableProperty] private AbbExecutionStatus abbExecutionStatus;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(AbbStatusLevel))]
+        private bool isAbbConnected;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(AbbStatusLevel))]
+        private AbbControllerState abbControllerState;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(AbbStatusLevel))]
+        [NotifyPropertyChangedFor(nameof(IsAbbAutoMode))]
+        private AbbOperatingMode abbOperatingMode;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(AbbStatusLevel))]
+        private AbbExecutionStatus abbExecutionStatus;
+
+        /// <summary>
+        /// 燈號等級，對映 IntToColorConverter（0=綠/Success, 1=黃/Warning, 2=紅/Error, other=灰/Idle）。
+        /// 非 ABB 設備或未連線恆回 3（Idle）。優先序：錯誤狀態 > Running > 已連線預設。
+        /// </summary>
+        public int AbbStatusLevel =>
+            !IsAbbConnected ? 3 :
+            AbbControllerState is AbbControllerState.GuardStop or AbbControllerState.EmergencyStop
+                or AbbControllerState.EmergencyStopReset or AbbControllerState.SystemFailure ? 2 :
+            AbbExecutionStatus == AbbExecutionStatus.Running ? 0 :
+            1;
+
+        /// <summary>OperatingMode 為 Auto 時為 true，控制 Auto chip 可見性。</summary>
+        public bool IsAbbAutoMode => AbbOperatingMode == AbbOperatingMode.Auto;
 
         private void InitAbb(IAbbRobotClient? abbClient)
         {
@@ -29,7 +55,7 @@ namespace FProductionDashBoard.ViewModels
         }
 
         private static bool IsValidAbbIp(string? ip) =>
-            !string.IsNullOrWhiteSpace(ip) && ip != "none";
+            System.Net.IPAddress.TryParse(ip, out _);
 
         private void StartAbbLoop()
         {
@@ -71,12 +97,6 @@ namespace FProductionDashBoard.ViewModels
 
         private void OnAbbStatusChanged(object? sender, AbbRobotStatus status)
         {
-            _core.Log.AddLog($"[ABB] {Info.Name} " +
-                $"StateChanged -> " +
-                $"IsConnected={status.IsConnected} " +
-                $"State={status.State} " +
-                $"OperatingMode={status.OperatingMode} " +
-                $"RapidExecutionStatus={status.RapidExecutionStatus} ");
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 IsAbbConnected     = status.IsConnected;
