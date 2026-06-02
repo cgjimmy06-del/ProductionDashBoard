@@ -248,17 +248,19 @@ namespace FProductionDashBoard.ViewModels
             var addr = new RapidVariableAddress(SelectedTask.Name, SelectedModule, SelectedRapidSymbol.Name);
             try
             {
-                var dataType = SelectedRapidSymbol.DataType;
-                RapidValue = dataType switch
+                RapidValue = SelectedRapidSymbol.DataType switch
                 {
-                    _ when dataType.Contains('{') => FormatArrayHint(dataType),
                     "bool"   => (await Task.Run(() => _client.ReadBool(addr))).ToString().ToLower(),
                     "num"    => (await Task.Run(() => _client.ReadNum(addr))).ToString(),
                     "string" => await Task.Run(() => _client.ReadString(addr)),
                     _        => "（不支援，待後續階段）"
                 };
             }
-            catch (AbbRobotException ex) { StatusMessage = $"讀取失敗：{ex.Message}"; }
+            catch (AbbRobotException ex)
+            {
+                RapidValue = "讀取失敗";
+                StatusMessage = $"讀取失敗：{ex.Message}";
+            }
         }
 
         private async Task WriteValueAsync()
@@ -313,14 +315,6 @@ namespace FProductionDashBoard.ViewModels
                 OperatingMode   = status.OperatingMode;
                 ExecutionStatus = status.RapidExecutionStatus;
             });
-        }
-
-        private static string FormatArrayHint(string dataType)
-        {
-            var brace = dataType.IndexOf('{');
-            var baseType = dataType[..brace];
-            var dims = dataType[(brace + 1)..dataType.IndexOf('}')];
-            return $"（{baseType} 陣列[{dims}]，待後續階段）";
         }
 
         private void Delete()

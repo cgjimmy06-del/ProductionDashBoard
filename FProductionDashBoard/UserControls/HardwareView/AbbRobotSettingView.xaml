@@ -316,6 +316,14 @@
                                         <materialDesign:PackIcon Kind="DatabaseEdit" Width="18" Height="18"/>
                                     </Button>
                                 </Grid>
+
+                                <!-- 狀態訊息 -->
+                                <TextBlock Text="{Binding StatusMessage}"
+                                           Margin="0,4,0,0"
+                                           FontSize="11"
+                                           TextTrimming="CharacterEllipsis"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                           Style="{StaticResource MaterialDesignCaptionTextBlock}"/>
                             </StackPanel>
                         </Border>
                     </DataTemplate>
