@@ -33,7 +33,9 @@ namespace FProductionDashBoard.ViewModels
         // ── 狀態 chip ────────────────────────────────────────────────────────
         [ObservableProperty] private bool isConnected;
         [ObservableProperty] private AbbControllerState controllerState;
-        [ObservableProperty] private AbbOperatingMode operatingMode;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanWrite))]
+        private AbbOperatingMode operatingMode;
         [ObservableProperty] private AbbExecutionStatus executionStatus;
         [ObservableProperty] private string? statusMessage;
 
@@ -58,10 +60,11 @@ namespace FProductionDashBoard.ViewModels
 
         public bool HasSelectedRapidSymbol => SelectedRapidSymbol is not null;
 
-        /// <summary>VAR / PERS 且型別為 bool / num / string 時才可寫入。</summary>
+        /// <summary>VAR / PERS、型別為 bool / num / string，且非 Auto 模式時才可寫入。</summary>
         public bool CanWrite =>
             SelectedRapidSymbol?.Kind is "VAR" or "PERS" &&
-            SelectedRapidSymbol?.DataType is "bool" or "num" or "string";
+            SelectedRapidSymbol?.DataType is "bool" or "num" or "string" &&
+            OperatingMode != AbbOperatingMode.Auto;
 
         public IAsyncRelayCommand ConnectCommand { get; }
         public IRelayCommand DisconnectCommand { get; }
@@ -245,8 +248,10 @@ namespace FProductionDashBoard.ViewModels
             var addr = new RapidVariableAddress(SelectedTask.Name, SelectedModule, SelectedRapidSymbol.Name);
             try
             {
-                RapidValue = SelectedRapidSymbol.DataType switch
+                var dataType = SelectedRapidSymbol.DataType;
+                RapidValue = dataType switch
                 {
+                    _ when dataType.Contains('{') => FormatArrayHint(dataType),
                     "bool"   => (await Task.Run(() => _client.ReadBool(addr))).ToString().ToLower(),
                     "num"    => (await Task.Run(() => _client.ReadNum(addr))).ToString(),
                     "string" => await Task.Run(() => _client.ReadString(addr)),
@@ -259,6 +264,11 @@ namespace FProductionDashBoard.ViewModels
         private async Task WriteValueAsync()
         {
             if (SelectedRapidSymbol is null || SelectedTask is null || SelectedModule is null) return;
+            if (OperatingMode == AbbOperatingMode.Auto)
+            {
+                StatusMessage = "Auto 模式下無法寫入變數";
+                return;
+            }
             var addr = new RapidVariableAddress(SelectedTask.Name, SelectedModule, SelectedRapidSymbol.Name);
 
             var confirm = MessageBox.Show(
@@ -303,6 +313,14 @@ namespace FProductionDashBoard.ViewModels
                 OperatingMode   = status.OperatingMode;
                 ExecutionStatus = status.RapidExecutionStatus;
             });
+        }
+
+        private static string FormatArrayHint(string dataType)
+        {
+            var brace = dataType.IndexOf('{');
+            var baseType = dataType[..brace];
+            var dims = dataType[(brace + 1)..dataType.IndexOf('}')];
+            return $"（{baseType} 陣列[{dims}]，待後續階段）";
         }
 
         private void Delete()
