@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import date
 
 OUTPUT_DIR = Path(r"C:\AIresources\DB_outputFile")
-VERSION_TAG = "v1.3"
+VERSION_TAG = "v2.5"
 DOCX_PATH  = OUTPUT_DIR / f"UserManual_FProductionDashBoard_{VERSION_TAG}.docx"
 PDF_PATH   = OUTPUT_DIR / f"UserManual_FProductionDashBoard_{VERSION_TAG}.pdf"
 REVIEW_DATE = date.today().strftime("%Y-%m-%d")
@@ -233,7 +233,7 @@ def generate_manual():
 
     doc.add_paragraph()
     for label, value in [
-        ("文件版本", f"{VERSION_TAG}（含系統設定 / 日誌管理 / 版面配置）"),
+        ("文件版本", f"{VERSION_TAG}（含硬體設定 / ABB機械手 / 離線優化）"),
         ("適用對象", "現場操作人員、設備管理員、系統管理員"),
         ("語言版本", "繁體中文"),
         ("文件日期", REVIEW_DATE),
@@ -256,7 +256,8 @@ def generate_manual():
             ["v1.0", "2026-05-06", "—",                  "初版建立"],
             ["v1.1", "2026-05-13", "AI-assisted",       "補主畫面版面配置（PR#29）+ Menu 外觀切換（PR#32）"],
             ["v1.2", "2026-05-15", "AI-assisted",       "補日誌管理上傳功能（PR#36）+ 閒置偵測機制更新（PR#37）"],
-            [VERSION_TAG, REVIEW_DATE, "AI-assisted",   "補系統參數設定（PR#26）+ 章節對齊現況；輸出路徑改為 DB_outputFile"],
+            ["v1.3", "2026-05-21", "AI-assisted",       "補系統參數設定（PR#26）+ 章節對齊現況；輸出路徑改為 DB_outputFile"],
+            [VERSION_TAG, REVIEW_DATE, "AI-assisted",   "新增 6.8 硬體設定（PR#62）；補 ABB 機械手說明；離線優化說明"],
         ],
         [2.0, 2.5, 3.5, 8.0]
     )
@@ -293,8 +294,9 @@ def generate_manual():
         ("  6.4", "錯誤清單管理", ""),
         ("  6.5", "巡檢時段設定", ""),
         ("  6.6", "角色與權限管理", ""),
-        ("  6.7", "系統參數設定", ""),
-        ("  6.8", "日誌管理與上傳", ""),
+        ("  6.7", "系統參數設定（業務時間 / 排程 / 閒置登出）", ""),
+        ("  6.8", "硬體設定（讀卡機 / ABB 機械手 RAPID 位址）", ""),
+        ("  6.9", "日誌管理與上傳", ""),
         ("7.", "硬體設定（讀卡機）", ""),
         ("8.", "離線模式說明", ""),
         ("9.", "登出與閒置保護", ""),
@@ -634,7 +636,32 @@ def generate_manual():
     note("修改設定後請按「套用」儲存；未儲存的變更會在頂部顯示警告橫條提示", kind="warn")
     img_placeholder("系統設定頁面（業務時間 + 同步 + 補檢 + 閒置四區塊）")
 
-    heading2("6.8 日誌管理與上傳")
+    heading2("6.8 硬體設定（系統設定中的進階參數）")
+    body("「系統設定」視窗中提供硬體設定區塊，可設定讀卡機連線參數與 ABB 機械手 RAPID 變數位址。"
+         "修改後請點擊「套用」儲存至 hardware_config.json（儲存位置：%LOCALAPPDATA%\\FProductionDashBoard\\）。")
+    heading3("讀卡機")
+    simple_table(
+        ["設定項","說明","預設值"],
+        [
+            ["COM Port",   "讀卡機連接的 Windows 串列埠號碼",   "COM3"],
+            ["Baud Rate",  "串列通訊鮑率，需與讀卡機型號一致",  "115200"],
+        ],
+        [4, 9, 3]
+    )
+    heading3("ABB 機械手（SeqNo RAPID 變數位址）")
+    body("用於設定系統寫入生產序號（SeqNo）的 RAPID 變數目標位置，需與機器人程式中的變數名稱一致。")
+    simple_table(
+        ["設定項","說明","預設值"],
+        [
+            ["Task",     "RAPID Task 名稱",                        "T_ROB1"],
+            ["Module",   "RAPID Module 名稱",                      "MES"],
+            ["Variable", "RAPID 變數名稱（接收序號的整數變數）",   "MES_project"],
+        ],
+        [3.5, 9, 3.5]
+    )
+    note("修改 RAPID 變數位址後，需確認機器人程式中對應的變數已宣告為整數型別（num 或 dnum）", kind="warn")
+
+    heading2("6.9 日誌管理與上傳")
     body("系統設定頁的「日誌管理」區塊提供日誌檔案設定與遠端上傳功能，"
          "可協助工程師遠端取得現場 Log 進行異常排查。")
     heading3("日誌設定")
