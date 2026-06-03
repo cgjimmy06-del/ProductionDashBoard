@@ -10,7 +10,7 @@ from datetime import date
 from pathlib import Path
 
 OUTPUT_DIR = Path(r"C:\AIresources\DB_outputFile")
-VERSION_TAG = "v1.3"
+VERSION_TAG = "v2.5"
 XLSX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.xlsx"
 DOCX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.docx"
 PDF_PATH  = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.pdf"
@@ -263,7 +263,7 @@ FINDINGS = [
 
     ("P5-L3","Low","品質","CardReaderService.cs","19, 29","建構子",
      "COM3 / 115200 預設值與 Settings.settings 重複",
-     "從 Settings.Default.ReaderPort / ReaderBaud 讀取","Phase 4","待修"),
+     "從 Settings.Default.ReaderPort / ReaderBaud 讀取","Phase 4","已修正 PR#62"),
 
     ("P5-L4","Low","品質","DataServiceV1.cs","18","using 區",
      "using static System.Reflection.Metadata.BlobBuilder; 未使用",
@@ -622,7 +622,8 @@ def generate_word():
         ["v1.0", "2026-05-06", "AI-assisted Review", "初版發布：完整程式碼審查（43 項發現）", "已歸檔"],
         ["v1.1", "2026-05-13", "AI-assisted Review", "Phase 1-3 修復進度追蹤（PR #20/#21/#22/#23/#34）", "已歸檔"],
         ["v1.2", "2026-05-15", "AI-assisted Review", "PR #36 (Log 上傳) + PR #37 (B1/UI-03/IDLE-01)", "已歸檔"],
-        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "二輪審查 + 18 項新發現 (P5-H1~L6) + 完整修復追蹤", "更新版"],
+        ["v1.3", "2026-05-21", "AI-assisted Review", "二輪審查 + 18 項新發現 (P5-H1~L6) + 完整修復追蹤", "已歸檔"],
+        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V2.5.1 發佈版本更新；PR #62 硬體設定持久化（P5-L3 已解決）", "更新版"],
     ]
     rev_tbl = doc.add_table(rows=len(rev_history)+1, cols=5)
     rev_tbl.style = "Table Grid"
