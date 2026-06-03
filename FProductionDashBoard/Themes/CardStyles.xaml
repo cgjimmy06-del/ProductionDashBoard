@@ -6,7 +6,7 @@
     <!-- 用於 動態生成複數卡片時產生之具名樣式設計 -->
 
     <!-- 主視窗用的簡單卡片 -->
-    <Style TargetType="localcontrols:DeviceCard" x:Key="MainCardStyle">
+    <Style TargetType="localcontrols:DeviceCardView" x:Key="MainCardStyle">
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="Height" Value="Auto"/>
 

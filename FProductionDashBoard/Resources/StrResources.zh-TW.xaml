@@ -229,6 +229,14 @@
     <sys:String x:Key="SsIdleLogoutLabel">閒置登出</sys:String>
     <sys:String x:Key="SsEvery">每</sys:String>
     <sys:String x:Key="SsSecondUnit">秒</sys:String>
+    <sys:String x:Key="SsHardwareHeader">硬體設定</sys:String>
+    <sys:String x:Key="SsCardReaderSubHeader">讀卡機</sys:String>
+    <sys:String x:Key="SsCardReaderPort">連接埠</sys:String>
+    <sys:String x:Key="SsCardReaderBaud">鮑率</sys:String>
+    <sys:String x:Key="SsAbbRobotSubHeader">ABB 機械手</sys:String>
+    <sys:String x:Key="SsAbbSeqNoTask">任務名稱</sys:String>
+    <sys:String x:Key="SsAbbSeqNoModule">模組名稱</sys:String>
+    <sys:String x:Key="SsAbbSeqNoVariable">變數名稱</sys:String>
     <sys:String x:Key="SsAboutHeader">關於</sys:String>
     <sys:String x:Key="SsVersionLabel">版本</sys:String>
     <sys:String x:Key="SsApplyButton">套用設定</sys:String>

@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.Services.Exceptions;
@@ -32,6 +33,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly IServiceProvider _serviceProvider;
         private readonly IDialogService _dialog;
         private readonly CardReaderHandler _cardReaderHandler;
+        private readonly IConfigService<SystemConfigDto> _systemConfig;
         #endregion
 
         [ObservableProperty] public string? systemUser;
@@ -73,7 +75,8 @@ namespace FProductionDashBoard.ViewModels
             MultiCardReaderService multiCardReaderService,
             IServiceProvider sp,
             IDialogService dialogService,
-            ListsFromSql commonLists)
+            ListsFromSql commonLists,
+            IConfigService<SystemConfigDto> systemConfig)
         {
             _core = core;
             _syncService = syncService;
@@ -81,6 +84,7 @@ namespace FProductionDashBoard.ViewModels
             _serviceProvider = sp;
             _dialog = dialogService;
             CommonLists = commonLists;
+            _systemConfig = systemConfig;
 
             _cardReaderHandler = new CardReaderHandler(
                 _core, sp.GetRequiredService<Services.WebApi.IErpApiService>(), _dialog, CommonLists);

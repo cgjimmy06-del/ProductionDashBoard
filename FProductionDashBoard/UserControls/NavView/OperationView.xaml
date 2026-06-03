@@ -41,7 +41,7 @@
                 <ItemsControl ItemsSource="{Binding Devices}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <localuc:DeviceCard Style="{StaticResource MainCardStyle}"/>
+                            <localuc:DeviceCardView Style="{StaticResource MainCardStyle}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

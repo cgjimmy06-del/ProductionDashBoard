@@ -18,6 +18,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Properties\PublishProfiles\**" />
+	  <EmbeddedResource Remove="Properties\PublishProfiles\**" />
+	  <None Remove="Properties\PublishProfiles\**" />
+	  <Page Remove="Properties\PublishProfiles\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove="appsettings.json" />
 		<None Remove="Resources\social-connections256.png" />
 	</ItemGroup>

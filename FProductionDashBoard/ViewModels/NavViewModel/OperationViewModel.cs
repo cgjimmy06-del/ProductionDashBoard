@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeviceDrivers.Abb;
+using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.Services.Exceptions;
 using FProductionDashBoard.UiModels;
@@ -31,6 +32,7 @@ namespace FProductionDashBoard.ViewModels
 
         // 硬體設備連線方法
         private readonly Func<IAbbRobotClient> _abbClientFactory;
+        private readonly IConfigService<HardwareConfigDto> _hardwareConfig;
         private const int AbbEquipmentTypeId = 1;
 
         public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
@@ -43,12 +45,13 @@ namespace FProductionDashBoard.ViewModels
         public ICommand DeleteDevicesCommand { get; }
 
         public OperationViewModel(DashboardCoreServices core, Services.IDialogService dialog, ListsFromSql getlists,
-            Func<IAbbRobotClient> abbClientFactory)
+            Func<IAbbRobotClient> abbClientFactory, IConfigService<HardwareConfigDto> hardwareConfig)
         {
             _core = core;
             _dialog = dialog;
             commonLists = getlists;
             _abbClientFactory = abbClientFactory;
+            _hardwareConfig = hardwareConfig;
 
             FirstArticleInsAllCommand = new AsyncRelayCommand(() => FirstArticleInsAll(),
                 () => _core.Authorization.HasPermission(PermissionId.OperateInspection));
@@ -184,7 +187,7 @@ namespace FProductionDashBoard.ViewModels
                 foreach (var iselection in result.Selections)
                 {
                     var abbClient = iselection.TypeId == AbbEquipmentTypeId ? _abbClientFactory() : null;
-                    var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, abbClient);
+                    var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, _hardwareConfig, abbClient);
                     await idevice.UpdateTimeSlotsStatusAsync();
                     Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                     _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
@@ -215,7 +218,7 @@ namespace FProductionDashBoard.ViewModels
             foreach (var iselection in result)
             {
                 var abbClient = iselection.TypeId == AbbEquipmentTypeId ? _abbClientFactory() : null;
-                var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, abbClient);
+                var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, _hardwareConfig, abbClient);
                 await idevice.UpdateTimeSlotsStatusAsync();
                 Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                 _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);

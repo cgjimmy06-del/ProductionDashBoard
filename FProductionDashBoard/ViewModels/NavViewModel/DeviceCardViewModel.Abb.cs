@@ -136,18 +136,14 @@ namespace FProductionDashBoard.ViewModels
         // 開始生產時把該訂單的 EquipmentProduct.SeqNo 寫入機器人指定 num 變數，
         // 結束生產（及啟動失敗復原）時寫回 0。位址常數待依現場 RAPID 程式填寫。
 
-        // TODO 待填：依現場 ABB RAPID 程式填入實際 Task / Module / 變數名
-        private const string SeqNoTask     = "T_ROB1";
-        private const string SeqNoModule   = "Module1";
-        private const string SeqNoVariable = "MES_project";
-
         /// <summary>
         /// 把指定 SeqNo 寫入機器人變數。連線/寫入失敗會 <b>拋出</b> <see cref="AbbRobotException"/>，
         /// 供開始生產流程判斷成敗（失敗則不更新訂單）。呼叫端需先確認為 ABB 設備（_abbClient 非 null）。
         /// </summary>
         private Task WriteSeqNoAsync(int seqNo)
         {
-            var addr = new RapidVariableAddress(SeqNoTask, SeqNoModule, SeqNoVariable);
+            var cfg = _hardwareConfig.Current;
+            var addr = new RapidVariableAddress(cfg.AbbSeqNoTask, cfg.AbbSeqNoModule, cfg.AbbSeqNoVariable);
             return Task.Run(() => _abbClient!.WriteNum(addr, seqNo));
         }
 
@@ -158,7 +154,8 @@ namespace FProductionDashBoard.ViewModels
         private void ResetSeqNoFireAndForget()
         {
             if (_abbClient == null) return;
-            var addr = new RapidVariableAddress(SeqNoTask, SeqNoModule, SeqNoVariable);
+            var cfg = _hardwareConfig.Current;
+            var addr = new RapidVariableAddress(cfg.AbbSeqNoTask, cfg.AbbSeqNoModule, cfg.AbbSeqNoVariable);
             _ = Task.Run(() =>
             {
                 try { _abbClient.WriteNum(addr, 0); }
