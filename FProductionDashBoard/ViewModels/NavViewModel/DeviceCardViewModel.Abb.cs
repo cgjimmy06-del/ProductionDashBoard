@@ -138,8 +138,8 @@ namespace FProductionDashBoard.ViewModels
 
         // TODO 待填：依現場 ABB RAPID 程式填入實際 Task / Module / 變數名
         private const string SeqNoTask     = "T_ROB1";
-        private const string SeqNoModule   = "TODO_MODULE";
-        private const string SeqNoVariable = "TODO_SEQNO_VAR";
+        private const string SeqNoModule   = "Module1";
+        private const string SeqNoVariable = "MES_project";
 
         /// <summary>
         /// 把指定 SeqNo 寫入機器人變數。連線/寫入失敗會 <b>拋出</b> <see cref="AbbRobotException"/>，
