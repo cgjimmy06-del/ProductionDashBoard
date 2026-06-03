@@ -18,9 +18,9 @@ namespace FProductionDashBoard.UserControls
     /// <summary>
     /// DeviceCard.xaml 的互動邏輯
     /// </summary>
-    public partial class DeviceCard : UserControl
+    public partial class DeviceCardView : UserControl
     {
-        public DeviceCard()
+        public DeviceCardView()
         {
             InitializeComponent();
         }
