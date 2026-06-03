@@ -229,6 +229,14 @@
     <sys:String x:Key="SsIdleLogoutLabel">Idle Logout</sys:String>
     <sys:String x:Key="SsEvery">Every</sys:String>
     <sys:String x:Key="SsSecondUnit">sec</sys:String>
+    <sys:String x:Key="SsHardwareHeader">Hardware Settings</sys:String>
+    <sys:String x:Key="SsCardReaderSubHeader">Card Reader</sys:String>
+    <sys:String x:Key="SsCardReaderPort">Port</sys:String>
+    <sys:String x:Key="SsCardReaderBaud">Baud Rate</sys:String>
+    <sys:String x:Key="SsAbbRobotSubHeader">ABB Robot</sys:String>
+    <sys:String x:Key="SsAbbSeqNoTask">Task</sys:String>
+    <sys:String x:Key="SsAbbSeqNoModule">Module</sys:String>
+    <sys:String x:Key="SsAbbSeqNoVariable">Variable</sys:String>
     <sys:String x:Key="SsAboutHeader">About</sys:String>
     <sys:String x:Key="SsVersionLabel">Version</sys:String>
     <sys:String x:Key="SsApplyButton">Apply Settings</sys:String>

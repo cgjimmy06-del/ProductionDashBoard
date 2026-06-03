@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.Services.WebApi;
 using MaterialDesignColors;
@@ -21,6 +22,8 @@ namespace FProductionDashBoard.ViewModels
     {
         private readonly DashboardCoreServices _core;
         private readonly ILogUploadService _logUpload;
+        private readonly IConfigService<SystemConfigDto> _systemConfig;
+        private readonly IConfigService<HardwareConfigDto> _hardwareConfig;
 
         private readonly PaletteHelper _paletteHelper = new PaletteHelper();
         private readonly Theme _lightTheme = Theme.Create(BaseTheme.Light,
@@ -55,6 +58,19 @@ namespace FProductionDashBoard.ViewModels
         partial void OnMissedCheckIntervalSecChanged(int value) => HasUnsavedChanges = true;
         partial void OnIdleLogoutEnabledChanged(bool value)     => HasUnsavedChanges = true;
         partial void OnIdleLogoutIntervalSecChanged(int value)  => HasUnsavedChanges = true;
+
+        // 硬體設定
+        [ObservableProperty] private string readerPort       = "COM3";
+        [ObservableProperty] private int    readerBaud        = 115200;
+        [ObservableProperty] private string abbSeqNoTask     = "T_ROB1";
+        [ObservableProperty] private string abbSeqNoModule   = "MES";
+        [ObservableProperty] private string abbSeqNoVariable = "MES_project";
+
+        partial void OnReaderPortChanged(string value)       => HasUnsavedChanges = true;
+        partial void OnReaderBaudChanged(int value)          => HasUnsavedChanges = true;
+        partial void OnAbbSeqNoTaskChanged(string value)     => HasUnsavedChanges = true;
+        partial void OnAbbSeqNoModuleChanged(string value)   => HasUnsavedChanges = true;
+        partial void OnAbbSeqNoVariableChanged(string value) => HasUnsavedChanges = true;
 
         // 日誌設定（直接映射 LogService，setter 同時觸發 HasUnsavedChanges）
         public bool LogSaveToFile
@@ -95,10 +111,13 @@ namespace FProductionDashBoard.ViewModels
         public IRelayCommand<string> RemoveAttachmentCommand { get; }
         public IAsyncRelayCommand UploadLogCommand { get; }
 
-        public SystemSettingsViewModel(DashboardCoreServices core, ILogUploadService logUploadService)
+        public SystemSettingsViewModel(DashboardCoreServices core, ILogUploadService logUploadService,
+            IConfigService<SystemConfigDto> systemConfig, IConfigService<HardwareConfigDto> hardwareConfig)
         {
             _core = core;
             _logUpload = logUploadService;
+            _systemConfig = systemConfig;
+            _hardwareConfig = hardwareConfig;
             LoadFromSettings();
 
             AttachmentPaths.CollectionChanged += (_, _) => HasAttachments = AttachmentPaths.Count > 0;
@@ -129,36 +148,54 @@ namespace FProductionDashBoard.ViewModels
 
         public void LoadFromSettings()
         {
-            var s = Properties.Settings.Default;
-            BusinessHour           = s.BusinessHour;
-            BusinessMinute         = s.BusinessMinute;
-            SyncEnabled            = s.SyncEnabled;
-            SyncIntervalSec        = s.SyncIntervalSec;
-            MissedCheckEnabled     = s.MissedCheckEnabled;
-            MissedCheckIntervalSec = s.MissedCheckIntervalSec;
-            IdleLogoutEnabled      = s.IdleLogoutEnabled;
-            IdleLogoutIntervalSec  = s.IdleLogoutIntervalSec;
-            LogSaveToFile          = s.LogSaveToFile;
-            LogDaysToKeep          = s.LogDaysToKeep;
-            HasUnsavedChanges      = false;
+            var sys = _systemConfig.Current;
+            BusinessHour           = sys.BusinessHour;
+            BusinessMinute         = sys.BusinessMinute;
+            SyncEnabled            = sys.SyncEnabled;
+            SyncIntervalSec        = sys.SyncIntervalSec;
+            MissedCheckEnabled     = sys.MissedCheckEnabled;
+            MissedCheckIntervalSec = sys.MissedCheckIntervalSec;
+            IdleLogoutEnabled      = sys.IdleLogoutEnabled;
+            IdleLogoutIntervalSec  = sys.IdleLogoutIntervalSec;
+            LogSaveToFile          = sys.LogSaveToFile;
+            LogDaysToKeep          = sys.LogDaysToKeep;
+
+            var hw = _hardwareConfig.Current;
+            ReaderPort       = hw.ReaderPort;
+            ReaderBaud       = hw.ReaderBaud;
+            AbbSeqNoTask     = hw.AbbSeqNoTask;
+            AbbSeqNoModule   = hw.AbbSeqNoModule;
+            AbbSeqNoVariable = hw.AbbSeqNoVariable;
+
+            HasUnsavedChanges = false;
 
             _core.Log.RefreshAvailableLogFiles();
         }
 
         private void Apply()
         {
-            var s = Properties.Settings.Default;
-            s.BusinessHour           = BusinessHour;
-            s.BusinessMinute         = BusinessMinute;
-            s.SyncEnabled            = SyncEnabled;
-            s.SyncIntervalSec        = SyncIntervalSec;
-            s.MissedCheckEnabled     = MissedCheckEnabled;
-            s.MissedCheckIntervalSec = MissedCheckIntervalSec;
-            s.IdleLogoutEnabled      = IdleLogoutEnabled;
-            s.IdleLogoutIntervalSec  = IdleLogoutIntervalSec;
-            s.LogSaveToFile          = LogSaveToFile;
-            s.LogDaysToKeep          = LogDaysToKeep;
-            s.Save();
+            _systemConfig.Save(new SystemConfigDto
+            {
+                BusinessHour           = BusinessHour,
+                BusinessMinute         = BusinessMinute,
+                SyncEnabled            = SyncEnabled,
+                SyncIntervalSec        = SyncIntervalSec,
+                MissedCheckEnabled     = MissedCheckEnabled,
+                MissedCheckIntervalSec = MissedCheckIntervalSec,
+                IdleLogoutEnabled      = IdleLogoutEnabled,
+                IdleLogoutIntervalSec  = IdleLogoutIntervalSec,
+                LogSaveToFile          = LogSaveToFile,
+                LogDaysToKeep          = LogDaysToKeep,
+            });
+            _hardwareConfig.Save(new HardwareConfigDto
+            {
+                ReaderPort       = ReaderPort,
+                ReaderBaud       = ReaderBaud,
+                AbbSeqNoTask     = AbbSeqNoTask,
+                AbbSeqNoModule   = AbbSeqNoModule,
+                AbbSeqNoVariable = AbbSeqNoVariable,
+            });
+            Properties.Settings.Default.Save();
             HasUnsavedChanges = false;
             _core.Log.AddLog(Properties.Resources.MainProgressSuccess, LogLevel.Success);
         }

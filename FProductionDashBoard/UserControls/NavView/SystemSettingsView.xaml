@@ -103,15 +103,15 @@
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock Text="{DynamicResource SsBusinessStartTime}" VerticalAlignment="Center" Width="130"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Width="60" Margin="8,0"
+                        <TextBox Width="60" Margin="4,0"
                                  Text="{Binding BusinessHour, UpdateSourceTrigger=PropertyChanged}"
                                  materialDesign:HintAssist.Hint="{DynamicResource SsHourUnit}"/>
-                        <TextBlock Text="{DynamicResource SsHourUnit}" VerticalAlignment="Center" Margin="0,0,16,0"
+                        <TextBlock Text="{DynamicResource SsHourUnit}" VerticalAlignment="Center" Margin="4,0,16,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Width="60"
+                        <TextBox Width="60" Margin="4,0"
                                  Text="{Binding BusinessMinute, UpdateSourceTrigger=PropertyChanged}"
                                  materialDesign:HintAssist.Hint="{DynamicResource SsMinuteUnit}"/>
-                        <TextBlock Text="{DynamicResource SsMinuteUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
+                        <TextBlock Text="{DynamicResource SsMinuteUnit}" VerticalAlignment="Center" Margin="4,0,0,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
                     </StackPanel>
                 </StackPanel>
@@ -324,6 +324,82 @@
                                  IsEnabled="{Binding IdleLogoutEnabled}"/>
                         <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 硬體設定 -->
+            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                    CornerRadius="4" Padding="16" Margin="0,0,0,16"
+                    Background="{DynamicResource BackgroundBrush}">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource SsHardwareHeader}"
+                               FontSize="14" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,0,0,12"/>
+
+                    <!-- 讀卡機 -->
+                    <TextBlock Text="{DynamicResource SsCardReaderSubHeader}"
+                               FontSize="12" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource SsCardReaderPort}"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox Grid.Column="1" Width="120" HorizontalAlignment="Left"
+                                 Text="{Binding ReaderPort, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource SsCardReaderBaud}"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox Grid.Column="1" Width="120" HorizontalAlignment="Left"
+                                 Text="{Binding ReaderBaud, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+
+                    <Separator Margin="0,0,0,12"/>
+
+                    <!-- ABB 機械手 -->
+                    <TextBlock Text="{DynamicResource SsAbbRobotSubHeader}"
+                               FontSize="12" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource SsAbbSeqNoTask}"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox Grid.Column="1" Width="180" HorizontalAlignment="Left"
+                                 Text="{Binding AbbSeqNoTask, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource SsAbbSeqNoModule}"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox Grid.Column="1" Width="180" HorizontalAlignment="Left"
+                                 Text="{Binding AbbSeqNoModule, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource SsAbbSeqNoVariable}"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBox Grid.Column="1" Width="180" HorizontalAlignment="Left"
+                                 Text="{Binding AbbSeqNoVariable, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
                 </StackPanel>
             </Border>

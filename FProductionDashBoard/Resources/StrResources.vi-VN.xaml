@@ -229,6 +229,14 @@
     <sys:String x:Key="SsIdleLogoutLabel">Đăng xuất nhàn rỗi</sys:String>
     <sys:String x:Key="SsEvery">Mỗi</sys:String>
     <sys:String x:Key="SsSecondUnit">giây</sys:String>
+    <sys:String x:Key="SsHardwareHeader">Cài đặt phần cứng</sys:String>
+    <sys:String x:Key="SsCardReaderSubHeader">Đầu đọc thẻ</sys:String>
+    <sys:String x:Key="SsCardReaderPort">Cổng</sys:String>
+    <sys:String x:Key="SsCardReaderBaud">Tốc độ baud</sys:String>
+    <sys:String x:Key="SsAbbRobotSubHeader">Robot ABB</sys:String>
+    <sys:String x:Key="SsAbbSeqNoTask">Task</sys:String>
+    <sys:String x:Key="SsAbbSeqNoModule">Module</sys:String>
+    <sys:String x:Key="SsAbbSeqNoVariable">Biến số</sys:String>
     <sys:String x:Key="SsAboutHeader">Giới thiệu</sys:String>
     <sys:String x:Key="SsVersionLabel">Phiên bản</sys:String>
     <sys:String x:Key="SsApplyButton">Áp dụng</sys:String>

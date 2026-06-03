@@ -46,12 +46,6 @@ namespace FProductionDashBoard.ViewModels
                 ? $"已連線 ({SelectedPort}, {SelectedBaudRate})"
                 : "連線失敗，請確認設定";
 
-            if (IsConnected) // 已連線則存為預設
-            {
-                Properties.Settings.Default.ReaderPort = SelectedPort;
-                Properties.Settings.Default.ReaderBaud = SelectedBaudRate;
-                Properties.Settings.Default.Save();
-            }
         }
 
         private void Test()

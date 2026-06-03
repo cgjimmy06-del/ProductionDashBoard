@@ -20,41 +20,5 @@
     <Setting Name="Password" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="ReaderPort" Type="System.String" Scope="User">
-      <Value Profile="(Default)">COM3</Value>
-    </Setting>
-    <Setting Name="ReaderBaud" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">115200</Value>
-    </Setting>
-    <Setting Name="BusinessHour" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">8</Value>
-    </Setting>
-    <Setting Name="BusinessMinute" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="SyncIntervalSec" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">60</Value>
-    </Setting>
-    <Setting Name="MissedCheckIntervalSec" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">300</Value>
-    </Setting>
-    <Setting Name="IdleLogoutIntervalSec" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">600</Value>
-    </Setting>
-    <Setting Name="SyncEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="MissedCheckEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="IdleLogoutEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="LogSaveToFile" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="LogDaysToKeep" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">7</Value>
-    </Setting>
   </Settings>
 </SettingsFile>
