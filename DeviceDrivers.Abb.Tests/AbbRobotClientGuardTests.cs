@@ -66,11 +66,15 @@ public class AbbRobotClientGuardTests
         Assert.Equal(AbbRobotErrorKind.NotConnected,
             Assert.Throws<AbbRobotException>(() => client.ReadNum(SampleAddress)).Kind);
         Assert.Equal(AbbRobotErrorKind.NotConnected,
+            Assert.Throws<AbbRobotException>(() => client.ReadArray(SampleAddress)).Kind);
+        Assert.Equal(AbbRobotErrorKind.NotConnected,
             Assert.Throws<AbbRobotException>(() => client.WriteBool(SampleAddress, true)).Kind);
         Assert.Equal(AbbRobotErrorKind.NotConnected,
             Assert.Throws<AbbRobotException>(() => client.WriteString(SampleAddress, "x")).Kind);
         Assert.Equal(AbbRobotErrorKind.NotConnected,
             Assert.Throws<AbbRobotException>(() => client.WriteNum(SampleAddress, 1.0)).Kind);
+        Assert.Equal(AbbRobotErrorKind.NotConnected,
+            Assert.Throws<AbbRobotException>(() => client.WriteArray(SampleAddress, "[1,2,3]")).Kind);
     }
 
     [Fact]
