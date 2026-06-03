@@ -93,4 +93,12 @@ public interface IAbbRobotClient : IDisposable
     /// <summary>寫入一個 RAPID <c>num</c> 變數。</summary>
     /// <exception cref="AbbRobotException">尚未連線或寫入失敗。</exception>
     void WriteNum(RapidVariableAddress address, double value);
+
+    /// <summary>讀取一個 RAPID 陣列變數，以 RAPID 字串格式（如 [1,2,3]）回傳。</summary>
+    /// <exception cref="AbbRobotException">尚未連線、非陣列型別或讀取失敗。</exception>
+    string ReadArray(RapidVariableAddress address);
+
+    /// <summary>以 RAPID 字串格式（如 [1,2,3]）寫入一個陣列變數。</summary>
+    /// <exception cref="AbbRobotException">尚未連線、非陣列型別或寫入失敗。</exception>
+    void WriteArray(RapidVariableAddress address, string rapidString);
 }
