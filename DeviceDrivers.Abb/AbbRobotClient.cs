@@ -198,7 +198,7 @@ public sealed class AbbRobotClient : IAbbRobotClient
                     {
                         using RapidData rd = module.GetRapidData(symbol);
                         dataType = rd.RapidType ?? string.Empty;
-                        isArray  = rd.Value is ArrayData;
+                        isArray  = rd.Value is ArrayData;   // 等價寫法：rd.IsArray
                     }
                     catch (Exception)
                     {
@@ -271,7 +271,7 @@ public sealed class AbbRobotClient : IAbbRobotClient
                 if (rd.Value is not ArrayData)
                     throw new AbbRobotException(AbbRobotErrorKind.OperationFailed,
                         $"[WriteArray] {address.Variable} 不是陣列型別。");
-                rd.StringValue = rapidString;
+                rd.StringValue = rapidString;   // TODO(Stage 7)：待真機驗證；若失敗改用 rd.WriteItem(elem, i) 逐元素寫入
             }
             catch (Exception ex)
             {
