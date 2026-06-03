@@ -260,7 +260,7 @@
                                                FontSize="11"
                                                Foreground="{DynamicResource SecondaryBrush}"
                                                TextTrimming="CharacterEllipsis">
-                                        <Run Text="{Binding SelectedRapidSymbol.DataType, Mode=OneWay}"/>
+                                        <Run Text="{Binding SelectedDataTypeDisplay, Mode=OneWay}"/>
                                         <Run Text=" · "/>
                                         <Run Text="{Binding SelectedRapidSymbol.Kind, Mode=OneWay}"/>
                                     </TextBlock>
@@ -296,7 +296,7 @@
                                         <TextBlock Margin="8,0,0,0" FontSize="11" VerticalAlignment="Center"
                                                    Foreground="{DynamicResource SecondaryBrush}">
                                             <Run Text="("/>
-                                            <Run Text="{Binding SelectedRapidSymbol.DataType, Mode=OneWay}"/>
+                                            <Run Text="{Binding SelectedDataTypeDisplay, Mode=OneWay}"/>
                                             <Run Text=" · "/>
                                             <Run Text="{Binding SelectedRapidSymbol.Kind, Mode=OneWay}"/>
                                             <Run Text=")"/>

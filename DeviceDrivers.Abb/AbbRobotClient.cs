@@ -193,10 +193,17 @@ public sealed class AbbRobotClient : IAbbRobotClient
                 foreach (RapidSymbol symbol in module.SearchRapidSymbol(props))
                 {
                     string dataType = string.Empty;
+                    bool isArray = false;
+                    int arraySize = 0;
                     try
                     {
                         using RapidData rd = module.GetRapidData(symbol);
-                        dataType = rd.RapidType ?? string.Empty;
+                        dataType    = rd.RapidType ?? string.Empty;
+                        if (rd.Value is ArrayData arrData) 
+                        {
+                            isArray = true; // 等價寫法：rd.IsArray
+                            arraySize = arrData.Length;
+                        }
                     }
                     catch (Exception)
                     {
@@ -206,9 +213,11 @@ public sealed class AbbRobotClient : IAbbRobotClient
 
                     result.Add(new AbbRapidSymbolInfo
                     {
-                        Name = symbol.Name,
-                        DataType = dataType,
-                        Kind = ToSymbolKind(symbol.Type),
+                        Name        = symbol.Name,
+                        DataType    = dataType,
+                        Kind        = ToSymbolKind(symbol.Type),
+                        IsArray     = isArray,
+                        ArraySize   = arraySize,
                     });
                 }
                 return result;
@@ -243,6 +252,39 @@ public sealed class AbbRobotClient : IAbbRobotClient
     /// <inheritdoc/>
     public void WriteNum(RapidVariableAddress address, double value)
         => Write(address, nameof(WriteNum), new Num((float)value));
+
+    /// <inheritdoc/>
+    public string ReadArray(RapidVariableAddress address)
+        => Read(address, nameof(ReadArray), rd =>
+        {
+            if (rd.Value is not ArrayData)
+                throw new AbbRobotException(AbbRobotErrorKind.OperationFailed,
+                    $"[ReadArray] {address.Variable} 不是陣列型別。");
+            return rd.StringValue;
+        });
+
+    /// <inheritdoc/>
+    public void WriteArray(RapidVariableAddress address, string rapidString)
+    {
+        ArgumentNullException.ThrowIfNull(address);
+        lock (_gate)
+        {
+            Controller c = RequireConnected(nameof(WriteArray));
+            try
+            {
+                using Mastership mastership = Mastership.Request(c);
+                using RapidData rd = c.Rapid.GetRapidData(address.Task, address.Module, address.Variable);
+                if (rd.Value is not ArrayData)
+                    throw new AbbRobotException(AbbRobotErrorKind.OperationFailed,
+                        $"[WriteArray] {address.Variable} 不是陣列型別。");
+                rd.StringValue = rapidString;   // TODO(Stage 7)：待真機驗證；若失敗改用 rd.WriteItem(elem, i) 逐元素寫入
+            }
+            catch (Exception ex)
+            {
+                throw Wrap($"{nameof(WriteArray)}({address})", AbbRobotErrorKind.OperationFailed, ex);
+            }
+        }
+    }
 
     /// <inheritdoc/>
     public void Dispose()
