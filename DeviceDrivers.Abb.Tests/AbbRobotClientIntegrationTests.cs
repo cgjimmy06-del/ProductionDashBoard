@@ -182,4 +182,30 @@ public class AbbRobotClientIntegrationTests
         string value = client.ReadString(address);
         Assert.NotNull(value);
     }
+
+    [Fact]
+    public void ReadWriteArray_RoundTrips()
+    {
+        if (!HasRobot) return;
+        var address = TestAddress("ABB_TEST_NUM_ARRAY_VAR");
+        if (address is null) return;   // 未設定 ABB_TEST_NUM_ARRAY_VAR，略過
+
+        using var client = Connected();
+        string original = client.ReadArray(address);
+
+        // 驗證讀取結果為 RAPID 陣列格式（以 '[' 開頭）
+        Assert.StartsWith("[", original.Trim());
+
+        try
+        {
+            // 以相同值寫回再讀出，確認 round-trip 不失真
+            client.WriteArray(address, original);
+            string readBack = client.ReadArray(address);
+            Assert.Equal(original, readBack);
+        }
+        finally
+        {
+            client.WriteArray(address, original);   // 還原
+        }
+    }
 }
