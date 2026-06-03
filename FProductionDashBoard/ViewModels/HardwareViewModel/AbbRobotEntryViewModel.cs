@@ -60,10 +60,11 @@ namespace FProductionDashBoard.ViewModels
 
         public bool HasSelectedRapidSymbol => SelectedRapidSymbol is not null;
 
-        /// <summary>VAR / PERS、型別為 bool / num / string，且非 Auto 模式時才可寫入。</summary>
+        /// <summary>VAR / PERS、型別為 bool / num / string 或陣列，且非 Auto 模式時才可寫入。</summary>
         public bool CanWrite =>
             SelectedRapidSymbol?.Kind is "VAR" or "PERS" &&
-            SelectedRapidSymbol?.DataType is "bool" or "num" or "string" &&
+            (SelectedRapidSymbol?.DataType is "bool" or "num" or "string"
+             || SelectedRapidSymbol?.IsArray == true) &&
             OperatingMode != AbbOperatingMode.Auto;
 
         public IAsyncRelayCommand ConnectCommand { get; }
@@ -248,13 +249,15 @@ namespace FProductionDashBoard.ViewModels
             var addr = new RapidVariableAddress(SelectedTask.Name, SelectedModule, SelectedRapidSymbol.Name);
             try
             {
-                RapidValue = SelectedRapidSymbol.DataType switch
-                {
-                    "bool"   => (await Task.Run(() => _client.ReadBool(addr))).ToString().ToLower(),
-                    "num"    => (await Task.Run(() => _client.ReadNum(addr))).ToString(),
-                    "string" => await Task.Run(() => _client.ReadString(addr)),
-                    _        => "（不支援，待後續階段）"
-                };
+                RapidValue = SelectedRapidSymbol.IsArray
+                    ? await Task.Run(() => _client.ReadArray(addr))
+                    : SelectedRapidSymbol.DataType switch
+                    {
+                        "bool"   => (await Task.Run(() => _client.ReadBool(addr))).ToString().ToLower(),
+                        "num"    => (await Task.Run(() => _client.ReadNum(addr))).ToString(),
+                        "string" => await Task.Run(() => _client.ReadString(addr)),
+                        _        => "（不支援）"
+                    };
             }
             catch (AbbRobotException ex)
             {
@@ -280,6 +283,14 @@ namespace FProductionDashBoard.ViewModels
 
             try
             {
+                if (SelectedRapidSymbol.IsArray)
+                {
+                    await Task.Run(() => _client.WriteArray(addr, NewValueText ?? string.Empty));
+                    StatusMessage = "寫入成功";
+                    await ReadValueAsync();
+                    return;
+                }
+
                 switch (SelectedRapidSymbol.DataType)
                 {
                     case "bool":
