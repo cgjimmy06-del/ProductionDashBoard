@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using DeviceDrivers.Abb;
+using FProductionDashBoard.Services;
 using System;
 using System.Linq;
 using System.Threading;
@@ -129,6 +130,44 @@ namespace FProductionDashBoard.ViewModels
 
             _abbLoopCts?.Dispose();
             _abbLoopCts = null;
+        }
+
+        // ─── 生產 SeqNo 寫入（非通用，僅供接單流程；勿移作他用）───────────────────
+        // 開始生產時把該訂單的 EquipmentProduct.SeqNo 寫入機器人指定 num 變數，
+        // 結束生產（及啟動失敗復原）時寫回 0。位址常數待依現場 RAPID 程式填寫。
+
+        // TODO 待填：依現場 ABB RAPID 程式填入實際 Task / Module / 變數名
+        private const string SeqNoTask     = "T_ROB1";
+        private const string SeqNoModule   = "Module1";
+        private const string SeqNoVariable = "MES_project";
+
+        /// <summary>
+        /// 把指定 SeqNo 寫入機器人變數。連線/寫入失敗會 <b>拋出</b> <see cref="AbbRobotException"/>，
+        /// 供開始生產流程判斷成敗（失敗則不更新訂單）。呼叫端需先確認為 ABB 設備（_abbClient 非 null）。
+        /// </summary>
+        private Task WriteSeqNoAsync(int seqNo)
+        {
+            var addr = new RapidVariableAddress(SeqNoTask, SeqNoModule, SeqNoVariable);
+            return Task.Run(() => _abbClient!.WriteNum(addr, seqNo));
+        }
+
+        /// <summary>
+        /// 嘗試把生產變數寫回 0；fire-and-forget，吞例外只記 log、不阻擋流程、不需成功。
+        /// 用於結束生產，以及開始生產時「寫入成功但 DB 更新失敗」的復原。
+        /// </summary>
+        private void ResetSeqNoFireAndForget()
+        {
+            if (_abbClient == null) return;
+            var addr = new RapidVariableAddress(SeqNoTask, SeqNoModule, SeqNoVariable);
+            _ = Task.Run(() =>
+            {
+                try { _abbClient.WriteNum(addr, 0); }
+                catch (Exception ex)
+                {
+                    _core.Log.AddLog($"[{Info.Name}] 生產變數歸零失敗", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[ResetSeqNoFireAndForget] {ex.Message}");
+                }
+            });
         }
     }
 }
