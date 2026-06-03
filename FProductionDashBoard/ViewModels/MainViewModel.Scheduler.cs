@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Services;
 using System;
 using System.Collections.Generic;
@@ -35,8 +36,8 @@ namespace FProductionDashBoard.ViewModels
 
         partial void InitializeScheduler()
         {
-            BusinessHour = Properties.Settings.Default.BusinessHour;
-            BusinessMinute = Properties.Settings.Default.BusinessMinute;
+            BusinessHour = _systemConfig.Current.BusinessHour;
+            BusinessMinute = _systemConfig.Current.BusinessMinute;
             _core.Data.BusinessDay = DateTime.Today.AddHours(BusinessHour).AddMinutes(BusinessMinute);
             DefaultTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             DefaultTimer.Tick += OnTimerTick;
@@ -59,7 +60,7 @@ namespace FProductionDashBoard.ViewModels
             OnPropertyChanged(nameof(IsCardReaderConnected));
             OnPropertyChanged(nameof(CardReaderStatusTooltip));
 
-            var s = Properties.Settings.Default;
+            var s = _systemConfig.Current;
 
             _syncTickCounter++;
             if (s.SyncEnabled && _syncTickCounter >= s.SyncIntervalSec)

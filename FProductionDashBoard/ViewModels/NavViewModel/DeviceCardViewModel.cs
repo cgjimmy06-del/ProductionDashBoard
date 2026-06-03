@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeviceDrivers.Abb;
+using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Properties;
 using FProductionDashBoard.Services;
@@ -37,6 +38,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly DashboardCoreServices _core;
         private readonly ListsFromSql _commonLists;
         private readonly Services.IDialogService _dialog;
+        private readonly IConfigService<HardwareConfigDto> _hardwareConfig;
 
         // 訊息顯示
         [ObservableProperty]
@@ -87,13 +89,15 @@ namespace FProductionDashBoard.ViewModels
         public ICommand EndTuningCommand { get; }
 
         public DeviceCardViewModel(DashboardCoreServices core, Services.IDialogService dialog, DeviceInfo info,
-            UserInfo currentUser, ListsFromSql getLists, IAbbRobotClient? abbClient = null)
+            UserInfo currentUser, ListsFromSql getLists, IConfigService<HardwareConfigDto> hardwareConfig,
+            IAbbRobotClient? abbClient = null)
         {
             _core = core;
             _dialog = dialog;
             Info = info;
             CurrentUser = currentUser;
             _commonLists = getLists;
+            _hardwareConfig = hardwareConfig;
 
             for (int i = 0; i < getLists.TimeSlotsList.Count; i++) { TimeSlotsStatus.Add(-1); }
 

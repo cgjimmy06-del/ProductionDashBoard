@@ -105,6 +105,12 @@ namespace FProductionDashBoard
                 services.AddSingleton<Services.ICardReaderService>(sp =>
                     sp.GetRequiredService<Services.MultiCardReaderService>());
 
+                // 設定持久化服務
+                services.AddSingleton<Services.IConfigService<Dtos.SystemConfigDto>>(
+                    _ => new Services.ConfigService<Dtos.SystemConfigDto>("system_config.json"));
+                services.AddSingleton<Services.IConfigService<Dtos.HardwareConfigDto>>(
+                    _ => new Services.ConfigService<Dtos.HardwareConfigDto>("hardware_config.json"));
+
                 // 註冊 ABB 機器人用戶端工廠（每台設備卡片各自持有獨立實例，由 ViewModel 負責釋放）
                 services.AddSingleton<Func<DeviceDrivers.Abb.IAbbRobotClient>>(
                     _ => () => new DeviceDrivers.Abb.AbbRobotClient());
@@ -142,6 +148,9 @@ namespace FProductionDashBoard
                 services.AddTransient<ViewModels.OperationViewModel>();
 
                 _serviceProvider = services.BuildServiceProvider();
+                // 載入持久化設定
+                _serviceProvider.GetRequiredService<Services.IConfigService<Dtos.SystemConfigDto>>().Load();
+                _serviceProvider.GetRequiredService<Services.IConfigService<Dtos.HardwareConfigDto>>().Load();
                 // 啟動登入權限
                 var authService = _serviceProvider.GetRequiredService<Services.AuthorizationService>();
                 try 
@@ -153,10 +162,10 @@ namespace FProductionDashBoard
                 }
                 catch { Debug.WriteLine("角色清單取得異常，進入離線模式..."); }
                 await authService.InitializeAsync(user);
-                // 預設啟動一台讀卡機 (以最後連線的設備為準)
+                // 預設啟動一台讀卡機（以硬體設定為準）
+                var hwCfg = _serviceProvider.GetRequiredService<Services.IConfigService<Dtos.HardwareConfigDto>>().Current;
                 _serviceProvider.GetRequiredService<Services.MultiCardReaderService>()
-                    .AddReader(FProductionDashBoard.Properties.Settings.Default.ReaderPort,
-                               FProductionDashBoard.Properties.Settings.Default.ReaderBaud);
+                    .AddReader(hwCfg.ReaderPort, hwCfg.ReaderBaud);
 
                 // 取代在 App.xaml 中的 StartupUri
                 ShutdownMode = ShutdownMode.OnMainWindowClose; //「被設定為 MainWindow 的介面關閉則結束」
