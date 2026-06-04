@@ -262,6 +262,7 @@
                                          MaxHeight="120"
                                          ItemsSource="{Binding ReadResults}"
                                          FontFamily="Consolas"
+                                         Background="{DynamicResource MaterialDesignPaper}"
                                          Foreground="{DynamicResource TextPrimaryBrush}"
                                          Visibility="{Binding IsConnected, Converter={StaticResource BooleanToVisibilityConverter}}"
                                          ScrollViewer.VerticalScrollBarVisibility="Auto"

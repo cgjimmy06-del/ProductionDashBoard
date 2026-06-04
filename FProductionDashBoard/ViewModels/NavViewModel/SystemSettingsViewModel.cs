@@ -66,11 +66,16 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string abbSeqNoModule   = "MES";
         [ObservableProperty] private string abbSeqNoVariable = "MES_project";
 
-        partial void OnReaderPortChanged(string value)       => HasUnsavedChanges = true;
-        partial void OnReaderBaudChanged(int value)          => HasUnsavedChanges = true;
-        partial void OnAbbSeqNoTaskChanged(string value)     => HasUnsavedChanges = true;
-        partial void OnAbbSeqNoModuleChanged(string value)   => HasUnsavedChanges = true;
-        partial void OnAbbSeqNoVariableChanged(string value) => HasUnsavedChanges = true;
+        [ObservableProperty] private bool deviceReconnectEnabled     = true;
+        [ObservableProperty] private int  deviceReconnectIntervalSec = 10;
+
+        partial void OnReaderPortChanged(string value)              => HasUnsavedChanges = true;
+        partial void OnReaderBaudChanged(int value)                 => HasUnsavedChanges = true;
+        partial void OnAbbSeqNoTaskChanged(string value)            => HasUnsavedChanges = true;
+        partial void OnAbbSeqNoModuleChanged(string value)          => HasUnsavedChanges = true;
+        partial void OnAbbSeqNoVariableChanged(string value)        => HasUnsavedChanges = true;
+        partial void OnDeviceReconnectEnabledChanged(bool value)    => HasUnsavedChanges = true;
+        partial void OnDeviceReconnectIntervalSecChanged(int value) => HasUnsavedChanges = true;
 
         // 日誌設定（直接映射 LogService，setter 同時觸發 HasUnsavedChanges）
         public bool LogSaveToFile
@@ -161,11 +166,13 @@ namespace FProductionDashBoard.ViewModels
             LogDaysToKeep          = sys.LogDaysToKeep;
 
             var hw = _hardwareConfig.Current;
-            ReaderPort       = hw.ReaderPort;
-            ReaderBaud       = hw.ReaderBaud;
-            AbbSeqNoTask     = hw.AbbSeqNoTask;
-            AbbSeqNoModule   = hw.AbbSeqNoModule;
-            AbbSeqNoVariable = hw.AbbSeqNoVariable;
+            ReaderPort                = hw.ReaderPort;
+            ReaderBaud                = hw.ReaderBaud;
+            AbbSeqNoTask              = hw.AbbSeqNoTask;
+            AbbSeqNoModule            = hw.AbbSeqNoModule;
+            AbbSeqNoVariable          = hw.AbbSeqNoVariable;
+            DeviceReconnectEnabled    = hw.DeviceReconnectEnabled;
+            DeviceReconnectIntervalSec = hw.DeviceReconnectIntervalSec;
 
             HasUnsavedChanges = false;
 
@@ -189,11 +196,13 @@ namespace FProductionDashBoard.ViewModels
             });
             _hardwareConfig.Save(new HardwareConfigDto
             {
-                ReaderPort       = ReaderPort,
-                ReaderBaud       = ReaderBaud,
-                AbbSeqNoTask     = AbbSeqNoTask,
-                AbbSeqNoModule   = AbbSeqNoModule,
-                AbbSeqNoVariable = AbbSeqNoVariable,
+                ReaderPort                = ReaderPort,
+                ReaderBaud                = ReaderBaud,
+                AbbSeqNoTask              = AbbSeqNoTask,
+                AbbSeqNoModule            = AbbSeqNoModule,
+                AbbSeqNoVariable          = AbbSeqNoVariable,
+                DeviceReconnectEnabled    = DeviceReconnectEnabled,
+                DeviceReconnectIntervalSec = DeviceReconnectIntervalSec,
             });
             Properties.Settings.Default.Save();
             HasUnsavedChanges = false;

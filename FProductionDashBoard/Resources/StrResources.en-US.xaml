@@ -256,6 +256,8 @@
     <sys:String x:Key="SsAbbSeqNoTask">Task</sys:String>
     <sys:String x:Key="SsAbbSeqNoModule">Module</sys:String>
     <sys:String x:Key="SsAbbSeqNoVariable">Variable</sys:String>
+    <sys:String x:Key="SsDeviceReconnectSubHeader">Device Reconnect</sys:String>
+    <sys:String x:Key="SsDeviceReconnect">Auto Reconnect</sys:String>
     <sys:String x:Key="SsAboutHeader">About</sys:String>
     <sys:String x:Key="SsVersionLabel">Version</sys:String>
     <sys:String x:Key="SsApplyButton">Apply Settings</sys:String>

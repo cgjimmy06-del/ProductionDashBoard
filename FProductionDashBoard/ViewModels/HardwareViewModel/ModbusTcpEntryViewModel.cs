@@ -147,6 +147,7 @@ namespace FProductionDashBoard.ViewModels
             catch (ModbusClientException ex)
             {
                 StatusMessage = ex.Message;
+                IsConnected = _client?.IsConnected ?? false;
             }
         }
 
@@ -179,6 +180,7 @@ namespace FProductionDashBoard.ViewModels
             catch (ModbusClientException ex)
             {
                 StatusMessage = ex.Message;
+                IsConnected = _client?.IsConnected ?? false;
             }
         }
 

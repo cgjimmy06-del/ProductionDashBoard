@@ -7,5 +7,7 @@ namespace FProductionDashBoard.Dtos
         public string AbbSeqNoTask     { get; set; } = "T_ROB1";
         public string AbbSeqNoModule   { get; set; } = "MES";
         public string AbbSeqNoVariable { get; set; } = "MES_project";
+        public bool   DeviceReconnectEnabled     { get; set; } = true;
+        public int    DeviceReconnectIntervalSec { get; set; } = 10;
     }
 }

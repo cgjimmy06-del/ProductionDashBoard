@@ -256,6 +256,8 @@
     <sys:String x:Key="SsAbbSeqNoTask">Task</sys:String>
     <sys:String x:Key="SsAbbSeqNoModule">Module</sys:String>
     <sys:String x:Key="SsAbbSeqNoVariable">Biến số</sys:String>
+    <sys:String x:Key="SsDeviceReconnectSubHeader">Kết nối lại</sys:String>
+    <sys:String x:Key="SsDeviceReconnect">Tự động kết nối lại</sys:String>
     <sys:String x:Key="SsAboutHeader">Giới thiệu</sys:String>
     <sys:String x:Key="SsVersionLabel">Phiên bản</sys:String>
     <sys:String x:Key="SsApplyButton">Áp dụng</sys:String>
