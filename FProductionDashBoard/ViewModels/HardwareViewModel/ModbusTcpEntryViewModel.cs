@@ -19,7 +19,7 @@ namespace FProductionDashBoard.ViewModels
         // ── 連線設定 ─────────────────────────────────────────────────
         [ObservableProperty] private string ipAddress = "192.168.1.1";
         [ObservableProperty] private int port = 502;
-        [ObservableProperty] private int unitId = 1;
+        [ObservableProperty] private int unitId = 0;
         [ObservableProperty] private bool isConnected;
         [ObservableProperty] private string statusMessage = "";
 

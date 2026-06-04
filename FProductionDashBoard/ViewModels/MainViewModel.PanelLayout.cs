@@ -120,5 +120,14 @@ namespace FProductionDashBoard.ViewModels
             bool isMulti = layout != LayoutMode.Single;
             foreach (var p in _panels) p.ShowHeader = isMulti;
         }
+
+        /// <summary>釋放所有設備容器（連帶釋放每張 DeviceCard 的重連 loop 與 ABB/Modbus 連線）。由 Dispose 呼叫。</summary>
+        private void DisposePanelContainers()
+        {
+            _deviceContainer?.Dispose();
+            _deviceContainer = null;
+            foreach (var vm in _panelContainers.Values) vm.Dispose();
+            _panelContainers.Clear();
+        }
     }
 }
