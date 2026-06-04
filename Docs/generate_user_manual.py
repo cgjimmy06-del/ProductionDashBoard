@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 from datetime import date
 
-OUTPUT_DIR = Path(r"C:\AIresources\DB_outputFile")
+OUTPUT_DIR = Path(__file__).parent
 VERSION_TAG = "v2.6"
 DOCX_PATH  = OUTPUT_DIR / f"UserManual_FProductionDashBoard_{VERSION_TAG}.docx"
 PDF_PATH   = OUTPUT_DIR / f"UserManual_FProductionDashBoard_{VERSION_TAG}.pdf"

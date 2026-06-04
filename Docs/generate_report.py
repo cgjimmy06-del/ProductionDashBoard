@@ -9,7 +9,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-OUTPUT_DIR = Path(r"C:\AIresources\DB_outputFile")
+OUTPUT_DIR = Path(__file__).parent
 VERSION_TAG = "v2.6"
 XLSX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.xlsx"
 DOCX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.docx"
