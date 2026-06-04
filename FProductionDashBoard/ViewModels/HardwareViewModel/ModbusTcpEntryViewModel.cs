@@ -1,8 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeviceDrivers.Modbus;
+using DeviceDrivers.Modbus.Models;
 using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -13,15 +16,43 @@ namespace FProductionDashBoard.ViewModels
         private IModbusClient? _client;
         private bool _disposed;
 
+        // ── 連線設定 ─────────────────────────────────────────────────
         [ObservableProperty] private string ipAddress = "192.168.1.1";
         [ObservableProperty] private int port = 502;
         [ObservableProperty] private int unitId = 1;
         [ObservableProperty] private bool isConnected;
         [ObservableProperty] private string statusMessage = "";
 
+        // ── 下拉選項 ─────────────────────────────────────────────────
+        public IReadOnlyList<ModbusRegisterType> RegisterTypeOptions { get; } =
+            (ModbusRegisterType[])Enum.GetValues(typeof(ModbusRegisterType));
+
+        public IReadOnlyList<ModbusValueFormat> ValueFormatOptions { get; } =
+            (ModbusValueFormat[])Enum.GetValues(typeof(ModbusValueFormat));
+
+        // ── 讀取參數 ─────────────────────────────────────────────────
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanWrite))]
+        private ModbusRegisterType selectedRegisterType = ModbusRegisterType.HoldingRegister;
+
+        [ObservableProperty] private ushort readStartAddress;
+        [ObservableProperty] private ushort readCount = 1;
+        [ObservableProperty] private ModbusValueFormat selectedValueFormat = ModbusValueFormat.UInt16;
+        public ObservableCollection<string> ReadResults { get; } = new();
+
+        // ── 寫入參數 ─────────────────────────────────────────────────
+        [ObservableProperty] private ushort writeAddress;
+        [ObservableProperty] private string writeRawValue = "";
+
+        public bool CanWrite =>
+            SelectedRegisterType is ModbusRegisterType.Coil or ModbusRegisterType.HoldingRegister;
+
+        // ── 命令 ─────────────────────────────────────────────────────
         public IAsyncRelayCommand ConnectCommand { get; }
         public IRelayCommand DisconnectCommand { get; }
         public IRelayCommand DeleteCommand { get; }
+        public IAsyncRelayCommand ReadCommand { get; }
+        public IAsyncRelayCommand WriteCommand { get; }
 
         public ModbusTcpEntryViewModel(
             Func<string, int, byte, IModbusClient> factory,
@@ -32,8 +63,11 @@ namespace FProductionDashBoard.ViewModels
             ConnectCommand    = new AsyncRelayCommand(ConnectAsync);
             DisconnectCommand = new RelayCommand(Disconnect);
             DeleteCommand     = new RelayCommand(Delete);
+            ReadCommand       = new AsyncRelayCommand(ReadAsync);
+            WriteCommand      = new AsyncRelayCommand(WriteAsync);
         }
 
+        // ── 連線 ─────────────────────────────────────────────────────
         private async Task ConnectAsync()
         {
             StatusMessage = "";
@@ -60,9 +94,90 @@ namespace FProductionDashBoard.ViewModels
             try { _client?.Disconnect(); } catch { }
             IsConnected   = _client?.IsConnected ?? false;
             StatusMessage = "";
+            ReadResults.Clear();
         }
 
         private void Delete() => _onDelete(this);
+
+        // ── 讀取 ─────────────────────────────────────────────────────
+        private async Task ReadAsync()
+        {
+            ReadResults.Clear();
+            StatusMessage = "";
+            try
+            {
+                if (SelectedRegisterType is ModbusRegisterType.Coil or ModbusRegisterType.DiscreteInput)
+                {
+                    var isCoil = SelectedRegisterType == ModbusRegisterType.Coil;
+                    var bools = await Task.Run(() =>
+                        isCoil
+                            ? _client!.ReadCoils(ReadStartAddress, ReadCount)
+                            : _client!.ReadDiscreteInputs(ReadStartAddress, ReadCount))
+                        .ConfigureAwait(true);
+
+                    for (int i = 0; i < bools.Length; i++)
+                        ReadResults.Add($"0x{(ReadStartAddress + i):X4}: {bools[i]}");
+                }
+                else
+                {
+                    int stride = ModbusValueConverter.WordCount(SelectedValueFormat);
+                    var wordsToRead = (ushort)(ReadCount * stride);
+                    var isHolding = SelectedRegisterType == ModbusRegisterType.HoldingRegister;
+                    var words = await Task.Run(() =>
+                        isHolding
+                            ? _client!.ReadHoldingRegisters(ReadStartAddress, wordsToRead)
+                            : _client!.ReadInputRegisters(ReadStartAddress, wordsToRead))
+                        .ConfigureAwait(true);
+
+                    for (int i = 0; i < ReadCount; i++)
+                    {
+                        int offset = i * stride;
+                        ushort addr = (ushort)(ReadStartAddress + offset);
+                        string typed = ModbusValueConverter.Format(words, offset, SelectedValueFormat);
+                        string raw = stride == 1
+                            ? $"0x{words[offset]:X4}"
+                            : $"0x{words[offset]:X4}{words[offset + 1]:X4}";
+                        ReadResults.Add($"0x{addr:X4}: {typed}  (raw: {raw})");
+                    }
+                }
+            }
+            catch (ModbusClientException ex)
+            {
+                StatusMessage = ex.Message;
+            }
+        }
+
+        // ── 寫入 ─────────────────────────────────────────────────────
+        private async Task WriteAsync()
+        {
+            if (!CanWrite) return;
+
+            var confirm = MessageBox.Show(
+                $"確定要對位址 0x{WriteAddress:X4} 寫入「{WriteRawValue}」？",
+                "確認寫入", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.OK) return;
+
+            StatusMessage = "";
+            try
+            {
+                if (SelectedRegisterType == ModbusRegisterType.Coil)
+                {
+                    if (!bool.TryParse(WriteRawValue, out bool bv))
+                    { StatusMessage = "請輸入 true 或 false"; return; }
+                    await Task.Run(() => _client!.WriteSingleCoil(WriteAddress, bv)).ConfigureAwait(true);
+                }
+                else
+                {
+                    if (!ushort.TryParse(WriteRawValue, out ushort uv))
+                    { StatusMessage = "請輸入 0–65535 的整數"; return; }
+                    await Task.Run(() => _client!.WriteSingleRegister(WriteAddress, uv)).ConfigureAwait(true);
+                }
+            }
+            catch (ModbusClientException ex)
+            {
+                StatusMessage = ex.Message;
+            }
+        }
 
         public void Dispose()
         {

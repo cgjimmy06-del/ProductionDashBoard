@@ -218,6 +218,14 @@
     <sys:String x:Key="ModbusTcpDisconnected">Chưa kết nối</sys:String>
     <sys:String x:Key="ModbusTcpAddTooltip">Thêm thiết bị</sys:String>
     <sys:String x:Key="ModbusTcpDeleteTooltip">Xóa</sys:String>
+    <sys:String x:Key="ModbusTcpReadTooltip">Đọc</sys:String>
+    <sys:String x:Key="ModbusTcpWriteTooltip">Ghi</sys:String>
+    <sys:String x:Key="ModbusTcpRegTypeHint">Loại thanh ghi</sys:String>
+    <sys:String x:Key="ModbusTcpStartAddrHint">Địa chỉ đầu</sys:String>
+    <sys:String x:Key="ModbusTcpCountHint">Số lượng</sys:String>
+    <sys:String x:Key="ModbusTcpValueFmtHint">Định dạng</sys:String>
+    <sys:String x:Key="ModbusTcpWriteAddrHint">Địa chỉ</sys:String>
+    <sys:String x:Key="ModbusTcpWriteValueHint">Giá trị ghi</sys:String>
     <!--#endregion-->
     <!--#region system settings view -->
     <sys:String x:Key="SsAppearanceHeader">Ngoại hình</sys:String>
