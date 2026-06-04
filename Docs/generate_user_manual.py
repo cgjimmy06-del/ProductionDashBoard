@@ -10,8 +10,8 @@ from datetime import date
 
 OUTPUT_DIR = Path(__file__).parent
 VERSION_TAG = "v2.6"
-DOCX_PATH  = OUTPUT_DIR / f"UserManual_FProductionDashBoard_{VERSION_TAG}.docx"
-PDF_PATH   = OUTPUT_DIR / f"UserManual_FProductionDashBoard_{VERSION_TAG}.pdf"
+DOCX_PATH  = OUTPUT_DIR / f"UserManual_PDB_{VERSION_TAG}.docx"
+PDF_PATH   = OUTPUT_DIR / f"UserManual_PDB_{VERSION_TAG}.pdf"
 REVIEW_DATE = date.today().strftime("%Y-%m-%d")
 
 # ─────────────────────────────────────────
