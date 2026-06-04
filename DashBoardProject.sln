@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceDrivers.Abb", "Device
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceDrivers.Abb.Tests", "DeviceDrivers.Abb.Tests\DeviceDrivers.Abb.Tests.csproj", "{B3DD42DE-3C24-401E-A99E-9CC3EA0C5582}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceDrivers.Modbus", "DeviceDrivers.Modbus\DeviceDrivers.Modbus.csproj", "{F04C28E2-2014-4CE0-9075-11621C5E21E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceDrivers.Modbus.Tests", "DeviceDrivers.Modbus.Tests\DeviceDrivers.Modbus.Tests.csproj", "{DBB35CF6-3D3E-43FF-847D-A3FE5C50841B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +65,22 @@ Global
 		{B3DD42DE-3C24-401E-A99E-9CC3EA0C5582}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B3DD42DE-3C24-401E-A99E-9CC3EA0C5582}.Release|x64.ActiveCfg = Release|x64
 		{B3DD42DE-3C24-401E-A99E-9CC3EA0C5582}.Release|x64.Build.0 = Release|x64
+		{F04C28E2-2014-4CE0-9075-11621C5E21E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F04C28E2-2014-4CE0-9075-11621C5E21E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F04C28E2-2014-4CE0-9075-11621C5E21E3}.Debug|x64.ActiveCfg = Debug|x64
+		{F04C28E2-2014-4CE0-9075-11621C5E21E3}.Debug|x64.Build.0 = Debug|x64
+		{F04C28E2-2014-4CE0-9075-11621C5E21E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F04C28E2-2014-4CE0-9075-11621C5E21E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F04C28E2-2014-4CE0-9075-11621C5E21E3}.Release|x64.ActiveCfg = Release|x64
+		{F04C28E2-2014-4CE0-9075-11621C5E21E3}.Release|x64.Build.0 = Release|x64
+		{DBB35CF6-3D3E-43FF-847D-A3FE5C50841B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBB35CF6-3D3E-43FF-847D-A3FE5C50841B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBB35CF6-3D3E-43FF-847D-A3FE5C50841B}.Debug|x64.ActiveCfg = Debug|x64
+		{DBB35CF6-3D3E-43FF-847D-A3FE5C50841B}.Debug|x64.Build.0 = Debug|x64
+		{DBB35CF6-3D3E-43FF-847D-A3FE5C50841B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBB35CF6-3D3E-43FF-847D-A3FE5C50841B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBB35CF6-3D3E-43FF-847D-A3FE5C50841B}.Release|x64.ActiveCfg = Release|x64
+		{DBB35CF6-3D3E-43FF-847D-A3FE5C50841B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
