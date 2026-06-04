@@ -65,7 +65,7 @@
 
             <!-- 狀態燈號 -->
             <Border Grid.Column="0"
-                    Background="{Binding AbbStatusLevel, Converter={StaticResource IntToColorConverter}}"
+                    Background="{Binding DeviceStatusLevel, Converter={StaticResource IntToColorConverter}}"
                     d:Background="Green"
                     CornerRadius="3"/>
 

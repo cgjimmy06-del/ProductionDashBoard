@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeviceDrivers.Abb;
+using DeviceDrivers.Modbus;
 using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Properties;
@@ -90,7 +91,7 @@ namespace FProductionDashBoard.ViewModels
 
         public DeviceCardViewModel(DashboardCoreServices core, Services.IDialogService dialog, DeviceInfo info,
             UserInfo currentUser, ListsFromSql getLists, IConfigService<HardwareConfigDto> hardwareConfig,
-            IAbbRobotClient? abbClient = null)
+            IAbbRobotClient? abbClient = null, IModbusClient? modbusClient = null)
         {
             _core = core;
             _dialog = dialog;
@@ -119,13 +120,22 @@ namespace FProductionDashBoard.ViewModels
             _ = LoadOrdersAsync();
             _ = LoadProgramTuningStateAsync();
             InitAbb(abbClient);
+            InitModbus(modbusClient);
         }
+
+        /// <summary>
+        /// 燈號等級，對映 IntToColorConverter（0=綠, 1=黃, 2=紅, other=灰）。
+        /// Modbus 設備：連線=0（綠），斷線=3（灰）。ABB 設備委派給 AbbStatusLevel。
+        /// </summary>
+        public int DeviceStatusLevel =>
+            _modbusClient != null ? (IsModbusConnected ? 0 : 3) : AbbStatusLevel;
 
         public void Dispose()
         {
             if (_disposed) return;
             _disposed = true;
             DisposeAbb();
+            DisposeModbus();
             _tuningTimer?.Stop();
         }
 
