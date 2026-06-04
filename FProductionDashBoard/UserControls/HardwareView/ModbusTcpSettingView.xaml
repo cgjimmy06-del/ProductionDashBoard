@@ -1,0 +1,157 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.ModbusTcpSettingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d"
+             d:Background="White"
+             d:DesignHeight="400" d:DesignWidth="1000">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Toolbar -->
+        <DockPanel Grid.Row="0" Margin="8,6">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button Command="{Binding AddCommand}"
+                        ToolTip="{DynamicResource ModbusTcpAddTooltip}"
+                        Style="{StaticResource FunctionButtonStyle}">
+                    <materialDesign:PackIcon Kind="Plus" Width="40" Height="40"
+                                             VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Button>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Device card list -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Devices}" Margin="8,0,8,8">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,6"
+                                BorderThickness="1"
+                                BorderBrush="{DynamicResource MaterialDesignDivider}"
+                                CornerRadius="4"
+                                Padding="12,8"
+                                Background="{DynamicResource PrimaryBackgroundBrush}">
+                            <StackPanel>
+                                <!-- 列 1：IP / Port / UnitId + 連線 + 狀態 chip + 刪除 -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="180"/>
+                                        <ColumnDefinition Width="90"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- IP 位址 -->
+                                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                        <TextBlock Text="{DynamicResource ModbusTcpIpHint}"
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBox Text="{Binding IpAddress, UpdateSourceTrigger=PropertyChanged}"
+                                                 materialDesign:HintAssist.Hint="{DynamicResource ModbusTcpIpHint}"/>
+                                    </StackPanel>
+
+                                    <!-- 連接埠 -->
+                                    <StackPanel Grid.Column="1" Margin="0,0,8,0">
+                                        <TextBlock Text="{DynamicResource ModbusTcpPortHint}"
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBox Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}"
+                                                 materialDesign:HintAssist.Hint="{DynamicResource ModbusTcpPortHint}"/>
+                                    </StackPanel>
+
+                                    <!-- Unit ID -->
+                                    <StackPanel Grid.Column="2" Margin="0,0,8,0">
+                                        <TextBlock Text="{DynamicResource ModbusTcpUnitIdHint}"
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBox Text="{Binding UnitId, UpdateSourceTrigger=PropertyChanged}"
+                                                 materialDesign:HintAssist.Hint="{DynamicResource ModbusTcpUnitIdHint}"/>
+                                    </StackPanel>
+
+                                    <!-- 連線 / 斷線 -->
+                                    <StackPanel Grid.Column="3" Orientation="Horizontal"
+                                                VerticalAlignment="Bottom">
+                                        <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                                     Width="20" Height="20" Margin="0,0,4,4"
+                                                     IsIndeterminate="True"
+                                                     VerticalAlignment="Bottom"
+                                                     Visibility="{Binding ConnectCommand.IsRunning,
+                                                                  Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                        <Button Style="{StaticResource GridEditButtonStyle}"
+                                                Command="{Binding ConnectCommand}"
+                                                ToolTip="{DynamicResource ModbusTcpConnectTooltip}"
+                                                Foreground="{DynamicResource PrimaryBrush}">
+                                            <materialDesign:PackIcon Kind="LanConnect" Width="18" Height="18"/>
+                                        </Button>
+                                        <Button Style="{StaticResource GridEditButtonStyle}"
+                                                Command="{Binding DisconnectCommand}"
+                                                ToolTip="{DynamicResource ModbusTcpDisconnectTooltip}"
+                                                Foreground="{DynamicResource SecondaryBrush}">
+                                            <materialDesign:PackIcon Kind="LanDisconnect" Width="18" Height="18"/>
+                                        </Button>
+                                    </StackPanel>
+
+                                    <!-- 狀態 chip + 訊息 -->
+                                    <WrapPanel Grid.Column="4" Orientation="Horizontal"
+                                               VerticalAlignment="Center" Margin="12,0,0,0">
+                                        <Border CornerRadius="8" Padding="8,2" Margin="0,0,6,2"
+                                                BorderThickness="1"
+                                                BorderBrush="{DynamicResource SecondaryBrush}">
+                                            <StackPanel>
+                                                <TextBlock Text="{DynamicResource ModbusTcpConnLabel}"
+                                                           FontSize="10"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                                <TextBlock FontSize="13" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="{DynamicResource ModbusTcpDisconnected}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                                                    <Setter Property="Text" Value="{DynamicResource ModbusTcpConnected}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Border>
+                                        <TextBlock Text="{Binding StatusMessage}"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource ErrorBrush}"
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   TextWrapping="Wrap"/>
+                                    </WrapPanel>
+
+                                    <!-- 刪除 -->
+                                    <Button Grid.Column="5"
+                                            VerticalAlignment="Bottom"
+                                            Style="{StaticResource GridEditButtonStyle}"
+                                            Command="{Binding DeleteCommand}"
+                                            ToolTip="{DynamicResource ModbusTcpDeleteTooltip}"
+                                            Foreground="{DynamicResource ErrorBrush}">
+                                        <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

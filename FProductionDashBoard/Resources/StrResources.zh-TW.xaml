@@ -207,6 +207,17 @@
     <sys:String x:Key="AbbSettingReadValueTooltip">讀取變數值</sys:String>
     <sys:String x:Key="AbbSettingWriteValueTooltip">寫入變數值</sys:String>
     <sys:String x:Key="AbbSettingNewValueHint">新值</sys:String>
+    <sys:String x:Key="HardwareTabModbusTcp">Modbus TCP</sys:String>
+    <sys:String x:Key="ModbusTcpIpHint">IP 位址</sys:String>
+    <sys:String x:Key="ModbusTcpPortHint">連接埠</sys:String>
+    <sys:String x:Key="ModbusTcpUnitIdHint">Unit ID</sys:String>
+    <sys:String x:Key="ModbusTcpConnectTooltip">連線</sys:String>
+    <sys:String x:Key="ModbusTcpDisconnectTooltip">斷線</sys:String>
+    <sys:String x:Key="ModbusTcpConnLabel">狀態</sys:String>
+    <sys:String x:Key="ModbusTcpConnected">已連線</sys:String>
+    <sys:String x:Key="ModbusTcpDisconnected">未連線</sys:String>
+    <sys:String x:Key="ModbusTcpAddTooltip">新增設備</sys:String>
+    <sys:String x:Key="ModbusTcpDeleteTooltip">刪除</sys:String>
     <!--#endregion-->
     <!--#region system settings view 系統設定視窗 -->
     <sys:String x:Key="SsAppearanceHeader">外觀</sys:String>

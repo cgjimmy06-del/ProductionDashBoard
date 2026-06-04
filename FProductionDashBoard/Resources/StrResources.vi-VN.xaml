@@ -207,6 +207,17 @@
     <sys:String x:Key="AbbSettingReadValueTooltip">Đọc biến</sys:String>
     <sys:String x:Key="AbbSettingWriteValueTooltip">Ghi biến</sys:String>
     <sys:String x:Key="AbbSettingNewValueHint">Giá trị mới</sys:String>
+    <sys:String x:Key="HardwareTabModbusTcp">Modbus TCP</sys:String>
+    <sys:String x:Key="ModbusTcpIpHint">Địa chỉ IP</sys:String>
+    <sys:String x:Key="ModbusTcpPortHint">Cổng</sys:String>
+    <sys:String x:Key="ModbusTcpUnitIdHint">Unit ID</sys:String>
+    <sys:String x:Key="ModbusTcpConnectTooltip">Kết nối</sys:String>
+    <sys:String x:Key="ModbusTcpDisconnectTooltip">Ngắt kết nối</sys:String>
+    <sys:String x:Key="ModbusTcpConnLabel">Trạng thái</sys:String>
+    <sys:String x:Key="ModbusTcpConnected">Đã kết nối</sys:String>
+    <sys:String x:Key="ModbusTcpDisconnected">Chưa kết nối</sys:String>
+    <sys:String x:Key="ModbusTcpAddTooltip">Thêm thiết bị</sys:String>
+    <sys:String x:Key="ModbusTcpDeleteTooltip">Xóa</sys:String>
     <!--#endregion-->
     <!--#region system settings view -->
     <sys:String x:Key="SsAppearanceHeader">Ngoại hình</sys:String>

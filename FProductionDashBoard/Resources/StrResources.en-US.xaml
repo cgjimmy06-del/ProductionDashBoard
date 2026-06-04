@@ -207,6 +207,17 @@
     <sys:String x:Key="AbbSettingReadValueTooltip">Read variable</sys:String>
     <sys:String x:Key="AbbSettingWriteValueTooltip">Write variable</sys:String>
     <sys:String x:Key="AbbSettingNewValueHint">New value</sys:String>
+    <sys:String x:Key="HardwareTabModbusTcp">Modbus TCP</sys:String>
+    <sys:String x:Key="ModbusTcpIpHint">IP Address</sys:String>
+    <sys:String x:Key="ModbusTcpPortHint">Port</sys:String>
+    <sys:String x:Key="ModbusTcpUnitIdHint">Unit ID</sys:String>
+    <sys:String x:Key="ModbusTcpConnectTooltip">Connect</sys:String>
+    <sys:String x:Key="ModbusTcpDisconnectTooltip">Disconnect</sys:String>
+    <sys:String x:Key="ModbusTcpConnLabel">Status</sys:String>
+    <sys:String x:Key="ModbusTcpConnected">Connected</sys:String>
+    <sys:String x:Key="ModbusTcpDisconnected">Disconnected</sys:String>
+    <sys:String x:Key="ModbusTcpAddTooltip">Add Device</sys:String>
+    <sys:String x:Key="ModbusTcpDeleteTooltip">Delete</sys:String>
     <!--#endregion-->
     <!--#region system settings view -->
     <sys:String x:Key="SsAppearanceHeader">Appearance</sys:String>
