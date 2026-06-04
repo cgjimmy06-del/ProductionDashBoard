@@ -18,19 +18,23 @@ namespace FProductionDashBoard.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(AbbStatusLevel))]
+        [NotifyPropertyChangedFor(nameof(DeviceStatusLevel))]
         private bool isAbbConnected;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(AbbStatusLevel))]
+        [NotifyPropertyChangedFor(nameof(DeviceStatusLevel))]
         private AbbControllerState abbControllerState;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(AbbStatusLevel))]
+        [NotifyPropertyChangedFor(nameof(DeviceStatusLevel))]
         [NotifyPropertyChangedFor(nameof(IsAbbAutoMode))]
         private AbbOperatingMode abbOperatingMode;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(AbbStatusLevel))]
+        [NotifyPropertyChangedFor(nameof(DeviceStatusLevel))]
         private AbbExecutionStatus abbExecutionStatus;
 
         /// <summary>

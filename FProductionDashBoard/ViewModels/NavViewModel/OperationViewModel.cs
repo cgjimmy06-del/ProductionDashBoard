@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeviceDrivers.Abb;
+using DeviceDrivers.Modbus;
 using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.Services.Exceptions;
@@ -32,8 +33,10 @@ namespace FProductionDashBoard.ViewModels
 
         // 硬體設備連線方法
         private readonly Func<IAbbRobotClient> _abbClientFactory;
+        private readonly Func<string, int, byte, IModbusClient> _modbusClientFactory;
         private readonly IConfigService<HardwareConfigDto> _hardwareConfig;
-        private const int AbbEquipmentTypeId = 1;
+        private const int AbbEquipmentTypeId   = 1;
+        private const int ModbusEquipmentTypeId = 2;
 
         public UserInfo? CurrentUser => _core.Authorization.CurrentUser;
 
@@ -45,12 +48,14 @@ namespace FProductionDashBoard.ViewModels
         public ICommand DeleteDevicesCommand { get; }
 
         public OperationViewModel(DashboardCoreServices core, Services.IDialogService dialog, ListsFromSql getlists,
-            Func<IAbbRobotClient> abbClientFactory, IConfigService<HardwareConfigDto> hardwareConfig)
+            Func<IAbbRobotClient> abbClientFactory, IConfigService<HardwareConfigDto> hardwareConfig,
+            Func<string, int, byte, IModbusClient> modbusClientFactory)
         {
             _core = core;
             _dialog = dialog;
             commonLists = getlists;
             _abbClientFactory = abbClientFactory;
+            _modbusClientFactory = modbusClientFactory;
             _hardwareConfig = hardwareConfig;
 
             FirstArticleInsAllCommand = new AsyncRelayCommand(() => FirstArticleInsAll(),
@@ -186,8 +191,11 @@ namespace FProductionDashBoard.ViewModels
                 var result = vm.Result ?? new();
                 foreach (var iselection in result.Selections)
                 {
-                    var abbClient = iselection.TypeId == AbbEquipmentTypeId ? _abbClientFactory() : null;
-                    var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, _hardwareConfig, abbClient);
+                    var abbClient    = iselection.TypeId == AbbEquipmentTypeId   ? _abbClientFactory() : null;
+                    var modbusClient = iselection.TypeId == ModbusEquipmentTypeId
+                        ? _modbusClientFactory(iselection.IP, 502, (byte)iselection.Port)
+                        : null;
+                    var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, _hardwareConfig, abbClient, modbusClient);
                     await idevice.UpdateTimeSlotsStatusAsync();
                     Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                     _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
@@ -217,8 +225,11 @@ namespace FProductionDashBoard.ViewModels
             }
             foreach (var iselection in result)
             {
-                var abbClient = iselection.TypeId == AbbEquipmentTypeId ? _abbClientFactory() : null;
-                var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, _hardwareConfig, abbClient);
+                var abbClient    = iselection.TypeId == AbbEquipmentTypeId   ? _abbClientFactory() : null;
+                var modbusClient = iselection.TypeId == ModbusEquipmentTypeId
+                    ? _modbusClientFactory(iselection.IP, 502, (byte)iselection.Port)
+                    : null;
+                var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, _hardwareConfig, abbClient, modbusClient);
                 await idevice.UpdateTimeSlotsStatusAsync();
                 Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                 _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
