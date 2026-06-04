@@ -21,16 +21,14 @@
         </Grid.RowDefinitions>
 
         <!-- Toolbar -->
-        <DockPanel Grid.Row="0" Margin="8,6">
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                <Button Command="{Binding AddCommand}"
-                        ToolTip="{DynamicResource ModbusTcpAddTooltip}"
-                        Style="{StaticResource FunctionButtonStyle}">
-                    <materialDesign:PackIcon Kind="Plus" Width="40" Height="40"
-                                             VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                </Button>
-            </StackPanel>
-        </DockPanel>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8,6">
+            <Button Command="{Binding AddCommand}"
+                    ToolTip="{DynamicResource ModbusTcpAddTooltip}"
+                    Style="{StaticResource FunctionButtonStyle}">
+                <materialDesign:PackIcon Kind="Plus" Width="40" Height="40"
+                                         VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Button>
+        </StackPanel>
 
         <!-- Device card list -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
