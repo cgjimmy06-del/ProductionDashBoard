@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import date
 
 OUTPUT_DIR = Path(r"C:\AIresources\DB_outputFile")
-VERSION_TAG = "v2.5"
+VERSION_TAG = "v2.6"
 DOCX_PATH  = OUTPUT_DIR / f"UserManual_FProductionDashBoard_{VERSION_TAG}.docx"
 PDF_PATH   = OUTPUT_DIR / f"UserManual_FProductionDashBoard_{VERSION_TAG}.pdf"
 REVIEW_DATE = date.today().strftime("%Y-%m-%d")
@@ -233,7 +233,7 @@ def generate_manual():
 
     doc.add_paragraph()
     for label, value in [
-        ("文件版本", f"{VERSION_TAG}（含硬體設定 / ABB機械手 / 離線優化）"),
+        ("文件版本", f"{VERSION_TAG}（含硬體設定 / ABB機械手 / Modbus TCP 設備支援）"),
         ("適用對象", "現場操作人員、設備管理員、系統管理員"),
         ("語言版本", "繁體中文"),
         ("文件日期", REVIEW_DATE),
@@ -254,10 +254,11 @@ def generate_manual():
         ["版本","日期","修訂人","修訂說明"],
         [
             ["v1.0", "2026-05-06", "—",                  "初版建立"],
-            ["v1.1", "2026-05-13", "AI-assisted",       "補主畫面版面配置（PR#29）+ Menu 外觀切換（PR#32）"],
-            ["v1.2", "2026-05-15", "AI-assisted",       "補日誌管理上傳功能（PR#36）+ 閒置偵測機制更新（PR#37）"],
-            ["v1.3", "2026-05-21", "AI-assisted",       "補系統參數設定（PR#26）+ 章節對齊現況；輸出路徑改為 DB_outputFile"],
-            [VERSION_TAG, REVIEW_DATE, "AI-assisted",   "新增 6.8 硬體設定（PR#62）；補 ABB 機械手說明；離線優化說明"],
+            ["v1.1", "2026-05-13", "AI-assisted",        "補主畫面版面配置（PR#29）+ Menu 外觀切換（PR#32）"],
+            ["v1.2", "2026-05-15", "AI-assisted",        "補日誌管理上傳功能（PR#36）+ 閒置偵測機制更新（PR#37）"],
+            ["v1.3", "2026-05-21", "AI-assisted",        "補系統參數設定（PR#26）+ 章節對齊現況；輸出路徑改為 DB_outputFile"],
+            ["v2.5", REVIEW_DATE,  "AI-assisted",        "新增 6.8 硬體設定（PR#62）；補 ABB 機械手說明；離線優化說明"],
+            [VERSION_TAG, REVIEW_DATE, "AI-assisted",    "新增 7.3 Modbus TCP 設備（PR#64-65）；補設備卡片 Modbus 狀態說明；補 FAQ"],
         ],
         [2.0, 2.5, 3.5, 8.0]
     )
@@ -297,7 +298,13 @@ def generate_manual():
         ("  6.7", "系統參數設定（業務時間 / 排程 / 閒置登出）", ""),
         ("  6.8", "硬體設定（讀卡機 / ABB 機械手 RAPID 位址）", ""),
         ("  6.9", "日誌管理與上傳", ""),
-        ("7.", "硬體設定（讀卡機）", ""),
+        ("7.",     "硬體設定（讀卡機 / Modbus TCP 設備）", ""),
+        ("  7.1",  "新增讀卡機", ""),
+        ("  7.2",  "移除讀卡機", ""),
+        ("  7.3",  "Modbus TCP 設備", ""),
+        ("  7.3.1","新增 Modbus TCP 連線", ""),
+        ("  7.3.2","讀寫測試平台", ""),
+        ("  7.3.3","移除 Modbus TCP 設備", ""),
         ("8.", "離線模式說明", ""),
         ("9.", "登出與閒置保護", ""),
         ("10.", "常見問題（FAQ）", ""),
@@ -474,6 +481,7 @@ def generate_manual():
             ["設備名稱 / ID",    "卡片頂部顯示設備識別資訊"],
             ["目前產品",         "ModelCode — TypeCode（如 ABC123 — 001）"],
             ["時段狀態指示燈",   "每個圓點代表一個巡檢時段\n🔵 未到時段  🟢 已巡檢  🔴 逾時未巡檢  ⚪ 不適用"],
+            ["設備連線狀態",     "硬體設備類型（TypeId=1 ABB / TypeId=2 Modbus TCP）的卡片顯示連線燈號\n🟢 已連線  🔴 未連線（自動重連中）"],
             ["首件狀態",         "✅ 首件已完成  ❌ 首件未完成"],
             ["操作按鈕列",       "物料 / 首件 / 巡檢 / 調試 四個操作按鈕"],
             ["調試進行中",       "進行調試時卡片顯示計時器與「結束調試」按鈕"],
@@ -684,10 +692,10 @@ def generate_manual():
     doc.add_page_break()
 
     # ══════════════════════════════════════
-    # 7. 硬體設定（讀卡機）
+    # 7. 硬體設定（讀卡機 / Modbus TCP 設備）
     # ══════════════════════════════════════
-    heading1("7. 硬體設定（讀卡機）")
-    body("點擊左側導覽「設備管理」進入硬體設定，可新增 / 移除讀卡機。")
+    heading1("7. 硬體設定（讀卡機 / Modbus TCP 設備）")
+    body("點擊左側導覽「設備管理」進入硬體設定，可新增 / 移除讀卡機與 Modbus TCP 設備。")
     img_placeholder("讀卡機設定頁面（讀卡機清單 + 新增按鈕）")
 
     heading2("7.1 新增讀卡機")
@@ -702,6 +710,41 @@ def generate_manual():
     heading2("7.2 移除讀卡機")
     step(1, "在讀卡機清單中選取要移除的項目")
     step(2, "點擊「刪除」按鈕並確認")
+
+    heading2("7.3 Modbus TCP 設備")
+    body("點擊左側導覽「設備管理」後切換至「Modbus TCP」頁籤，可新增、測試與移除 Modbus TCP 設備連線。")
+
+    heading3("7.3.1 新增 Modbus TCP 連線")
+    step(1, "點擊「新增」按鈕，開啟設備設定對話框")
+    step(2, "輸入設備名稱與 IP 位址（格式：xxx.xxx.xxx.xxx）")
+    step(3, "確認 TCP Port（預設 502，通常無需修改）")
+    step(4, "輸入 Unit ID（Modbus 從站地址，範圍 0–255）")
+    step(5, "點擊「套用」儲存，設備卡片將自動嘗試建立連線（燈號轉綠代表成功）")
+    img_placeholder("Modbus TCP 新增設備對話框（IP / Port / Unit ID 欄位）")
+    note("Unit ID 對應 Modbus 從站地址（Slave Address），需與 PLC 或設備的設定一致", kind="info")
+
+    heading3("7.3.2 讀寫測試平台")
+    body("Modbus TCP 頁籤提供即時讀寫測試功能，可在不開啟設備卡片的情況下直接測試暫存器。")
+    simple_table(
+        ["欄位","說明"],
+        [
+            ["設備選擇",  "從下拉選單選擇要測試的 Modbus 設備"],
+            ["起始位址",  "要讀取或寫入的暫存器起始位址（十進位）"],
+            ["數量",      "連續讀取的暫存器數量"],
+            ["資料格式",  "選擇解析格式（Int16 / UInt16 / Int32_BE / Float32_BE 等）"],
+            ["寫入值",    "寫入暫存器的值（讀取測試時留空）"],
+        ],
+        [4, 12]
+    )
+    step(1, "選擇目標設備與暫存器位址")
+    step(2, "點擊「讀取」取得當前值，或填入寫入值後點擊「寫入」")
+    step(3, "結果顯示於下方結果欄位")
+    note("讀寫測試平台僅供工程師調試使用，請確認暫存器位址正確後再執行寫入操作", kind="warn")
+    img_placeholder("Modbus TCP 讀寫測試平台（位址 / 格式 / 讀寫按鈕 / 結果顯示）")
+
+    heading3("7.3.3 移除 Modbus TCP 設備")
+    step(1, "在 Modbus TCP 清單中選取要移除的設備")
+    step(2, "點擊「刪除」並確認，設備連線將立即中斷並從清單移除")
     doc.add_page_break()
 
     # ══════════════════════════════════════
@@ -784,6 +827,13 @@ def generate_manual():
         ("Q: 刷卡後顯示「未識別卡號，是否查詢 ERP？」",
          "表示此卡號尚未在系統中登記。若為新員工，管理員可選擇查詢 ERP 並新增帳號；"
          "若非本公司員工卡，請勿允許新增。"),
+
+        ("Q: Modbus TCP 設備卡片燈號恆顯示紅色（未連線）",
+         "請確認：\n"
+         "1. 設備 IP 位址與 Unit ID 是否正確\n"
+         "2. 目標設備（PLC / 感測器）已開機且允許 Modbus TCP 連線（TCP 502 port 未被防火牆封鎖）\n"
+         "3. 電腦與設備在同一網段，可互相 ping 通\n"
+         "若以上皆正常但仍無法連線，可至「設備管理 → Modbus TCP」頁籤進行讀寫測試診斷"),
     ]
 
     for q, a in faq_items:
