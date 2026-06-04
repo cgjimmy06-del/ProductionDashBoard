@@ -151,7 +151,7 @@
                                       Visibility="{Binding IsConnected, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>   <!-- 讀取按鈕 -->
-                                        <ColumnDefinition Width="120"/>    <!-- 暫存器類型 -->
+                                        <ColumnDefinition Width="150"/>    <!-- 暫存器類型 -->
                                         <ColumnDefinition Width="90"/>     <!-- 起始位址 -->
                                         <ColumnDefinition Width="70"/>     <!-- 數量 -->
                                         <ColumnDefinition Width="120"/>    <!-- 值格式 -->
@@ -192,7 +192,8 @@
                                         <TextBlock Text="{DynamicResource ModbusTcpStartAddrHint}"
                                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                        <TextBox Text="{Binding ReadStartAddress, UpdateSourceTrigger=PropertyChanged}"
+                                        <TextBox Margin="0" Padding="0,3"
+                                                 Text="{Binding ReadStartAddress, UpdateSourceTrigger=PropertyChanged}"
                                                  materialDesign:HintAssist.Hint="{DynamicResource ModbusTcpStartAddrHint}"/>
                                     </StackPanel>
 
@@ -201,7 +202,8 @@
                                         <TextBlock Text="{DynamicResource ModbusTcpCountHint}"
                                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                        <TextBox Text="{Binding ReadCount, UpdateSourceTrigger=PropertyChanged}"
+                                        <TextBox Margin="0" Padding="0,3"
+                                                 Text="{Binding ReadCount, UpdateSourceTrigger=PropertyChanged}"
                                                  materialDesign:HintAssist.Hint="{DynamicResource ModbusTcpCountHint}"/>
                                     </StackPanel>
 
@@ -234,7 +236,8 @@
                                         <TextBlock Text="{DynamicResource ModbusTcpWriteAddrHint}"
                                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                        <TextBox Text="{Binding WriteAddress, UpdateSourceTrigger=PropertyChanged}"
+                                        <TextBox Margin="0" Padding="0,3"
+                                                 Text="{Binding WriteAddress, UpdateSourceTrigger=PropertyChanged}"
                                                  IsEnabled="{Binding CanWrite}"
                                                  materialDesign:HintAssist.Hint="{DynamicResource ModbusTcpWriteAddrHint}"/>
                                     </StackPanel>
@@ -244,7 +247,8 @@
                                         <TextBlock Text="{DynamicResource ModbusTcpWriteValueHint}"
                                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                        <TextBox Text="{Binding WriteRawValue, UpdateSourceTrigger=PropertyChanged}"
+                                        <TextBox Margin="0" Padding="0,3"
+                                                 Text="{Binding WriteRawValue, UpdateSourceTrigger=PropertyChanged}"
                                                  IsEnabled="{Binding CanWrite}"
                                                  materialDesign:HintAssist.Hint="{DynamicResource ModbusTcpWriteValueHint}"/>
                                     </StackPanel>
