@@ -9,8 +9,8 @@ import sys
 from datetime import date
 from pathlib import Path
 
-OUTPUT_DIR = Path(r"C:\AIresources\DB_outputFile")
-VERSION_TAG = "v2.5"
+OUTPUT_DIR = Path(__file__).parent
+VERSION_TAG = "v2.6"
 XLSX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.xlsx"
 DOCX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.docx"
 PDF_PATH  = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.pdf"
@@ -623,7 +623,8 @@ def generate_word():
         ["v1.1", "2026-05-13", "AI-assisted Review", "Phase 1-3 修復進度追蹤（PR #20/#21/#22/#23/#34）", "已歸檔"],
         ["v1.2", "2026-05-15", "AI-assisted Review", "PR #36 (Log 上傳) + PR #37 (B1/UI-03/IDLE-01)", "已歸檔"],
         ["v1.3", "2026-05-21", "AI-assisted Review", "二輪審查 + 18 項新發現 (P5-H1~L6) + 完整修復追蹤", "已歸檔"],
-        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V2.5.1 發佈版本更新；PR #62 硬體設定持久化（P5-L3 已解決）", "更新版"],
+        ["v2.5", REVIEW_DATE,  "AI-assisted Review", "V2.5.1 發佈版本更新；PR #62 硬體設定持久化（P5-L3 已解決）", "已歸檔"],
+        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V2.6.0 發佈版本更新；PR #64-66 Modbus TCP 支援 + ABB/Modbus code review 修正（High-1 資源釋放 + Low-1~5）", "更新版"],
     ]
     rev_tbl = doc.add_table(rows=len(rev_history)+1, cols=5)
     rev_tbl.style = "Table Grid"
