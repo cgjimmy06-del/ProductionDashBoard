@@ -38,7 +38,7 @@ public sealed class ModbusTcpClient : IModbusClient
     /// <param name="ipAddress">設備 IP 位址。</param>
     /// <param name="port">TCP 連接埠，預設 502。</param>
     /// <param name="unitId">Modbus Unit ID，預設 1。</param>
-    public ModbusTcpClient(string ipAddress, int port = 502, byte unitId = 1)
+    public ModbusTcpClient(string ipAddress, int port = 502, byte unitId = 0)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(ipAddress);
         _ipAddress = ipAddress;

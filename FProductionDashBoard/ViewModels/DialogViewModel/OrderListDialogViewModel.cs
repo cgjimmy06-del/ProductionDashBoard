@@ -46,7 +46,7 @@ namespace FProductionDashBoard.ViewModels
     {
         public int ItemId { get; set; }
         public string DisplayText { get; set; } = string.Empty;
-        [ObservableProperty] private bool isChecked = false;
+        [ObservableProperty] private bool isChecked = true;
     }
 
     // ─── ViewModel ────────────────────────────────────────────────────────────

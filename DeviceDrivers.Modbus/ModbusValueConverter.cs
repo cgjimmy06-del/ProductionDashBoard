@@ -1,5 +1,6 @@
 using DeviceDrivers.Modbus.Models;
 using System;
+using System.Globalization;
 
 namespace DeviceDrivers.Modbus;
 
@@ -19,8 +20,8 @@ public static class ModbusValueConverter
         ModbusValueFormat.UInt32_LE => ToU32LE(words, offset).ToString(),
         ModbusValueFormat.Int32_BE  => ((int)ToU32BE(words, offset)).ToString(),
         ModbusValueFormat.Int32_LE  => ((int)ToU32LE(words, offset)).ToString(),
-        ModbusValueFormat.Float32_BE => BitConverter.Int32BitsToSingle((int)ToU32BE(words, offset)).ToString("G6"),
-        ModbusValueFormat.Float32_LE => BitConverter.Int32BitsToSingle((int)ToU32LE(words, offset)).ToString("G6"),
+        ModbusValueFormat.Float32_BE => BitConverter.Int32BitsToSingle((int)ToU32BE(words, offset)).ToString("G6", CultureInfo.InvariantCulture),
+        ModbusValueFormat.Float32_LE => BitConverter.Int32BitsToSingle((int)ToU32LE(words, offset)).ToString("G6", CultureInfo.InvariantCulture),
         _ => throw new ArgumentOutOfRangeException(nameof(format))
     };
 

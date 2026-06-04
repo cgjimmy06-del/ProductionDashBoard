@@ -17,6 +17,7 @@ namespace FProductionDashBoard.UiModels
         public required string DeviceID { get; set; }
         public required string Name { get; set; }
         public string IP { get; set; } = "none";
+        /// <summary>連接埠；TypeId=2（Modbus）時改存 Modbus Unit ID（TCP port 固定 502）。</summary>
         public int Port { get; set; } = 0;
         public int? TypeId { get; set; }
         public string? Factory { get; set; }

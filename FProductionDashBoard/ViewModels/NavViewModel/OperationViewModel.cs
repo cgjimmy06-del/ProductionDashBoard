@@ -22,8 +22,8 @@ namespace FProductionDashBoard.ViewModels
 {
     public partial class OperationViewModel : ObservableObject, IDisposable
     {
-        private string defaultDevicesFile = "DefaultDevices.json"; // 預設設備檔案
-        private readonly ListsFromSql commonLists;
+        private string _defaultDevicesFile = "default_devices.json"; // 預設設備檔案
+        private readonly ListsFromSql _commonLists;
         public ObservableCollection<DeviceCardViewModel> Devices { get; } =
             new ObservableCollection<DeviceCardViewModel>();
 
@@ -53,7 +53,7 @@ namespace FProductionDashBoard.ViewModels
         {
             _core = core;
             _dialog = dialog;
-            commonLists = getlists;
+            _commonLists = getlists;
             _abbClientFactory = abbClientFactory;
             _modbusClientFactory = modbusClientFactory;
             _hardwareConfig = hardwareConfig;
@@ -77,7 +77,7 @@ namespace FProductionDashBoard.ViewModels
             if (!Devices.Any()) return;
 
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0],
-                commonLists.ErrorsList);
+                _commonLists.ErrorsList);
             _dialog.ShowDialog(vm);
 
             if (vm.IsConfirmed)
@@ -122,14 +122,14 @@ namespace FProductionDashBoard.ViewModels
             if (!Devices.Any()) return;
 
             var vm = new InspectionDialogViewModel(Properties.Resources.DeviceFirstInsDialog, Devices[0],
-                commonLists.ErrorsList);
+                _commonLists.ErrorsList);
             _dialog.ShowDialog(vm);
 
             if (vm.IsConfirmed)
             {
                 var result = vm.Result ?? new();
 
-                var currentTimeSlot = _core.Data.GetCurrentTimeSlotId(commonLists.TimeSlotsList);
+                var currentTimeSlot = _core.Data.GetCurrentTimeSlotId(_commonLists.TimeSlotsList);
                 if (currentTimeSlot == null)
                 {
                     _core.Log.AddLog("目前不在任何巡檢時段內");
@@ -182,8 +182,8 @@ namespace FProductionDashBoard.ViewModels
                 typeOptions = new[] { new EquipmentTypeFilterOption(null) };
             }
 
-            var vm = new AddDeviceDialogViewModel(Properties.Resources.DeviceCardManageDialog, defaultDevicesFile,
-                                                    commonLists.DevicesList, [.. Devices], typeOptions); // [.. X] = X.ToList()
+            var vm = new AddDeviceDialogViewModel(Properties.Resources.DeviceCardManageDialog, _defaultDevicesFile,
+                                                    _commonLists.DevicesList, [.. Devices], typeOptions); // [.. X] = X.ToList()
             _dialog.ShowDialog(vm);
 
             if (vm.IsConfirmed)
@@ -193,8 +193,9 @@ namespace FProductionDashBoard.ViewModels
                 {
                     var abbClient    = iselection.TypeId == AbbEquipmentTypeId   ? _abbClientFactory() : null;
                     var modbusClient = iselection.TypeId == ModbusEquipmentTypeId
-                        ? _modbusClientFactory(iselection.IP, 502, (byte)iselection.Port) : null;
-                    var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, _hardwareConfig, abbClient, modbusClient);
+                        ? _modbusClientFactory(iselection.IP, 502, (byte)iselection.Port) : null; // Port 範圍 0~255；超出則靜默略過
+
+                    var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, _commonLists, _hardwareConfig, abbClient, modbusClient);
                     await idevice.UpdateTimeSlotsStatusAsync();
                     Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                     _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);
@@ -205,8 +206,8 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                JsonDataService.Save(Devices.Select(s => s.Info), defaultDevicesFile);
-                _core.Log.AddLog($"{Properties.Resources.ComStrDownloaded}: {defaultDevicesFile}", LogLevel.Info);
+                JsonDataService.Save(Devices.Select(s => s.Info), _defaultDevicesFile);
+                _core.Log.AddLog($"{Properties.Resources.ComStrDownloaded}: {_defaultDevicesFile}", LogLevel.Info);
             }
             catch (Exception ex)
             {
@@ -216,7 +217,7 @@ namespace FProductionDashBoard.ViewModels
         }
         private async Task FastUploadDevices()
         {
-            var result = JsonDataService.Load<List<DeviceInfo>>(defaultDevicesFile).AsEnumerable();
+            var result = JsonDataService.Load<List<DeviceInfo>>(_defaultDevicesFile).AsEnumerable();
             if (Devices.Any())
             {
                 var existedIds = Devices.Select(s => s.Info.DeviceID).ToHashSet();
@@ -226,8 +227,9 @@ namespace FProductionDashBoard.ViewModels
             {
                 var abbClient    = iselection.TypeId == AbbEquipmentTypeId   ? _abbClientFactory() : null;
                 var modbusClient = iselection.TypeId == ModbusEquipmentTypeId
-                    ? _modbusClientFactory(iselection.IP, 502, (byte)iselection.Port) : null;
-                var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, _hardwareConfig, abbClient, modbusClient);
+                    ? _modbusClientFactory(iselection.IP, 502, (byte)iselection.Port) : null; // Port 範圍 0~255；超出則靜默略過
+
+                var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, _commonLists, _hardwareConfig, abbClient, modbusClient);
                 await idevice.UpdateTimeSlotsStatusAsync();
                 Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
                 _core.Log.AddLog($"{Properties.Resources.ComStrAdded}: {iselection.Name}", LogLevel.Info);

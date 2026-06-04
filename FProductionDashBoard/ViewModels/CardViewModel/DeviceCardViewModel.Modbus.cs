@@ -22,6 +22,7 @@ namespace FProductionDashBoard.ViewModels
         private void InitModbus(IModbusClient? modbusClient)
         {
             if (modbusClient == null) return;
+            // 註：ABB 與 Modbus 由 TypeId 互斥，不應同卡並存；若未來允許並存，DeviceStatusLevel 會以 Modbus 為準。
             _modbusClient = modbusClient;
             StartModbusLoop();
         }
