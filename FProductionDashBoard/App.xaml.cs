@@ -115,6 +115,10 @@ namespace FProductionDashBoard
                 services.AddSingleton<Func<DeviceDrivers.Abb.IAbbRobotClient>>(
                     _ => () => new DeviceDrivers.Abb.AbbRobotClient());
 
+                // 註冊 Modbus TCP 用戶端工廠（由 ModbusTcpSettingViewModel 負責釋放）
+                services.AddSingleton<Func<string, int, byte, DeviceDrivers.Modbus.IModbusClient>>(
+                    _ => (ip, port, unitId) => new DeviceDrivers.Modbus.ModbusTcpClient(ip, port, unitId));
+
                 // 註冊 WebApi 服務
                 var factoryArea = config[$"EriApi:{selectedServer}"] ?? selectedServer;
                 services.Configure<ErpApiOptions>(opt => opt.FactoryArea = factoryArea);

@@ -217,9 +217,19 @@ public sealed class ModbusTcpClient : IModbusClient
             // 協定層錯誤（如非法位址/功能）—— 連線保持，不斷線
             throw Wrap(method, ModbusErrorKind.OperationFailed, ex);
         }
+        catch (IOException ex) when (ex.InnerException is not SocketException)
+        {
+            // NModbus response 驗證失敗（ValidateResponse 拋 IOException，無 inner exception）
+            // 如台達 PLC 對 FC06 的非標準 response 格式。
+            // 寫入/讀取已在設備端執行完畢，TCP 連線本身仍活著，不觸發斷線。
+            //
+            // 區分依據：NetworkStream 傳輸層斷線時拋的 IOException 其 InnerException 為 SocketException；
+            // ValidateResponse 拋的 IOException 沒有 inner exception，因此可安全區分。
+            throw Wrap(method, ModbusErrorKind.OperationFailed, ex);
+        }
         catch (Exception ex)
         {
-            // 傳輸層錯誤（SocketException/IOException/TimeoutException 等）—— 先斷線
+            // 傳輸層錯誤（SocketException / TimeoutException 等）—— 先斷線
             Disconnect();
             throw Wrap(method, ModbusErrorKind.ConnectionFailed, ex);
         }

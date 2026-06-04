@@ -38,5 +38,19 @@
             <localuc:AbbRobotSettingView DataContext="{Binding AbbRobot}"/>
         </TabItem>
 
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Margin="4,0">
+                    <materialDesign:PackIcon Kind="EthernetCable"
+                                             Width="20" Height="20"
+                                             VerticalAlignment="Center"
+                                             Margin="0,0,6,0"/>
+                    <TextBlock Text="{DynamicResource HardwareTabModbusTcp}" VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </StackPanel>
+            </TabItem.Header>
+            <localuc:ModbusTcpSettingView DataContext="{Binding ModbusTcp}"/>
+        </TabItem>
+
     </TabControl>
 </UserControl>
