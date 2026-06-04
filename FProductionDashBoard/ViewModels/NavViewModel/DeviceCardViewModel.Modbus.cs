@@ -13,6 +13,7 @@ namespace FProductionDashBoard.ViewModels
         private IModbusClient? _modbusClient;
         private CancellationTokenSource? _modbusLoopCts;
         private Task? _modbusLoopTask;
+        private bool _modbusConnectFailedLogged;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(DeviceStatusLevel))]
@@ -36,8 +37,11 @@ namespace FProductionDashBoard.ViewModels
             await TryModbusConnectAsync().ConfigureAwait(false);
             while (!ct.IsCancellationRequested)
             {
-                try { await Task.Delay(10000, ct).ConfigureAwait(false); }
+                var cfg = _hardwareConfig.Current;
+                int delayMs = Math.Max(1, cfg.DeviceReconnectIntervalSec) * 1000;
+                try { await Task.Delay(delayMs, ct).ConfigureAwait(false); }
                 catch { break; }
+                if (!cfg.DeviceReconnectEnabled) continue;
                 if (!_modbusClient!.IsConnected)
                     await TryModbusConnectAsync().ConfigureAwait(false);
             }
@@ -48,12 +52,17 @@ namespace FProductionDashBoard.ViewModels
             try
             {
                 await Task.Run(() => _modbusClient!.Connect()).ConfigureAwait(false);
+                _modbusConnectFailedLogged = false;
                 _core.Log.AddLog($"[Modbus] {Info.Name} ({Info.IP}) 連線成功。");
             }
             catch (ModbusClientException ex)
             {
-                _core.Log.AddLog($"[Modbus] {Info.Name} ({Info.IP}) 連線失敗，請檢查連線。", LogLevel.Error);
-                _core.Log.AddErrorLog($"[TryModbusConnectAsync] {ex.Message}");
+                if (!_modbusConnectFailedLogged)
+                {
+                    _core.Log.AddLog($"[Modbus] {Info.Name} ({Info.IP}) 連線失敗，請檢查連線。", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[TryModbusConnectAsync] {ex.Message}");
+                    _modbusConnectFailedLogged = true;
+                }
             }
             finally
             {

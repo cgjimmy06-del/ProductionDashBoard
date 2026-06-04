@@ -48,8 +48,8 @@ namespace FProductionDashBoard.ViewModels
         public ICommand DeleteDevicesCommand { get; }
 
         public OperationViewModel(DashboardCoreServices core, Services.IDialogService dialog, ListsFromSql getlists,
-            Func<IAbbRobotClient> abbClientFactory, IConfigService<HardwareConfigDto> hardwareConfig,
-            Func<string, int, byte, IModbusClient> modbusClientFactory)
+            IConfigService<HardwareConfigDto> hardwareConfig,
+            Func<IAbbRobotClient> abbClientFactory, Func<string, int, byte, IModbusClient> modbusClientFactory)
         {
             _core = core;
             _dialog = dialog;
@@ -193,8 +193,7 @@ namespace FProductionDashBoard.ViewModels
                 {
                     var abbClient    = iselection.TypeId == AbbEquipmentTypeId   ? _abbClientFactory() : null;
                     var modbusClient = iselection.TypeId == ModbusEquipmentTypeId
-                        ? _modbusClientFactory(iselection.IP, 502, (byte)iselection.Port)
-                        : null;
+                        ? _modbusClientFactory(iselection.IP, 502, (byte)iselection.Port) : null;
                     var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, _hardwareConfig, abbClient, modbusClient);
                     await idevice.UpdateTimeSlotsStatusAsync();
                     Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));
@@ -227,8 +226,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 var abbClient    = iselection.TypeId == AbbEquipmentTypeId   ? _abbClientFactory() : null;
                 var modbusClient = iselection.TypeId == ModbusEquipmentTypeId
-                    ? _modbusClientFactory(iselection.IP, 502, (byte)iselection.Port)
-                    : null;
+                    ? _modbusClientFactory(iselection.IP, 502, (byte)iselection.Port) : null;
                 var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, commonLists, _hardwareConfig, abbClient, modbusClient);
                 await idevice.UpdateTimeSlotsStatusAsync();
                 Application.Current.Dispatcher.Invoke(() => Devices.Add(idevice));

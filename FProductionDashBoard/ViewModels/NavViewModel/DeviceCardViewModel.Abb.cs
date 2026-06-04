@@ -15,6 +15,7 @@ namespace FProductionDashBoard.ViewModels
         private AbbControllerInfo? _lastAbbControllerInfo;
         private CancellationTokenSource? _abbLoopCts;
         private Task? _abbLoopTask;
+        private bool _abbConnectFailedLogged;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(AbbStatusLevel))]
@@ -73,8 +74,11 @@ namespace FProductionDashBoard.ViewModels
             await TryAbbConnectAsync().ConfigureAwait(false);
             while (!ct.IsCancellationRequested)
             {
-                try { await Task.Delay(10000, ct).ConfigureAwait(false); }
+                var cfg = _hardwareConfig.Current;
+                int delayMs = Math.Max(1, cfg.DeviceReconnectIntervalSec) * 1000;
+                try { await Task.Delay(delayMs, ct).ConfigureAwait(false); }
                 catch { break; }
+                if (!cfg.DeviceReconnectEnabled) continue;
                 if (!_abbClient!.IsConnected)
                     await TryAbbConnectAsync().ConfigureAwait(false);
             }
@@ -90,13 +94,18 @@ namespace FProductionDashBoard.ViewModels
                 if (_lastAbbControllerInfo != null)
                 {
                     await Task.Run(() => _abbClient!.Connect(_lastAbbControllerInfo)).ConfigureAwait(false);
+                    _abbConnectFailedLogged = false;
                     _core.Log.AddLog($"[ABB] {Info.Name} ({Info.IP}) 連線成功。");
                 }
             }
             catch (AbbRobotException ex)
             {
-                _core.Log.AddLog($"[ABB] {Info.Name} ({Info.IP}) 連線失敗，請檢查連線。");
-                _core.Log.AddErrorLog($"[TryAbbConnectAsync] {Info.Name} ({Info.IP}) {ex.Message}");
+                if (!_abbConnectFailedLogged)
+                {
+                    _core.Log.AddLog($"[ABB] {Info.Name} ({Info.IP}) 連線失敗，請檢查連線。", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[TryAbbConnectAsync] {Info.Name} ({Info.IP}) {ex.Message}");
+                    _abbConnectFailedLogged = true;
+                }
             }
         }
 
