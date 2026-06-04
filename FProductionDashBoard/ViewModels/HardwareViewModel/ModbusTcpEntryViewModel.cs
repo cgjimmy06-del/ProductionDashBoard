@@ -116,7 +116,10 @@ namespace FProductionDashBoard.ViewModels
                         .ConfigureAwait(true);
 
                     for (int i = 0; i < bools.Length; i++)
-                        ReadResults.Add($"0x{(ReadStartAddress + i):X4}: {bools[i]}");
+                    {
+                        ushort a = (ushort)(ReadStartAddress + i);
+                        ReadResults.Add($"0x{a:X4}({a}): {bools[i]}");
+                    }
                 }
                 else
                 {
@@ -137,7 +140,7 @@ namespace FProductionDashBoard.ViewModels
                         string raw = stride == 1
                             ? $"0x{words[offset]:X4}"
                             : $"0x{words[offset]:X4}{words[offset + 1]:X4}";
-                        ReadResults.Add($"0x{addr:X4}: {typed}  (raw: {raw})");
+                        ReadResults.Add($"0x{addr:X4}({addr}): {typed}  (raw: {raw})");
                     }
                 }
             }
