@@ -97,6 +97,11 @@ namespace FProductionDashBoard.ViewModels
                     _abbConnectFailedLogged = false;
                     _core.Log.AddLog($"[ABB] {Info.Name} ({Info.IP}) 連線成功。");
                 }
+                else if (!_abbConnectFailedLogged)
+                {
+                    _core.Log.AddLog($"[ABB] {Info.Name} ({Info.IP}) 找不到控制器，請檢查連線。", LogLevel.Error);
+                    _abbConnectFailedLogged = true;
+                }
             }
             catch (AbbRobotException ex)
             {

@@ -215,6 +215,7 @@ namespace FProductionDashBoard.ViewModels
         public void Dispose()
         {
             DisposeScheduler();
+            DisposePanelContainers();
             _cardReaderHandler.Detach();
             if (_onUserChanged != null)
                 _core.Authorization.UserChanged -= _onUserChanged;
