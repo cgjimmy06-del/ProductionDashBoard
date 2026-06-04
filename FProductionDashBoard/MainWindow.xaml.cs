@@ -33,7 +33,10 @@ namespace FProductionDashBoard
         private void OnWindowClosed(object? sender, EventArgs e)
         {
             if (DataContext is ViewModels.MainViewModel vm)
+            {
                 vm.PropertyChanged -= OnViewModelPropertyChanged;
+                vm.Dispose();
+            }
         }
 
         private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
