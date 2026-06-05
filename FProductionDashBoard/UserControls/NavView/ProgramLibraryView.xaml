@@ -59,7 +59,7 @@
             <Border Style="{StaticResource StatCardBorderStyle}">
                 <StackPanel HorizontalAlignment="Center">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Ellipse Width="8" Height="8" Margin="0,0,4,0" VerticalAlignment="Center"
+                        <Ellipse Width="10" Height="10" Margin="0,0,4,0" VerticalAlignment="Center"
                                  Fill="{DynamicResource ProgramFeasibleBrush}"/>
                         <TextBlock Text="{DynamicResource PlStatFeasible}" Style="{StaticResource StatLabelStyle}"/>
                     </StackPanel>
@@ -78,7 +78,7 @@
             <Border Style="{StaticResource StatCardBorderStyle}">
                 <StackPanel HorizontalAlignment="Center">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Ellipse Width="8" Height="8" Margin="0,0,4,0" VerticalAlignment="Center"
+                        <Ellipse Width="10" Height="10" Margin="0,0,4,0" VerticalAlignment="Center"
                                  Fill="{DynamicResource ProgramErrorBrush}"/>
                         <TextBlock Text="{DynamicResource PlStatTeaching}" Style="{StaticResource StatLabelStyle}"/>
                     </StackPanel>
@@ -97,7 +97,7 @@
             <Border Style="{StaticResource StatCardBorderStyle}">
                 <StackPanel HorizontalAlignment="Center">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Ellipse Width="8" Height="8" Margin="0,0,4,0" VerticalAlignment="Center"
+                        <Ellipse Width="10" Height="10" Margin="0,0,4,0" VerticalAlignment="Center"
                                  Fill="{DynamicResource ProgramOffsetBrush}"/>
                         <TextBlock Text="{DynamicResource PlStatOffset}" Style="{StaticResource StatLabelStyle}"/>
                     </StackPanel>
@@ -116,7 +116,7 @@
             <Border Style="{StaticResource StatCardBorderStyle}">
                 <StackPanel HorizontalAlignment="Center">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Ellipse Width="8" Height="8" Margin="0,0,4,0" VerticalAlignment="Center"
+                        <Ellipse Width="10" Height="10" Margin="0,0,4,0" VerticalAlignment="Center"
                                  Fill="{DynamicResource ProgramPendingBrush}"/>
                         <TextBlock Text="{DynamicResource PlStatPending}" Style="{StaticResource StatLabelStyle}"/>
                     </StackPanel>
@@ -135,7 +135,7 @@
             <Border Style="{StaticResource StatCardBorderStyle}">
                 <StackPanel HorizontalAlignment="Center">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Ellipse Width="8" Height="8" Margin="0,0,4,0" VerticalAlignment="Center"
+                        <Ellipse Width="10" Height="10" Margin="0,0,4,0" VerticalAlignment="Center"
                                  Fill="{DynamicResource ProgramErrorBrush}"/>
                         <TextBlock Text="{DynamicResource PlStatInfeasible}" Style="{StaticResource StatLabelStyle}"/>
                     </StackPanel>
@@ -193,6 +193,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="{x:Type localvm:ProgramDeviceCardViewModel}">
                             <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                    Height="Auto"
                                     Padding="0"
                                     Command="{Binding DataContext.SelectCardCommand,
                                               RelativeSource={RelativeSource AncestorType=UserControl}}"
