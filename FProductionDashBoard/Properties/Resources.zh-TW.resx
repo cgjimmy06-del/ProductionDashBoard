@@ -258,6 +258,12 @@
   <data name="TuningDialogTitle" xml:space="preserve">
     <value>選擇調試操作</value>
   </data>
+  <data name="ProgramStatusDialogTitle" xml:space="preserve">
+    <value>修改程式狀態</value>
+  </data>
+  <data name="ProgramStatusNoSelectionError" xml:space="preserve">
+    <value>請選擇目標狀態</value>
+  </data>
   <data name="TuningInProgressTeaching" xml:space="preserve">
     <value>帶點中...</value>
   </data>

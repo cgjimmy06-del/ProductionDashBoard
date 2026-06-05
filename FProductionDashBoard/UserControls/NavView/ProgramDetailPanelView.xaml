@@ -162,19 +162,26 @@
                                            Foreground="{DynamicResource TextPrimaryBrush}"
                                            Margin="0,0,16,0"/>
 
-                                <!-- ProductionStatus Chip -->
-                                <Grid Grid.Column="4" VerticalAlignment="Center">
-                                    <!-- 暈色背景層 -->
-                                    <Border CornerRadius="10"
-                                            Background="{Binding ProductionStatus, Converter={StaticResource TuningTypeToBrushConverter}}"
-                                            Opacity="0.15"/>
-                                    <!-- 文字層 -->
-                                    <Border CornerRadius="10" Padding="10,4">
-                                        <TextBlock Text="{Binding ProductionStatus, Converter={StaticResource TuningTypeToLabelConverter}}"
-                                                   FontSize="18" FontWeight="SemiBold"
-                                                   Foreground="{Binding ProductionStatus, Converter={StaticResource TuningTypeToBrushConverter}}"/>
-                                    </Border>
-                                </Grid>
+                                <!-- ProductionStatus Chip（可點擊） -->
+                                <Button Grid.Column="4" VerticalAlignment="Center"
+                                        Style="{StaticResource MaterialDesignFlatButton}"
+                                        Height="Auto" Padding="0"
+                                        Command="{Binding DataContext.EditStatusCommand,
+                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
+                                    <Grid>
+                                        <!-- 暈色背景層 -->
+                                        <Border CornerRadius="10"
+                                                Background="{Binding ProductionStatus, Converter={StaticResource TuningTypeToBrushConverter}}"
+                                                Opacity="0.15"/>
+                                        <!-- 文字層 -->
+                                        <Border CornerRadius="10" Padding="10,4">
+                                            <TextBlock Text="{Binding ProductionStatus, Converter={StaticResource TuningTypeToLabelConverter}}"
+                                                       FontSize="18" FontWeight="SemiBold"
+                                                       Foreground="{Binding ProductionStatus, Converter={StaticResource TuningTypeToBrushConverter}}"/>
+                                        </Border>
+                                    </Grid>
+                                </Button>
 
                             </Grid>
                         </Border>

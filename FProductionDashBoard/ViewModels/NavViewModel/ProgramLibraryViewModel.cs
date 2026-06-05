@@ -7,12 +7,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace FProductionDashBoard.ViewModels
 {
     public partial class ProgramLibraryViewModel : ObservableObject
     {
         private readonly DashboardCoreServices _core;
+        private readonly IDialogService _dialog;
         private List<EquipmentProduct> _all = new();
 
         // 全域統計（載入後算一次，不隨篩選變動）
@@ -70,9 +72,31 @@ namespace FProductionDashBoard.ViewModels
         [RelayCommand]
         private void CloseDetail() => SelectedCard = null;
 
-        public ProgramLibraryViewModel(DashboardCoreServices core)
+        [RelayCommand]
+        private async Task EditStatus(EquipmentProduct ep)
+        {
+            var vm = new ProgramStatusDialogViewModel(ep, Properties.Resources.ProgramStatusDialogTitle);
+            _dialog.ShowDialog(vm);
+            if (!vm.IsConfirmed || vm.Result == null) return;
+            try
+            {
+                await _core.Data.UpdateProductionStatusAsync(ep.EquipmentProductId, vm.Result.NewStatus);
+                ep.ProductionStatus = vm.Result.NewStatus;
+                ep.UpdateAt = DateTime.Now;
+                ComputeGlobalStats();
+                RebuildCards();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[程式庫管理] 更新程式狀態失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[EditStatus] {ex.Message}");
+            }
+        }
+
+        public ProgramLibraryViewModel(DashboardCoreServices core, IDialogService dialog)
         {
             _core = core;
+            _dialog = dialog;
             _ = LoadAsync();
         }
 

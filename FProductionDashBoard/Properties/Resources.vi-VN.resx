@@ -258,6 +258,12 @@
   <data name="TuningDialogTitle" xml:space="preserve">
     <value>Chọn Thao Tác Điều Chỉnh</value>
   </data>
+  <data name="ProgramStatusDialogTitle" xml:space="preserve">
+    <value>Chỉnh sửa trạng thái</value>
+  </data>
+  <data name="ProgramStatusNoSelectionError" xml:space="preserve">
+    <value>Vui lòng chọn trạng thái</value>
+  </data>
   <data name="TuningInProgressTeaching" xml:space="preserve">
     <value>Đang Dạy điểm...</value>
   </data>

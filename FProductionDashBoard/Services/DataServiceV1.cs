@@ -910,6 +910,17 @@ namespace FProductionDashBoard.Services.V1
             await _equipmentProductRep.UpdateAsync(entity).ConfigureAwait(false);
         }
 
+        public async Task UpdateProductionStatusAsync(int equipmentProductId, TuningType newStatus)
+        {
+            if (!await _equipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[UpdateProductionStatusAsync] 機台可生產清單 Repository 連線失敗");
+            var entity = await _equipmentProductRep.GetByIdAsync(equipmentProductId).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"[UpdateProductionStatusAsync] 找不到 EquipmentProduct ID={equipmentProductId}");
+            entity.ProductionStatus = newStatus;
+            entity.UpdateAt = DateTime.Now;
+            await _equipmentProductRep.UpdateAsync(entity).ConfigureAwait(false);
+        }
+
         public async Task DeleteEquipmentProductAsync(int id)
         {
             if (!await _equipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
