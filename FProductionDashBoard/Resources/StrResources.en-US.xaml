@@ -322,6 +322,7 @@
     <sys:String x:Key="PlFilterModel">Model</sys:String>
     <sys:String x:Key="PlFilterProcess">Process</sys:String>
     <sys:String x:Key="PlDetailPlaceholder">Select a device to view programs</sys:String>
+    <sys:String x:Key="PlDetailClose">Close</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

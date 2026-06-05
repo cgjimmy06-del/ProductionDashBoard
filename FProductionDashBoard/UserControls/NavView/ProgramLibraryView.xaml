@@ -213,17 +213,11 @@
                           Visibility="{Binding IsDetailVisible,
                                        Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-            <!-- 右欄：PR1 空白佔位 -->
-            <Border Grid.Column="2"
-                    Visibility="{Binding IsDetailVisible,
-                                 Converter={StaticResource BooleanToVisibilityConverter}}">
-                <TextBlock Text="{DynamicResource PlDetailPlaceholder}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           FontSize="14"
-                           Opacity="0.5"
-                           Foreground="{DynamicResource TextPrimaryBrush}"/>
-            </Border>
+            <!-- 右欄：程式清單面板 -->
+            <localuc:ProgramDetailPanelView
+                Grid.Column="2"
+                Visibility="{Binding IsDetailVisible,
+                             Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
         </Grid>
     </Grid>

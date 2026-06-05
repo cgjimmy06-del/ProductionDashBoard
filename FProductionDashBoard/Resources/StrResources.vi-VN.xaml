@@ -322,6 +322,7 @@
     <sys:String x:Key="PlFilterModel">Kiểu máy</sys:String>
     <sys:String x:Key="PlFilterProcess">Công đoạn</sys:String>
     <sys:String x:Key="PlDetailPlaceholder">Chọn thiết bị để xem chương trình</sys:String>
+    <sys:String x:Key="PlDetailClose">Đóng</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>
