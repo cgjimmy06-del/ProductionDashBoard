@@ -26,16 +26,10 @@
                    TextTrimming="CharacterEllipsis"
                    d:Text="BrandX · ModelY · Process1"/>
 
-        <!-- 狀態選擇 Grid：Row0 = 可生產/待審核/不可生產；Row1 = 帶點/調品質 -->
-        <Grid Margin="0,0,0,8">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+        <!-- 狀態選擇：第一列 = 可生產/待審核/不可生產；第二列 = 帶點/調品質 -->
+        <StackPanel Margin="0,0,0,8">
 
-            <WrapPanel Grid.Row="1" Margin="0,4">
+            <WrapPanel Margin="0,4">
                 <!-- Row 0: 可生產 -->
                 <Button Margin="8,4" Width="90"
                     Visibility="{Binding FeasibleVisibility}"
@@ -91,7 +85,7 @@
                 </Button>
             </WrapPanel>
 
-            <WrapPanel Grid.Row="3" Margin="0,4">
+            <WrapPanel Margin="0,4">
                 <!-- Row 1: 帶點 -->
                 <Button Margin="8,4"  Width="90"
                     Visibility="{Binding TeachingVisibility}"
@@ -128,6 +122,6 @@
                     <TextBlock Text="{DynamicResource PlStatOffset}"/>
                 </Button>
             </WrapPanel>
-        </Grid>
+        </StackPanel>
     </StackPanel>
 </UserControl>

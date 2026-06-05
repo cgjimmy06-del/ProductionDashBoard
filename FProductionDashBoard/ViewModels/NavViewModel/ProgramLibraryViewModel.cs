@@ -84,9 +84,9 @@ namespace FProductionDashBoard.ViewModels
             if (!vm.IsConfirmed || vm.Result == null) return;
             try
             {
-                await _core.Data.UpdateProductionStatusAsync(ep.EquipmentProductId, vm.Result.NewStatus);
+                var updatedAt = await _core.Data.UpdateProductionStatusAsync(ep.EquipmentProductId, vm.Result.NewStatus);
                 ep.ProductionStatus = vm.Result.NewStatus;
-                ep.UpdateAt = DateTime.Now;
+                ep.UpdateAt = updatedAt;
                 ComputeGlobalStats();
                 RebuildCards();
             }

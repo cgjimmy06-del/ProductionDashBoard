@@ -910,7 +910,7 @@ namespace FProductionDashBoard.Services.V1
             await _equipmentProductRep.UpdateAsync(entity).ConfigureAwait(false);
         }
 
-        public async Task UpdateProductionStatusAsync(int equipmentProductId, TuningType newStatus)
+        public async Task<DateTime> UpdateProductionStatusAsync(int equipmentProductId, TuningType newStatus)
         {
             if (!await _equipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[UpdateProductionStatusAsync] 機台可生產清單 Repository 連線失敗");
@@ -919,6 +919,7 @@ namespace FProductionDashBoard.Services.V1
             entity.ProductionStatus = newStatus;
             entity.UpdateAt = DateTime.Now;
             await _equipmentProductRep.UpdateAsync(entity).ConfigureAwait(false);
+            return entity.UpdateAt.Value;
         }
 
         public async Task DeleteEquipmentProductAsync(int id)

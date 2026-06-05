@@ -29,16 +29,19 @@ namespace FProductionDashBoard.Tests.ViewModels
             }
         };
 
-        private static ProgramLibraryViewModel CreateVmWithData(List<EquipmentProduct> data)
+        private static ProgramLibraryViewModel CreateVmWithData(
+            List<EquipmentProduct> data,
+            Mock<IDataService>? mockData = null,
+            IDialogService? dialog = null)
         {
-            var mockData = new Mock<IDataService>();
+            mockData ??= new Mock<IDataService>();
             mockData.Setup(d => d.GetAllEquipmentProductsAsync())
                     .ReturnsAsync(data);
             var log = new LogService();
             var auth = new AuthorizationService();
             var cardReader = new Mock<ICardReaderService>().Object;
             var core = new DashboardCoreServices(log, mockData.Object, auth, cardReader);
-            var dialog = new Mock<IDialogService>().Object;
+            dialog ??= new Mock<IDialogService>().Object;
 
             var vm = new ProgramLibraryViewModel(core, dialog);
             // 直接注入 _all 繞過非同步 LoadAsync（UI thread 限制）
@@ -270,6 +273,45 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal(1, vm.DetailTeachingCount);
             Assert.Equal(0, vm.DetailOffsetCount);
             Assert.Equal(1, vm.DetailPendingCount);
+        }
+
+        // ── EditStatus ───────────────────────────────────────────────────────
+        [Fact]
+        public async Task EditStatus_Confirmed_UpdatesStatusAndStats()
+        {
+            var ep = MakeEp(1, "EQ-A", "P1", "B1", "M1", "Pr1", TuningType.Feasible);
+            ep.EquipmentProductId = 42;
+            ep.SeqNo = 1;
+            var data = new List<EquipmentProduct> { ep };
+
+            var fixedDate = new DateTime(2026, 6, 5, 10, 30, 0);
+            var mockData = new Mock<IDataService>();
+            mockData.Setup(d => d.UpdateProductionStatusAsync(42, TuningType.Pending))
+                    .ReturnsAsync(fixedDate);
+
+            // 模擬使用者在 Dialog 選「待審核」並確認
+            var mockDialog = new Mock<IDialogService>();
+            mockDialog.Setup(d => d.ShowDialog(It.IsAny<DialogBaseViewModel<ProgramStatusResult>>()))
+                      .Callback<DialogBaseViewModel<ProgramStatusResult>>(v =>
+                      {
+                          var pvm = (ProgramStatusDialogViewModel)v;
+                          pvm.SelectPendingCommand.Execute(null);
+                          pvm.ConfirmCommand.Execute(null);
+                      })
+                      .Returns<DialogBaseViewModel<ProgramStatusResult>>(v => v.Result);
+
+            var vm = CreateVmWithData(data, mockData, mockDialog.Object);
+            vm.SelectCardCommand.Execute(vm.Cards.First(c => c.EquipmentId == 1));
+            var item = vm.SelectedPrograms.First(i => i.EquipmentProductId == 42);
+
+            await vm.EditStatusCommand.ExecuteAsync(item);
+
+            mockData.Verify(d => d.UpdateProductionStatusAsync(42, TuningType.Pending), Times.Once);
+            Assert.Equal(TuningType.Pending, ep.ProductionStatus);
+            Assert.Equal(fixedDate, ep.UpdateAt);
+            Assert.Equal(0, vm.GlobalFeasibleCount);
+            Assert.Equal(1, vm.GlobalPendingCount);
+            Assert.Equal(TuningType.Pending, vm.SelectedPrograms.First().ProductionStatus);
         }
     }
 
