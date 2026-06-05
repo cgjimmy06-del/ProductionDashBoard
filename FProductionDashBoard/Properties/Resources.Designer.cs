@@ -601,6 +601,24 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Edit Program Status 的當地語系化字串。
+        /// </summary>
+        internal static string ProgramStatusDialogTitle {
+            get {
+                return ResourceManager.GetString("ProgramStatusDialogTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查詢類似 Please select a status 的當地語系化字串。
+        /// </summary>
+        internal static string ProgramStatusNoSelectionError {
+            get {
+                return ResourceManager.GetString("ProgramStatusNoSelectionError", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   查詢類似 Select Tuning Operation 的當地語系化字串。
         /// </summary>
         internal static string TuningDialogTitle {

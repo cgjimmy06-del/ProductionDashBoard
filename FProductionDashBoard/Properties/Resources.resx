@@ -296,6 +296,14 @@
     <value>Select Tuning Operation</value>
     <comment>調試視窗: 標題</comment>
   </data>
+  <data name="ProgramStatusDialogTitle" xml:space="preserve">
+    <value>Edit Program Status</value>
+    <comment>程式狀態修改視窗: 標題</comment>
+  </data>
+  <data name="ProgramStatusNoSelectionError" xml:space="preserve">
+    <value>Please select a status</value>
+    <comment>程式狀態修改視窗: 未選擇狀態時的錯誤訊息</comment>
+  </data>
   <data name="TuningInProgressTeaching" xml:space="preserve">
     <value>Teaching...</value>
     <comment>調試卡片覆蓋層: 帶點進行中文字</comment>
