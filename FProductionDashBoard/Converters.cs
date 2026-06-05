@@ -179,6 +179,42 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+    public class TuningTypeToBrushConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            return value is Models.TuningType t ? t switch
+            {
+                Models.TuningType.Feasible                         => (Brush)resources["ProgramFeasibleBrush"],
+                Models.TuningType.Pending                          => (Brush)resources["ProgramPendingBrush"],
+                Models.TuningType.Offset                           => (Brush)resources["ProgramOffsetBrush"],
+                Models.TuningType.Teaching or Models.TuningType.Infeasible => (Brush)resources["ProgramErrorBrush"],
+                _                                                  => (Brush)resources["IdleBrush"],
+            } : (Brush)resources["IdleBrush"];
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+    public class TuningTypeToLabelConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            var key = value is Models.TuningType t ? t switch
+            {
+                Models.TuningType.Feasible   => "PlStatFeasible",
+                Models.TuningType.Teaching   => "PlStatTeaching",
+                Models.TuningType.Offset     => "PlStatOffset",
+                Models.TuningType.Pending    => "PlStatPending",
+                Models.TuningType.Infeasible => "PlStatInfeasible",
+                _                            => null,
+            } : null;
+            return key != null && resources[key] is string label ? label : value?.ToString() ?? string.Empty;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
     public static class ListBoxBehavior
     {
         public static readonly DependencyProperty AutoScrollToEndProperty = DependencyProperty.RegisterAttached(

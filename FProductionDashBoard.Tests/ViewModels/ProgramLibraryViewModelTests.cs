@@ -200,5 +200,84 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal(1, vm.FilteredFeasibleCount);
             Assert.Equal(1, vm.FilteredTeachingCount);
         }
+
+        // ── Detail Panel ──────────────────────────────────────────────────────
+
+        private static List<EquipmentProduct> MakeDetailData() =>
+        [
+            MakeEp(1, "EQ-A", "P1", "B1", "M1", "Pr1", TuningType.Feasible)  .WithSeqNo(1),
+            MakeEp(1, "EQ-A", "P2", "B1", "M1", "Pr1", TuningType.Teaching)  .WithSeqNo(3),
+            MakeEp(1, "EQ-A", "P3", "B1", "M1", "Pr1", TuningType.Pending)   .WithSeqNo(2),
+            MakeEp(2, "EQ-B", "P4", "B2", "M2", "Pr2", TuningType.Offset)    .WithSeqNo(1),
+        ];
+
+        [Fact]
+        public void SelectedPrograms_UpdatesOnCardSelect()
+        {
+            var vm = CreateVmWithData(MakeDetailData());
+            var card = vm.Cards.First(c => c.EquipmentId == 1);
+
+            vm.SelectCardCommand.Execute(card);
+
+            Assert.Equal(3, vm.SelectedPrograms.Count);
+            Assert.True(vm.IsDetailVisible);
+        }
+
+        [Fact]
+        public void SelectedPrograms_SortedBySeqNo()
+        {
+            var vm = CreateVmWithData(MakeDetailData());
+            vm.SelectCardCommand.Execute(vm.Cards.First(c => c.EquipmentId == 1));
+
+            var seqs = vm.SelectedPrograms.Select(ep => ep.SeqNo).ToList();
+            Assert.Equal(seqs.OrderBy(s => s).ToList(), seqs);
+        }
+
+        [Fact]
+        public void SelectedPrograms_FilterSynced()
+        {
+            var vm = CreateVmWithData(MakeDetailData());
+            vm.SelectCardCommand.Execute(vm.Cards.First(c => c.EquipmentId == 1));
+
+            // 讓 EQ-A 只剩 Feasible（Brand=B1 全過，再用 PartFilter 限制只看 P1）
+            vm.PartFilter = "P1";
+
+            Assert.Single(vm.SelectedPrograms);
+            Assert.Equal(TuningType.Feasible, vm.SelectedPrograms[0].ProductionStatus);
+        }
+
+        [Fact]
+        public void SelectedPrograms_ClearsOnDeselect()
+        {
+            var vm = CreateVmWithData(MakeDetailData());
+            vm.SelectCardCommand.Execute(vm.Cards.First(c => c.EquipmentId == 1));
+            Assert.NotEmpty(vm.SelectedPrograms);
+
+            vm.CloseDetailCommand.Execute(null);
+
+            Assert.Empty(vm.SelectedPrograms);
+            Assert.False(vm.IsDetailVisible);
+        }
+
+        [Fact]
+        public void DetailStats_Correct()
+        {
+            var vm = CreateVmWithData(MakeDetailData());
+            vm.SelectCardCommand.Execute(vm.Cards.First(c => c.EquipmentId == 1));
+
+            Assert.Equal(1, vm.DetailFeasibleCount);
+            Assert.Equal(1, vm.DetailTeachingCount);
+            Assert.Equal(0, vm.DetailOffsetCount);
+            Assert.Equal(1, vm.DetailPendingCount);
+        }
+    }
+
+    internal static class EquipmentProductExtensions
+    {
+        internal static EquipmentProduct WithSeqNo(this EquipmentProduct ep, int seqNo)
+        {
+            ep.SeqNo = seqNo;
+            return ep;
+        }
     }
 }
