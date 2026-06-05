@@ -34,6 +34,7 @@
     <sys:String x:Key="MenuToolsSettings">進階設定(_,)</sys:String>
     <sys:String x:Key="MenuViewLanguage">語言(_L)</sys:String>
     <sys:String x:Key="MenuViewTheme">主題(_H)</sys:String>
+    <sys:String x:Key="ProgramLibraryNavButton">程式庫管理</sys:String>
     <sys:String x:Key="SystemSettingsNavButton">系統設定</sys:String>
     <sys:String x:Key="LogInButtonTooltip">登入</sys:String>
     <sys:String x:Key="LogOutButtonTooltip">登出</sys:String>
@@ -307,6 +308,20 @@
     <sys:String x:Key="CancelReasonPrompt">取消原因（可留空）</sys:String>
     <sys:String x:Key="SopChecklistTitle">SOP 點檢確認</sys:String>
     <sys:String x:Key="ProductionDetailTitle">生產資訊</sys:String>
+    <!--#endregion-->
+    <!--#region 程式庫管理 ProgramLibrary -->
+    <sys:String x:Key="PlStatMachineTotal">機台總數</sys:String>
+    <sys:String x:Key="PlStatTotal">程式總數</sys:String>
+    <sys:String x:Key="PlStatFeasible">可生產</sys:String>
+    <sys:String x:Key="PlStatTeaching">帶點</sys:String>
+    <sys:String x:Key="PlStatOffset">調品質</sys:String>
+    <sys:String x:Key="PlStatPending">待審核</sys:String>
+    <sys:String x:Key="PlStatInfeasible">不可生產</sys:String>
+    <sys:String x:Key="PlFilterPart">零件號碼</sys:String>
+    <sys:String x:Key="PlFilterBrand">品牌</sys:String>
+    <sys:String x:Key="PlFilterModel">型號</sys:String>
+    <sys:String x:Key="PlFilterProcess">工序</sys:String>
+    <sys:String x:Key="PlDetailPlaceholder">選擇設備以檢視程式清單</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

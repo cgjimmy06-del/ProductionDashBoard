@@ -1,0 +1,230 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.ProgramLibraryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:FProductionDashBoard"
+             xmlns:localuc="clr-namespace:FProductionDashBoard.UserControls"
+             xmlns:localvm="clr-namespace:FProductionDashBoard.ViewModels"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="1200">
+    <UserControl.Resources>
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:BoolToDetailWidthConverter   x:Key="BoolToDetailWidthConverter"/>
+        <local:ProgramLightToBrushConverter x:Key="ProgramLightToBrushConverter"/>
+    </UserControl.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- 統計列 -->
+            <RowDefinition Height="Auto"/>  <!-- 篩選列 -->
+            <RowDefinition Height="*"/>     <!-- 卡片牆 + 右欄 -->
+        </Grid.RowDefinitions>
+
+        <!-- ========== Row0：統計列 ========== -->
+        <UniformGrid Grid.Row="0" Rows="1" Margin="0,0,0,10">
+
+            <!-- 機台總數 -->
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="{DynamicResource PlStatMachineTotal}" Style="{StaticResource StatLabelStyle}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding FilteredMachineCount}" Style="{StaticResource StatNumberStyle}"/>
+                        <TextBlock Style="{StaticResource StatDenominatorStyle}">
+                            <TextBlock.Text>
+                                <Binding Path="GlobalMachineCount" StringFormat="/{0}"/>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 程式總數 -->
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="{DynamicResource PlStatTotal}" Style="{StaticResource StatLabelStyle}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding FilteredProgramCount}" Style="{StaticResource StatNumberStyle}"/>
+                        <TextBlock Style="{StaticResource StatDenominatorStyle}">
+                            <TextBlock.Text>
+                                <Binding Path="GlobalProgramCount" StringFormat="/{0}"/>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 可生產 -->
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Ellipse Width="10" Height="10" Margin="0,0,4,0" VerticalAlignment="Center"
+                                 Fill="{DynamicResource ProgramFeasibleBrush}"/>
+                        <TextBlock Text="{DynamicResource PlStatFeasible}" Style="{StaticResource StatLabelStyle}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding FilteredFeasibleCount}" Style="{StaticResource StatNumberStyle}"/>
+                        <TextBlock Style="{StaticResource StatDenominatorStyle}">
+                            <TextBlock.Text>
+                                <Binding Path="GlobalFeasibleCount" StringFormat="/{0}"/>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 帶點 -->
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Ellipse Width="10" Height="10" Margin="0,0,4,0" VerticalAlignment="Center"
+                                 Fill="{DynamicResource ProgramErrorBrush}"/>
+                        <TextBlock Text="{DynamicResource PlStatTeaching}" Style="{StaticResource StatLabelStyle}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding FilteredTeachingCount}" Style="{StaticResource StatNumberStyle}"/>
+                        <TextBlock Style="{StaticResource StatDenominatorStyle}">
+                            <TextBlock.Text>
+                                <Binding Path="GlobalTeachingCount" StringFormat="/{0}"/>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 調品質 -->
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Ellipse Width="10" Height="10" Margin="0,0,4,0" VerticalAlignment="Center"
+                                 Fill="{DynamicResource ProgramOffsetBrush}"/>
+                        <TextBlock Text="{DynamicResource PlStatOffset}" Style="{StaticResource StatLabelStyle}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding FilteredOffsetCount}" Style="{StaticResource StatNumberStyle}"/>
+                        <TextBlock Style="{StaticResource StatDenominatorStyle}">
+                            <TextBlock.Text>
+                                <Binding Path="GlobalOffsetCount" StringFormat="/{0}"/>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 待審核 -->
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Ellipse Width="10" Height="10" Margin="0,0,4,0" VerticalAlignment="Center"
+                                 Fill="{DynamicResource ProgramPendingBrush}"/>
+                        <TextBlock Text="{DynamicResource PlStatPending}" Style="{StaticResource StatLabelStyle}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding FilteredPendingCount}" Style="{StaticResource StatNumberStyle}"/>
+                        <TextBlock Style="{StaticResource StatDenominatorStyle}">
+                            <TextBlock.Text>
+                                <Binding Path="GlobalPendingCount" StringFormat="/{0}"/>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 不可生產 -->
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Ellipse Width="10" Height="10" Margin="0,0,4,0" VerticalAlignment="Center"
+                                 Fill="{DynamicResource ProgramErrorBrush}"/>
+                        <TextBlock Text="{DynamicResource PlStatInfeasible}" Style="{StaticResource StatLabelStyle}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding FilteredInfeasibleCount}" Style="{StaticResource StatNumberStyle}"/>
+                        <TextBlock Style="{StaticResource StatDenominatorStyle}">
+                            <TextBlock.Text>
+                                <Binding Path="GlobalInfeasibleCount" StringFormat="/{0}"/>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+        </UniformGrid>
+
+        <!-- ========== Row1：篩選列 ========== -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Margin="0,0,6,0"
+                     materialDesign:HintAssist.Hint="{DynamicResource PlFilterPart}"
+                     Text="{Binding PartFilter, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Grid.Column="1" Margin="0,0,6,0"
+                     materialDesign:HintAssist.Hint="{DynamicResource PlFilterBrand}"
+                     Text="{Binding BrandFilter, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Grid.Column="2" Margin="0,0,6,0"
+                     materialDesign:HintAssist.Hint="{DynamicResource PlFilterModel}"
+                     Text="{Binding ModelFilter, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Grid.Column="3" Margin="0"
+                     materialDesign:HintAssist.Hint="{DynamicResource PlFilterProcess}"
+                     Text="{Binding ProcessFilter, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+
+        <!-- ========== Row2：卡片牆 + 右欄 ========== -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="{Binding IsDetailVisible, Converter={StaticResource BoolToDetailWidthConverter}}"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左欄：WrapPanel 卡片牆 -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding Cards}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type localvm:ProgramDeviceCardViewModel}">
+                            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                    Height="Auto"
+                                    Padding="0"
+                                    Command="{Binding DataContext.SelectCardCommand,
+                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}">
+                                <localuc:ProgramDeviceCardView/>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- GridSplitter（僅右欄展開時顯示） -->
+            <GridSplitter Grid.Column="1"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                          Background="{DynamicResource BorderBrush}"
+                          ResizeDirection="Columns"
+                          Visibility="{Binding IsDetailVisible,
+                                       Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <!-- 右欄：PR1 空白佔位 -->
+            <Border Grid.Column="2"
+                    Visibility="{Binding IsDetailVisible,
+                                 Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Text="{DynamicResource PlDetailPlaceholder}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="14"
+                           Opacity="0.5"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+            </Border>
+
+        </Grid>
+    </Grid>
+</UserControl>

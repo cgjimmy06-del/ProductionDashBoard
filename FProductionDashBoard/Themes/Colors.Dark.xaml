@@ -34,6 +34,11 @@
     <Color x:Key="ButtonWarningColor">#F57C00</Color>
     <Color x:Key="ButtonErrorColor">#D32F2F</Color>
     
+    <!-- 程式庫管理專屬柔和狀態色 -->
+    <Color x:Key="ProgramFeasibleColor">#76C893</Color>
+    <Color x:Key="ProgramPendingColor">#7EC8E3</Color>
+    <Color x:Key="ProgramOffsetColor">#F0C060</Color>
+    <Color x:Key="ProgramErrorColor">#E07878</Color>
     <!--#endregion-->
 
     <!--#region 合成筆刷 -->
@@ -67,7 +72,12 @@
     <SolidColorBrush x:Key="ButtonSecondaryLightBrush" Color="{StaticResource ButtonSecondaryLightColor}" />
     <SolidColorBrush x:Key="ButtonWarningBrush" Color="{StaticResource ButtonWarningColor}" />
     <SolidColorBrush x:Key="ButtonErrorBrush" Color="{StaticResource ButtonErrorColor}" />
-    
+
+    <SolidColorBrush x:Key="ProgramFeasibleBrush" Color="{StaticResource ProgramFeasibleColor}" />
+    <SolidColorBrush x:Key="ProgramPendingBrush"  Color="{StaticResource ProgramPendingColor}" />
+    <SolidColorBrush x:Key="ProgramOffsetBrush"   Color="{StaticResource ProgramOffsetColor}" />
+    <SolidColorBrush x:Key="ProgramErrorBrush"    Color="{StaticResource ProgramErrorColor}" />
+
     <!--#endregion-->
     
 </ResourceDictionary>
