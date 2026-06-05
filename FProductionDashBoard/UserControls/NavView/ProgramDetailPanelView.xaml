@@ -18,74 +18,86 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ========== Row0：標題列 ========== -->
-        <Border Grid.Row="0" Padding="12,8"
+        <!-- ========== Row0：標題列（單列） ========== -->
+        <Border Grid.Row="0" Padding="12,10"
                 BorderThickness="0,0,0,1"
                 BorderBrush="{DynamicResource BorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>  <!-- 設備名 -->
+                    <ColumnDefinition Width="*"/>     <!-- 小統計 -->
+                    <ColumnDefinition Width="Auto"/>  <!-- 關閉 -->
                 </Grid.ColumnDefinitions>
 
-                <!-- 左側：設備名 + 小統計 -->
-                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding SelectedCard.DeviceName}"
-                               FontSize="15" FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextPrimaryBrush}"
-                               TextTrimming="CharacterEllipsis"
-                               Margin="0,0,0,4"/>
-                    <WrapPanel>
-                        <!-- 可生產 -->
-                        <TextBlock Text="{DynamicResource PlStatFeasible}"
-                                   FontSize="12"
-                                   Foreground="{DynamicResource ProgramFeasibleBrush}"
-                                   Margin="0,0,2,0"/>
-                        <TextBlock Text="{Binding DetailFeasibleCount}"
-                                   FontSize="12" FontWeight="Bold"
-                                   Foreground="{DynamicResource ProgramFeasibleBrush}"
-                                   Margin="0,0,12,0"/>
-                        <!-- 帶點 -->
-                        <TextBlock Text="{DynamicResource PlStatTeaching}"
-                                   FontSize="12"
-                                   Foreground="{DynamicResource ProgramErrorBrush}"
-                                   Margin="0,0,2,0"/>
-                        <TextBlock Text="{Binding DetailTeachingCount}"
-                                   FontSize="12" FontWeight="Bold"
-                                   Foreground="{DynamicResource ProgramErrorBrush}"
-                                   Margin="0,0,12,0"/>
-                        <!-- 調品質 -->
-                        <TextBlock Text="{DynamicResource PlStatOffset}"
-                                   FontSize="12"
-                                   Foreground="{DynamicResource ProgramOffsetBrush}"
-                                   Margin="0,0,2,0"/>
-                        <TextBlock Text="{Binding DetailOffsetCount}"
-                                   FontSize="12" FontWeight="Bold"
-                                   Foreground="{DynamicResource ProgramOffsetBrush}"
-                                   Margin="0,0,12,0"/>
-                        <!-- 待審核 -->
-                        <TextBlock Text="{DynamicResource PlStatPending}"
-                                   FontSize="12"
-                                   Foreground="{DynamicResource ProgramPendingBrush}"
-                                   Margin="0,0,2,0"/>
-                        <TextBlock Text="{Binding DetailPendingCount}"
-                                   FontSize="12" FontWeight="Bold"
-                                   Foreground="{DynamicResource ProgramPendingBrush}"/>
-                    </WrapPanel>
+                <!-- 設備名 -->
+                <TextBlock Grid.Column="0"
+                           Text="{Binding SelectedCard.DeviceName}"
+                           FontSize="15" FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"
+                           MaxWidth="160"
+                           Margin="0,0,16,0"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+                <!-- 小統計 -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- 可生產 -->
+                    <TextBlock Text="{DynamicResource PlStatFeasible}"
+                               FontSize="12"
+                               Foreground="{DynamicResource ProgramFeasibleBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,2,0"/>
+                    <TextBlock Text="{Binding DetailFeasibleCount}"
+                               FontSize="12" FontWeight="Bold"
+                               Foreground="{DynamicResource ProgramFeasibleBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0"/>
+                    <!-- 帶點 -->
+                    <TextBlock Text="{DynamicResource PlStatTeaching}"
+                               FontSize="12"
+                               Foreground="{DynamicResource ProgramErrorBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,2,0"/>
+                    <TextBlock Text="{Binding DetailTeachingCount}"
+                               FontSize="12" FontWeight="Bold"
+                               Foreground="{DynamicResource ProgramErrorBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0"/>
+                    <!-- 調品質 -->
+                    <TextBlock Text="{DynamicResource PlStatOffset}"
+                               FontSize="12"
+                               Foreground="{DynamicResource ProgramOffsetBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,2,0"/>
+                    <TextBlock Text="{Binding DetailOffsetCount}"
+                               FontSize="12" FontWeight="Bold"
+                               Foreground="{DynamicResource ProgramOffsetBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0"/>
+                    <!-- 待審核 -->
+                    <TextBlock Text="{DynamicResource PlStatPending}"
+                               FontSize="12"
+                               Foreground="{DynamicResource ProgramPendingBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,2,0"/>
+                    <TextBlock Text="{Binding DetailPendingCount}"
+                               FontSize="12" FontWeight="Bold"
+                               Foreground="{DynamicResource ProgramPendingBrush}"
+                               VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <!-- 右側：關閉按鈕 -->
-                <Button Grid.Column="1"
+                <!-- 關閉按鈕 -->
+                <Button Grid.Column="2"
                         Style="{StaticResource MaterialDesignIconButton}"
                         Command="{Binding CloseDetailCommand}"
                         ToolTip="{DynamicResource PlDetailClose}"
-                        VerticalAlignment="Top">
+                        VerticalAlignment="Center">
                     <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
                 </Button>
             </Grid>
         </Border>
 
-        <!-- ========== Row1：程式清單 ========== -->
+        <!-- ========== Row1：程式清單（單列卡片） ========== -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding SelectedPrograms}" Margin="8,4,8,8">
                 <ItemsControl.ItemTemplate>
@@ -99,29 +111,42 @@
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="6" ShadowDepth="1" Opacity="0.15"/>
                             </Border.Effect>
-                            <StackPanel>
 
-                                <!-- 第一行：SeqNo + PartNo -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                                    <TextBlock FontSize="11" Opacity="0.5"
-                                               Foreground="{DynamicResource TextPrimaryBrush}"
-                                               VerticalAlignment="Center">
-                                        <TextBlock.Text>
-                                            <Binding Path="SeqNo" StringFormat="[{0}]"/>
-                                        </TextBlock.Text>
-                                    </TextBlock>
-                                    <TextBlock Text="{Binding Sop.Product.Part.PartNo}"
-                                               FontSize="13" FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextPrimaryBrush}"
-                                               Margin="6,0,0,0" VerticalAlignment="Center"
-                                               TextTrimming="CharacterEllipsis"/>
-                                </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>  <!-- SeqNo -->
+                                    <ColumnDefinition Width="Auto"/>  <!-- PartNo -->
+                                    <ColumnDefinition Width="*"/>     <!-- Brand · Model · Process -->
+                                    <ColumnDefinition Width="Auto"/>  <!-- Chip -->
+                                </Grid.ColumnDefinitions>
 
-                                <!-- 第二行：Brand · Model · Process -->
-                                <TextBlock FontSize="12" Opacity="0.65"
+                                <!-- SeqNo -->
+                                <TextBlock Grid.Column="0"
+                                           FontSize="12" Opacity="0.5"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           Margin="0,0,8,0">
+                                    <TextBlock.Text>
+                                        <Binding Path="SeqNo" StringFormat="[{0}]"/>
+                                    </TextBlock.Text>
+                                </TextBlock>
+
+                                <!-- PartNo -->
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Sop.Product.Part.PartNo}"
+                                           FontSize="15" FontWeight="Bold"
+                                           VerticalAlignment="Center"
                                            Foreground="{DynamicResource TextPrimaryBrush}"
                                            TextTrimming="CharacterEllipsis"
-                                           Margin="0,0,0,8">
+                                           Margin="0,0,12,0"/>
+
+                                <!-- Brand · Model · Process -->
+                                <TextBlock Grid.Column="2"
+                                           FontSize="13" Opacity="0.65"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           TextTrimming="CharacterEllipsis"
+                                           Margin="0,0,12,0">
                                     <Run Text="{Binding Sop.Product.Part.Brand, Mode=OneWay}"/>
                                     <Run Text=" · "/>
                                     <Run Text="{Binding Sop.Product.Model.Name, Mode=OneWay}"/>
@@ -129,21 +154,21 @@
                                     <Run Text="{Binding Sop.Process.Name, Mode=OneWay}"/>
                                 </TextBlock>
 
-                                <!-- 第三行：ProductionStatus Chip -->
-                                <Grid HorizontalAlignment="Left">
+                                <!-- ProductionStatus Chip -->
+                                <Grid Grid.Column="3" VerticalAlignment="Center">
                                     <!-- 暈色背景層 -->
                                     <Border CornerRadius="10"
                                             Background="{Binding ProductionStatus, Converter={StaticResource TuningTypeToBrushConverter}}"
                                             Opacity="0.15"/>
                                     <!-- 文字層 -->
-                                    <Border CornerRadius="10" Padding="10,3">
+                                    <Border CornerRadius="10" Padding="10,4">
                                         <TextBlock Text="{Binding ProductionStatus, Converter={StaticResource TuningTypeToLabelConverter}}"
-                                                   FontSize="11" FontWeight="SemiBold"
+                                                   FontSize="12" FontWeight="SemiBold"
                                                    Foreground="{Binding ProductionStatus, Converter={StaticResource TuningTypeToBrushConverter}}"/>
                                     </Border>
                                 </Grid>
 
-                            </StackPanel>
+                            </Grid>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
