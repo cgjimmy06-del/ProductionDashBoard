@@ -1,0 +1,204 @@
+using FProductionDashBoard.Models;
+using FProductionDashBoard.Services;
+using FProductionDashBoard.ViewModels;
+using Moq;
+using Xunit;
+
+namespace FProductionDashBoard.Tests.ViewModels
+{
+    public class ProgramLibraryViewModelTests
+    {
+        // LoadAsync 使用 Application.Current.Dispatcher，xUnit 無 WPF Dispatcher。
+        // 本測試專注於：RebuildCards / ComputeLight / 統計計算。LoadAsync 由 UI 手動驗證。
+
+        private static EquipmentProduct MakeEp(int eqId, string eqName,
+            string partNo, string brand, string modelName, string processName,
+            TuningType status) => new()
+        {
+            EquipmentId = eqId,
+            ProductionStatus = status,
+            Equipment = new Equipment { Id = eqId, Name = eqName },
+            Sop = new SopChecklist
+            {
+                Product = new Product
+                {
+                    Part  = new ProductPart { PartNo = partNo, Brand = brand },
+                    Model = new ProductModel { Name = modelName }
+                },
+                Process = new WorkProcess { Name = processName }
+            }
+        };
+
+        private static ProgramLibraryViewModel CreateVmWithData(List<EquipmentProduct> data)
+        {
+            var mockData = new Mock<IDataService>();
+            mockData.Setup(d => d.GetAllEquipmentProductsAsync())
+                    .ReturnsAsync(data);
+            var log = new LogService();
+            var auth = new AuthorizationService();
+            var cardReader = new Mock<ICardReaderService>().Object;
+            var core = new DashboardCoreServices(log, mockData.Object, auth, cardReader);
+
+            var vm = new ProgramLibraryViewModel(core);
+            // 直接注入 _all 繞過非同步 LoadAsync（UI thread 限制）
+            vm.InjectDataForTest(data);
+            return vm;
+        }
+
+        // ── 全域統計 ─────────────────────────────────────────────────────────
+        [Fact]
+        public void GlobalStats_AreCorrectAfterInject()
+        {
+            var data = new List<EquipmentProduct>
+            {
+                MakeEp(1, "A", "P1", "B1", "M1", "Pr1", TuningType.Feasible),
+                MakeEp(1, "A", "P2", "B1", "M2", "Pr1", TuningType.Teaching),
+                MakeEp(2, "B", "P3", "B2", "M3", "Pr2", TuningType.Offset),
+                MakeEp(2, "B", "P4", "B2", "M3", "Pr2", TuningType.Pending),
+                MakeEp(3, "C", "P5", "B3", "M4", "Pr3", TuningType.Infeasible),
+            };
+            var vm = CreateVmWithData(data);
+
+            Assert.Equal(3, vm.GlobalMachineCount);
+            Assert.Equal(5, vm.GlobalProgramCount);
+            Assert.Equal(1, vm.GlobalFeasibleCount);
+            Assert.Equal(1, vm.GlobalTeachingCount);
+            Assert.Equal(1, vm.GlobalOffsetCount);
+            Assert.Equal(1, vm.GlobalPendingCount);
+            Assert.Equal(1, vm.GlobalInfeasibleCount);
+        }
+
+        [Fact]
+        public void GlobalStats_DoNotChangeAfterFilter()
+        {
+            var data = new List<EquipmentProduct>
+            {
+                MakeEp(1, "A", "P1", "B1", "M1", "Pr1", TuningType.Feasible),
+                MakeEp(2, "B", "P2", "B2", "M2", "Pr2", TuningType.Teaching),
+            };
+            var vm = CreateVmWithData(data);
+
+            vm.PartFilter = "P1";  // 應讓 Equipment 2 消失
+
+            Assert.Equal(2, vm.GlobalMachineCount);   // 全域不動
+            Assert.Equal(2, vm.GlobalProgramCount);
+            Assert.Equal(1, vm.FilteredMachineCount); // 篩選後只剩 1
+        }
+
+        // ── 篩選邏輯 ─────────────────────────────────────────────────────────
+        [Fact]
+        public void Filter_ByPart_HidesNonMatchingCard()
+        {
+            var data = new List<EquipmentProduct>
+            {
+                MakeEp(1, "A", "ABC", "B1", "M1", "Pr1", TuningType.Feasible),
+                MakeEp(2, "B", "XYZ", "B1", "M1", "Pr1", TuningType.Feasible),
+            };
+            var vm = CreateVmWithData(data);
+
+            vm.PartFilter = "abc";  // 大小寫不分
+
+            Assert.Single(vm.Cards);
+            Assert.Equal(1, vm.Cards[0].EquipmentId);
+        }
+
+        [Fact]
+        public void Filter_MachineWithZeroMatchingPrograms_IsHidden()
+        {
+            var data = new List<EquipmentProduct>
+            {
+                MakeEp(1, "A", "P1", "B1", "M1", "Pr1", TuningType.Feasible),
+                MakeEp(2, "B", "P2", "B2", "M2", "Pr2", TuningType.Feasible),
+            };
+            var vm = CreateVmWithData(data);
+
+            vm.BrandFilter = "B1";
+
+            Assert.Single(vm.Cards);
+        }
+
+        [Fact]
+        public void Filter_EmptyString_ShowsAllCards()
+        {
+            var data = new List<EquipmentProduct>
+            {
+                MakeEp(1, "A", "P1", "B1", "M1", "Pr1", TuningType.Feasible),
+                MakeEp(2, "B", "P2", "B2", "M2", "Pr2", TuningType.Feasible),
+                MakeEp(3, "C", "P3", "B3", "M3", "Pr3", TuningType.Feasible),
+            };
+            var vm = CreateVmWithData(data);
+
+            Assert.Equal(3, vm.Cards.Count);
+        }
+
+        // ── 燈號優先序 ───────────────────────────────────────────────────────
+        [Theory]
+        [InlineData(TuningType.Teaching,   ProgramLight.Error)]
+        [InlineData(TuningType.Infeasible, ProgramLight.Error)]
+        [InlineData(TuningType.Offset,     ProgramLight.Offset)]
+        [InlineData(TuningType.Pending,    ProgramLight.Pending)]
+        [InlineData(TuningType.Feasible,   ProgramLight.Feasible)]
+        public void ComputeLight_SingleStatus_ReturnsExpected(TuningType status, ProgramLight expected)
+        {
+            var progs = new List<EquipmentProduct>
+            {
+                new() { ProductionStatus = status }
+            };
+            Assert.Equal(expected, ProgramDeviceCardViewModel.ComputeLight(progs));
+        }
+
+        [Fact]
+        public void ComputeLight_MixedStatuses_ErrorWins()
+        {
+            var progs = new List<EquipmentProduct>
+            {
+                new() { ProductionStatus = TuningType.Feasible },
+                new() { ProductionStatus = TuningType.Pending },
+                new() { ProductionStatus = TuningType.Offset },
+                new() { ProductionStatus = TuningType.Teaching },
+            };
+            Assert.Equal(ProgramLight.Error, ProgramDeviceCardViewModel.ComputeLight(progs));
+        }
+
+        [Fact]
+        public void ComputeLight_OffsetBeforePending()
+        {
+            var progs = new List<EquipmentProduct>
+            {
+                new() { ProductionStatus = TuningType.Feasible },
+                new() { ProductionStatus = TuningType.Pending },
+                new() { ProductionStatus = TuningType.Offset },
+            };
+            Assert.Equal(ProgramLight.Offset, ProgramDeviceCardViewModel.ComputeLight(progs));
+        }
+
+        // ── CountLabel ───────────────────────────────────────────────────────
+        [Fact]
+        public void CardLabels_AreCorrectFormat()
+        {
+            var card = new ProgramDeviceCardViewModel(1, "A", 5, 12, ProgramLight.Feasible);
+            Assert.Equal("5", card.FeasibleLabel);
+            Assert.Equal("/12", card.TotalLabel);
+        }
+
+        // ── 篩選後統計 ───────────────────────────────────────────────────────
+        [Fact]
+        public void FilteredStats_UpdateAfterFilter()
+        {
+            var data = new List<EquipmentProduct>
+            {
+                MakeEp(1, "A", "P1", "B1", "M1", "Pr1", TuningType.Feasible),
+                MakeEp(1, "A", "P2", "B1", "M1", "Pr1", TuningType.Teaching),
+                MakeEp(2, "B", "P3", "B2", "M2", "Pr2", TuningType.Feasible),
+            };
+            var vm = CreateVmWithData(data);
+
+            vm.BrandFilter = "B1";
+
+            Assert.Equal(1, vm.FilteredMachineCount);
+            Assert.Equal(2, vm.FilteredProgramCount);
+            Assert.Equal(1, vm.FilteredFeasibleCount);
+            Assert.Equal(1, vm.FilteredTeachingCount);
+        }
+    }
+}

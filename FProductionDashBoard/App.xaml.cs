@@ -150,6 +150,7 @@ namespace FProductionDashBoard
                 services.AddScoped<ViewModels.SystemSettingsViewModel>();
                 services.AddScoped<ViewModels.HomeViewModel>();
                 services.AddTransient<ViewModels.OperationViewModel>();
+                services.AddTransient<ViewModels.ProgramLibraryViewModel>();
 
                 _serviceProvider = services.BuildServiceProvider();
                 // 載入持久化設定

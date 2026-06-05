@@ -34,6 +34,7 @@
     <sys:String x:Key="MenuToolsSettings">Cài đặt _nâng cao</sys:String>
     <sys:String x:Key="MenuViewLanguage">_Ngôn ngữ</sys:String>
     <sys:String x:Key="MenuViewTheme">_Chủ đề</sys:String>
+    <sys:String x:Key="ProgramLibraryNavButton">Thư viện chương trình</sys:String>
     <sys:String x:Key="SystemSettingsNavButton">Cài đặt hệ thống</sys:String>
     <sys:String x:Key="LogInButtonTooltip">Đăng nhập</sys:String>
     <sys:String x:Key="LogOutButtonTooltip">Đăng xuất</sys:String>
@@ -307,6 +308,20 @@
     <sys:String x:Key="CancelReasonPrompt">Lý do hủy (có thể để trống)</sys:String>
     <sys:String x:Key="SopChecklistTitle">Kiểm tra SOP</sys:String>
     <sys:String x:Key="ProductionDetailTitle">Thông tin sản xuất</sys:String>
+    <!--#endregion-->
+    <!--#region 程式庫管理 ProgramLibrary -->
+    <sys:String x:Key="PlStatMachineTotal">Tổng máy</sys:String>
+    <sys:String x:Key="PlStatTotal">Tổng chương trình</sys:String>
+    <sys:String x:Key="PlStatFeasible">Sản xuất được</sys:String>
+    <sys:String x:Key="PlStatTeaching">Đang dạy</sys:String>
+    <sys:String x:Key="PlStatOffset">Hiệu chỉnh</sys:String>
+    <sys:String x:Key="PlStatPending">Chờ duyệt</sys:String>
+    <sys:String x:Key="PlStatInfeasible">Không sản xuất</sys:String>
+    <sys:String x:Key="PlFilterPart">Mã linh kiện</sys:String>
+    <sys:String x:Key="PlFilterBrand">Thương hiệu</sys:String>
+    <sys:String x:Key="PlFilterModel">Kiểu máy</sys:String>
+    <sys:String x:Key="PlFilterProcess">Công đoạn</sys:String>
+    <sys:String x:Key="PlDetailPlaceholder">Chọn thiết bị để xem chương trình</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

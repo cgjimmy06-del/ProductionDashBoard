@@ -34,6 +34,7 @@
     <sys:String x:Key="MenuToolsSettings">_Advanced Settings</sys:String>
     <sys:String x:Key="MenuViewLanguage">_Language</sys:String>
     <sys:String x:Key="MenuViewTheme">_Theme</sys:String>
+    <sys:String x:Key="ProgramLibraryNavButton">Program Library</sys:String>
     <sys:String x:Key="SystemSettingsNavButton">System Settings</sys:String>
     <sys:String x:Key="LogInButtonTooltip">Log in</sys:String>
     <sys:String x:Key="LogOutButtonTooltip">Log out</sys:String>
@@ -307,6 +308,20 @@
     <sys:String x:Key="CancelReasonPrompt">Cancel reason (optional)</sys:String>
     <sys:String x:Key="SopChecklistTitle">SOP Checklist</sys:String>
     <sys:String x:Key="ProductionDetailTitle">Production Details</sys:String>
+    <!--#endregion-->
+    <!--#region 程式庫管理 ProgramLibrary -->
+    <sys:String x:Key="PlStatMachineTotal">Machines</sys:String>
+    <sys:String x:Key="PlStatTotal">Programs</sys:String>
+    <sys:String x:Key="PlStatFeasible">Feasible</sys:String>
+    <sys:String x:Key="PlStatTeaching">Teaching</sys:String>
+    <sys:String x:Key="PlStatOffset">Offset</sys:String>
+    <sys:String x:Key="PlStatPending">Pending</sys:String>
+    <sys:String x:Key="PlStatInfeasible">Infeasible</sys:String>
+    <sys:String x:Key="PlFilterPart">Part No.</sys:String>
+    <sys:String x:Key="PlFilterBrand">Brand</sys:String>
+    <sys:String x:Key="PlFilterModel">Model</sys:String>
+    <sys:String x:Key="PlFilterProcess">Process</sys:String>
+    <sys:String x:Key="PlDetailPlaceholder">Select a device to view programs</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>
