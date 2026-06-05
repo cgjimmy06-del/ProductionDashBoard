@@ -20,6 +20,7 @@ namespace FProductionDashBoard.ViewModels
 
         // ── 右側品項清單 ─────────────────────────────────────────────
         public ObservableCollection<EquipmentProduct> ProductList { get; } = new();
+        public ObservableCollection<EquipmentProduct> FilteredProductList { get; } = new();
 
         // ── SOP 資料（供表單選擇） ────────────────────────────────────
         public ObservableCollection<SopChecklist> SopOptions { get; } = new();
@@ -32,6 +33,9 @@ namespace FProductionDashBoard.ViewModels
         // ── 左側 filter ──────────────────────────────────────────────
         [ObservableProperty] private string keywordFilter = "";
         [ObservableProperty] private EquipmentType? typeFilter;
+
+        // ── 右側品項篩選 ─────────────────────────────────────────────
+        [ObservableProperty] private string programFilter = "";
 
         // ── 左側選擇 ─────────────────────────────────────────────────
         [ObservableProperty] private Equipment? selectedEquipment;
@@ -53,6 +57,29 @@ namespace FProductionDashBoard.ViewModels
         // ── 左側 filter partial 方法 ─────────────────────────────────
         partial void OnKeywordFilterChanged(string value) => RecomputeFilteredEquipmentList();
         partial void OnTypeFilterChanged(EquipmentType? value) => RecomputeFilteredEquipmentList();
+
+        // ── 右側品項篩選 partial 方法 ────────────────────────────────
+        partial void OnProgramFilterChanged(string value) => RecomputeFilteredProductList();
+
+        private void RecomputeFilteredProductList()
+        {
+            FilteredProductList.Clear();
+            foreach (var ep in ProductList)
+            {
+                if (!string.IsNullOrEmpty(ProgramFilter))
+                {
+                    var hay = string.Join(" ", new[]
+                    {
+                        ep.Sop?.Product?.Part?.PartNo,
+                        ep.Sop?.Product?.Part?.Brand,
+                        ep.Sop?.Product?.Model?.Name,
+                        ep.Sop?.Process?.Name
+                    }.Where(x => !string.IsNullOrEmpty(x)));
+                    if (hay.IndexOf(ProgramFilter, StringComparison.OrdinalIgnoreCase) < 0) continue;
+                }
+                FilteredProductList.Add(ep);
+            }
+        }
 
         private void RecomputeFilteredEquipmentList()
         {
@@ -94,6 +121,7 @@ namespace FProductionDashBoard.ViewModels
                 if (SelectedEquipment?.Id != equipmentId) return;
                 ProductList.Clear();
                 foreach (var ep in list) ProductList.Add(ep);
+                RecomputeFilteredProductList();
             }
             catch (Exception ex)
             {

@@ -291,6 +291,7 @@
     <sys:String x:Key="EqprodFilterKeyword">設備編號/名稱/IP</sys:String>
     <sys:String x:Key="EqprodTypeFilterAll">全部類型</sys:String>
     <sys:String x:Key="EqprodNewItemButton">+ 新增品項</sys:String>
+    <sys:String x:Key="EqprodProgramFilter">件號/品牌/型號/工序</sys:String>
     <sys:String x:Key="EqprodNoEquipmentSelected">請先從左側選取機台</sys:String>
     <sys:String x:Key="EqprodEquipmentListTitle">機台清單</sys:String>
     <sys:String x:Key="EqprodProductionStatus">狀態</sys:String>
