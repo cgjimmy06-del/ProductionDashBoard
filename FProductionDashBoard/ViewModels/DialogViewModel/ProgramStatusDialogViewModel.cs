@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Models;
+using FProductionDashBoard.UiModels;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
@@ -31,16 +32,12 @@ namespace FProductionDashBoard.ViewModels
         public ICommand SelectInfeasibleCommand { get; }
         public ICommand SelectPendingCommand    { get; }
 
-        public ProgramStatusDialogViewModel(EquipmentProduct ep, string title) : base(title)
+        public ProgramStatusDialogViewModel(ProgramItemUiModel item, string title) : base(title)
         {
-            var part    = ep.Sop?.Product?.Part;
-            var model   = ep.Sop?.Product?.Model;
-            var process = ep.Sop?.Process;
+            PartNo = item.PartNo;
+            Detail = item.BrandModelProcess;
 
-            PartNo = part?.PartNo ?? "-";
-            Detail = $"{part?.Brand} · {model?.Name} · {process?.Name}";
-
-            var allowed = GetAllowedStatuses(ep.ProductionStatus);
+            var allowed = GetAllowedStatuses(item.ProductionStatus);
             TeachingVisibility   = ToVisibility(allowed, TuningType.Teaching);
             OffsetVisibility     = ToVisibility(allowed, TuningType.Offset);
             FeasibleVisibility   = ToVisibility(allowed, TuningType.Feasible);
