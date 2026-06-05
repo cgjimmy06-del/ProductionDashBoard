@@ -1,0 +1,187 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.ProgramDetailPanelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:FProductionDashBoard"
+             mc:Ignorable="d" d:Background="White"
+             d:DesignHeight="800" d:DesignWidth="400">
+    <UserControl.Resources>
+        <local:TuningTypeToBrushConverter  x:Key="TuningTypeToBrushConverter"/>
+        <local:TuningTypeToLabelConverter  x:Key="TuningTypeToLabelConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ========== Row0：標題列（單列） ========== -->
+        <Border Grid.Row="0" Padding="12,5"
+                BorderThickness="0,0,0,1"
+                BorderBrush="{DynamicResource BorderBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>  <!-- 設備名 -->
+                    <ColumnDefinition Width="*"/>     <!-- 小統計 -->
+                    <ColumnDefinition Width="Auto"/>  <!-- 關閉 -->
+                </Grid.ColumnDefinitions>
+
+                <!-- 設備名 -->
+                <TextBlock Grid.Column="0"
+                           Text="{Binding SelectedCard.DeviceName}"
+                           FontSize="20" FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"
+                           Margin="0,0,20,0"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+                <!-- 小統計 -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- 可生產 -->
+                    <TextBlock Text="{DynamicResource PlStatFeasible}"
+                               FontSize="16"
+                               Foreground="{DynamicResource ProgramFeasibleBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,2,0"/>
+                    <TextBlock Text="{Binding DetailFeasibleCount}"
+                               FontSize="16" FontWeight="Bold"
+                               Foreground="{DynamicResource ProgramFeasibleBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0"/>
+                    <!-- 帶點 -->
+                    <TextBlock Text="{DynamicResource PlStatTeaching}"
+                               FontSize="16"
+                               Foreground="{DynamicResource ProgramErrorBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,2,0"/>
+                    <TextBlock Text="{Binding DetailTeachingCount}"
+                               FontSize="16" FontWeight="Bold"
+                               Foreground="{DynamicResource ProgramErrorBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0"/>
+                    <!-- 調品質 -->
+                    <TextBlock Text="{DynamicResource PlStatOffset}"
+                               FontSize="16"
+                               Foreground="{DynamicResource ProgramOffsetBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,2,0"/>
+                    <TextBlock Text="{Binding DetailOffsetCount}"
+                               FontSize="16" FontWeight="Bold"
+                               Foreground="{DynamicResource ProgramOffsetBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0"/>
+                    <!-- 待審核 -->
+                    <TextBlock Text="{DynamicResource PlStatPending}"
+                               FontSize="16"
+                               Foreground="{DynamicResource ProgramPendingBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,2,0"/>
+                    <TextBlock Text="{Binding DetailPendingCount}"
+                               FontSize="16" FontWeight="Bold"
+                               Foreground="{DynamicResource ProgramPendingBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- 關閉按鈕 -->
+                <Button Grid.Column="2"
+                        Style="{StaticResource MaterialDesignIconButton}"
+                        Command="{Binding CloseDetailCommand}"
+                        ToolTip="{DynamicResource PlDetailClose}"
+                        VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- ========== Row1：程式清單（單列卡片） ========== -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding SelectedPrograms}" Margin="8,4,8,8">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,4"
+                                Padding="12,5"
+                                CornerRadius="8"
+                                BorderThickness="1"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                Background="{DynamicResource PrimaryBackgroundBrush}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="6" ShadowDepth="1" Opacity="0.15"/>
+                            </Border.Effect>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>  <!-- SeqNo -->
+                                    <ColumnDefinition Width="Auto"/>  <!-- PartNo -->
+                                    <ColumnDefinition Width="*"/>     <!-- Brand · Model · Process -->
+                                    <ColumnDefinition Width="Auto"/>  <!-- UpdateAt -->
+                                    <ColumnDefinition Width="Auto"/>  <!-- Chip -->
+                                </Grid.ColumnDefinitions>
+
+                                <!-- SeqNo -->
+                                <TextBlock Grid.Column="0"
+                                           FontSize="14" Opacity="0.7"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           Margin="0,0,8,0">
+                                    <TextBlock.Text>
+                                        <Binding Path="SeqNo" StringFormat="[{0}]"/>
+                                    </TextBlock.Text>
+                                </TextBlock>
+
+                                <!-- PartNo -->
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Sop.Product.Part.PartNo}"
+                                           FontSize="18" FontWeight="Bold"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           TextTrimming="CharacterEllipsis"
+                                           Margin="0,0,12,0"/>
+
+                                <!-- Brand · Model · Process -->
+                                <TextBlock Grid.Column="2"
+                                           FontSize="16" Opacity="0.65"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           TextTrimming="CharacterEllipsis"
+                                           Margin="0,0,12,0">
+                                    <Run Text="{Binding Sop.Product.Part.Brand, Mode=OneWay}"/>
+                                    <Run Text=" · "/>
+                                    <Run Text="{Binding Sop.Product.Model.Name, Mode=OneWay}"/>
+                                    <Run Text=" · "/>
+                                    <Run Text="{Binding Sop.Process.Name, Mode=OneWay}"/>
+                                </TextBlock>
+
+                                <!-- UpdateAt -->
+                                <TextBlock Grid.Column="3"
+                                           Text="{Binding UpdateAt, StringFormat='{}{0:yyyy/MM/dd HH:mm}', TargetNullValue=''}"
+                                           FontSize="13" Opacity="0.7"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           Margin="0,0,16,0"/>
+
+                                <!-- ProductionStatus Chip -->
+                                <Grid Grid.Column="4" VerticalAlignment="Center">
+                                    <!-- 暈色背景層 -->
+                                    <Border CornerRadius="10"
+                                            Background="{Binding ProductionStatus, Converter={StaticResource TuningTypeToBrushConverter}}"
+                                            Opacity="0.15"/>
+                                    <!-- 文字層 -->
+                                    <Border CornerRadius="10" Padding="10,4">
+                                        <TextBlock Text="{Binding ProductionStatus, Converter={StaticResource TuningTypeToLabelConverter}}"
+                                                   FontSize="18" FontWeight="SemiBold"
+                                                   Foreground="{Binding ProductionStatus, Converter={StaticResource TuningTypeToBrushConverter}}"/>
+                                    </Border>
+                                </Grid>
+
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+    </Grid>
+</UserControl>

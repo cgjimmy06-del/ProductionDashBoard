@@ -317,11 +317,12 @@
     <sys:String x:Key="PlStatOffset">調品質</sys:String>
     <sys:String x:Key="PlStatPending">待審核</sys:String>
     <sys:String x:Key="PlStatInfeasible">不可生產</sys:String>
-    <sys:String x:Key="PlFilterPart">零件號碼</sys:String>
+    <sys:String x:Key="PlFilterPart">件號</sys:String>
     <sys:String x:Key="PlFilterBrand">品牌</sys:String>
     <sys:String x:Key="PlFilterModel">型號</sys:String>
     <sys:String x:Key="PlFilterProcess">工序</sys:String>
     <sys:String x:Key="PlDetailPlaceholder">選擇設備以檢視程式清單</sys:String>
+    <sys:String x:Key="PlDetailClose">關閉</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

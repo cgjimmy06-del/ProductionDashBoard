@@ -44,16 +44,31 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private ProgramDeviceCardViewModel? selectedCard;
         public bool IsDetailVisible => SelectedCard != null;
 
+        // 右側清單（依 SelectedCard + 篩選器決定，排序 SeqNo）
+        public ObservableCollection<EquipmentProduct> SelectedPrograms { get; } = new();
+
+        // 標題列小統計
+        [ObservableProperty] private int detailFeasibleCount;
+        [ObservableProperty] private int detailTeachingCount;
+        [ObservableProperty] private int detailOffsetCount;
+        [ObservableProperty] private int detailPendingCount;
+
         partial void OnPartFilterChanged(string value) => RebuildCards();
         partial void OnBrandFilterChanged(string value) => RebuildCards();
         partial void OnModelFilterChanged(string value) => RebuildCards();
         partial void OnProcessFilterChanged(string value) => RebuildCards();
 
         partial void OnSelectedCardChanged(ProgramDeviceCardViewModel? value)
-            => OnPropertyChanged(nameof(IsDetailVisible));
+        {
+            OnPropertyChanged(nameof(IsDetailVisible));
+            RebuildDetail();
+        }
 
         [RelayCommand]
         private void SelectCard(ProgramDeviceCardViewModel card) => SelectedCard = card;
+
+        [RelayCommand]
+        private void CloseDetail() => SelectedCard = null;
 
         public ProgramLibraryViewModel(DashboardCoreServices core)
         {
@@ -124,6 +139,26 @@ namespace FProductionDashBoard.ViewModels
             FilteredOffsetCount     = filteredAll.Count(ep => ep.ProductionStatus == TuningType.Offset);
             FilteredPendingCount    = filteredAll.Count(ep => ep.ProductionStatus == TuningType.Pending);
             FilteredInfeasibleCount = filteredAll.Count(ep => ep.ProductionStatus == TuningType.Infeasible);
+
+            RebuildDetail();
+        }
+
+        private void RebuildDetail()
+        {
+            SelectedPrograms.Clear();
+            if (SelectedCard == null) return;
+
+            var programs = _all
+                .Where(ep => ep.EquipmentId == SelectedCard.EquipmentId && MatchesFilter(ep))
+                .OrderBy(ep => ep.SeqNo);
+
+            foreach (var ep in programs)
+                SelectedPrograms.Add(ep);
+
+            DetailFeasibleCount = SelectedPrograms.Count(ep => ep.ProductionStatus == TuningType.Feasible);
+            DetailTeachingCount = SelectedPrograms.Count(ep => ep.ProductionStatus == TuningType.Teaching);
+            DetailOffsetCount   = SelectedPrograms.Count(ep => ep.ProductionStatus == TuningType.Offset);
+            DetailPendingCount  = SelectedPrograms.Count(ep => ep.ProductionStatus == TuningType.Pending);
         }
 
         private bool MatchesFilter(EquipmentProduct ep)
