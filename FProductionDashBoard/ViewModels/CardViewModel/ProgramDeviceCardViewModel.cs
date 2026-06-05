@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using FProductionDashBoard.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +7,9 @@ namespace FProductionDashBoard.ViewModels
 {
     public enum ProgramLight { Feasible, Pending, Offset, Error }
 
-    public class ProgramDeviceCardViewModel
+    public partial class ProgramDeviceCardViewModel : ObservableObject
     {
+        [ObservableProperty] private bool isSelected;
         public int EquipmentId { get; }
         public string DeviceName { get; }
         public int FeasibleCount { get; }

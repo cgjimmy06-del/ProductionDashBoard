@@ -63,6 +63,8 @@ namespace FProductionDashBoard.ViewModels
 
         partial void OnSelectedCardChanged(ProgramDeviceCardViewModel? value)
         {
+            foreach (var card in Cards)
+                card.IsSelected = card == value;
             OnPropertyChanged(nameof(IsDetailVisible));
             RebuildDetail();
         }
@@ -158,6 +160,11 @@ namespace FProductionDashBoard.ViewModels
                 Cards.Add(new ProgramDeviceCardViewModel(
                     group.Key, deviceName, feasible, filtered.Count, light));
             }
+
+            // 還原選取狀態（SelectedCard 仍指舊實例，以 EquipmentId 識別）
+            if (SelectedCard != null)
+                foreach (var card in Cards)
+                    card.IsSelected = card.EquipmentId == SelectedCard.EquipmentId;
 
             // 更新篩選後統計
             FilteredMachineCount  = Cards.Count;
