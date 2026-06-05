@@ -117,6 +117,7 @@
                                     <ColumnDefinition Width="Auto"/>  <!-- SeqNo -->
                                     <ColumnDefinition Width="Auto"/>  <!-- PartNo -->
                                     <ColumnDefinition Width="*"/>     <!-- Brand · Model · Process -->
+                                    <ColumnDefinition Width="Auto"/>  <!-- UpdateAt -->
                                     <ColumnDefinition Width="Auto"/>  <!-- Chip -->
                                 </Grid.ColumnDefinitions>
 
@@ -154,8 +155,16 @@
                                     <Run Text="{Binding Sop.Process.Name, Mode=OneWay}"/>
                                 </TextBlock>
 
+                                <!-- UpdateAt -->
+                                <TextBlock Grid.Column="3"
+                                           Text="{Binding UpdateAt, StringFormat='{}{0:yyyy/MM/dd HH:mm}', TargetNullValue=''}"
+                                           FontSize="11" Opacity="0.5"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           Margin="0,0,12,0"/>
+
                                 <!-- ProductionStatus Chip -->
-                                <Grid Grid.Column="3" VerticalAlignment="Center">
+                                <Grid Grid.Column="4" VerticalAlignment="Center">
                                     <!-- 暈色背景層 -->
                                     <Border CornerRadius="10"
                                             Background="{Binding ProductionStatus, Converter={StaticResource TuningTypeToBrushConverter}}"
