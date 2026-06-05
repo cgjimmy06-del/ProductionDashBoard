@@ -384,22 +384,22 @@
                         <RadioButton GroupName="NavGroup"
                                      Style="{StaticResource NavButtonStyle}"
                                      Command="{Binding SwitchModeCommand}"
-                                     CommandParameter="{x:Static localvm:NavMode.Operation}">
+                                     CommandParameter="{x:Static localvm:NavMode.View}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                                <materialDesign:PackIcon Kind="WrenchCheck" Margin="0,0,5,0"
+                                <materialDesign:PackIcon Kind="ChartBox" Margin="0,0,5,0"
                                                          Width="30" Height="30"/>
-                                <TextBlock Text="{DynamicResource OperationNavButton}"
+                                <TextBlock Text="{DynamicResource ViewNavButton}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </RadioButton>
                         <RadioButton GroupName="NavGroup"
                                      Style="{StaticResource NavButtonStyle}"
                                      Command="{Binding SwitchModeCommand}"
-                                     CommandParameter="{x:Static localvm:NavMode.View}">
+                                     CommandParameter="{x:Static localvm:NavMode.Operation}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                                <materialDesign:PackIcon Kind="ChartBox" Margin="0,0,5,0"
+                                <materialDesign:PackIcon Kind="WrenchCheck" Margin="0,0,5,0"
                                                          Width="30" Height="30"/>
-                                <TextBlock Text="{DynamicResource ViewNavButton}"
+                                <TextBlock Text="{DynamicResource OperationNavButton}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </RadioButton>
@@ -428,22 +428,22 @@
                         <RadioButton GroupName="NavGroup"
                                      Style="{StaticResource NavButtonStyle}"
                                      Command="{Binding SwitchModeCommand}"
-                                     CommandParameter="{x:Static localvm:NavMode.Schedule}">
+                                     CommandParameter="{x:Static localvm:NavMode.ProgramLibrary}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                                <materialDesign:PackIcon Kind="OrderBoolAscendingVariant" Margin="0,0,5,0"
+                                <materialDesign:PackIcon Kind="ViewModule" Margin="0,0,5,0"
                                                          Width="30" Height="30"/>
-                                <TextBlock Text="{DynamicResource OrderManagementNavButton}"
+                                <TextBlock Text="{DynamicResource ProgramLibraryNavButton}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </RadioButton>
                         <RadioButton GroupName="NavGroup"
                                      Style="{StaticResource NavButtonStyle}"
                                      Command="{Binding SwitchModeCommand}"
-                                     CommandParameter="{x:Static localvm:NavMode.ProgramLibrary}">
+                                     CommandParameter="{x:Static localvm:NavMode.Schedule}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                                <materialDesign:PackIcon Kind="ViewModule" Margin="0,0,5,0"
+                                <materialDesign:PackIcon Kind="OrderBoolAscendingVariant" Margin="0,0,5,0"
                                                          Width="30" Height="30"/>
-                                <TextBlock Text="{DynamicResource ProgramLibraryNavButton}"
+                                <TextBlock Text="{DynamicResource OrderManagementNavButton}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </RadioButton>

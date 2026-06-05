@@ -12,10 +12,20 @@
 
     <Border Width="100" Height="100"
             CornerRadius="12"
-            BorderThickness="1"
-            BorderBrush="{DynamicResource BorderBrush}"
             Background="{DynamicResource PrimaryBackgroundBrush}"
             Margin="6">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                        <Setter Property="BorderThickness" Value="2"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
         <Border.Effect>
             <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
         </Border.Effect>

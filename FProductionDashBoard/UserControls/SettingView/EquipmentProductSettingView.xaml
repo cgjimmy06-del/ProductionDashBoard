@@ -5,8 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:FProductionDashBoard"
              mc:Ignorable="d"
              d:DesignHeight="700" d:DesignWidth="1100">
+    <UserControl.Resources>
+        <local:TuningTypeToLabelConverter x:Key="TuningTypeToLabelConverter"/>
+    </UserControl.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadCommand}"/>
@@ -105,10 +109,11 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- 標題列：機台資訊 + 新增按鈕 -->
+                    <!-- 標題列：機台資訊 + 篩選 + 新增按鈕 -->
                     <Grid Grid.Row="0" Margin="0,4,0,4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="160"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -122,7 +127,11 @@
                                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </StackPanel>
-                        <Button Grid.Column="1" Content="{DynamicResource EqprodNewItemButton}"
+                        <TextBox Grid.Column="1" Margin="8,0,4,0"
+                                 VerticalAlignment="Center"
+                                 materialDesign:HintAssist.Hint="{DynamicResource EqprodProgramFilter}"
+                                 Text="{Binding ProgramFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Grid.Column="2" Content="{DynamicResource EqprodNewItemButton}"
                                 Command="{Binding NewCommand}">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
@@ -142,7 +151,7 @@
 
                     <!-- 可生產品項清單 -->
                     <DataGrid Grid.Row="2"
-                              ItemsSource="{Binding ProductList}"
+                              ItemsSource="{Binding FilteredProductList}"
                               AutoGenerateColumns="False"
                               IsReadOnly="True"
                               CanUserAddRows="False"
@@ -161,8 +170,14 @@
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                             <DataGridTextColumn Header="{DynamicResource EqprodSopType}" Binding="{Binding Sop.SopType}" Width="60"
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                            <DataGridTextColumn Header="{DynamicResource EqprodProductionStatus}" Binding="{Binding ProductionStatus}" Width="80"
-                                                ElementStyle="{StaticResource CenterTextBlockStyle}"/>
+                            <DataGridTemplateColumn Header="{DynamicResource EqprodProductionStatus}" Width="80">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ProductionStatus, Converter={StaticResource TuningTypeToLabelConverter}}"
+                                                   Style="{StaticResource CenterTextBlockStyle}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -280,7 +295,13 @@
                                                Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                                     <ComboBox ItemsSource="{Binding ProductionStatusOptions}"
-                                              SelectedItem="{Binding FormProductionStatus}"/>
+                                              SelectedItem="{Binding FormProductionStatus}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Converter={StaticResource TuningTypeToLabelConverter}}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
                                 </StackPanel>
                                 <StackPanel Grid.Column="2" Margin="4"
                                             Visibility="{Binding IsSopTypeVisible, Converter={StaticResource BooleanToVisibilityConverter}}">

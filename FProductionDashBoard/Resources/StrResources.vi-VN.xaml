@@ -291,6 +291,7 @@
     <sys:String x:Key="EqprodFilterKeyword">Mã/Tên/IP</sys:String>
     <sys:String x:Key="EqprodTypeFilterAll">Tất cả</sys:String>
     <sys:String x:Key="EqprodNewItemButton">+ Thêm mục</sys:String>
+    <sys:String x:Key="EqprodProgramFilter">Phụ kiện/Thương hiệu/Dòng sản phẩm/Quy trình</sys:String>
     <sys:String x:Key="EqprodNoEquipmentSelected">Vui lòng chọn thiết bị từ bên trái</sys:String>
     <sys:String x:Key="EqprodEquipmentListTitle">Danh sách thiết bị</sys:String>
     <sys:String x:Key="EqprodProductionStatus">Trạng thái</sys:String>

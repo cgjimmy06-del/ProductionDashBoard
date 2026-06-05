@@ -181,11 +181,20 @@ namespace FProductionDashBoard.ViewModels
             PartFilter.Length == 8 && !PartList.Any(p => p.PartNo == PartFilter);
 
         [RelayCommand(CanExecute = nameof(CanCreatePart))]
-        private void BeginCreatePart()
+        private async Task BeginCreatePartAsync()
         {
             NewPartBrand = null;
             NewPartName = null;
             IsCreatingPart = true;
+            try
+            {
+                var customer = await _core.Data.GetCustomerByCodeAsync(PartFilter);
+                if (customer != null) NewPartBrand = customer;
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddErrorLog($"[BeginCreatePartAsync] {ex.Message}");
+            }
         }
 
         [RelayCommand]
