@@ -155,6 +155,30 @@ namespace FProductionDashBoard
             return (bool)value ? Enum.Parse(targetType, parameter.ToString() ?? "") : Binding.DoNothing;
         }
     }
+    public class ProgramLightToBrushConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            return value is ViewModels.ProgramLight light ? light switch
+            {
+                ViewModels.ProgramLight.Feasible => (Brush)resources["ProgramFeasibleBrush"],
+                ViewModels.ProgramLight.Pending  => (Brush)resources["ProgramPendingBrush"],
+                ViewModels.ProgramLight.Offset   => (Brush)resources["ProgramOffsetBrush"],
+                ViewModels.ProgramLight.Error    => (Brush)resources["ProgramErrorBrush"],
+                _                                => (Brush)resources["IdleBrush"],
+            } : (Brush)resources["IdleBrush"];
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+    public class BoolToDetailWidthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => value is bool b && b ? new GridLength(2, GridUnitType.Star) : new GridLength(0);
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
     public static class ListBoxBehavior
     {
         public static readonly DependencyProperty AutoScrollToEndProperty = DependencyProperty.RegisterAttached(
