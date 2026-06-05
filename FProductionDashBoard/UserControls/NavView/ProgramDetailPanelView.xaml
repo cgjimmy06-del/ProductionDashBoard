@@ -133,7 +133,7 @@
 
                                 <!-- PartNo -->
                                 <TextBlock Grid.Column="1"
-                                           Text="{Binding Sop.Product.Part.PartNo}"
+                                           Text="{Binding PartNo}"
                                            FontSize="18" FontWeight="Bold"
                                            VerticalAlignment="Center"
                                            Foreground="{DynamicResource TextPrimaryBrush}"
@@ -142,17 +142,12 @@
 
                                 <!-- Brand · Model · Process -->
                                 <TextBlock Grid.Column="2"
+                                           Text="{Binding BrandModelProcess}"
                                            FontSize="16" Opacity="0.65"
                                            VerticalAlignment="Center"
                                            Foreground="{DynamicResource TextPrimaryBrush}"
                                            TextTrimming="CharacterEllipsis"
-                                           Margin="0,0,12,0">
-                                    <Run Text="{Binding Sop.Product.Part.Brand, Mode=OneWay}"/>
-                                    <Run Text=" · "/>
-                                    <Run Text="{Binding Sop.Product.Model.Name, Mode=OneWay}"/>
-                                    <Run Text=" · "/>
-                                    <Run Text="{Binding Sop.Process.Name, Mode=OneWay}"/>
-                                </TextBlock>
+                                           Margin="0,0,12,0"/>
 
                                 <!-- UpdateAt -->
                                 <TextBlock Grid.Column="3"

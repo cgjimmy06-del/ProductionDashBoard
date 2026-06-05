@@ -1,4 +1,5 @@
 using FProductionDashBoard.Models;
+using FProductionDashBoard.UiModels;
 using FProductionDashBoard.ViewModels;
 using System.Windows;
 using Xunit;
@@ -7,23 +8,16 @@ namespace FProductionDashBoard.Tests.ViewModels
 {
     public class ProgramStatusDialogViewModelTests
     {
-        private static EquipmentProduct MakeEp(TuningType status) => new()
+        private static ProgramItemUiModel MakeItem(TuningType status) => new()
         {
             EquipmentProductId = 1,
             ProductionStatus = status,
-            Sop = new SopChecklist
-            {
-                Product = new Product
-                {
-                    Part  = new ProductPart { PartNo = "TEST-001", Brand = "B1" },
-                    Model = new ProductModel { Name = "M1" }
-                },
-                Process = new WorkProcess { Name = "P1" }
-            }
+            PartNo = "TEST-001",
+            BrandModelProcess = "B1 · M1 · P1"
         };
 
         private static ProgramStatusDialogViewModel Create(TuningType status)
-            => new(MakeEp(status), "Test Title");
+            => new(MakeItem(status), "Test Title");
 
         // ── Visibility 規則 ─────────────────────────────────────────────────
 

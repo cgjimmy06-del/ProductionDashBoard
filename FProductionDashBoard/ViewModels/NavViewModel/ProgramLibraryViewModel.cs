@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.UiModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -47,7 +48,7 @@ namespace FProductionDashBoard.ViewModels
         public bool IsDetailVisible => SelectedCard != null;
 
         // 右側清單（依 SelectedCard + 篩選器決定，排序 SeqNo）
-        public ObservableCollection<EquipmentProduct> SelectedPrograms { get; } = new();
+        public ObservableCollection<ProgramItemUiModel> SelectedPrograms { get; } = new();
 
         // 標題列小統計
         [ObservableProperty] private int detailFeasibleCount;
@@ -73,9 +74,12 @@ namespace FProductionDashBoard.ViewModels
         private void CloseDetail() => SelectedCard = null;
 
         [RelayCommand]
-        private async Task EditStatus(EquipmentProduct ep)
+        private async Task EditStatus(ProgramItemUiModel item)
         {
-            var vm = new ProgramStatusDialogViewModel(ep, Properties.Resources.ProgramStatusDialogTitle);
+            var ep = _all.FirstOrDefault(e => e.EquipmentProductId == item.EquipmentProductId);
+            if (ep == null) return;
+
+            var vm = new ProgramStatusDialogViewModel(item, Properties.Resources.ProgramStatusDialogTitle);
             _dialog.ShowDialog(vm);
             if (!vm.IsConfirmed || vm.Result == null) return;
             try
@@ -177,12 +181,12 @@ namespace FProductionDashBoard.ViewModels
                 .OrderBy(ep => ep.SeqNo);
 
             foreach (var ep in programs)
-                SelectedPrograms.Add(ep);
+                SelectedPrograms.Add(ProgramItemUiModel.FromEntity(ep));
 
-            DetailFeasibleCount = SelectedPrograms.Count(ep => ep.ProductionStatus == TuningType.Feasible);
-            DetailTeachingCount = SelectedPrograms.Count(ep => ep.ProductionStatus == TuningType.Teaching);
-            DetailOffsetCount   = SelectedPrograms.Count(ep => ep.ProductionStatus == TuningType.Offset);
-            DetailPendingCount  = SelectedPrograms.Count(ep => ep.ProductionStatus == TuningType.Pending);
+            DetailFeasibleCount = SelectedPrograms.Count(item => item.ProductionStatus == TuningType.Feasible);
+            DetailTeachingCount = SelectedPrograms.Count(item => item.ProductionStatus == TuningType.Teaching);
+            DetailOffsetCount   = SelectedPrograms.Count(item => item.ProductionStatus == TuningType.Offset);
+            DetailPendingCount  = SelectedPrograms.Count(item => item.ProductionStatus == TuningType.Pending);
         }
 
         private bool MatchesFilter(EquipmentProduct ep)
