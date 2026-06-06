@@ -32,6 +32,7 @@ namespace FProductionDashBoard.Models
         public EquipmentProduct? EquipmentProduct { get; set; }
         public Employee? CreatedByEmployee { get; set; }
         public Employee? StartedByEmployee { get; set; }
+        public Schedule? Schedule { get; set; }
     }
 
     public class OrderProductionConfiguration : IEntityTypeConfiguration<OrderProduction>

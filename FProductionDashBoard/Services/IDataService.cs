@@ -141,7 +141,18 @@ namespace FProductionDashBoard.Services
         public Task AddMesDeviceAsync(MesDevice entity);
         public Task UpdateMesDeviceAsync(MesDevice entity);
 
-        // ─── MESData：製程資料 View ───��──────────────────────────────────────
+        // ─── MESData：製程資料 View ──────────────────────────────────────────
         public Task<IEnumerable<VwMesDailyProcessData>> GetDailyProcessDataAsync();
+
+        // ─── 出入料管理：排程服務 ────────────────────────────────────────────
+        public Task<int> AddScheduleAsync(ScheduleCreateDto dto);
+        public Task<List<Schedule>> GetAllSchedulesAsync();
+        public Task<Schedule?> GetScheduleByIdAsync(int id);
+        public Task MarkScheduledAsync(int scheduleId, int employeeId);
+        public Task MarkVerifiedAsync(int scheduleId, int employeeId, int? actualQty, string? description);
+        public Task MarkReleasedAsync(int scheduleId, int employeeId, string? description);
+        public Task CancelScheduleAsync(int scheduleId, string? description);
+        public Task ForceCompleteAsync(int scheduleId, int employeeId, int? actualQty, string description);
+        public Task SplitScheduleAsync(ScheduleSplitDto dto);
     }
 }
