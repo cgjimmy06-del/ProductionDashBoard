@@ -8,10 +8,6 @@
              mc:Ignorable="d"
              Width="380" d:DesignHeight="260" d:DesignWidth="380" d:Background="White">
 
-    <UserControl.Resources>
-        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-    </UserControl.Resources>
-
     <StackPanel Margin="16,5">
 
         <!-- 備註 -->

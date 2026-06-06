@@ -9,12 +9,6 @@
              xmlns:models="clr-namespace:FProductionDashBoard.Models"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="1200">
-    <UserControl.Resources>
-        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <local:ScheduleStatusToBrushConverter x:Key="ScheduleStatusToBrushConverter"/>
-        <local:ScheduleStatusToLabelConverter x:Key="ScheduleStatusToLabelConverter"/>
-    </UserControl.Resources>
-
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>  <!-- 統計列 -->
@@ -70,15 +64,17 @@
 
             <!-- 狀態篩選 -->
             <ComboBox Grid.Column="0" Margin="0,0,6,0"
-                      SelectedItem="{Binding StatusFilter}">
+                      ItemsSource="{Binding StatusFilterOptions}"
+                      SelectedValue="{Binding StatusFilter}"
+                      SelectedValuePath="Value">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="Text" Value="{Binding Converter={StaticResource ScheduleStatusToLabelConverter}}"/>
+                                    <Setter Property="Text" Value="{Binding Value, Converter={StaticResource ScheduleStatusToLabelConverter}}"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                        <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
                                             <Setter Property="Text" Value="{DynamicResource PioFilterStatusAll}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -87,14 +83,6 @@
                         </TextBlock>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
-                <ComboBox.Items>
-                    <x:Null/>
-                    <models:ScheduleStatus>Pending</models:ScheduleStatus>
-                    <models:ScheduleStatus>Scheduled</models:ScheduleStatus>
-                    <models:ScheduleStatus>Completed</models:ScheduleStatus>
-                    <models:ScheduleStatus>Released</models:ScheduleStatus>
-                    <models:ScheduleStatus>Cancelled</models:ScheduleStatus>
-                </ComboBox.Items>
             </ComboBox>
 
             <!-- 件號/品牌/型號 搜尋 -->
@@ -120,19 +108,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5"/>
-                <ColumnDefinition Width="{Binding IsPanelVisible,
-                                   Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <ColumnDefinition.Style>
-                        <Style TargetType="ColumnDefinition">
-                            <Setter Property="Width" Value="0"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsPanelVisible}" Value="True">
-                                    <Setter Property="Width" Value="320"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ColumnDefinition.Style>
-                </ColumnDefinition>
+                <ColumnDefinition Width="{Binding IsPanelVisible, Converter={StaticResource BoolToDetailWidthConverter}}"/>
             </Grid.ColumnDefinitions>
 
             <!-- 左欄：DataGrid -->
@@ -143,7 +119,8 @@
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
                       SelectionMode="Single"
-                      VirtualizingPanel.IsVirtualizing="True">
+                      VirtualizingPanel.IsVirtualizing="True"
+                      materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
 
                     <!-- # -->

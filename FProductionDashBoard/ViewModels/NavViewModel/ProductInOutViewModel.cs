@@ -53,6 +53,8 @@ namespace FProductionDashBoard.ViewModels
         public ObservableCollection<WorkProcess> Processes { get; } = new();
         [ObservableProperty] private WorkProcess? selectedProcess;
 
+        public IReadOnlyList<ScheduleStatusFilterOption> StatusFilterOptions { get; }
+
         partial void OnStatusFilterChanged(ScheduleStatus? value) => ApplyFilter();
         partial void OnSearchTextChanged(string value) => ApplyFilter();
         partial void OnProcessFilterChanged(string value) => ApplyFilter();
@@ -63,6 +65,9 @@ namespace FProductionDashBoard.ViewModels
         {
             _core = core;
             _dialog = dialog;
+            StatusFilterOptions = new ScheduleStatusFilterOption[] { new(null) }
+                .Concat(Enum.GetValues<ScheduleStatus>().Select(s => new ScheduleStatusFilterOption(s)))
+                .ToArray();
             _ = LoadAsync();
         }
 
@@ -348,4 +353,6 @@ namespace FProductionDashBoard.ViewModels
             }
         }
     }
+
+    public sealed record ScheduleStatusFilterOption(ScheduleStatus? Value);
 }
