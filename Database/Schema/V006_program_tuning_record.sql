@@ -39,5 +39,6 @@ GO
 -- 2. migration history
 -- ----------------------------------------------------------------------------
 IF NOT EXISTS (SELECT 1 FROM _migration_history WHERE version = 'V006')
-    INSERT INTO _migration_history (version, applied_at) VALUES ('V006', sysdatetime());
+    INSERT INTO [_migration_history] ([version], [description])
+    VALUES ('V006', 'create program_tuning_record table');
 GO

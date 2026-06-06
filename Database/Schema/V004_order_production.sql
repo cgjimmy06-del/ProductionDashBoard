@@ -43,5 +43,6 @@ GO
 -- 2. migration history
 -- ----------------------------------------------------------------------------
 IF NOT EXISTS (SELECT 1 FROM _migration_history WHERE version = 'V004')
-    INSERT INTO _migration_history (version, applied_at) VALUES ('V004', sysdatetime());
+    INSERT INTO [_migration_history] ([version], [description])
+    VALUES ('V004', 'create order_production table');
 GO

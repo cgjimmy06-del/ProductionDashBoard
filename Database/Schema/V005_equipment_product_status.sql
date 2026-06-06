@@ -25,5 +25,6 @@ GO
 -- 2. migration history
 -- ----------------------------------------------------------------------------
 IF NOT EXISTS (SELECT 1 FROM _migration_history WHERE version = 'V005')
-    INSERT INTO _migration_history (version, applied_at) VALUES ('V005', sysdatetime());
+    INSERT INTO [_migration_history] ([version], [description])
+    VALUES ('V005', 'add production_status column to equipment_product');
 GO
