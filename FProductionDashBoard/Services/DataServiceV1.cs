@@ -36,6 +36,7 @@ namespace FProductionDashBoard.Services.V1
         private readonly IEquipmentProductRepository _equipmentProductRep;
         private readonly IOrderProductionRepository _orderProductionRep;
         private readonly IProgramTuningRecordRepository _programTuningRep;
+        private readonly IScheduleRepository _scheduleRep;
         private readonly IDbContextFactory<MesDbContext> _mesFactory;
         private readonly IInfoDbRepository _infoRep;
         private readonly IDataDbRepository _dataRep;
@@ -48,7 +49,7 @@ namespace FProductionDashBoard.Services.V1
             IOfflineCacheService offlineCache, IRolePermissionRepository rolePermissionRep,
             IProductPartRepository productPartRep, IProductRepository productRep, ISopChecklistRepository sopChecklistRep,
             IEquipmentProductRepository equipmentProductRep, IOrderProductionRepository orderProductionRep,
-            IProgramTuningRecordRepository programTuningRep,
+            IProgramTuningRecordRepository programTuningRep, IScheduleRepository scheduleRep,
             IDbContextFactory<MesDbContext> mesFactory, IInfoDbRepository infoRep, IDataDbRepository dataRep)
         {
             _equipmentRep = equipmentrep;
@@ -66,6 +67,7 @@ namespace FProductionDashBoard.Services.V1
             _equipmentProductRep = equipmentProductRep;
             _orderProductionRep = orderProductionRep;
             _programTuningRep = programTuningRep;
+            _scheduleRep = scheduleRep;
             _mesFactory = mesFactory;
             _infoRep = infoRep;
             _dataRep = dataRep;
@@ -1032,6 +1034,141 @@ namespace FProductionDashBoard.Services.V1
         public async Task UpdateMesDeviceAsync(MesDevice entity)
         {
             await _infoRep.UpdateMesDeviceAsync(entity).ConfigureAwait(false);
+        }
+
+        #endregion
+
+        #region 出入料管理：排程服務
+
+        public async Task<int> AddScheduleAsync(ScheduleCreateDto dto)
+        {
+            if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[AddScheduleAsync] 排程 Repository 連線失敗");
+            var entity = new Schedule
+            {
+                ProductId   = dto.ProductId,
+                ProcessId   = dto.ProcessId,
+                Quantity    = dto.Quantity,
+                LotNo       = dto.LotNo,
+                Status      = ScheduleStatus.Pending,
+                ReceivedBy  = dto.ReceivedBy,
+                ReceivedAt  = DateTime.Now,
+                Description = dto.Description,
+                CreateAt    = DateTime.Now,
+                UpdateAt    = DateTime.Now
+            };
+            return await _scheduleRep.AddAsync(entity).ConfigureAwait(false);
+        }
+
+        public async Task<List<Schedule>> GetAllSchedulesAsync()
+        {
+            if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetAllSchedulesAsync] 排程 Repository 連線失敗");
+            return await _scheduleRep.GetAllWithDetailsAsync().ConfigureAwait(false);
+        }
+
+        public async Task<Schedule?> GetScheduleByIdAsync(int id)
+        {
+            if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetScheduleByIdAsync] 排程 Repository 連線失敗");
+            return await _scheduleRep.GetByIdWithDetailsAsync(id).ConfigureAwait(false);
+        }
+
+        public async Task MarkScheduledAsync(int scheduleId, int employeeId)
+        {
+            if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[MarkScheduledAsync] 排程 Repository 連線失敗");
+            await _scheduleRep.MarkScheduledAsync(scheduleId, employeeId, DateTime.Now).ConfigureAwait(false);
+        }
+
+        public async Task MarkVerifiedAsync(int scheduleId, int employeeId, int? actualQty, string? description)
+        {
+            if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[MarkVerifiedAsync] 排程 Repository 連線失敗");
+            await _scheduleRep.MarkVerifiedAsync(scheduleId, employeeId, DateTime.Now, actualQty, description).ConfigureAwait(false);
+        }
+
+        public async Task MarkReleasedAsync(int scheduleId, int employeeId, string? description)
+        {
+            if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[MarkReleasedAsync] 排程 Repository 連線失敗");
+            await _scheduleRep.MarkReleasedAsync(scheduleId, employeeId, DateTime.Now, description).ConfigureAwait(false);
+        }
+
+        public async Task CancelScheduleAsync(int scheduleId, string? description)
+        {
+            if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[CancelScheduleAsync] 排程 Repository 連線失敗");
+            await _scheduleRep.MarkCancelledAsync(scheduleId, description).ConfigureAwait(false);
+        }
+
+        public async Task ForceCompleteAsync(int scheduleId, int employeeId, int? actualQty, string description)
+        {
+            if (string.IsNullOrWhiteSpace(description))
+                throw new BusinessRuleException("[ForceCompleteAsync] 強制完成必須填寫說明");
+            if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[ForceCompleteAsync] 排程 Repository 連線失敗");
+
+            await using var ctx = _mesFactory.CreateDbContext();
+            var schedule = await ctx.Schedules.FindAsync(scheduleId).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"[ForceCompleteAsync] 找不到排程 ScheduleId={scheduleId}");
+            if (schedule.Status != ScheduleStatus.Pending)
+                throw new BusinessRuleException($"[ForceCompleteAsync] 狀態不允許：{schedule.Status}（需為 Pending）");
+
+            schedule.Status         = ScheduleStatus.Completed;
+            schedule.VerifiedBy     = employeeId;
+            schedule.VerifiedAt     = DateTime.Now;
+            schedule.ActualQuantity = actualQty ?? schedule.Quantity;
+            schedule.Description    = description;
+            schedule.UpdateAt       = DateTime.Now;
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public async Task SplitScheduleAsync(ScheduleSplitDto dto)
+        {
+            if (dto.RemainingQuantity <= 0)
+                throw new BusinessRuleException("[SplitScheduleAsync] remainingQuantity 必須大於 0");
+            if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[SplitScheduleAsync] 排程 Repository 連線失敗");
+
+            await using var ctx = _mesFactory.CreateDbContext();
+            var original = await ctx.Schedules.FindAsync(dto.OriginalScheduleId).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"[SplitScheduleAsync] 找不到原排程 ScheduleId={dto.OriginalScheduleId}");
+            if (original.Status != ScheduleStatus.Completed)
+                throw new BusinessRuleException($"[SplitScheduleAsync] 原排程狀態不允許拆單：{original.Status}（需為 Completed）");
+
+            var completedQty = original.ActualQuantity ?? original.Quantity;
+            if (completedQty + dto.RemainingQuantity != original.Quantity)
+                throw new BusinessRuleException(
+                    $"[SplitScheduleAsync] actual_quantity({completedQty}) + remainingQuantity({dto.RemainingQuantity}) " +
+                    $"必須等於原始數量({original.Quantity})");
+
+            var now = DateTime.Now;
+            var splitNote = dto.Description ?? $"拆單：完成 {completedQty}，剩餘 {dto.RemainingQuantity}";
+
+            original.Status      = ScheduleStatus.Released;
+            original.ReleasedBy  = dto.ReleasedBy;
+            original.ReleasedAt  = now;
+            original.Description = splitNote;
+            original.UpdateAt    = now;
+
+            var child = new Schedule
+            {
+                ProductId   = original.ProductId,
+                ProcessId   = original.ProcessId,
+                Quantity    = dto.RemainingQuantity,
+                LotNo       = original.LotNo,
+                Status      = ScheduleStatus.Pending,
+                ReceivedBy  = dto.ReleasedBy,
+                ReceivedAt  = now,
+                ParentId    = original.ScheduleId,
+                Description = splitNote,
+                CreateAt    = now,
+                UpdateAt    = now
+            };
+            ctx.Schedules.Add(child);
+
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
         #endregion

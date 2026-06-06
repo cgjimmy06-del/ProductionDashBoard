@@ -28,6 +28,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         private readonly Mock<IEquipmentProductRepository> _equipmentProductRep = new();
         private readonly Mock<IOrderProductionRepository> _orderProductionRep = new();
         private readonly Mock<IProgramTuningRecordRepository> _programTuningRep = new();
+        private readonly Mock<IScheduleRepository> _scheduleRep = new();
         private readonly Mock<IDbContextFactory<MesDbContext>> _mesFactory = new();
         private readonly Mock<IInfoDbRepository> _infoRep = new();
         private readonly Mock<IDataDbRepository> _dataRep = new();
@@ -63,6 +64,7 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 _equipmentProductRep.Object,
                 _orderProductionRep.Object,
                 _programTuningRep.Object,
+                _scheduleRep.Object,
                 _mesFactory.Object,
                 _infoRep.Object,
                 _dataRep.Object
