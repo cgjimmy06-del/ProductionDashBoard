@@ -363,4 +363,43 @@
   <data name="ConfirmEndOrder" xml:space="preserve">
     <value>Confirm end this order?</value>
   </data>
+  <data name="ScheduleOpForceCompleteTitle" xml:space="preserve">
+    <value>Force Complete</value>
+  </data>
+  <data name="ScheduleOpVerifyTitle" xml:space="preserve">
+    <value>Verify Completion</value>
+  </data>
+  <data name="ScheduleOpReleaseTitle" xml:space="preserve">
+    <value>Release</value>
+  </data>
+  <data name="ScheduleOpSplitTitle" xml:space="preserve">
+    <value>Split Order</value>
+  </data>
+  <data name="ScheduleOpCancelTitle" xml:space="preserve">
+    <value>Cancel Schedule</value>
+  </data>
+  <data name="ScheduleOpDescRequired" xml:space="preserve">
+    <value>Remarks is required</value>
+  </data>
+  <data name="ScheduleOpRemainingQtyRequired" xml:space="preserve">
+    <value>Remaining quantity is required</value>
+  </data>
+  <data name="ScheduleOpForcedByPrefix" xml:space="preserve">
+    <value>Force completed by </value>
+  </data>
+  <data name="ScheduleOpForcedBySuffix" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="PioFormErrorProduct" xml:space="preserve">
+    <value>Please select a product</value>
+  </data>
+  <data name="PioFormErrorProcess" xml:space="preserve">
+    <value>Please select a process</value>
+  </data>
+  <data name="PioFormErrorQty" xml:space="preserve">
+    <value>Quantity must be greater than 0</value>
+  </data>
+  <data name="PioFormSubmitError" xml:space="preserve">
+    <value>Failed to receive, please try again</value>
+  </data>
 </root>

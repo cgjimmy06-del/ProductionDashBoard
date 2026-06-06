@@ -318,4 +318,43 @@
   <data name="ConfirmEndOrder" xml:space="preserve">
     <value>Xác nhận hoàn tất đơn hàng này?</value>
   </data>
+  <data name="ScheduleOpForceCompleteTitle" xml:space="preserve">
+    <value>Cưỡng chế hoàn thành</value>
+  </data>
+  <data name="ScheduleOpVerifyTitle" xml:space="preserve">
+    <value>Xác nhận hoàn thành</value>
+  </data>
+  <data name="ScheduleOpReleaseTitle" xml:space="preserve">
+    <value>Xuất kho</value>
+  </data>
+  <data name="ScheduleOpSplitTitle" xml:space="preserve">
+    <value>Tách đơn</value>
+  </data>
+  <data name="ScheduleOpCancelTitle" xml:space="preserve">
+    <value>Hủy lịch</value>
+  </data>
+  <data name="ScheduleOpDescRequired" xml:space="preserve">
+    <value>Bắt buộc nhập ghi chú</value>
+  </data>
+  <data name="ScheduleOpRemainingQtyRequired" xml:space="preserve">
+    <value>Bắt buộc nhập SL còn lại</value>
+  </data>
+  <data name="ScheduleOpForcedByPrefix" xml:space="preserve">
+    <value>Cưỡng chế bởi </value>
+  </data>
+  <data name="ScheduleOpForcedBySuffix" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="PioFormErrorProduct" xml:space="preserve">
+    <value>Vui lòng chọn sản phẩm</value>
+  </data>
+  <data name="PioFormErrorProcess" xml:space="preserve">
+    <value>Vui lòng chọn công đoạn</value>
+  </data>
+  <data name="PioFormErrorQty" xml:space="preserve">
+    <value>Số lượng phải lớn hơn 0</value>
+  </data>
+  <data name="PioFormSubmitError" xml:space="preserve">
+    <value>Nhập kho thất bại, vui lòng thử lại</value>
+  </data>
 </root>

@@ -1,0 +1,601 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.ProductInOutView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:FProductionDashBoard"
+             xmlns:localvm="clr-namespace:FProductionDashBoard.ViewModels"
+             xmlns:models="clr-namespace:FProductionDashBoard.Models"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="1200">
+    <UserControl.Resources>
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:ScheduleStatusToBrushConverter x:Key="ScheduleStatusToBrushConverter"/>
+        <local:ScheduleStatusToLabelConverter x:Key="ScheduleStatusToLabelConverter"/>
+    </UserControl.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- 統計列 -->
+            <RowDefinition Height="Auto"/>  <!-- 篩選列 -->
+            <RowDefinition Height="*"/>     <!-- 主內容 -->
+        </Grid.RowDefinitions>
+
+        <!-- ========== Row0：統計列 ========== -->
+        <UniformGrid Grid.Row="0" Rows="1" Margin="0,0,0,10">
+
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="{DynamicResource PioStatPendingLabel}" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding StatPending}" Style="{StaticResource StatNumberStyle}"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="{DynamicResource PioStatScheduledLabel}" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding StatScheduled}" Style="{StaticResource StatNumberStyle}"
+                               Foreground="{DynamicResource PrimaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="{DynamicResource PioStatCompletedLabel}" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding StatCompleted}" Style="{StaticResource StatNumberStyle}"
+                               Foreground="{DynamicResource SuccessBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="{DynamicResource PioStatReleasedLabel}" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding StatReleased}" Style="{StaticResource StatNumberStyle}"
+                               Foreground="{DynamicResource SecondaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+        </UniformGrid>
+
+        <!-- ========== Row1：篩選列 ========== -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 狀態篩選 -->
+            <ComboBox Grid.Column="0" Margin="0,0,6,0"
+                      SelectedItem="{Binding StatusFilter}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding Converter={StaticResource ScheduleStatusToLabelConverter}}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                            <Setter Property="Text" Value="{DynamicResource PioFilterStatusAll}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+                <ComboBox.Items>
+                    <x:Null/>
+                    <models:ScheduleStatus>Pending</models:ScheduleStatus>
+                    <models:ScheduleStatus>Scheduled</models:ScheduleStatus>
+                    <models:ScheduleStatus>Completed</models:ScheduleStatus>
+                    <models:ScheduleStatus>Released</models:ScheduleStatus>
+                    <models:ScheduleStatus>Cancelled</models:ScheduleStatus>
+                </ComboBox.Items>
+            </ComboBox>
+
+            <!-- 件號/品牌/型號 搜尋 -->
+            <TextBox Grid.Column="1" Margin="0,0,6,0"
+                     materialDesign:HintAssist.Hint="{DynamicResource PioFilterPartModel}"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <!-- 工序 搜尋 -->
+            <TextBox Grid.Column="2" Margin="0,0,6,0"
+                     materialDesign:HintAssist.Hint="{DynamicResource PioFilterProcess}"
+                     Text="{Binding ProcessFilter, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <!-- + 入料按鈕 -->
+            <Button Grid.Column="3"
+                    Content="{DynamicResource PioReceiveButton}"
+                    Style="{DynamicResource FunctionButtonStyle}"
+                    Background="{DynamicResource SecondaryBrush}"
+                    Command="{Binding OpenFormCommand}"/>
+        </Grid>
+
+        <!-- ========== Row2：DataGrid + 右側面板 ========== -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="{Binding IsPanelVisible,
+                                   Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ColumnDefinition.Style>
+                        <Style TargetType="ColumnDefinition">
+                            <Setter Property="Width" Value="0"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPanelVisible}" Value="True">
+                                    <Setter Property="Width" Value="320"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ColumnDefinition.Style>
+                </ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左欄：DataGrid -->
+            <DataGrid Grid.Column="0"
+                      ItemsSource="{Binding Schedules}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      SelectionMode="Single"
+                      VirtualizingPanel.IsVirtualizing="True">
+                <DataGrid.Columns>
+
+                    <!-- # -->
+                    <DataGridTextColumn Header="{DynamicResource PioColScheduleId}"
+                                        Binding="{Binding ScheduleId}"
+                                        Width="50"/>
+
+                    <!-- 件號 -->
+                    <DataGridTextColumn Header="{DynamicResource PioColPartNo}"
+                                        Binding="{Binding PartNo}"
+                                        Width="90"/>
+
+                    <!-- 品牌 -->
+                    <DataGridTextColumn Header="{DynamicResource PioColBrand}"
+                                        Binding="{Binding BrandName}"
+                                        Width="80"/>
+
+                    <!-- 型號 -->
+                    <DataGridTextColumn Header="{DynamicResource PioColModel}"
+                                        Binding="{Binding ModelName}"
+                                        Width="80"/>
+
+                    <!-- 工序 -->
+                    <DataGridTextColumn Header="{DynamicResource PioColProcess}"
+                                        Binding="{Binding ProcessName}"
+                                        Width="70"/>
+
+                    <!-- 數量 -->
+                    <DataGridTextColumn Header="{DynamicResource PioColQty}"
+                                        Binding="{Binding Quantity}"
+                                        Width="55"/>
+
+                    <!-- 來料編號 -->
+                    <DataGridTemplateColumn Header="{DynamicResource PioColLotNo}" Width="90">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding LotNo, TargetNullValue='-'}"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" Padding="4,0"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- 入料時間 -->
+                    <DataGridTextColumn Header="{DynamicResource PioColReceivedAt}"
+                                        Binding="{Binding ReceivedAt, StringFormat='MM/dd HH:mm'}"
+                                        Width="90"/>
+
+                    <!-- 出料時間 -->
+                    <DataGridTemplateColumn Header="{DynamicResource PioColReleasedAt}" Width="90">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ReleasedAt, StringFormat='MM/dd HH:mm', TargetNullValue='-'}"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" Padding="4,0"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- 狀態（彩色 + 點擊開啟詳情） -->
+                    <DataGridTemplateColumn Header="{DynamicResource PioColStatus}" Width="90">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                        Padding="4,2"
+                                        Height="Auto"
+                                        Command="{Binding DataContext.OpenDetailCommand,
+                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Ellipse Width="8" Height="8" Margin="0,0,4,0"
+                                                 VerticalAlignment="Center"
+                                                 Fill="{Binding Status,
+                                                        Converter={StaticResource ScheduleStatusToBrushConverter}}"/>
+                                        <TextBlock Text="{Binding Status,
+                                                          Converter={StaticResource ScheduleStatusToLabelConverter}}"
+                                                   Foreground="{Binding Status,
+                                                               Converter={StaticResource ScheduleStatusToBrushConverter}}"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- 操作 -->
+                    <DataGridTemplateColumn Header="{DynamicResource PioColActions}" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+
+                                    <!-- Pending: 強制完成 + 取消 -->
+                                    <Button Content="{DynamicResource PioOpForceComplete}"
+                                            Margin="2,1" Padding="6,2" Height="Auto"
+                                            Command="{Binding DataContext.ForceCompleteCommand,
+                                                      RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                                                <Setter Property="Background" Value="{DynamicResource WarningBrush}"/>
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Pending}">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <!-- Scheduled: 確認完成 -->
+                                    <Button Content="{DynamicResource PioOpVerify}"
+                                            Margin="2,1" Padding="6,2" Height="Auto"
+                                            Command="{Binding DataContext.VerifyCommand,
+                                                      RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Scheduled}">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <!-- Completed: 出料 + 拆單 -->
+                                    <Button Content="{DynamicResource PioOpRelease}"
+                                            Margin="2,1" Padding="6,2" Height="Auto"
+                                            Command="{Binding DataContext.ReleaseCommand,
+                                                      RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                                                <Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Completed}">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                    <Button Content="{DynamicResource PioOpSplit}"
+                                            Margin="2,1" Padding="6,2" Height="Auto"
+                                            Command="{Binding DataContext.SplitCommand,
+                                                      RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Completed}">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <!-- Pending / Scheduled: 取消 -->
+                                    <Button Content="{DynamicResource PioOpCancel}"
+                                            Margin="2,1" Padding="6,2" Height="Auto"
+                                            Command="{Binding DataContext.CancelScheduleCommand,
+                                                      RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                                                <Setter Property="Background" Value="{DynamicResource ErrorBrush}"/>
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Pending}">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Scheduled}">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- GridSplitter -->
+            <GridSplitter Grid.Column="1"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                          Background="{DynamicResource BorderBrush}"
+                          ResizeDirection="Columns"
+                          Visibility="{Binding IsPanelVisible,
+                                       Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <!-- 右側面板 -->
+            <Border Grid.Column="2"
+                    Visibility="{Binding IsPanelVisible,
+                                 Converter={StaticResource BooleanToVisibilityConverter}}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 面板標題列 -->
+                    <Grid Grid.Row="0" Margin="8,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" FontSize="14" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding PanelMode}"
+                                                     Value="{x:Static localvm:ProductInOutPanelMode.Detail}">
+                                            <Setter Property="Text" Value="{DynamicResource PioDetailTitle}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding PanelMode}"
+                                                     Value="{x:Static localvm:ProductInOutPanelMode.Form}">
+                                            <Setter Property="Text" Value="{DynamicResource PioFormTitle}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <Button Grid.Column="1" Style="{StaticResource MaterialDesignIconButton}"
+                                Width="24" Height="24" Padding="0"
+                                Foreground="{DynamicResource TextPrimaryBrush}"
+                                Command="{Binding ClosePanelCommand}">
+                            <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
+                        </Button>
+                    </Grid>
+
+                    <!-- Detail 模式 -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                                  Margin="8,0,8,8">
+                        <ScrollViewer.Style>
+                            <Style TargetType="ScrollViewer">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PanelMode}"
+                                                 Value="{x:Static localvm:ProductInOutPanelMode.Detail}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ScrollViewer.Style>
+                        <StackPanel DataContext="{Binding SelectedSchedule}">
+                            <!-- ScheduleId -->
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailScheduleId}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding ScheduleId}"/>
+                            <!-- 件號 / 品牌 / 型號 / 工序 -->
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioColPartNo}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding PartNo}"/>
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioColBrand}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding BrandName}"/>
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioColModel}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding ModelName}"/>
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioColProcess}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding ProcessName}"/>
+                            <!-- 數量 / 實際數量 -->
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailQty}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding Quantity}"/>
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailActualQty}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding ActualQuantity, TargetNullValue='-'}"/>
+                            <!-- 來料編號 -->
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailLotNo}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding LotNo, TargetNullValue='-'}"/>
+                            <!-- 入料 -->
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailReceivedBy}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding ReceivedByName, TargetNullValue='-'}"/>
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailReceivedAt}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding ReceivedAt, StringFormat='yyyy-MM-dd HH:mm', TargetNullValue='-'}"/>
+                            <!-- 排單 -->
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailScheduledBy}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding ScheduledByName, TargetNullValue='-'}"/>
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailScheduledAt}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding ScheduledAt, StringFormat='yyyy-MM-dd HH:mm', TargetNullValue='-'}"/>
+                            <!-- 審核 -->
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailVerifiedBy}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding VerifiedByName, TargetNullValue='-'}"/>
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailVerifiedAt}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding VerifiedAt, StringFormat='yyyy-MM-dd HH:mm', TargetNullValue='-'}"/>
+                            <!-- 出料 -->
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailReleasedBy}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding ReleasedByName, TargetNullValue='-'}"/>
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailReleasedAt}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding ReleasedAt, StringFormat='yyyy-MM-dd HH:mm', TargetNullValue='-'}"/>
+                            <!-- 備註 -->
+                            <TextBlock Style="{StaticResource DetailLabelStyle}" Text="{DynamicResource PioDetailDescription}"/>
+                            <TextBlock Style="{StaticResource DetailValueStyle}" Text="{Binding Description, TargetNullValue='-'}" TextWrapping="Wrap"/>
+                            <!-- 父單（有值才顯示） -->
+                            <TextBlock Text="{DynamicResource PioDetailParentId}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource DetailLabelStyle}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ParentId}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="{Binding ParentId}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource DetailValueStyle}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ParentId}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Form 模式 -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                                  Margin="8,0,8,8">
+                        <ScrollViewer.Style>
+                            <Style TargetType="ScrollViewer">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PanelMode}"
+                                                 Value="{x:Static localvm:ProductInOutPanelMode.Form}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ScrollViewer.Style>
+                        <StackPanel>
+
+                            <!-- 來料編號 -->
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource PioFormLotNo}"
+                                     Text="{Binding FormLotNo, UpdateSourceTrigger=PropertyChanged}"
+                                     Margin="0,0,0,10"/>
+
+                            <!-- 件號篩選 + 型號篩選 -->
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         materialDesign:HintAssist.Hint="{DynamicResource PioFormPartFilter}"
+                                         Text="{Binding FormPartFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBox Grid.Column="2"
+                                         materialDesign:HintAssist.Hint="{DynamicResource PioFormModelFilter}"
+                                         Text="{Binding FormModelFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Grid>
+
+                            <!-- 產品 ComboBox -->
+                            <ComboBox materialDesign:HintAssist.Hint="{DynamicResource PioFormProduct}"
+                                      ItemsSource="{Binding FilteredProducts}"
+                                      SelectedItem="{Binding SelectedProduct}"
+                                      Margin="0,0,0,4">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock>
+                                            <Run Text="{Binding Part.PartNo}"/>
+                                            <Run Text=" · "/>
+                                            <Run Text="{Binding Part.Brand}"/>
+                                            <Run Text=" "/>
+                                            <Run Text="{Binding Model.Name}"/>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <!-- 無符合產品提示 -->
+                            <TextBlock Foreground="{DynamicResource ErrorBrush}"
+                                       FontSize="11"
+                                       Text="{DynamicResource PioFormNoProduct}"
+                                       Margin="0,0,0,6">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding FilteredProducts.Count}" Value="0"/>
+                                                    <Condition Binding="{Binding FormPartFilter, Converter={StaticResource StringHasValueToVisibilityConverter}}" Value="Visible"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </MultiDataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding FilteredProducts.Count}" Value="0"/>
+                                                    <Condition Binding="{Binding FormModelFilter, Converter={StaticResource StringHasValueToVisibilityConverter}}" Value="Visible"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <!-- 工序 ComboBox -->
+                            <ComboBox materialDesign:HintAssist.Hint="{DynamicResource PioFormProcess}"
+                                      ItemsSource="{Binding Processes}"
+                                      SelectedItem="{Binding SelectedProcess}"
+                                      DisplayMemberPath="Name"
+                                      Margin="0,0,0,10"/>
+
+                            <!-- 數量 -->
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource PioFormQty}"
+                                     Text="{Binding FormQuantity, UpdateSourceTrigger=PropertyChanged}"
+                                     Margin="0,0,0,10"/>
+
+                            <!-- 備註 -->
+                            <TextBox materialDesign:HintAssist.Hint="{DynamicResource PioFormDescription}"
+                                     Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"
+                                     Margin="0,0,0,10"/>
+
+                            <!-- 錯誤訊息 -->
+                            <TextBlock Foreground="{DynamicResource ErrorBrush}"
+                                       Text="{Binding FormError}"
+                                       FontSize="12"
+                                       Margin="0,0,0,6"
+                                       Visibility="{Binding FormError,
+                                                    Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
+
+                            <!-- 取消 / 入料 按鈕 -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="{DynamicResource PioFormCancelButton}"
+                                        Style="{DynamicResource FunctionButtonStyle}"
+                                        Background="{DynamicResource BorderBrush}"
+                                        Margin="0,0,8,0"
+                                        Command="{Binding ClosePanelCommand}"/>
+                                <Button Content="{DynamicResource PioFormSubmitButton}"
+                                        Command="{Binding SubmitFormCommand}"/>
+                            </StackPanel>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Grid>
+</UserControl>

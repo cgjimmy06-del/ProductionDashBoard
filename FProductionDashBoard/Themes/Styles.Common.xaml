@@ -433,4 +433,17 @@
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
     </Style>
 
+    <!-- 詳細資訊面板標籤/值樣式 -->
+    <Style x:Key="DetailLabelStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="Opacity" Value="0.6"/>
+        <Setter Property="Margin" Value="0,6,0,1"/>
+    </Style>
+    <Style x:Key="DetailValueStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+    </Style>
+
 </ResourceDictionary>

@@ -662,5 +662,45 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("TuningInProgressTeaching", resourceCulture);
             }
         }
+
+        internal static string ScheduleOpForceCompleteTitle {
+            get { return ResourceManager.GetString("ScheduleOpForceCompleteTitle", resourceCulture); }
+        }
+        internal static string ScheduleOpVerifyTitle {
+            get { return ResourceManager.GetString("ScheduleOpVerifyTitle", resourceCulture); }
+        }
+        internal static string ScheduleOpReleaseTitle {
+            get { return ResourceManager.GetString("ScheduleOpReleaseTitle", resourceCulture); }
+        }
+        internal static string ScheduleOpSplitTitle {
+            get { return ResourceManager.GetString("ScheduleOpSplitTitle", resourceCulture); }
+        }
+        internal static string ScheduleOpCancelTitle {
+            get { return ResourceManager.GetString("ScheduleOpCancelTitle", resourceCulture); }
+        }
+        internal static string ScheduleOpDescRequired {
+            get { return ResourceManager.GetString("ScheduleOpDescRequired", resourceCulture); }
+        }
+        internal static string ScheduleOpRemainingQtyRequired {
+            get { return ResourceManager.GetString("ScheduleOpRemainingQtyRequired", resourceCulture); }
+        }
+        internal static string ScheduleOpForcedByPrefix {
+            get { return ResourceManager.GetString("ScheduleOpForcedByPrefix", resourceCulture); }
+        }
+        internal static string ScheduleOpForcedBySuffix {
+            get { return ResourceManager.GetString("ScheduleOpForcedBySuffix", resourceCulture); }
+        }
+        internal static string PioFormErrorProduct {
+            get { return ResourceManager.GetString("PioFormErrorProduct", resourceCulture); }
+        }
+        internal static string PioFormErrorProcess {
+            get { return ResourceManager.GetString("PioFormErrorProcess", resourceCulture); }
+        }
+        internal static string PioFormErrorQty {
+            get { return ResourceManager.GetString("PioFormErrorQty", resourceCulture); }
+        }
+        internal static string PioFormSubmitError {
+            get { return ResourceManager.GetString("PioFormSubmitError", resourceCulture); }
+        }
     }
 }

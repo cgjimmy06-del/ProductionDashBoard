@@ -326,5 +326,65 @@
     <sys:String x:Key="PlDetailPlaceholder">選擇設備以檢視程式清單</sys:String>
     <sys:String x:Key="PlDetailClose">關閉</sys:String>
     <!--#endregion-->
+    <!--#region 進出料管理 ProductInOut -->
+    <sys:String x:Key="PioStatusPending">待排單</sys:String>
+    <sys:String x:Key="PioStatusScheduled">已排單</sys:String>
+    <sys:String x:Key="PioStatusCompleted">已完成</sys:String>
+    <sys:String x:Key="PioStatusReleased">已出料</sys:String>
+    <sys:String x:Key="PioStatusCancelled">已取消</sys:String>
+    <sys:String x:Key="PioStatPendingLabel">待排單</sys:String>
+    <sys:String x:Key="PioStatScheduledLabel">已排單</sys:String>
+    <sys:String x:Key="PioStatCompletedLabel">已完成</sys:String>
+    <sys:String x:Key="PioStatReleasedLabel">已出料</sys:String>
+    <sys:String x:Key="PioFilterStatusAll">全部狀態</sys:String>
+    <sys:String x:Key="PioFilterPartModel">件號/品牌/型號</sys:String>
+    <sys:String x:Key="PioFilterProcess">工序</sys:String>
+    <sys:String x:Key="PioReceiveButton">+ 入料</sys:String>
+    <sys:String x:Key="PioColScheduleId">#</sys:String>
+    <sys:String x:Key="PioColPartNo">件號</sys:String>
+    <sys:String x:Key="PioColBrand">品牌</sys:String>
+    <sys:String x:Key="PioColModel">型號</sys:String>
+    <sys:String x:Key="PioColProcess">工序</sys:String>
+    <sys:String x:Key="PioColQty">數量</sys:String>
+    <sys:String x:Key="PioColLotNo">來料編號</sys:String>
+    <sys:String x:Key="PioColReceivedAt">入料時間</sys:String>
+    <sys:String x:Key="PioColReleasedAt">出料時間</sys:String>
+    <sys:String x:Key="PioColStatus">狀態</sys:String>
+    <sys:String x:Key="PioColActions">操作</sys:String>
+    <sys:String x:Key="PioOpForceComplete">強制完成</sys:String>
+    <sys:String x:Key="PioOpVerify">確認完成</sys:String>
+    <sys:String x:Key="PioOpRelease">出料</sys:String>
+    <sys:String x:Key="PioOpSplit">拆單</sys:String>
+    <sys:String x:Key="PioOpCancel">取消</sys:String>
+    <sys:String x:Key="PioDetailTitle">詳細資訊</sys:String>
+    <sys:String x:Key="PioDetailScheduleId">排程編號</sys:String>
+    <sys:String x:Key="PioDetailQty">數量</sys:String>
+    <sys:String x:Key="PioDetailActualQty">實際數量</sys:String>
+    <sys:String x:Key="PioDetailLotNo">來料編號</sys:String>
+    <sys:String x:Key="PioDetailReceivedBy">入料人員</sys:String>
+    <sys:String x:Key="PioDetailReceivedAt">入料時間</sys:String>
+    <sys:String x:Key="PioDetailScheduledBy">排單人員</sys:String>
+    <sys:String x:Key="PioDetailScheduledAt">排單時間</sys:String>
+    <sys:String x:Key="PioDetailVerifiedBy">審核人員</sys:String>
+    <sys:String x:Key="PioDetailVerifiedAt">審核時間</sys:String>
+    <sys:String x:Key="PioDetailReleasedBy">出料人員</sys:String>
+    <sys:String x:Key="PioDetailReleasedAt">出料時間</sys:String>
+    <sys:String x:Key="PioDetailDescription">備註</sys:String>
+    <sys:String x:Key="PioDetailParentId">父單編號</sys:String>
+    <sys:String x:Key="PioFormTitle">入料表單</sys:String>
+    <sys:String x:Key="PioFormLotNo">來料編號（選填）</sys:String>
+    <sys:String x:Key="PioFormPartFilter">件號篩選</sys:String>
+    <sys:String x:Key="PioFormModelFilter">型號篩選</sys:String>
+    <sys:String x:Key="PioFormProduct">產品</sys:String>
+    <sys:String x:Key="PioFormProcess">工序</sys:String>
+    <sys:String x:Key="PioFormQty">數量</sys:String>
+    <sys:String x:Key="PioFormDescription">備註（選填）</sys:String>
+    <sys:String x:Key="PioFormNoProduct">無符合的產品，請調整搜尋條件</sys:String>
+    <sys:String x:Key="PioFormCancelButton">取消</sys:String>
+    <sys:String x:Key="PioFormSubmitButton">入料</sys:String>
+    <sys:String x:Key="PioDialogDescription">備註</sys:String>
+    <sys:String x:Key="PioDialogActualQty">實際數量</sys:String>
+    <sys:String x:Key="PioDialogRemainingQty">剩餘數量</sys:String>
+    <!--#endregion-->
 
 </ResourceDictionary>
