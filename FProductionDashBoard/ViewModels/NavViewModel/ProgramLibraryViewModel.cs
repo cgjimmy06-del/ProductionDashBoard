@@ -39,10 +39,13 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private int filteredInfeasibleCount;
 
         // 篩選條件
+        [ObservableProperty] private TuningType? tuningTypeFilter;
         [ObservableProperty] private string partFilter = string.Empty;
         [ObservableProperty] private string brandFilter = string.Empty;
         [ObservableProperty] private string modelFilter = string.Empty;
         [ObservableProperty] private string processFilter = string.Empty;
+
+        public IReadOnlyList<TuningTypeFilterOption> TuningTypeFilterOptions { get; }
 
         private readonly List<ProgramDeviceCardViewModel> _cards = new();
         private readonly List<ProgramItemUiModel> _programs = new();
@@ -58,6 +61,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private int detailOffsetCount;
         [ObservableProperty] private int detailPendingCount;
 
+        partial void OnTuningTypeFilterChanged(TuningType? value) => RebuildCards();
         partial void OnPartFilterChanged(string value) => RebuildCards();
         partial void OnBrandFilterChanged(string value) => RebuildCards();
         partial void OnModelFilterChanged(string value) => RebuildCards();
@@ -105,6 +109,9 @@ namespace FProductionDashBoard.ViewModels
         {
             _core = core;
             _dialog = dialog;
+            TuningTypeFilterOptions = new TuningTypeFilterOption[] { new(null) }
+                .Concat(Enum.GetValues<TuningType>().Select(t => new TuningTypeFilterOption(t)))
+                .ToArray();
             CardsView = CollectionViewSource.GetDefaultView(_cards);
             SelectedProgramsView = CollectionViewSource.GetDefaultView(_programs);
             _ = LoadAsync();
@@ -209,6 +216,8 @@ namespace FProductionDashBoard.ViewModels
             var model   = ep.Sop?.Product?.Model;
             var process = ep.Sop?.Process;
 
+            if (TuningTypeFilter.HasValue && ep.ProductionStatus != TuningTypeFilter.Value)
+                return false;
             if (!string.IsNullOrEmpty(PartFilter) &&
                 (part?.PartNo?.IndexOf(PartFilter, StringComparison.OrdinalIgnoreCase) < 0))
                 return false;
@@ -224,4 +233,6 @@ namespace FProductionDashBoard.ViewModels
             return true;
         }
     }
+
+    public sealed record TuningTypeFilterOption(TuningType? Value);
 }

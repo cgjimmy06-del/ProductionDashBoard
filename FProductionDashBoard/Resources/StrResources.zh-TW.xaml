@@ -332,6 +332,7 @@
     <sys:String x:Key="PioStatusCompleted">已完成</sys:String>
     <sys:String x:Key="PioStatusReleased">已出料</sys:String>
     <sys:String x:Key="PioStatusCancelled">已取消</sys:String>
+    <sys:String x:Key="PioStatTotalLabel">總排單</sys:String>
     <sys:String x:Key="PioStatPendingLabel">待排單</sys:String>
     <sys:String x:Key="PioStatScheduledLabel">已排單</sys:String>
     <sys:String x:Key="PioStatCompletedLabel">已完成</sys:String>

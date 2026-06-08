@@ -8,9 +8,6 @@
              xmlns:local="clr-namespace:FProductionDashBoard"
              mc:Ignorable="d"
              d:DesignHeight="700" d:DesignWidth="1100">
-    <UserControl.Resources>
-        <local:TuningTypeToLabelConverter x:Key="TuningTypeToLabelConverter"/>
-    </UserControl.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadCommand}"/>

@@ -332,6 +332,7 @@
     <sys:String x:Key="PioStatusCompleted">Hoàn thành</sys:String>
     <sys:String x:Key="PioStatusReleased">Đã xuất</sys:String>
     <sys:String x:Key="PioStatusCancelled">Đã hủy</sys:String>
+    <sys:String x:Key="PioStatTotalLabel">Tổng đơn</sys:String>
     <sys:String x:Key="PioStatPendingLabel">Đang chờ</sys:String>
     <sys:String x:Key="PioStatScheduledLabel">Đã lên lịch</sys:String>
     <sys:String x:Key="PioStatCompletedLabel">Hoàn thành</sys:String>

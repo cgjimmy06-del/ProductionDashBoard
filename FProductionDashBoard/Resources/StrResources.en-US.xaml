@@ -332,6 +332,7 @@
     <sys:String x:Key="PioStatusCompleted">Completed</sys:String>
     <sys:String x:Key="PioStatusReleased">Released</sys:String>
     <sys:String x:Key="PioStatusCancelled">Cancelled</sys:String>
+    <sys:String x:Key="PioStatTotalLabel">Total</sys:String>
     <sys:String x:Key="PioStatPendingLabel">Pending</sys:String>
     <sys:String x:Key="PioStatScheduledLabel">Scheduled</sys:String>
     <sys:String x:Key="PioStatCompletedLabel">Completed</sys:String>

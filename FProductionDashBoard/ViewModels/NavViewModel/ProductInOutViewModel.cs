@@ -23,10 +23,16 @@ namespace FProductionDashBoard.ViewModels
         private List<ScheduleUiModel> _all = new();
 
         // 統計
+        [ObservableProperty] private int statTotal;
+        [ObservableProperty] private int statTotalQty;
         [ObservableProperty] private int statPending;
+        [ObservableProperty] private int statPendingQty;
         [ObservableProperty] private int statScheduled;
+        [ObservableProperty] private int statScheduledQty;
         [ObservableProperty] private int statCompleted;
+        [ObservableProperty] private int statCompletedQty;
         [ObservableProperty] private int statReleased;
+        [ObservableProperty] private int statReleasedQty;
 
         // 篩選
         [ObservableProperty] private ScheduleStatus? statusFilter;
@@ -103,10 +109,17 @@ namespace FProductionDashBoard.ViewModels
 
         private void ComputeStats()
         {
-            StatPending   = _all.Count(s => s.Status == ScheduleStatus.Pending);
-            StatScheduled = _all.Count(s => s.Status == ScheduleStatus.Scheduled);
-            StatCompleted = _all.Count(s => s.Status == ScheduleStatus.Completed);
-            StatReleased  = _all.Count(s => s.Status == ScheduleStatus.Released);
+            var src = _all;
+            StatTotal        = src.Count(s => s.Status != ScheduleStatus.Cancelled);
+            StatTotalQty     = src.Where(s => s.Status != ScheduleStatus.Cancelled).Sum(s => s.Quantity);
+            StatPending      = src.Count(s => s.Status == ScheduleStatus.Pending);
+            StatPendingQty   = src.Where(s => s.Status == ScheduleStatus.Pending).Sum(s => s.Quantity);
+            StatScheduled    = src.Count(s => s.Status == ScheduleStatus.Scheduled);
+            StatScheduledQty = src.Where(s => s.Status == ScheduleStatus.Scheduled).Sum(s => s.Quantity);
+            StatCompleted    = src.Count(s => s.Status == ScheduleStatus.Completed);
+            StatCompletedQty = src.Where(s => s.Status == ScheduleStatus.Completed).Sum(s => s.ActualQuantity ?? 0);
+            StatReleased     = src.Count(s => s.Status == ScheduleStatus.Released);
+            StatReleasedQty  = src.Where(s => s.Status == ScheduleStatus.Released).Sum(s => s.ActualQuantity ?? 0);
         }
 
         private void RebuildSchedulesView()
