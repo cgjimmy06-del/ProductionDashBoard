@@ -63,7 +63,6 @@ namespace FProductionDashBoard.ViewModels
         public ObservableCollection<Product> FilteredProducts { get; } = new();
         [ObservableProperty] private Product? selectedProduct;
 
-        public ObservableCollection<WorkProcess> Processes { get; } = new();
         private List<WorkProcess> _allProcesses = new();
         public ObservableCollection<WorkProcess> FilteredProcesses { get; } = new();
         [ObservableProperty] private WorkProcess? selectedProcess;
