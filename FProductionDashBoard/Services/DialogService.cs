@@ -16,7 +16,8 @@ namespace FProductionDashBoard.Services
             [typeof(TuningDialogViewModel)]     = vm => new TuningDialog { DataContext = vm },
             [typeof(AddDeviceDialogViewModel)]  = vm => new AddDeviceDialog { DataContext = vm },
             [typeof(OrderListDialogViewModel)]  = vm => new OrderListDialog { DataContext = vm },
-            [typeof(ProgramStatusDialogViewModel)] = vm => new ProgramStatusDialog { DataContext = vm },
+            [typeof(ProgramStatusDialogViewModel)]          = vm => new ProgramStatusDialog { DataContext = vm },
+            [typeof(ScheduleOperationDialogViewModel)]      = vm => new ScheduleOperationDialog { DataContext = vm },
         };
 
         public bool ShowConfirm(string message)

@@ -6,10 +6,6 @@
              xmlns:local="clr-namespace:FProductionDashBoard"
              mc:Ignorable="d"
              d:DesignHeight="160" d:DesignWidth="160">
-    <UserControl.Resources>
-        <local:ProgramLightToBrushConverter x:Key="ProgramLightToBrushConverter"/>
-    </UserControl.Resources>
-
     <Border Width="100" Height="100"
             CornerRadius="12"
             Background="{DynamicResource PrimaryBackgroundBrush}"
