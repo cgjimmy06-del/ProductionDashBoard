@@ -41,6 +41,7 @@ LogUploadApi/               # IIS 系統相關 Web API
   - 顏色引用優先使用 `Colors.Dark.xaml` / `Colors.Light.xaml` 中定義的自訂 Brush（如 `ErrorBrush`、`SuccessBrush`、`TextPrimaryBrush`），不使用 MaterialDesign 內建 Brush；配色以主色系與輔色系為出發（主要功能如確認、取消等用主色 `PrimaryBrush`，延伸功能如新增、刪除等用輔色 `SecondaryBrush`）
   - 元件樣式優先繼承 `Styles.Common.xaml` 的全域樣式，避免在個別 XAML 中寫 explicit `Style="{StaticResource MaterialDesign...}"`
   - 新增元件若需自訂樣式，應先在 `Styles.Common.xaml` 補充全域或具名樣式，再於 View 中引用
+  - **Converter 必須集中在 `App.xaml` 的 `#region 自訂 Converter` 區塊統一宣告，禁止在各個 `UserControl.Resources` 中重複定義**
 
 ## 開發規範
 

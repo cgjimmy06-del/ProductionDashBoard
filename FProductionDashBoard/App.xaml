@@ -45,6 +45,7 @@
             <!--#region 自訂 Converter -->
             <local:BoolToColorConverter x:Key="BoolToColorConverter"/>
             <local:BoolToAlertIconConverter x:Key="BoolToAlertConverter"/>
+            <local:BoolToDetailWidthConverter x:Key="BoolToDetailWidthConverter"/>
             <local:IntToColorConverter x:Key="IntToColorConverter"/>
             <local:StringNullOrEmptyToVisibilityConverter x:Key="PlaceholderConverter"/>
             <local:CollapseWidthConverter x:Key="CollapseWidthConverter"/>
@@ -54,6 +55,9 @@
             <local:StringHasValueToVisibilityConverter x:Key="StringHasValueToVisibilityConverter"/>
             <local:TimeSpanToHhmmConverter x:Key="TimeSpanToHhmmConverter"/>
             <local:TranslationZhTwConverter x:Key="TranslationZhTwConverter"/>
+            <local:ProgramLightToBrushConverter x:Key="ProgramLightToBrushConverter"/>
+            <local:ScheduleStatusToBrushConverter x:Key="ScheduleStatusToBrushConverter"/>
+            <local:ScheduleStatusToLabelConverter x:Key="ScheduleStatusToLabelConverter"/>
             <!--#endregion-->
             
         </ResourceDictionary>

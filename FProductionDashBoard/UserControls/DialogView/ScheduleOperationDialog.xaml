@@ -1,0 +1,35 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.DialogView.ScheduleOperationDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:FProductionDashBoard"
+             mc:Ignorable="d"
+             Width="380" d:DesignHeight="260" d:DesignWidth="380" d:Background="White">
+
+    <StackPanel Margin="16,5">
+
+        <!-- 備註 -->
+        <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                 materialDesign:HintAssist.Hint="{DynamicResource PioDialogDescription}"
+                 Margin="0,0,0,12"/>
+
+        <!-- 實際數量（ForceComplete / Verify） -->
+        <TextBox Text="{Binding ActualQuantity, UpdateSourceTrigger=PropertyChanged}"
+                 materialDesign:HintAssist.Hint="{DynamicResource PioDialogActualQty}"
+                 Margin="0,0,0,12"
+                 Visibility="{Binding IsActualQtyVisible,
+                              Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        <!-- 剩餘數量（Split） -->
+        <TextBox Text="{Binding RemainingQuantity, UpdateSourceTrigger=PropertyChanged}"
+                 materialDesign:HintAssist.Hint="{DynamicResource PioDialogRemainingQty}"
+                 materialDesign:HintAssist.HelperText="{Binding MaxRemainingQtyHint}"
+                 materialDesign:HintAssist.HelperTextFontSize="12"
+                 Margin="0,0,0,12"
+                 Visibility="{Binding IsRemainingQtyVisible,
+                              Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+    </StackPanel>
+</UserControl>

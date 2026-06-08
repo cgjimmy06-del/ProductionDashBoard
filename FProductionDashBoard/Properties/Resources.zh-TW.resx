@@ -318,4 +318,49 @@
   <data name="ConfirmEndOrder" xml:space="preserve">
     <value>確認結束此訂單?</value>
   </data>
+  <data name="ScheduleOpForceCompleteTitle" xml:space="preserve">
+    <value>強制完成</value>
+  </data>
+  <data name="ScheduleOpVerifyTitle" xml:space="preserve">
+    <value>確認完成</value>
+  </data>
+  <data name="ScheduleOpReleaseTitle" xml:space="preserve">
+    <value>出料</value>
+  </data>
+  <data name="ScheduleOpSplitTitle" xml:space="preserve">
+    <value>拆單</value>
+  </data>
+  <data name="ScheduleOpCancelTitle" xml:space="preserve">
+    <value>取消排程</value>
+  </data>
+  <data name="ScheduleOpDescRequired" xml:space="preserve">
+    <value>備註為必填</value>
+  </data>
+  <data name="ScheduleOpRemainingQtyRequired" xml:space="preserve">
+    <value>剩餘數量為必填</value>
+  </data>
+  <data name="ScheduleOpRemainingQtyHint" xml:space="preserve">
+    <value>最多 {0}</value>
+  </data>
+  <data name="ScheduleOpRemainingQtyExceeded" xml:space="preserve">
+    <value>可填數量不能超過剩餘數量</value>
+  </data>
+  <data name="ScheduleOpForcedByPrefix" xml:space="preserve">
+    <value>由</value>
+  </data>
+  <data name="ScheduleOpForcedBySuffix" xml:space="preserve">
+    <value>強制完成</value>
+  </data>
+  <data name="PioFormErrorProduct" xml:space="preserve">
+    <value>請選擇產品</value>
+  </data>
+  <data name="PioFormErrorProcess" xml:space="preserve">
+    <value>請選擇工序</value>
+  </data>
+  <data name="PioFormErrorQty" xml:space="preserve">
+    <value>數量須大於 0</value>
+  </data>
+  <data name="PioFormSubmitError" xml:space="preserve">
+    <value>入料失敗，請重試</value>
+  </data>
 </root>

@@ -9,12 +9,6 @@
              xmlns:localvm="clr-namespace:FProductionDashBoard.ViewModels"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="1200">
-    <UserControl.Resources>
-        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <local:BoolToDetailWidthConverter   x:Key="BoolToDetailWidthConverter"/>
-        <local:ProgramLightToBrushConverter x:Key="ProgramLightToBrushConverter"/>
-    </UserControl.Resources>
-
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>  <!-- 統計列 -->

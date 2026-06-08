@@ -144,6 +144,9 @@ namespace FProductionDashBoard.Services
         // ─── MESData：製程資料 View ──────────────────────────────────────────
         public Task<IEnumerable<VwMesDailyProcessData>> GetDailyProcessDataAsync();
 
+        // ─── 出入料管理：產品查詢 ────────────────────────────────────────────
+        public Task<List<Product>> GetAllProductsAsync();
+
         // ─── 出入料管理：排程服務 ────────────────────────────────────────────
         public Task<int> AddScheduleAsync(ScheduleCreateDto dto);
         public Task<List<Schedule>> GetAllSchedulesAsync();

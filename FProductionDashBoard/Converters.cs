@@ -215,6 +215,43 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+    public class ScheduleStatusToBrushConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            return value is Models.ScheduleStatus s ? s switch
+            {
+                Models.ScheduleStatus.Pending   => (Brush)resources["TextPrimaryBrush"],
+                Models.ScheduleStatus.Scheduled => (Brush)resources["PrimaryBrush"],
+                Models.ScheduleStatus.Completed => (Brush)resources["SuccessBrush"],
+                Models.ScheduleStatus.Released  => (Brush)resources["SecondaryBrush"],
+                Models.ScheduleStatus.Cancelled => (Brush)resources["ErrorBrush"],
+                _                               => (Brush)resources["IdleBrush"],
+            } : (Brush)resources["IdleBrush"];
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+    public class ScheduleStatusToLabelConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            var key = value is Models.ScheduleStatus s ? s switch
+            {
+                Models.ScheduleStatus.Pending   => "PioStatusPending",
+                Models.ScheduleStatus.Scheduled => "PioStatusScheduled",
+                Models.ScheduleStatus.Completed => "PioStatusCompleted",
+                Models.ScheduleStatus.Released  => "PioStatusReleased",
+                Models.ScheduleStatus.Cancelled => "PioStatusCancelled",
+                _                               => null,
+            } : null;
+            return key != null && resources[key] is string label ? label : value?.ToString() ?? string.Empty;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
     public static class ListBoxBehavior
     {
         public static readonly DependencyProperty AutoScrollToEndProperty = DependencyProperty.RegisterAttached(

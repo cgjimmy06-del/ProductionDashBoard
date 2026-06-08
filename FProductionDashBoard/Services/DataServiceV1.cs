@@ -1060,6 +1060,13 @@ namespace FProductionDashBoard.Services.V1
             return await _scheduleRep.AddAsync(entity).ConfigureAwait(false);
         }
 
+        public async Task<List<Product>> GetAllProductsAsync()
+        {
+            if (!await _productRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetAllProductsAsync] 產品 Repository 連線失敗");
+            return await _productRep.GetAllWithDetailsAsync().ConfigureAwait(false);
+        }
+
         public async Task<List<Schedule>> GetAllSchedulesAsync()
         {
             if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))

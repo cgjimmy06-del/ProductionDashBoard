@@ -80,6 +80,11 @@ namespace FProductionDashBoard.ViewModels
                     if (!_core.Authorization.HasAnyPermission(PermissionId.Order, PermissionId.Schedule)) return false;
                     break;
 
+                case NavMode.ProductInOut:
+                    if (!_core.Authorization.HasAnyPermission(PermissionId.Order, PermissionId.Schedule)) return false;
+                    content = _serviceProvider.GetRequiredService<ProductInOutViewModel>();
+                    break;
+
                 case NavMode.ProgramLibrary:
                     if (!_core.Authorization.HasPermission(PermissionId.Schedule)) return false;
                     content = _serviceProvider.GetRequiredService<ProgramLibraryViewModel>();
