@@ -6,7 +6,6 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:FProductionDashBoard"
              xmlns:localvm="clr-namespace:FProductionDashBoard.ViewModels"
-             xmlns:models="clr-namespace:FProductionDashBoard.Models"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="1200">
     <Grid Margin="12">
@@ -102,12 +101,12 @@
             <!-- 件號/品牌/型號 搜尋 -->
             <TextBox Grid.Column="1" Margin="0,0,6,0"
                      materialDesign:HintAssist.Hint="{DynamicResource PioFilterPartModel}"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=200}"/>
 
             <!-- 工序 搜尋 -->
             <TextBox Grid.Column="2" Margin="0,0,6,0"
                      materialDesign:HintAssist.Hint="{DynamicResource PioFilterProcess}"
-                     Text="{Binding ProcessFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                     Text="{Binding ProcessFilter, UpdateSourceTrigger=PropertyChanged, Delay=200}"/>
 
             <!-- + 入料按鈕 -->
             <Button Grid.Column="3" Margin="0,0,6,0"
@@ -266,96 +265,40 @@
                                     <!-- Pending: 強制完成 + 取消 -->
                                     <Button Content="{DynamicResource PioOpForceComplete}"
                                             Margin="2,1" Padding="6,2" Height="Auto"
+                                            Style="{StaticResource PioForceCompleteButtonStyle}"
                                             Command="{Binding DataContext.ForceCompleteCommand,
                                                       RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}">
-                                        <Button.Style>
-                                            <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
-                                                <Setter Property="Background" Value="{DynamicResource WarningBrush}"/>
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Pending}">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
+                                            CommandParameter="{Binding}"/>
 
                                     <!-- Scheduled: 確認完成 -->
                                     <Button Content="{DynamicResource PioOpVerify}"
                                             Margin="2,1" Padding="6,2" Height="Auto"
+                                            Style="{StaticResource PioVerifyButtonStyle}"
                                             Command="{Binding DataContext.VerifyCommand,
                                                       RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}">
-                                        <Button.Style>
-                                            <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Scheduled}">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
+                                            CommandParameter="{Binding}"/>
 
                                     <!-- Completed: 出料 + 拆單 -->
                                     <Button Content="{DynamicResource PioOpRelease}"
                                             Margin="2,1" Padding="6,2" Height="Auto"
+                                            Style="{StaticResource PioReleaseButtonStyle}"
                                             Command="{Binding DataContext.ReleaseCommand,
                                                       RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}">
-                                        <Button.Style>
-                                            <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
-                                                <Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Completed}">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
+                                            CommandParameter="{Binding}"/>
                                     <Button Content="{DynamicResource PioOpSplit}"
                                             Margin="2,1" Padding="6,2" Height="Auto"
+                                            Style="{StaticResource PioSplitButtonStyle}"
                                             Command="{Binding DataContext.SplitCommand,
                                                       RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}">
-                                        <Button.Style>
-                                            <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Completed}">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
+                                            CommandParameter="{Binding}"/>
 
                                     <!-- Pending / Scheduled: 取消 -->
                                     <Button Content="{DynamicResource PioOpCancel}"
                                             Margin="2,1" Padding="6,2" Height="Auto"
+                                            Style="{StaticResource PioCancelButtonStyle}"
                                             Command="{Binding DataContext.CancelScheduleCommand,
                                                       RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}">
-                                        <Button.Style>
-                                            <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
-                                                <Setter Property="Background" Value="{DynamicResource ErrorBrush}"/>
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Pending}">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Scheduled}">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
+                                            CommandParameter="{Binding}"/>
 
                                 </StackPanel>
                             </DataTemplate>
