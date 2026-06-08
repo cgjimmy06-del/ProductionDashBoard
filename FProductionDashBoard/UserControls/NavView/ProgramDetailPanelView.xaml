@@ -9,7 +9,6 @@
              d:DesignHeight="800" d:DesignWidth="400">
     <UserControl.Resources>
         <local:TuningTypeToBrushConverter  x:Key="TuningTypeToBrushConverter"/>
-        <local:TuningTypeToLabelConverter  x:Key="TuningTypeToLabelConverter"/>
     </UserControl.Resources>
 
     <Grid>
@@ -98,7 +97,7 @@
 
         <!-- ========== Row1：程式清單（單列卡片） ========== -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding SelectedPrograms}" Margin="8,4,8,8">
+            <ItemsControl ItemsSource="{Binding SelectedProgramsView}" Margin="8,4,8,8">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border Margin="0,4"

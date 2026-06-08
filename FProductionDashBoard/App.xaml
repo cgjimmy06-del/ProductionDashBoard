@@ -58,6 +58,7 @@
             <local:ProgramLightToBrushConverter x:Key="ProgramLightToBrushConverter"/>
             <local:ScheduleStatusToBrushConverter x:Key="ScheduleStatusToBrushConverter"/>
             <local:ScheduleStatusToLabelConverter x:Key="ScheduleStatusToLabelConverter"/>
+            <local:TuningTypeToLabelConverter x:Key="TuningTypeToLabelConverter"/>
             <!--#endregion-->
             
         </ResourceDictionary>

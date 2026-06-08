@@ -332,6 +332,7 @@
     <sys:String x:Key="PioStatusCompleted">已完成</sys:String>
     <sys:String x:Key="PioStatusReleased">已出料</sys:String>
     <sys:String x:Key="PioStatusCancelled">已取消</sys:String>
+    <sys:String x:Key="PioStatTotalLabel">總排單</sys:String>
     <sys:String x:Key="PioStatPendingLabel">待排單</sys:String>
     <sys:String x:Key="PioStatScheduledLabel">已排單</sys:String>
     <sys:String x:Key="PioStatCompletedLabel">已完成</sys:String>
@@ -339,6 +340,13 @@
     <sys:String x:Key="PioFilterStatusAll">全部狀態</sys:String>
     <sys:String x:Key="PioFilterPartModel">件號/品牌/型號</sys:String>
     <sys:String x:Key="PioFilterProcess">工序</sys:String>
+    <sys:String x:Key="PioFilterDateStart">開始日期</sys:String>
+    <sys:String x:Key="PioFilterDateEnd">結束日期</sys:String>
+    <sys:String x:Key="PioShortcutToday">今天</sys:String>
+    <sys:String x:Key="PioShortcutLast3Days">3天</sys:String>
+    <sys:String x:Key="PioShortcutLast5Days">5天</sys:String>
+    <sys:String x:Key="PioShortcutCurrentWeek">當周</sys:String>
+    <sys:String x:Key="PioShortcutCurrentMonth">當月</sys:String>
     <sys:String x:Key="PioReceiveButton">+ 入料</sys:String>
     <sys:String x:Key="PioColScheduleId">#</sys:String>
     <sys:String x:Key="PioColPartNo">件號</sys:String>
