@@ -42,6 +42,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string formLotNo = string.Empty;
         [ObservableProperty] private string formPartFilter = string.Empty;
         [ObservableProperty] private string formModelFilter = string.Empty;
+        [ObservableProperty] private string formProcessFilter = string.Empty;
         [ObservableProperty] private int formQuantity;
         [ObservableProperty] private string formDescription = string.Empty;
         [ObservableProperty] private string? formError;
@@ -51,6 +52,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private Product? selectedProduct;
 
         public ObservableCollection<WorkProcess> Processes { get; } = new();
+        private List<WorkProcess> _allProcesses = new();
+        public ObservableCollection<WorkProcess> FilteredProcesses { get; } = new();
         [ObservableProperty] private WorkProcess? selectedProcess;
 
         public IReadOnlyList<ScheduleStatusFilterOption> StatusFilterOptions { get; }
@@ -60,6 +63,7 @@ namespace FProductionDashBoard.ViewModels
         partial void OnProcessFilterChanged(string value) => ApplyFilter();
         partial void OnFormPartFilterChanged(string value) => RebuildFilteredProducts();
         partial void OnFormModelFilterChanged(string value) => RebuildFilteredProducts();
+        partial void OnFormProcessFilterChanged(string value) => RebuildFilteredProcesses();
 
         public ProductInOutViewModel(DashboardCoreServices core, IDialogService dialog)
         {
@@ -85,9 +89,8 @@ namespace FProductionDashBoard.ViewModels
                 RebuildFilteredProducts();
 
                 var processes = await _core.Data.GetWorkProcessesAsync();
-                Processes.Clear();
-                foreach (var p in processes) Processes.Add(p);
-                SelectedProcess = Processes.FirstOrDefault();
+                _allProcesses = processes;
+                RebuildFilteredProcesses();
             }
             catch (Exception ex)
             {
@@ -155,6 +158,20 @@ namespace FProductionDashBoard.ViewModels
             SelectedProduct = FilteredProducts.FirstOrDefault();
         }
 
+        private void RebuildFilteredProcesses()
+        {
+            FilteredProcesses.Clear();
+            var results = _allProcesses.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(FormProcessFilter))
+            {
+                var kw = FormProcessFilter.Trim();
+                results = results.Where(p =>
+                    p.Name?.Contains(kw, StringComparison.OrdinalIgnoreCase) == true);
+            }
+            foreach (var p in results) FilteredProcesses.Add(p);
+            SelectedProcess = FilteredProcesses.FirstOrDefault();
+        }
+
         // ─── 面板控制 ─────────────────────────────────────────────────────────
 
         [RelayCommand]
@@ -182,14 +199,15 @@ namespace FProductionDashBoard.ViewModels
 
         private void ResetForm()
         {
-            FormLotNo       = string.Empty;
-            FormPartFilter  = string.Empty;
-            FormModelFilter = string.Empty;
-            FormQuantity    = 0;
-            FormDescription = string.Empty;
-            FormError       = null;
+            FormLotNo          = string.Empty;
+            FormPartFilter     = string.Empty;
+            FormModelFilter    = string.Empty;
+            FormProcessFilter  = string.Empty;
+            FormQuantity       = 0;
+            FormDescription    = string.Empty;
+            FormError          = null;
             RebuildFilteredProducts();
-            SelectedProcess = Processes.FirstOrDefault();
+            RebuildFilteredProcesses();
         }
 
         // ─── 入料表單提交 ──────────────────────────────────────────────────────

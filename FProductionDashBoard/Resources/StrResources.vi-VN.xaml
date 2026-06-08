@@ -371,10 +371,17 @@
     <sys:String x:Key="PioDetailReleasedAt">Ngày xuất</sys:String>
     <sys:String x:Key="PioDetailDescription">Ghi chú</sys:String>
     <sys:String x:Key="PioDetailParentId">Mã đơn cha</sys:String>
+    <sys:String x:Key="PioSectionProduct">Vật liệu</sys:String>
+    <sys:String x:Key="PioSectionFlow">Quy trình</sys:String>
+    <sys:String x:Key="PioFlowReceive">Nhận hàng</sys:String>
+    <sys:String x:Key="PioFlowSchedule">Lên lịch</sys:String>
+    <sys:String x:Key="PioFlowVerify">Xác nhận</sys:String>
+    <sys:String x:Key="PioFlowRelease">Xuất hàng</sys:String>
     <sys:String x:Key="PioFormTitle">Biểu mẫu nhập</sys:String>
     <sys:String x:Key="PioFormLotNo">Số lô (tùy chọn)</sys:String>
     <sys:String x:Key="PioFormPartFilter">Lọc mã SP</sys:String>
     <sys:String x:Key="PioFormModelFilter">Lọc kiểu</sys:String>
+    <sys:String x:Key="PioFormProcessFilter">Lọc công đoạn</sys:String>
     <sys:String x:Key="PioFormProduct">Sản phẩm</sys:String>
     <sys:String x:Key="PioFormProcess">Công đoạn</sys:String>
     <sys:String x:Key="PioFormQty">Số lượng</sys:String>

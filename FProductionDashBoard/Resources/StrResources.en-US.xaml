@@ -371,10 +371,17 @@
     <sys:String x:Key="PioDetailReleasedAt">Released At</sys:String>
     <sys:String x:Key="PioDetailDescription">Remarks</sys:String>
     <sys:String x:Key="PioDetailParentId">Parent ID</sys:String>
+    <sys:String x:Key="PioSectionProduct">Product</sys:String>
+    <sys:String x:Key="PioSectionFlow">Process Flow</sys:String>
+    <sys:String x:Key="PioFlowReceive">Receive</sys:String>
+    <sys:String x:Key="PioFlowSchedule">Schedule</sys:String>
+    <sys:String x:Key="PioFlowVerify">Verify</sys:String>
+    <sys:String x:Key="PioFlowRelease">Release</sys:String>
     <sys:String x:Key="PioFormTitle">Receive Form</sys:String>
     <sys:String x:Key="PioFormLotNo">Lot No. (optional)</sys:String>
     <sys:String x:Key="PioFormPartFilter">Part No. Filter</sys:String>
     <sys:String x:Key="PioFormModelFilter">Model Filter</sys:String>
+    <sys:String x:Key="PioFormProcessFilter">Process Filter</sys:String>
     <sys:String x:Key="PioFormProduct">Product</sys:String>
     <sys:String x:Key="PioFormProcess">Process</sys:String>
     <sys:String x:Key="PioFormQty">Quantity</sys:String>

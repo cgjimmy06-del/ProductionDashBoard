@@ -371,10 +371,17 @@
     <sys:String x:Key="PioDetailReleasedAt">出料時間</sys:String>
     <sys:String x:Key="PioDetailDescription">備註</sys:String>
     <sys:String x:Key="PioDetailParentId">父單編號</sys:String>
+    <sys:String x:Key="PioSectionProduct">物料</sys:String>
+    <sys:String x:Key="PioSectionFlow">流程</sys:String>
+    <sys:String x:Key="PioFlowReceive">入料</sys:String>
+    <sys:String x:Key="PioFlowSchedule">排單</sys:String>
+    <sys:String x:Key="PioFlowVerify">審核</sys:String>
+    <sys:String x:Key="PioFlowRelease">出料</sys:String>
     <sys:String x:Key="PioFormTitle">入料表單</sys:String>
     <sys:String x:Key="PioFormLotNo">來料編號（選填）</sys:String>
     <sys:String x:Key="PioFormPartFilter">件號篩選</sys:String>
     <sys:String x:Key="PioFormModelFilter">型號篩選</sys:String>
+    <sys:String x:Key="PioFormProcessFilter">工序篩選</sys:String>
     <sys:String x:Key="PioFormProduct">產品</sys:String>
     <sys:String x:Key="PioFormProcess">工序</sys:String>
     <sys:String x:Key="PioFormQty">數量</sys:String>
