@@ -20,7 +20,7 @@ namespace FProductionDashBoard.ViewModels
     {
         private readonly DashboardCoreServices _core;
         private readonly IDialogService _dialog;
-        private List<ScheduleUiModel> _all = new();
+        private readonly List<ScheduleUiModel> _all = new();
 
         // 統計
         [ObservableProperty] private int statTotal;
@@ -43,7 +43,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private DateTime? dateRangeStart;
         [ObservableProperty] private DateTime? dateRangeEnd;
 
-        public ICollectionView SchedulesView { get; private set; } = null!;
+        public ICollectionView SchedulesView { get; }
 
         // 右側面板
         [ObservableProperty] private bool isPanelVisible;
@@ -98,6 +98,12 @@ namespace FProductionDashBoard.ViewModels
             StatusFilterOptions = new ScheduleStatusFilterOption[] { new(null) }
                 .Concat(Enum.GetValues<ScheduleStatus>().Select(s => new ScheduleStatusFilterOption(s)))
                 .ToArray();
+
+            SchedulesView = CollectionViewSource.GetDefaultView(_all);
+            SchedulesView.Filter = FilterSchedule;
+            SchedulesView.SortDescriptions.Add(
+                new SortDescription(nameof(ScheduleUiModel.ScheduleId), ListSortDirection.Descending));
+
             _ = LoadAsync();
         }
 
@@ -106,9 +112,9 @@ namespace FProductionDashBoard.ViewModels
             try
             {
                 var schedules = await _core.Data.GetAllSchedulesAsync();
-                _all = schedules.Select(ScheduleUiModel.FromEntity).ToList();
+                ReplaceAll(schedules);
                 ComputeStats();
-                RebuildSchedulesView();
+                SchedulesView.Refresh();
 
                 var products  = await _core.Data.GetAllProductsAsync();
                 _allProducts  = products;
@@ -125,20 +131,27 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
-        private IEnumerable<ScheduleUiModel> GetDateFilteredSource()
+        private void ReplaceAll(IEnumerable<Schedule> schedules)
         {
-            if (!DateRangeStart.HasValue && !DateRangeEnd.HasValue) return _all;
+            _all.Clear();
+            _all.AddRange(schedules.Select(ScheduleUiModel.FromEntity));
+        }
+
+        private bool IsWithinDateRange(ScheduleUiModel s)
+        {
+            if (!DateRangeStart.HasValue && !DateRangeEnd.HasValue) return true;
+            if (!s.ReceivedAt.HasValue) return false;
             var businessDay = _core.Data.BusinessDay;
             var offset = businessDay == DateTime.MinValue ? TimeSpan.Zero : businessDay.TimeOfDay;
-            var result = _all.AsEnumerable();
-            if (DateRangeStart.HasValue)
-                result = result.Where(s => s.ReceivedAt.HasValue &&
-                                           s.ReceivedAt.Value >= DateRangeStart.Value.Date + offset);
-            if (DateRangeEnd.HasValue)
-                result = result.Where(s => s.ReceivedAt.HasValue &&
-                                           s.ReceivedAt.Value < DateRangeEnd.Value.Date.AddDays(1) + offset);
-            return result;
+            if (DateRangeStart.HasValue && s.ReceivedAt.Value < DateRangeStart.Value.Date + offset)
+                return false;
+            if (DateRangeEnd.HasValue && s.ReceivedAt.Value >= DateRangeEnd.Value.Date.AddDays(1) + offset)
+                return false;
+            return true;
         }
+
+        private IEnumerable<ScheduleUiModel> GetDateFilteredSource()
+            => (!DateRangeStart.HasValue && !DateRangeEnd.HasValue) ? _all : _all.Where(IsWithinDateRange);
 
         private void ComputeStats()
         {
@@ -153,15 +166,6 @@ namespace FProductionDashBoard.ViewModels
             StatCompletedQty = src.Where(s => s.Status == ScheduleStatus.Completed).Sum(s => s.ActualQuantity ?? 0);
             StatReleased     = src.Count(s => s.Status == ScheduleStatus.Released);
             StatReleasedQty  = src.Where(s => s.Status == ScheduleStatus.Released).Sum(s => s.ActualQuantity ?? 0);
-        }
-
-        private void RebuildSchedulesView()
-        {
-            SchedulesView = CollectionViewSource.GetDefaultView(_all);
-            SchedulesView.Filter = FilterSchedule;
-            SchedulesView.SortDescriptions.Add(
-                new SortDescription(nameof(ScheduleUiModel.ScheduleId), ListSortDirection.Descending));
-            OnPropertyChanged(nameof(SchedulesView));
         }
 
         private void ApplyFilter() => SchedulesView?.Refresh();
@@ -189,18 +193,7 @@ namespace FProductionDashBoard.ViewModels
                     return false;
             }
 
-            if (DateRangeStart.HasValue || DateRangeEnd.HasValue)
-            {
-                if (!s.ReceivedAt.HasValue) return false;
-                var businessDay = _core.Data.BusinessDay;
-                var offset = businessDay == DateTime.MinValue ? TimeSpan.Zero : businessDay.TimeOfDay;
-                if (DateRangeStart.HasValue &&
-                    s.ReceivedAt.Value < DateRangeStart.Value.Date + offset)
-                    return false;
-                if (DateRangeEnd.HasValue &&
-                    s.ReceivedAt.Value >= DateRangeEnd.Value.Date.AddDays(1) + offset)
-                    return false;
-            }
+            if (!IsWithinDateRange(s)) return false;
 
             return true;
         }
@@ -342,12 +335,9 @@ namespace FProductionDashBoard.ViewModels
             };
             try
             {
-                var newId = await _core.Data.AddScheduleAsync(dto);
+                await _core.Data.AddScheduleAsync(dto);
                 _core.Log.AddLog("[進出料管理] 入料成功");
-                var schedules = await _core.Data.GetAllSchedulesAsync();
-                _all = schedules.Select(ScheduleUiModel.FromEntity).ToList();
-                ComputeStats();
-                RebuildSchedulesView();
+                await ReloadAsync();
                 ClosePanel();
             }
             catch (Exception ex)
@@ -470,9 +460,9 @@ namespace FProductionDashBoard.ViewModels
         private async Task ReloadAsync()
         {
             var schedules = await _core.Data.GetAllSchedulesAsync();
-            _all = schedules.Select(ScheduleUiModel.FromEntity).ToList();
+            ReplaceAll(schedules);
             ComputeStats();
-            RebuildSchedulesView();
+            SchedulesView.Refresh();
             if (SelectedSchedule != null)
             {
                 var updated = _all.FirstOrDefault(s => s.ScheduleId == SelectedSchedule.ScheduleId);

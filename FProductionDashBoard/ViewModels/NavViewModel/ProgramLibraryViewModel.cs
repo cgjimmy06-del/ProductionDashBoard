@@ -219,16 +219,16 @@ namespace FProductionDashBoard.ViewModels
             if (TuningTypeFilter.HasValue && ep.ProductionStatus != TuningTypeFilter.Value)
                 return false;
             if (!string.IsNullOrEmpty(PartFilter) &&
-                (part?.PartNo?.IndexOf(PartFilter, StringComparison.OrdinalIgnoreCase) < 0))
+                !(part?.PartNo ?? string.Empty).Contains(PartFilter, StringComparison.OrdinalIgnoreCase))
                 return false;
             if (!string.IsNullOrEmpty(BrandFilter) &&
-                (part?.Brand?.IndexOf(BrandFilter, StringComparison.OrdinalIgnoreCase) < 0))
+                !(part?.Brand ?? string.Empty).Contains(BrandFilter, StringComparison.OrdinalIgnoreCase))
                 return false;
             if (!string.IsNullOrEmpty(ModelFilter) &&
-                (model?.Name?.IndexOf(ModelFilter, StringComparison.OrdinalIgnoreCase) < 0))
+                !(model?.Name ?? string.Empty).Contains(ModelFilter, StringComparison.OrdinalIgnoreCase))
                 return false;
             if (!string.IsNullOrEmpty(ProcessFilter) &&
-                (process?.Name?.IndexOf(ProcessFilter, StringComparison.OrdinalIgnoreCase) < 0))
+                !(process?.Name ?? string.Empty).Contains(ProcessFilter, StringComparison.OrdinalIgnoreCase))
                 return false;
             return true;
         }
