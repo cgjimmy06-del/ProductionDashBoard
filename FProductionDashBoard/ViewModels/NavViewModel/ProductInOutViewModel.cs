@@ -39,6 +39,10 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string searchText = string.Empty;
         [ObservableProperty] private string processFilter = string.Empty;
 
+        // 日期篩選
+        [ObservableProperty] private DateTime? dateRangeStart;
+        [ObservableProperty] private DateTime? dateRangeEnd;
+
         public ICollectionView SchedulesView { get; private set; } = null!;
 
         // 右側面板
@@ -72,6 +76,20 @@ namespace FProductionDashBoard.ViewModels
         partial void OnFormPartFilterChanged(string value) => RebuildFilteredProducts();
         partial void OnFormModelFilterChanged(string value) => RebuildFilteredProducts();
         partial void OnFormProcessFilterChanged(string value) => RebuildFilteredProcesses();
+
+        partial void OnDateRangeStartChanged(DateTime? value)
+        {
+            if (value.HasValue && (DateRangeEnd == null || DateRangeEnd < value))
+                DateRangeEnd = value;
+            ComputeStats();
+            SchedulesView?.Refresh();
+        }
+
+        partial void OnDateRangeEndChanged(DateTime? value)
+        {
+            ComputeStats();
+            SchedulesView?.Refresh();
+        }
 
         public ProductInOutViewModel(DashboardCoreServices core, IDialogService dialog)
         {
@@ -107,9 +125,24 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
+        private IEnumerable<ScheduleUiModel> GetDateFilteredSource()
+        {
+            if (!DateRangeStart.HasValue && !DateRangeEnd.HasValue) return _all;
+            var businessDay = _core.Data.BusinessDay;
+            var offset = businessDay == DateTime.MinValue ? TimeSpan.Zero : businessDay.TimeOfDay;
+            var result = _all.AsEnumerable();
+            if (DateRangeStart.HasValue)
+                result = result.Where(s => s.ReceivedAt.HasValue &&
+                                           s.ReceivedAt.Value >= DateRangeStart.Value.Date + offset);
+            if (DateRangeEnd.HasValue)
+                result = result.Where(s => s.ReceivedAt.HasValue &&
+                                           s.ReceivedAt.Value < DateRangeEnd.Value.Date.AddDays(1) + offset);
+            return result;
+        }
+
         private void ComputeStats()
         {
-            var src = _all;
+            var src = GetDateFilteredSource();
             StatTotal        = src.Count(s => s.Status != ScheduleStatus.Cancelled);
             StatTotalQty     = src.Where(s => s.Status != ScheduleStatus.Cancelled).Sum(s => s.Quantity);
             StatPending      = src.Count(s => s.Status == ScheduleStatus.Pending);
@@ -156,6 +189,19 @@ namespace FProductionDashBoard.ViewModels
                     return false;
             }
 
+            if (DateRangeStart.HasValue || DateRangeEnd.HasValue)
+            {
+                if (!s.ReceivedAt.HasValue) return false;
+                var businessDay = _core.Data.BusinessDay;
+                var offset = businessDay == DateTime.MinValue ? TimeSpan.Zero : businessDay.TimeOfDay;
+                if (DateRangeStart.HasValue &&
+                    s.ReceivedAt.Value < DateRangeStart.Value.Date + offset)
+                    return false;
+                if (DateRangeEnd.HasValue &&
+                    s.ReceivedAt.Value >= DateRangeEnd.Value.Date.AddDays(1) + offset)
+                    return false;
+            }
+
             return true;
         }
 
@@ -194,6 +240,46 @@ namespace FProductionDashBoard.ViewModels
             }
             foreach (var p in results) FilteredProcesses.Add(p);
             SelectedProcess = FilteredProcesses.FirstOrDefault();
+        }
+
+        // ─── 日期快捷鍵 ──────────────────────────────────────────────────────────
+
+        [RelayCommand]
+        private void SetDateToday()
+        {
+            DateRangeStart = DateTime.Today;
+            DateRangeEnd   = DateTime.Today;
+        }
+
+        [RelayCommand]
+        private void SetDateLast3Days()
+        {
+            DateRangeStart = DateTime.Today.AddDays(-2);
+            DateRangeEnd   = DateTime.Today;
+        }
+
+        [RelayCommand]
+        private void SetDateLast5Days()
+        {
+            DateRangeStart = DateTime.Today.AddDays(-4);
+            DateRangeEnd   = DateTime.Today;
+        }
+
+        [RelayCommand]
+        private void SetDateCurrentWeek()
+        {
+            var today = DateTime.Today;
+            var daysToMonday = ((int)today.DayOfWeek + 6) % 7;
+            DateRangeStart = today.AddDays(-daysToMonday);
+            DateRangeEnd   = DateRangeStart.Value.AddDays(6);
+        }
+
+        [RelayCommand]
+        private void SetDateCurrentMonth()
+        {
+            var today = DateTime.Today;
+            DateRangeStart = new DateTime(today.Year, today.Month, 1);
+            DateRangeEnd   = DateRangeStart.Value.AddMonths(1).AddDays(-1);
         }
 
         // ─── 面板控制 ─────────────────────────────────────────────────────────

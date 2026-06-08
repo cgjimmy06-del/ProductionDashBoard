@@ -340,6 +340,13 @@
     <sys:String x:Key="PioFilterStatusAll">All Status</sys:String>
     <sys:String x:Key="PioFilterPartModel">Part/Brand/Model</sys:String>
     <sys:String x:Key="PioFilterProcess">Process</sys:String>
+    <sys:String x:Key="PioFilterDateStart">Start Date</sys:String>
+    <sys:String x:Key="PioFilterDateEnd">End Date</sys:String>
+    <sys:String x:Key="PioShortcutToday">Today</sys:String>
+    <sys:String x:Key="PioShortcutLast3Days">3 Days</sys:String>
+    <sys:String x:Key="PioShortcutLast5Days">5 Days</sys:String>
+    <sys:String x:Key="PioShortcutCurrentWeek">This Week</sys:String>
+    <sys:String x:Key="PioShortcutCurrentMonth">This Month</sys:String>
     <sys:String x:Key="PioReceiveButton">+ Receive</sys:String>
     <sys:String x:Key="PioColScheduleId">#</sys:String>
     <sys:String x:Key="PioColPartNo">Part No.</sys:String>
