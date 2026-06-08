@@ -35,7 +35,12 @@ namespace FProductionDashBoard
                 // 建立 SplashScreen，false 手動控制關閉
                 SplashScreen splash = new SplashScreen((string)Application.Current.Resources["LoginLogoPath"]);
                 splash.Show(false);
-                
+
+#if DEBUG
+                // 取得登入資訊 ( Debug 模式 )
+                string selectedServer = "TT";
+                var user = new UiModels.UserInfo() { UserId = "visitor", Name = "Debug Mode" };
+#else
                 // 登入畫面 + 取得資訊
                 var loginWindow = new LoginWindow();
                 if (loginWindow.ShowDialog() != true) { Shutdown(); return; }
@@ -43,6 +48,7 @@ namespace FProductionDashBoard
                 // 取得登入資訊
                 string selectedServer = loginWindow.SelectedServer;
                 var user = loginWindow.User;
+#endif
 
                 // 讀取設定檔 - 重用登入階段已讀取的 config（避免 ClickOnce 路徑不穩定造成二次讀取失敗）
                 var config = Services.LoginDapper.GetCachedConfig();

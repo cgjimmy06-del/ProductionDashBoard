@@ -58,9 +58,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand InitializeCommand { get; }
         public IAsyncRelayCommand LoginCommand { get; }
         public IAsyncRelayCommand LogoutCommand { get; }
-#if DEBUG
         public IRelayCommand TestCommand { get; }
-#endif
         public ICommand CollapseNavCommand { get; }
         public LogPanelViewModel LogPanel { get; }
         public SystemSettingsViewModel SystemSettings { get; }
@@ -108,10 +106,8 @@ namespace FProductionDashBoard.ViewModels
             _onUserChanged = () => OnUserChanged();
             _core.Authorization.UserChanged += _onUserChanged;
 
-#if DEBUG
-            TestCommand = new RelayCommand(() => SqlTestFunc(),
+            TestCommand = new RelayCommand(() => { },
                 () => _core.Authorization.HasPermission(PermissionId.Test));
-#endif
         }
 
         #region -- 載入初始化 --
@@ -270,31 +266,5 @@ namespace FProductionDashBoard.ViewModels
         }
 
         private void ClearProgress() => SetProgress(Properties.Resources.MainProgressIdle, visible: false);
-
-#if DEBUG
-        private void SqlTestFunc()
-        {
-            try
-            {
-
-            }
-            catch (SqlException sqlex)
-            {
-                Debug.WriteLine($"SqlException: {sqlex.Message}");
-            }
-            catch (TaskCanceledException taskex)
-            {
-                Debug.WriteLine($"TaskCanceledException: {taskex.Message}");
-            }
-            catch (AggregateException aggEx)
-            {
-                Debug.WriteLine($"TaskCanceledException: {aggEx.Message}");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception: {ex.Message}");
-            }
-        }
-#endif
     }
 }
