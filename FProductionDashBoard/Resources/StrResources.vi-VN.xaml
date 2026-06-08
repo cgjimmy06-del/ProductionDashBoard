@@ -332,6 +332,7 @@
     <sys:String x:Key="PioStatusCompleted">Hoàn thành</sys:String>
     <sys:String x:Key="PioStatusReleased">Đã xuất</sys:String>
     <sys:String x:Key="PioStatusCancelled">Đã hủy</sys:String>
+    <sys:String x:Key="PioStatTotalLabel">Tổng đơn</sys:String>
     <sys:String x:Key="PioStatPendingLabel">Đang chờ</sys:String>
     <sys:String x:Key="PioStatScheduledLabel">Đã lên lịch</sys:String>
     <sys:String x:Key="PioStatCompletedLabel">Hoàn thành</sys:String>
@@ -339,6 +340,13 @@
     <sys:String x:Key="PioFilterStatusAll">Tất cả</sys:String>
     <sys:String x:Key="PioFilterPartModel">Mã/Hiệu/Kiểu</sys:String>
     <sys:String x:Key="PioFilterProcess">Công đoạn</sys:String>
+    <sys:String x:Key="PioFilterDateStart">Ngày bắt đầu</sys:String>
+    <sys:String x:Key="PioFilterDateEnd">Ngày kết thúc</sys:String>
+    <sys:String x:Key="PioShortcutToday">Hôm nay</sys:String>
+    <sys:String x:Key="PioShortcutLast3Days">3 Ngày</sys:String>
+    <sys:String x:Key="PioShortcutLast5Days">5 Ngày</sys:String>
+    <sys:String x:Key="PioShortcutCurrentWeek">Tuần này</sys:String>
+    <sys:String x:Key="PioShortcutCurrentMonth">Tháng này</sys:String>
     <sys:String x:Key="PioReceiveButton">+ Nhập</sys:String>
     <sys:String x:Key="PioColScheduleId">#</sys:String>
     <sys:String x:Key="PioColPartNo">Mã SP</sys:String>

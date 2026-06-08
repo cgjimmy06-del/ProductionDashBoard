@@ -1,5 +1,6 @@
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.UiModels;
 using FProductionDashBoard.ViewModels;
 using Moq;
 using Xunit;
@@ -10,6 +11,13 @@ namespace FProductionDashBoard.Tests.ViewModels
     {
         // LoadAsync 使用 Application.Current.Dispatcher，xUnit 無 WPF Dispatcher。
         // 本測試專注於：RebuildCards / ComputeLight / 統計計算。LoadAsync 由 UI 手動驗證。
+
+        // CardsView / SelectedProgramsView 為 ICollectionView，用 helper 轉換成具型別清單供測試使用。
+        private static IReadOnlyList<ProgramDeviceCardViewModel> GetCards(ProgramLibraryViewModel vm)
+            => vm.CardsView.Cast<ProgramDeviceCardViewModel>().ToList();
+
+        private static IReadOnlyList<ProgramItemUiModel> GetSelectedPrograms(ProgramLibraryViewModel vm)
+            => vm.SelectedProgramsView.Cast<ProgramItemUiModel>().ToList();
 
         private static EquipmentProduct MakeEp(int eqId, string eqName,
             string partNo, string brand, string modelName, string processName,
@@ -102,8 +110,8 @@ namespace FProductionDashBoard.Tests.ViewModels
 
             vm.PartFilter = "abc";  // 大小寫不分
 
-            Assert.Single(vm.Cards);
-            Assert.Equal(1, vm.Cards[0].EquipmentId);
+            Assert.Single(GetCards(vm));
+            Assert.Equal(1, GetCards(vm)[0].EquipmentId);
         }
 
         [Fact]
@@ -118,7 +126,7 @@ namespace FProductionDashBoard.Tests.ViewModels
 
             vm.BrandFilter = "B1";
 
-            Assert.Single(vm.Cards);
+            Assert.Single(GetCards(vm));
         }
 
         [Fact]
@@ -132,7 +140,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             };
             var vm = CreateVmWithData(data);
 
-            Assert.Equal(3, vm.Cards.Count);
+            Assert.Equal(3, GetCards(vm).Count);
         }
 
         // ── 燈號優先序 ───────────────────────────────────────────────────────
@@ -219,11 +227,11 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void SelectedPrograms_UpdatesOnCardSelect()
         {
             var vm = CreateVmWithData(MakeDetailData());
-            var card = vm.Cards.First(c => c.EquipmentId == 1);
+            var card = GetCards(vm).First(c => c.EquipmentId == 1);
 
             vm.SelectCardCommand.Execute(card);
 
-            Assert.Equal(3, vm.SelectedPrograms.Count);
+            Assert.Equal(3, GetSelectedPrograms(vm).Count);
             Assert.True(vm.IsDetailVisible);
         }
 
@@ -231,9 +239,9 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void SelectedPrograms_SortedBySeqNo()
         {
             var vm = CreateVmWithData(MakeDetailData());
-            vm.SelectCardCommand.Execute(vm.Cards.First(c => c.EquipmentId == 1));
+            vm.SelectCardCommand.Execute(GetCards(vm).First(c => c.EquipmentId == 1));
 
-            var seqs = vm.SelectedPrograms.Select(ep => ep.SeqNo).ToList();
+            var seqs = GetSelectedPrograms(vm).Select(ep => ep.SeqNo).ToList();
             Assert.Equal(seqs.OrderBy(s => s).ToList(), seqs);
         }
 
@@ -241,25 +249,25 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void SelectedPrograms_FilterSynced()
         {
             var vm = CreateVmWithData(MakeDetailData());
-            vm.SelectCardCommand.Execute(vm.Cards.First(c => c.EquipmentId == 1));
+            vm.SelectCardCommand.Execute(GetCards(vm).First(c => c.EquipmentId == 1));
 
             // 讓 EQ-A 只剩 Feasible（Brand=B1 全過，再用 PartFilter 限制只看 P1）
             vm.PartFilter = "P1";
 
-            Assert.Single(vm.SelectedPrograms);
-            Assert.Equal(TuningType.Feasible, vm.SelectedPrograms[0].ProductionStatus);
+            Assert.Single(GetSelectedPrograms(vm));
+            Assert.Equal(TuningType.Feasible, GetSelectedPrograms(vm)[0].ProductionStatus);
         }
 
         [Fact]
         public void SelectedPrograms_ClearsOnDeselect()
         {
             var vm = CreateVmWithData(MakeDetailData());
-            vm.SelectCardCommand.Execute(vm.Cards.First(c => c.EquipmentId == 1));
-            Assert.NotEmpty(vm.SelectedPrograms);
+            vm.SelectCardCommand.Execute(GetCards(vm).First(c => c.EquipmentId == 1));
+            Assert.NotEmpty(GetSelectedPrograms(vm));
 
             vm.CloseDetailCommand.Execute(null);
 
-            Assert.Empty(vm.SelectedPrograms);
+            Assert.Empty(GetSelectedPrograms(vm));
             Assert.False(vm.IsDetailVisible);
         }
 
@@ -267,7 +275,7 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void DetailStats_Correct()
         {
             var vm = CreateVmWithData(MakeDetailData());
-            vm.SelectCardCommand.Execute(vm.Cards.First(c => c.EquipmentId == 1));
+            vm.SelectCardCommand.Execute(GetCards(vm).First(c => c.EquipmentId == 1));
 
             Assert.Equal(1, vm.DetailFeasibleCount);
             Assert.Equal(1, vm.DetailTeachingCount);
@@ -301,8 +309,8 @@ namespace FProductionDashBoard.Tests.ViewModels
                       .Returns<DialogBaseViewModel<ProgramStatusResult>>(v => v.Result);
 
             var vm = CreateVmWithData(data, mockData, mockDialog.Object);
-            vm.SelectCardCommand.Execute(vm.Cards.First(c => c.EquipmentId == 1));
-            var item = vm.SelectedPrograms.First(i => i.EquipmentProductId == 42);
+            vm.SelectCardCommand.Execute(GetCards(vm).First(c => c.EquipmentId == 1));
+            var item = GetSelectedPrograms(vm).First(i => i.EquipmentProductId == 42);
 
             await vm.EditStatusCommand.ExecuteAsync(item);
 
@@ -311,7 +319,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal(fixedDate, ep.UpdateAt);
             Assert.Equal(0, vm.GlobalFeasibleCount);
             Assert.Equal(1, vm.GlobalPendingCount);
-            Assert.Equal(TuningType.Pending, vm.SelectedPrograms.First().ProductionStatus);
+            Assert.Equal(TuningType.Pending, GetSelectedPrograms(vm).First().ProductionStatus);
         }
     }
 

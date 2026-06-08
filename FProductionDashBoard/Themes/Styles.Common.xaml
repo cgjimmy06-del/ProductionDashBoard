@@ -1,7 +1,8 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:primitives="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework">
+                    xmlns:primitives="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework"
+                    xmlns:models="clr-namespace:FProductionDashBoard.Models">
 
     <!-- 此xaml為各種元件設計樣式 -->
     <!-- 用於所有主要元件之預設及具名樣式 -->
@@ -207,6 +208,53 @@
                 <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
                 <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
             </Trigger>
+        </Style.Triggers>
+    </Style>
+    <!-- ProductInOut DataGrid Actions 欄按鈕樣式 -->
+    <Style x:Key="PioForceCompleteButtonStyle" TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+        <Setter Property="Visibility" Value="Collapsed"/>
+        <Setter Property="Background" Value="{DynamicResource WarningBrush}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Pending}">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="PioVerifyButtonStyle" TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+        <Setter Property="Visibility" Value="Collapsed"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Scheduled}">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="PioReleaseButtonStyle" TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+        <Setter Property="Visibility" Value="Collapsed"/>
+        <Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Completed}">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="PioSplitButtonStyle" TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+        <Setter Property="Visibility" Value="Collapsed"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Completed}">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="PioCancelButtonStyle" TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+        <Setter Property="Visibility" Value="Collapsed"/>
+        <Setter Property="Background" Value="{DynamicResource ErrorBrush}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Pending}">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Scheduled}">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
         </Style.Triggers>
     </Style>
     <Style x:Key="FunctionToggleButtonStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignFlatToggleButton}">
@@ -419,10 +467,11 @@
         <Setter Property="Margin" Value="0,0,0,2"/>
     </Style>
     <Style x:Key="StatNumberStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="36"/>
+        <Setter Property="FontSize" Value="22"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="Opacity" Value="0.7"/>
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
     </Style>
     <Style x:Key="StatDenominatorStyle" TargetType="TextBlock">
@@ -431,6 +480,13 @@
         <Setter Property="Margin" Value="1,0,0,2"/>
         <Setter Property="Opacity" Value="0.5"/>
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+    </Style>
+    <Style x:Key="StatQtyStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="Opacity" Value="1"/>
+        <Setter Property="Margin" Value="0,2,0,0"/>
     </Style>
 
     <!-- 詳細資訊面板標籤/值樣式 -->

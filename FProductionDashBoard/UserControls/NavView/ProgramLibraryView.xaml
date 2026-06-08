@@ -149,21 +149,44 @@
         <!-- ========== Row1：篩選列 ========== -->
         <Grid Grid.Row="1" Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Margin="0,0,6,0"
+            <!-- 狀態篩選 -->
+            <ComboBox Grid.Column="0" Margin="0,0,6,0"
+                      ItemsSource="{Binding TuningTypeFilterOptions}"
+                      SelectedValue="{Binding TuningTypeFilter}"
+                      SelectedValuePath="Value">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding Value, Converter={StaticResource TuningTypeToLabelConverter}}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
+                                            <Setter Property="Text" Value="{DynamicResource PioFilterStatusAll}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBox Grid.Column="1" Margin="0,0,6,0"
                      materialDesign:HintAssist.Hint="{DynamicResource PlFilterPart}"
                      Text="{Binding PartFilter, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBox Grid.Column="1" Margin="0,0,6,0"
+            <TextBox Grid.Column="2" Margin="0,0,6,0"
                      materialDesign:HintAssist.Hint="{DynamicResource PlFilterBrand}"
                      Text="{Binding BrandFilter, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBox Grid.Column="2" Margin="0,0,6,0"
+            <TextBox Grid.Column="3" Margin="0,0,6,0"
                      materialDesign:HintAssist.Hint="{DynamicResource PlFilterModel}"
                      Text="{Binding ModelFilter, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBox Grid.Column="3" Margin="0"
+            <TextBox Grid.Column="4" Margin="0"
                      materialDesign:HintAssist.Hint="{DynamicResource PlFilterProcess}"
                      Text="{Binding ProcessFilter, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
@@ -178,7 +201,7 @@
 
             <!-- 左欄：WrapPanel 卡片牆 -->
             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding Cards}">
+                <ItemsControl ItemsSource="{Binding CardsView}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel/>
