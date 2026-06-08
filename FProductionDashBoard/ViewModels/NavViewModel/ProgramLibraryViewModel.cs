@@ -6,9 +6,11 @@ using FProductionDashBoard.UiModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -42,13 +44,13 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string modelFilter = string.Empty;
         [ObservableProperty] private string processFilter = string.Empty;
 
-        public ObservableCollection<ProgramDeviceCardViewModel> Cards { get; } = new();
+        private readonly List<ProgramDeviceCardViewModel> _cards = new();
+        private readonly List<ProgramItemUiModel> _programs = new();
+        public ICollectionView CardsView { get; }
+        public ICollectionView SelectedProgramsView { get; }
 
         [ObservableProperty] private ProgramDeviceCardViewModel? selectedCard;
         public bool IsDetailVisible => SelectedCard != null;
-
-        // 右側清單（依 SelectedCard + 篩選器決定，排序 SeqNo）
-        public ObservableCollection<ProgramItemUiModel> SelectedPrograms { get; } = new();
 
         // 標題列小統計
         [ObservableProperty] private int detailFeasibleCount;
@@ -63,7 +65,7 @@ namespace FProductionDashBoard.ViewModels
 
         partial void OnSelectedCardChanged(ProgramDeviceCardViewModel? value)
         {
-            foreach (var card in Cards)
+            foreach (var card in _cards)
                 card.IsSelected = card == value;
             OnPropertyChanged(nameof(IsDetailVisible));
             RebuildDetail();
@@ -103,6 +105,8 @@ namespace FProductionDashBoard.ViewModels
         {
             _core = core;
             _dialog = dialog;
+            CardsView = CollectionViewSource.GetDefaultView(_cards);
+            SelectedProgramsView = CollectionViewSource.GetDefaultView(_programs);
             _ = LoadAsync();
         }
 
@@ -141,7 +145,7 @@ namespace FProductionDashBoard.ViewModels
 
         private void RebuildCards()
         {
-            Cards.Clear();
+            _cards.Clear();
 
             var groups = _all.GroupBy(ep => ep.EquipmentId);
             var filteredAll = new List<EquipmentProduct>();
@@ -157,17 +161,19 @@ namespace FProductionDashBoard.ViewModels
                 var feasible = filtered.Count(ep => ep.ProductionStatus == TuningType.Feasible);
                 var light = ProgramDeviceCardViewModel.ComputeLight(filtered);
 
-                Cards.Add(new ProgramDeviceCardViewModel(
+                _cards.Add(new ProgramDeviceCardViewModel(
                     group.Key, deviceName, feasible, filtered.Count, light));
             }
 
             // 還原選取狀態（SelectedCard 仍指舊實例，以 EquipmentId 識別）
             if (SelectedCard != null)
-                foreach (var card in Cards)
+                foreach (var card in _cards)
                     card.IsSelected = card.EquipmentId == SelectedCard.EquipmentId;
 
+            CardsView.Refresh();
+
             // 更新篩選後統計
-            FilteredMachineCount  = Cards.Count;
+            FilteredMachineCount  = _cards.Count;
             FilteredProgramCount  = filteredAll.Count;
             FilteredFeasibleCount   = filteredAll.Count(ep => ep.ProductionStatus == TuningType.Feasible);
             FilteredTeachingCount   = filteredAll.Count(ep => ep.ProductionStatus == TuningType.Teaching);
@@ -180,20 +186,21 @@ namespace FProductionDashBoard.ViewModels
 
         private void RebuildDetail()
         {
-            SelectedPrograms.Clear();
-            if (SelectedCard == null) return;
+            _programs.Clear();
+            if (SelectedCard != null)
+            {
+                var programs = _all
+                    .Where(ep => ep.EquipmentId == SelectedCard.EquipmentId && MatchesFilter(ep))
+                    .OrderBy(ep => ep.SeqNo);
+                foreach (var ep in programs)
+                    _programs.Add(ProgramItemUiModel.FromEntity(ep));
+            }
+            SelectedProgramsView.Refresh();
 
-            var programs = _all
-                .Where(ep => ep.EquipmentId == SelectedCard.EquipmentId && MatchesFilter(ep))
-                .OrderBy(ep => ep.SeqNo);
-
-            foreach (var ep in programs)
-                SelectedPrograms.Add(ProgramItemUiModel.FromEntity(ep));
-
-            DetailFeasibleCount = SelectedPrograms.Count(item => item.ProductionStatus == TuningType.Feasible);
-            DetailTeachingCount = SelectedPrograms.Count(item => item.ProductionStatus == TuningType.Teaching);
-            DetailOffsetCount   = SelectedPrograms.Count(item => item.ProductionStatus == TuningType.Offset);
-            DetailPendingCount  = SelectedPrograms.Count(item => item.ProductionStatus == TuningType.Pending);
+            DetailFeasibleCount = _programs.Count(item => item.ProductionStatus == TuningType.Feasible);
+            DetailTeachingCount = _programs.Count(item => item.ProductionStatus == TuningType.Teaching);
+            DetailOffsetCount   = _programs.Count(item => item.ProductionStatus == TuningType.Offset);
+            DetailPendingCount  = _programs.Count(item => item.ProductionStatus == TuningType.Pending);
         }
 
         private bool MatchesFilter(EquipmentProduct ep)

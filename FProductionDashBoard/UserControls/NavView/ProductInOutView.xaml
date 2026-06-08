@@ -113,7 +113,7 @@
 
             <!-- 左欄：DataGrid -->
             <DataGrid Grid.Column="0"
-                      ItemsSource="{Binding Schedules}"
+                      ItemsSource="{Binding SchedulesView}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
                       CanUserAddRows="False"

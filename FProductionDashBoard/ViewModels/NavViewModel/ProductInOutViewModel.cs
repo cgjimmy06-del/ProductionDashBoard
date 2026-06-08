@@ -7,8 +7,10 @@ using FProductionDashBoard.UiModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Data;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -31,7 +33,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string searchText = string.Empty;
         [ObservableProperty] private string processFilter = string.Empty;
 
-        public ObservableCollection<ScheduleUiModel> Schedules { get; } = new();
+        public ICollectionView SchedulesView { get; private set; } = null!;
 
         // 右側面板
         [ObservableProperty] private bool isPanelVisible;
@@ -82,7 +84,7 @@ namespace FProductionDashBoard.ViewModels
                 var schedules = await _core.Data.GetAllSchedulesAsync();
                 _all = schedules.Select(ScheduleUiModel.FromEntity).ToList();
                 ComputeStats();
-                ApplyFilter();
+                RebuildSchedulesView();
 
                 var products  = await _core.Data.GetAllProductsAsync();
                 _allProducts  = products;
@@ -107,32 +109,41 @@ namespace FProductionDashBoard.ViewModels
             StatReleased  = _all.Count(s => s.Status == ScheduleStatus.Released);
         }
 
-        private void ApplyFilter()
+        private void RebuildSchedulesView()
         {
-            Schedules.Clear();
-            var filtered = _all.AsEnumerable();
+            SchedulesView = CollectionViewSource.GetDefaultView(_all);
+            SchedulesView.Filter = FilterSchedule;
+            SchedulesView.SortDescriptions.Add(
+                new SortDescription(nameof(ScheduleUiModel.ScheduleId), ListSortDirection.Ascending));
+            OnPropertyChanged(nameof(SchedulesView));
+        }
 
-            if (StatusFilter.HasValue)
-                filtered = filtered.Where(s => s.Status == StatusFilter.Value);
+        private void ApplyFilter() => SchedulesView?.Refresh();
+
+        private bool FilterSchedule(object obj)
+        {
+            if (obj is not ScheduleUiModel s) return false;
+
+            if (StatusFilter.HasValue && s.Status != StatusFilter.Value)
+                return false;
 
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
                 var kw = SearchText.Trim();
-                filtered = filtered.Where(s =>
-                    s.PartNo.Contains(kw, StringComparison.OrdinalIgnoreCase) ||
-                    s.BrandName.Contains(kw, StringComparison.OrdinalIgnoreCase) ||
-                    s.ModelName.Contains(kw, StringComparison.OrdinalIgnoreCase));
+                if (!s.PartNo.Contains(kw, StringComparison.OrdinalIgnoreCase) &&
+                    !s.BrandName.Contains(kw, StringComparison.OrdinalIgnoreCase) &&
+                    !s.ModelName.Contains(kw, StringComparison.OrdinalIgnoreCase))
+                    return false;
             }
 
             if (!string.IsNullOrWhiteSpace(ProcessFilter))
             {
                 var kw = ProcessFilter.Trim();
-                filtered = filtered.Where(s =>
-                    s.ProcessName.Contains(kw, StringComparison.OrdinalIgnoreCase));
+                if (!s.ProcessName.Contains(kw, StringComparison.OrdinalIgnoreCase))
+                    return false;
             }
 
-            foreach (var s in filtered.OrderBy(s => s.ScheduleId))
-                Schedules.Add(s);
+            return true;
         }
 
         private void RebuildFilteredProducts()
@@ -237,7 +248,7 @@ namespace FProductionDashBoard.ViewModels
                 var schedules = await _core.Data.GetAllSchedulesAsync();
                 _all = schedules.Select(ScheduleUiModel.FromEntity).ToList();
                 ComputeStats();
-                ApplyFilter();
+                RebuildSchedulesView();
                 ClosePanel();
             }
             catch (Exception ex)
@@ -362,7 +373,7 @@ namespace FProductionDashBoard.ViewModels
             var schedules = await _core.Data.GetAllSchedulesAsync();
             _all = schedules.Select(ScheduleUiModel.FromEntity).ToList();
             ComputeStats();
-            ApplyFilter();
+            RebuildSchedulesView();
             if (SelectedSchedule != null)
             {
                 var updated = _all.FirstOrDefault(s => s.ScheduleId == SelectedSchedule.ScheduleId);

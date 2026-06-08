@@ -178,7 +178,7 @@
 
             <!-- 左欄：WrapPanel 卡片牆 -->
             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding Cards}">
+                <ItemsControl ItemsSource="{Binding CardsView}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel/>
