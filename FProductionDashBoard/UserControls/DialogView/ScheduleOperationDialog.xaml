@@ -25,6 +25,7 @@
         <!-- 剩餘數量（Split） -->
         <TextBox Text="{Binding RemainingQuantity, UpdateSourceTrigger=PropertyChanged}"
                  materialDesign:HintAssist.Hint="{DynamicResource PioDialogRemainingQty}"
+                 materialDesign:HintAssist.HelperText="{Binding MaxRemainingQtyHint}"
                  Margin="0,0,0,12"
                  Visibility="{Binding IsRemainingQtyVisible,
                               Converter={StaticResource BooleanToVisibilityConverter}}"/>

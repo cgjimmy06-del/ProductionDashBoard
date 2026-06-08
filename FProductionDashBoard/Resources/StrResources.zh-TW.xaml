@@ -346,7 +346,7 @@
     <sys:String x:Key="PioColModel">型號</sys:String>
     <sys:String x:Key="PioColProcess">工序</sys:String>
     <sys:String x:Key="PioColQty">數量</sys:String>
-    <sys:String x:Key="PioColLotNo">來料編號</sys:String>
+    <sys:String x:Key="PioColActualQty">實際數量</sys:String>
     <sys:String x:Key="PioColReceivedAt">入料時間</sys:String>
     <sys:String x:Key="PioColReleasedAt">出料時間</sys:String>
     <sys:String x:Key="PioColStatus">狀態</sys:String>

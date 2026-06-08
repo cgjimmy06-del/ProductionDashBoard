@@ -339,6 +339,12 @@
   <data name="ScheduleOpRemainingQtyRequired" xml:space="preserve">
     <value>Bắt buộc nhập SL còn lại</value>
   </data>
+  <data name="ScheduleOpRemainingQtyHint" xml:space="preserve">
+    <value>Tối đa {0}</value>
+  </data>
+  <data name="ScheduleOpRemainingQtyExceeded" xml:space="preserve">
+    <value>Số lượng nhập không được vượt quá số lượng còn lại</value>
+  </data>
   <data name="ScheduleOpForcedByPrefix" xml:space="preserve">
     <value>Cưỡng chế bởi </value>
   </data>

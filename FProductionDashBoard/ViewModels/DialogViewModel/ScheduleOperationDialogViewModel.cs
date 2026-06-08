@@ -26,6 +26,10 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private int? actualQuantity;
         [ObservableProperty] private int? remainingQuantity;
 
+        private int _maxRemainingQty;
+        public string MaxRemainingQtyHint =>
+            string.Format(Properties.Resources.ScheduleOpRemainingQtyHint, _maxRemainingQty);
+
         public ScheduleOperationDialogViewModel(
             ScheduleOperationType operationType,
             ScheduleUiModel schedule,
@@ -39,6 +43,9 @@ namespace FProductionDashBoard.ViewModels
 
             if (IsActualQtyVisible)
                 ActualQuantity = schedule.Quantity;
+
+            if (IsRemainingQtyVisible)
+                _maxRemainingQty = schedule.Quantity - (schedule.ActualQuantity ?? 0);
         }
 
         protected override void OnConfirm()
@@ -51,6 +58,11 @@ namespace FProductionDashBoard.ViewModels
             if (IsRemainingQtyVisible && (RemainingQuantity == null || RemainingQuantity <= 0))
             {
                 DialogErrorString = Properties.Resources.ScheduleOpRemainingQtyRequired;
+                return;
+            }
+            if (IsRemainingQtyVisible && RemainingQuantity > _maxRemainingQty)
+            {
+                DialogErrorString = Properties.Resources.ScheduleOpRemainingQtyExceeded;
                 return;
             }
             Result = new ScheduleOperationResult

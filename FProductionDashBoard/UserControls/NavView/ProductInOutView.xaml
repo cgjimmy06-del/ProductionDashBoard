@@ -153,11 +153,11 @@
                                         Binding="{Binding Quantity}"
                                         Width="55"/>
 
-                    <!-- 來料編號 -->
-                    <DataGridTemplateColumn Header="{DynamicResource PioColLotNo}" Width="90">
+                    <!-- 實際數量 -->
+                    <DataGridTemplateColumn Header="{DynamicResource PioColActualQty}" Width="60">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding LotNo, TargetNullValue='-'}"
+                                <TextBlock Text="{Binding ActualQuantity, TargetNullValue='-'}"
                                            Foreground="{DynamicResource TextPrimaryBrush}"
                                            VerticalAlignment="Center" Padding="4,0"/>
                             </DataTemplate>

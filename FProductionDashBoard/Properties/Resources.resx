@@ -384,6 +384,12 @@
   <data name="ScheduleOpRemainingQtyRequired" xml:space="preserve">
     <value>Remaining quantity is required</value>
   </data>
+  <data name="ScheduleOpRemainingQtyHint" xml:space="preserve">
+    <value>Max: {0}</value>
+  </data>
+  <data name="ScheduleOpRemainingQtyExceeded" xml:space="preserve">
+    <value>Input cannot exceed remaining quantity</value>
+  </data>
   <data name="ScheduleOpForcedByPrefix" xml:space="preserve">
     <value>Force completed by </value>
   </data>

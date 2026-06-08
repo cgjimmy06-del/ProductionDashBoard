@@ -346,7 +346,7 @@
     <sys:String x:Key="PioColModel">Model</sys:String>
     <sys:String x:Key="PioColProcess">Process</sys:String>
     <sys:String x:Key="PioColQty">Qty</sys:String>
-    <sys:String x:Key="PioColLotNo">Lot No.</sys:String>
+    <sys:String x:Key="PioColActualQty">Actual Qty</sys:String>
     <sys:String x:Key="PioColReceivedAt">Received</sys:String>
     <sys:String x:Key="PioColReleasedAt">Released</sys:String>
     <sys:String x:Key="PioColStatus">Status</sys:String>

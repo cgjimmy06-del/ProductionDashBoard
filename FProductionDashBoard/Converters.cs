@@ -222,7 +222,7 @@ namespace FProductionDashBoard
             var resources = Application.Current.Resources;
             return value is Models.ScheduleStatus s ? s switch
             {
-                Models.ScheduleStatus.Pending   => (Brush)resources["TextSecondaryBrush"],
+                Models.ScheduleStatus.Pending   => (Brush)resources["TextPrimaryBrush"],
                 Models.ScheduleStatus.Scheduled => (Brush)resources["PrimaryBrush"],
                 Models.ScheduleStatus.Completed => (Brush)resources["SuccessBrush"],
                 Models.ScheduleStatus.Released  => (Brush)resources["SecondaryBrush"],

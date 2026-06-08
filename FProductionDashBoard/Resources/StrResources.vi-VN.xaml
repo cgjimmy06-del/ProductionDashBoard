@@ -346,7 +346,7 @@
     <sys:String x:Key="PioColModel">Kiểu</sys:String>
     <sys:String x:Key="PioColProcess">Công đoạn</sys:String>
     <sys:String x:Key="PioColQty">SL</sys:String>
-    <sys:String x:Key="PioColLotNo">Số lô</sys:String>
+    <sys:String x:Key="PioColActualQty">SL thực</sys:String>
     <sys:String x:Key="PioColReceivedAt">Ngày nhập</sys:String>
     <sys:String x:Key="PioColReleasedAt">Ngày xuất</sys:String>
     <sys:String x:Key="PioColStatus">Trạng thái</sys:String>
