@@ -684,6 +684,12 @@ namespace FProductionDashBoard.Properties {
         internal static string ScheduleOpRemainingQtyRequired {
             get { return ResourceManager.GetString("ScheduleOpRemainingQtyRequired", resourceCulture); }
         }
+        internal static string ScheduleOpRemainingQtyHint {
+            get { return ResourceManager.GetString("ScheduleOpRemainingQtyHint", resourceCulture); }
+        }
+        internal static string ScheduleOpRemainingQtyExceeded {
+            get { return ResourceManager.GetString("ScheduleOpRemainingQtyExceeded", resourceCulture); }
+        }
         internal static string ScheduleOpForcedByPrefix {
             get { return ResourceManager.GetString("ScheduleOpForcedByPrefix", resourceCulture); }
         }
