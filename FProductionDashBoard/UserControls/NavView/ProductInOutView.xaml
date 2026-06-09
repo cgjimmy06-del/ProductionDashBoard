@@ -164,11 +164,11 @@
         </StackPanel>
 
         <!-- ========== Row3：DataGrid + 右側面板 ========== -->
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="3" x:Name="ContentGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5"/>
-                <ColumnDefinition Width="{Binding IsPanelVisible, Converter={StaticResource BoolToDetailWidthConverter}}"/>
+                <ColumnDefinition Width="0"/>
             </Grid.ColumnDefinitions>
 
             <!-- 左欄：DataGrid -->
@@ -595,21 +595,21 @@
                                      Margin="0,0,0,10"/>
 
                             <!-- 件號篩選 + 型號篩選 + 工序篩選 -->
-                            <Grid Margin="0,0,0,4">
+                            <Grid Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="6"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="6"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0"
+                                <TextBox Grid.Column="0" Margin="0"
                                          materialDesign:HintAssist.Hint="{DynamicResource PioFormPartFilter}"
                                          Text="{Binding FormPartFilter, UpdateSourceTrigger=PropertyChanged}"/>
-                                <TextBox Grid.Column="2"
+                                <TextBox Grid.Column="2" Margin="0"
                                          materialDesign:HintAssist.Hint="{DynamicResource PioFormModelFilter}"
                                          Text="{Binding FormModelFilter, UpdateSourceTrigger=PropertyChanged}"/>
-                                <TextBox Grid.Column="4"
+                                <TextBox Grid.Column="4" Margin="0"
                                          materialDesign:HintAssist.Hint="{DynamicResource PioFormProcessFilter}"
                                          Text="{Binding FormProcessFilter, UpdateSourceTrigger=PropertyChanged}"/>
                             </Grid>
