@@ -94,5 +94,17 @@ namespace FProductionDashBoard.Properties {
                 this["Password"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SkipLoginScreen {
+            get {
+                return ((bool)(this["SkipLoginScreen"]));
+            }
+            set {
+                this["SkipLoginScreen"] = value;
+            }
+        }
     }
 }

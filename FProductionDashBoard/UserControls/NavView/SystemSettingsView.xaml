@@ -31,22 +31,23 @@
         </Border>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="16">
-        <StackPanel MaxWidth="700" HorizontalAlignment="Left">
+            <StackPanel MaxWidth="700" HorizontalAlignment="Left">
 
-            <!-- 外觀 -->
-            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
-                    CornerRadius="4" Padding="16" Margin="0,0,0,16"
-                    Background="{DynamicResource BackgroundBrush}">
-                <StackPanel>
-                    <TextBlock Text="{DynamicResource SsAppearanceHeader}"
+                <!-- 外觀 -->
+                <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                        CornerRadius="4" Padding="16" Margin="0,0,0,16"
+                        Background="{DynamicResource BackgroundBrush}"
+                        Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource SsAppearanceHeader}"
                                FontSize="14" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                Margin="0,0,0,12"/>
-                    <!-- 語言 -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                        <TextBlock Text="{DynamicResource LanguageText}" VerticalAlignment="Center" Width="60"
+                        <!-- 語言 -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="{DynamicResource LanguageText}" VerticalAlignment="Center" Width="60"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <RadioButton Content="中文" Margin="0,0,12,0"
+                            <RadioButton Content="中文" Margin="0,0,12,0"
                                      Style="{StaticResource MaterialDesignRadioButton}"
                                      GroupName="LanguageGroup"
                                      IsChecked="{Binding CurrentLanguage,
@@ -54,7 +55,7 @@
                                          ConverterParameter='zh-TW', Mode=OneWay}"
                                      Command="{Binding SetLanguageCommand}"
                                      CommandParameter="zh-TW"/>
-                        <RadioButton Content="English" Margin="0,0,12,0"
+                            <RadioButton Content="English" Margin="0,0,12,0"
                                      Style="{StaticResource MaterialDesignRadioButton}"
                                      GroupName="LanguageGroup"
                                      IsChecked="{Binding CurrentLanguage,
@@ -62,7 +63,7 @@
                                          ConverterParameter='en-US', Mode=OneWay}"
                                      Command="{Binding SetLanguageCommand}"
                                      CommandParameter="en-US"/>
-                        <RadioButton Content="Tiếng Việt"
+                            <RadioButton Content="Tiếng Việt"
                                      Style="{StaticResource MaterialDesignRadioButton}"
                                      GroupName="LanguageGroup"
                                      IsChecked="{Binding CurrentLanguage,
@@ -70,390 +71,407 @@
                                          ConverterParameter='vi-VN', Mode=OneWay}"
                                      Command="{Binding SetLanguageCommand}"
                                      CommandParameter="vi-VN"/>
-                    </StackPanel>
-                    <!-- 主題 -->
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{DynamicResource SsThemeLabel}" VerticalAlignment="Center" Width="60"
+                        </StackPanel>
+                        <!-- 主題 -->
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{DynamicResource SsThemeLabel}" VerticalAlignment="Center" Width="60"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <RadioButton Content="{DynamicResource SsThemeLight}" Margin="0,0,12,0"
+                            <RadioButton Content="{DynamicResource SsThemeLight}" Margin="0,0,12,0"
                                      Style="{StaticResource MaterialDesignRadioButton}"
                                      GroupName="ThemeGroup"
                                      IsChecked="{Binding CurrentIsLight, Mode=OneWay}"
                                      Command="{Binding SetThemeCommand}"
                                      CommandParameter="False"/>
-                        <RadioButton Content="{DynamicResource SsThemeDark}"
+                            <RadioButton Content="{DynamicResource SsThemeDark}"
                                      Style="{StaticResource MaterialDesignRadioButton}"
                                      GroupName="ThemeGroup"
                                      IsChecked="{Binding CurrentIsDark, Mode=OneWay}"
                                      Command="{Binding SetThemeCommand}"
                                      CommandParameter="True"/>
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-            </Border>
+                </Border>
 
-            <!-- 系統參數 -->
-            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                <!-- 系統參數 -->
+                <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                     CornerRadius="4" Padding="16" Margin="0,0,0,16"
                     Background="{DynamicResource BackgroundBrush}">
-                <StackPanel>
-                    <TextBlock Text="{DynamicResource SsSystemParamsHeader}"
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource SsSystemParamsHeader}"
                                FontSize="14" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                Margin="0,0,0,12"/>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="{DynamicResource SsBusinessStartTime}" VerticalAlignment="Center" Width="130"
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                                Margin="0,0,0,8">
+                            <TextBlock Text="{DynamicResource SsBusinessStartTime}" VerticalAlignment="Center" Width="130"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Width="60" Margin="4,0"
+                            <TextBox Width="60" Margin="4,0"
                                  Text="{Binding BusinessHour, UpdateSourceTrigger=PropertyChanged}"
                                  materialDesign:HintAssist.Hint="{DynamicResource SsHourUnit}"/>
-                        <TextBlock Text="{DynamicResource SsHourUnit}" VerticalAlignment="Center" Margin="4,0,16,0"
+                            <TextBlock Text="{DynamicResource SsHourUnit}" VerticalAlignment="Center" Margin="4,0,16,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Width="60" Margin="4,0"
+                            <TextBox Width="60" Margin="4,0"
                                  Text="{Binding BusinessMinute, UpdateSourceTrigger=PropertyChanged}"
                                  materialDesign:HintAssist.Hint="{DynamicResource SsMinuteUnit}"/>
-                        <TextBlock Text="{DynamicResource SsMinuteUnit}" VerticalAlignment="Center" Margin="4,0,0,0"
+                            <TextBlock Text="{DynamicResource SsMinuteUnit}" VerticalAlignment="Center" Margin="4,0,0,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </StackPanel>
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                   Text="{DynamicResource SsSkipLoginLabel}"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <ToggleButton Grid.Column="1"
+                                      IsChecked="{Binding SkipLoginScreen}"
+                                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                      Margin="8,0"/>
+                        </Grid>
                     </StackPanel>
-                </StackPanel>
-            </Border>
+                </Border>
 
-            <!-- 日誌管理 -->
-            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                <!-- 日誌管理 -->
+                <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                     CornerRadius="4" Padding="16" Margin="0,0,0,16"
                     Background="{DynamicResource BackgroundBrush}">
-                <StackPanel>
-                    <TextBlock Text="{DynamicResource SsLogUploadHeader}"
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource SsLogUploadHeader}"
                                FontSize="14" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                Margin="0,0,0,12"/>
 
-                    <!-- 自動儲存 Toggle -->
-                    <Grid Margin="0,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{DynamicResource SsLogSaveToFile}"
+                        <!-- 自動儲存 Toggle -->
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsLogSaveToFile}"
                                    VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <ToggleButton Grid.Column="1" IsChecked="{Binding LogSaveToFile}"
+                            <ToggleButton Grid.Column="1" IsChecked="{Binding LogSaveToFile}"
                                       Style="{StaticResource MaterialDesignSwitchToggleButton}"
                                       Margin="8,0"/>
-                    </Grid>
+                        </Grid>
 
-                    <!-- 保留天數 -->
-                    <Grid Margin="0,4,0,8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{DynamicResource SsLogDaysToKeep}"
+                        <!-- 保留天數 -->
+                        <Grid Margin="0,4,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsLogDaysToKeep}"
                                    VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Grid.Column="1" Width="60" Margin="8,0"
+                            <TextBox Grid.Column="1" Width="60" Margin="8,0"
                                  Text="{Binding LogDaysToKeep, UpdateSourceTrigger=PropertyChanged}"
                                  IsEnabled="{Binding LogSaveToFile}"/>
-                        <TextBlock Grid.Column="2" Text="{DynamicResource SsDayUnit}"
+                            <TextBlock Grid.Column="2" Text="{DynamicResource SsDayUnit}"
                                    VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    </Grid>
+                        </Grid>
 
-                    <Separator Margin="0,0,0,8"/>
+                        <Separator Margin="0,0,0,8"/>
 
-                    <!-- Log 檔選取 + 上傳按鈕 -->
-                    <Grid Margin="0,0,0,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <ComboBox Grid.Column="0"
+                        <!-- Log 檔選取 + 上傳按鈕 -->
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0"
                                   ItemsSource="{Binding AvailableLogFiles}"
                                   SelectedItem="{Binding SelectedLogFile}"
                                   Margin="0,0,8,0"/>
-                        <Button Padding="5,0" Grid.Column="1"
+                            <Button Padding="5,0" Grid.Column="1"
                                 Content="{DynamicResource SsLogUploadButton}"
                                 Command="{Binding UploadLogCommand}"
                                 Style="{StaticResource FunctionButtonStyle}"/>
-                    </Grid>
+                        </Grid>
 
-                    <!-- 新增附件按鈕 -->
-                    <Button Content="{DynamicResource SsLogAddAttachment}"
+                        <!-- 新增附件按鈕 -->
+                        <Button Content="{DynamicResource SsLogAddAttachment}"
                             Command="{Binding AddAttachmentCommand}"
                             HorizontalAlignment="Left"
                             Style="{StaticResource MaterialDesignFlatButton}"
                             Margin="0,0,0,4"/>
 
-                    <!-- 附件清單 -->
-                    <ListView ItemsSource="{Binding AttachmentPaths}"
+                        <!-- 附件清單 -->
+                        <ListView ItemsSource="{Binding AttachmentPaths}"
                               Visibility="{Binding HasAttachments,
                                   Converter={StaticResource BooleanToVisibilityConverter}}"
                               MaxHeight="110" Margin="0,0,0,8"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="Padding" Value="4,2"/>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{Binding}"
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Padding" Value="4,2"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding}"
                                                VerticalAlignment="Center"
                                                TextTrimming="CharacterEllipsis"
                                                Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                    <Button Grid.Column="1"
+                                        <Button Grid.Column="1"
                                             Command="{Binding DataContext.RemoveAttachmentCommand,
                                                 RelativeSource={RelativeSource AncestorType=ListView}}"
                                             CommandParameter="{Binding}"
                                             Style="{StaticResource GridEditButtonStyle}"
                                             Width="24" Height="24" Padding="0">
-                                        <materialDesign:PackIcon Kind="Close" Width="14" Height="14"/>
-                                    </Button>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                                            <materialDesign:PackIcon Kind="Close" Width="14" Height="14"/>
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
 
-                    <!-- 進度條（上傳中才顯示） -->
-                    <ProgressBar IsIndeterminate="True" Height="4" Margin="0,0,0,4"
+                        <!-- 進度條（上傳中才顯示） -->
+                        <ProgressBar IsIndeterminate="True" Height="4" Margin="0,0,0,4"
                                  Visibility="{Binding IsUploading,
                                      Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                    <!-- 上傳狀態文字 -->
-                    <TextBlock Text="{Binding UploadStatus}" FontSize="12"
+                        <!-- 上傳狀態文字 -->
+                        <TextBlock Text="{Binding UploadStatus}" FontSize="12"
                                Visibility="{Binding UploadStatus,
                                    Converter={StaticResource StringHasValueToVisibilityConverter}}">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsUploadSuccess}" Value="True">
-                                        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsUploadSuccess}" Value="False">
-                                        <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </StackPanel>
-            </Border>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsUploadSuccess}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsUploadSuccess}" Value="False">
+                                            <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
 
-            <!-- 背景任務 -->
-            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                <!-- 背景任務 -->
+                <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                     CornerRadius="4" Padding="16" Margin="0,0,0,16"
                     Background="{DynamicResource BackgroundBrush}">
-                <StackPanel>
-                    <TextBlock Text="{DynamicResource SsBackgroundTasksHeader}"
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource SsBackgroundTasksHeader}"
                                FontSize="14" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                Margin="0,0,0,12"/>
 
-                    <!-- 同步上傳 -->
-                    <Grid Margin="0,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{DynamicResource SsSyncLabel}" VerticalAlignment="Center"
+                        <!-- 同步上傳 -->
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsSyncLabel}" VerticalAlignment="Center"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <ToggleButton Grid.Column="1"
+                            <ToggleButton Grid.Column="1"
                                       IsChecked="{Binding SyncEnabled}"
                                       Style="{StaticResource MaterialDesignSwitchToggleButton}"
                                       Margin="8,0"/>
-                        <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}" VerticalAlignment="Center" Margin="16,0,8,0"
+                            <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}" VerticalAlignment="Center" Margin="16,0,8,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Grid.Column="3" Width="60"
+                            <TextBox Grid.Column="3" Width="60"
                                  Text="{Binding SyncIntervalSec, UpdateSourceTrigger=PropertyChanged}"
                                  IsEnabled="{Binding SyncEnabled}"/>
-                        <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
+                            <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    </Grid>
+                        </Grid>
 
-                    <!-- 未巡檢偵測 -->
-                    <Grid Margin="0,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{DynamicResource SsMissedCheckLabel}" VerticalAlignment="Center"
+                        <!-- 未巡檢偵測 -->
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsMissedCheckLabel}" VerticalAlignment="Center"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <ToggleButton Grid.Column="1"
+                            <ToggleButton Grid.Column="1"
                                       IsChecked="{Binding MissedCheckEnabled}"
                                       Style="{StaticResource MaterialDesignSwitchToggleButton}"
                                       Margin="8,0"/>
-                        <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}" VerticalAlignment="Center" Margin="16,0,8,0"
+                            <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}" VerticalAlignment="Center" Margin="16,0,8,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Grid.Column="3" Width="60"
+                            <TextBox Grid.Column="3" Width="60"
                                  Text="{Binding MissedCheckIntervalSec, UpdateSourceTrigger=PropertyChanged}"
                                  IsEnabled="{Binding MissedCheckEnabled}"/>
-                        <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
+                            <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    </Grid>
+                        </Grid>
 
-                    <!-- 閒置登出 -->
-                    <Grid Margin="0,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{DynamicResource SsIdleLogoutLabel}" VerticalAlignment="Center"
+                        <!-- 閒置登出 -->
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsIdleLogoutLabel}" VerticalAlignment="Center"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <ToggleButton Grid.Column="1"
+                            <ToggleButton Grid.Column="1"
                                       IsChecked="{Binding IdleLogoutEnabled}"
                                       Style="{StaticResource MaterialDesignSwitchToggleButton}"
                                       Margin="8,0"/>
-                        <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}" VerticalAlignment="Center" Margin="16,0,8,0"
+                            <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}" VerticalAlignment="Center" Margin="16,0,8,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Grid.Column="3" Width="60"
+                            <TextBox Grid.Column="3" Width="60"
                                  Text="{Binding IdleLogoutIntervalSec, UpdateSourceTrigger=PropertyChanged}"
                                  IsEnabled="{Binding IdleLogoutEnabled}"/>
-                        <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
+                            <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
 
-            <!-- 硬體設定 -->
-            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                <!-- 硬體設定 -->
+                <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                     CornerRadius="4" Padding="16" Margin="0,0,0,16"
                     Background="{DynamicResource BackgroundBrush}">
-                <StackPanel>
-                    <TextBlock Text="{DynamicResource SsHardwareHeader}"
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource SsHardwareHeader}"
                                FontSize="14" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                Margin="0,0,0,12"/>
 
-                    <!-- 讀卡機 -->
-                    <TextBlock Text="{DynamicResource SsCardReaderSubHeader}"
+                        <!-- 讀卡機 -->
+                        <TextBlock Text="{DynamicResource SsCardReaderSubHeader}"
                                FontSize="12" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextSecondaryBrush}"
                                Margin="0,0,0,8"/>
-                    <Grid Margin="0,0,0,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{DynamicResource SsCardReaderPort}"
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsCardReaderPort}"
                                    VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Grid.Column="1" Width="120" HorizontalAlignment="Left"
+                            <TextBox Grid.Column="1" Width="120" HorizontalAlignment="Left"
                                  Text="{Binding ReaderPort, UpdateSourceTrigger=PropertyChanged}"/>
-                    </Grid>
-                    <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{DynamicResource SsCardReaderBaud}"
+                        </Grid>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsCardReaderBaud}"
                                    VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Grid.Column="1" Width="120" HorizontalAlignment="Left"
+                            <TextBox Grid.Column="1" Width="120" HorizontalAlignment="Left"
                                  Text="{Binding ReaderBaud, UpdateSourceTrigger=PropertyChanged}"/>
-                    </Grid>
+                        </Grid>
 
-                    <Separator Margin="0,0,0,12"/>
+                        <Separator Margin="0,0,0,12"/>
 
-                    <!-- ABB 機械手 -->
-                    <TextBlock Text="{DynamicResource SsAbbRobotSubHeader}"
+                        <!-- ABB 機械手 -->
+                        <TextBlock Text="{DynamicResource SsAbbRobotSubHeader}"
                                FontSize="12" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextSecondaryBrush}"
                                Margin="0,0,0,8"/>
-                    <Grid Margin="0,0,0,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{DynamicResource SsAbbSeqNoTask}"
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsAbbSeqNoTask}"
                                    VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Grid.Column="1" Width="180" HorizontalAlignment="Left"
+                            <TextBox Grid.Column="1" Width="180" HorizontalAlignment="Left"
                                  Text="{Binding AbbSeqNoTask, UpdateSourceTrigger=PropertyChanged}"/>
-                    </Grid>
-                    <Grid Margin="0,0,0,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{DynamicResource SsAbbSeqNoModule}"
+                        </Grid>
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsAbbSeqNoModule}"
                                    VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Grid.Column="1" Width="180" HorizontalAlignment="Left"
+                            <TextBox Grid.Column="1" Width="180" HorizontalAlignment="Left"
                                  Text="{Binding AbbSeqNoModule, UpdateSourceTrigger=PropertyChanged}"/>
-                    </Grid>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{DynamicResource SsAbbSeqNoVariable}"
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsAbbSeqNoVariable}"
                                    VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Grid.Column="1" Width="180" HorizontalAlignment="Left"
+                            <TextBox Grid.Column="1" Width="180" HorizontalAlignment="Left"
                                  Text="{Binding AbbSeqNoVariable, UpdateSourceTrigger=PropertyChanged}"/>
-                    </Grid>
+                        </Grid>
 
-                    <Separator Margin="0,12,0,12"/>
+                        <Separator Margin="0,12,0,12"/>
 
-                    <!-- 設備重連 -->
-                    <TextBlock Text="{DynamicResource SsDeviceReconnectSubHeader}"
+                        <!-- 設備重連 -->
+                        <TextBlock Text="{DynamicResource SsDeviceReconnectSubHeader}"
                                FontSize="12" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextSecondaryBrush}"
                                Margin="0,0,0,8"/>
-                    <Grid Margin="0,4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{DynamicResource SsDeviceReconnect}"
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsDeviceReconnect}"
                                    VerticalAlignment="Center"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <ToggleButton Grid.Column="1"
+                            <ToggleButton Grid.Column="1"
                                       IsChecked="{Binding DeviceReconnectEnabled}"
                                       Style="{StaticResource MaterialDesignSwitchToggleButton}"
                                       Margin="8,0"/>
-                        <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}"
+                            <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}"
                                    VerticalAlignment="Center" Margin="16,0,8,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBox Grid.Column="3" Width="60"
+                            <TextBox Grid.Column="3" Width="60"
                                  Text="{Binding DeviceReconnectIntervalSec, UpdateSourceTrigger=PropertyChanged}"
                                  IsEnabled="{Binding DeviceReconnectEnabled}"/>
-                        <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}"
+                            <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}"
                                    VerticalAlignment="Center" Margin="8,0,0,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
 
-            <!-- 關於 -->
-            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
-                    CornerRadius="4" Padding="16" Margin="0,0,0,16"
-                    Background="{DynamicResource BackgroundBrush}">
-                <StackPanel>
-                    <TextBlock Text="{DynamicResource SsAboutHeader}"
+                <!-- 關於 -->
+                <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                        CornerRadius="4" Padding="16" Margin="0,0,0,16"
+                        Background="{DynamicResource BackgroundBrush}"
+                        Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource SsAboutHeader}"
                                FontSize="14" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                Margin="0,0,0,12"/>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="{DynamicResource SsVersionLabel}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,8,0"/>
-                        <TextBlock Text="{Binding AppVersion}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{DynamicResource SsVersionLabel}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Text="{Binding AppVersion}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-            </Border>
+                </Border>
 
-        </StackPanel>
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </UserControl>

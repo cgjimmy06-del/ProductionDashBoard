@@ -248,6 +248,7 @@
     <sys:String x:Key="SsSyncLabel">Đồng bộ tải lên</sys:String>
     <sys:String x:Key="SsMissedCheckLabel">Kiểm tra bỏ lỡ</sys:String>
     <sys:String x:Key="SsIdleLogoutLabel">Đăng xuất nhàn rỗi</sys:String>
+    <sys:String x:Key="SsSkipLoginLabel">Bỏ qua màn hình đăng nhập</sys:String>
     <sys:String x:Key="SsEvery">Mỗi</sys:String>
     <sys:String x:Key="SsSecondUnit">giây</sys:String>
     <sys:String x:Key="SsHardwareHeader">Cài đặt phần cứng</sys:String>
