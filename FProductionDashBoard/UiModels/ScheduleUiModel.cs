@@ -55,7 +55,7 @@ namespace FProductionDashBoard.UiModels
                 LotNo           = s.LotNo,
                 Status          = s.Status,
                 ReceivedBy      = s.ReceivedBy,
-                ReceivedByName  = s.ReceivedByEmployee?.Name ?? s.ReceivedBy.ToString(),
+                ReceivedByName  = s.ReceivedByEmployee?.Name ?? "-",
                 ReceivedAt      = s.ReceivedAt,
                 ScheduledBy     = s.ScheduledBy,
                 ScheduledByName = s.ScheduledByEmployee?.Name,

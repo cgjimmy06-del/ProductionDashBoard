@@ -1115,20 +1115,8 @@ namespace FProductionDashBoard.Services.V1
                 throw new BusinessRuleException("[ForceCompleteAsync] 強制完成必須填寫說明");
             if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[ForceCompleteAsync] 排程 Repository 連線失敗");
-
-            await using var ctx = _mesFactory.CreateDbContext();
-            var schedule = await ctx.Schedules.FindAsync(scheduleId).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"[ForceCompleteAsync] 找不到排程 ScheduleId={scheduleId}");
-            if (schedule.Status != ScheduleStatus.Pending)
-                throw new BusinessRuleException($"[ForceCompleteAsync] 狀態不允許：{schedule.Status}（需為 Pending）");
-
-            schedule.Status         = ScheduleStatus.Completed;
-            schedule.VerifiedBy     = employeeId;
-            schedule.VerifiedAt     = DateTime.Now;
-            schedule.ActualQuantity = actualQty ?? schedule.Quantity;
-            schedule.Description    = description;
-            schedule.UpdateAt       = DateTime.Now;
-            await ctx.SaveChangesAsync().ConfigureAwait(false);
+            await _scheduleRep.ForceCompleteAsync(scheduleId, employeeId, DateTime.Now, actualQty, description)
+                .ConfigureAwait(false);
         }
 
         public async Task SplitScheduleAsync(ScheduleSplitDto dto)
@@ -1137,45 +1125,9 @@ namespace FProductionDashBoard.Services.V1
                 throw new BusinessRuleException("[SplitScheduleAsync] remainingQuantity 必須大於 0");
             if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[SplitScheduleAsync] 排程 Repository 連線失敗");
-
-            await using var ctx = _mesFactory.CreateDbContext();
-            var original = await ctx.Schedules.FindAsync(dto.OriginalScheduleId).ConfigureAwait(false)
-                ?? throw new InvalidOperationException($"[SplitScheduleAsync] 找不到原排程 ScheduleId={dto.OriginalScheduleId}");
-            if (original.Status != ScheduleStatus.Completed)
-                throw new BusinessRuleException($"[SplitScheduleAsync] 原排程狀態不允許拆單：{original.Status}（需為 Completed）");
-
-            var completedQty = original.ActualQuantity ?? original.Quantity;
-            if (completedQty + dto.RemainingQuantity != original.Quantity)
-                throw new BusinessRuleException(
-                    $"[SplitScheduleAsync] actual_quantity({completedQty}) + remainingQuantity({dto.RemainingQuantity}) " +
-                    $"必須等於原始數量({original.Quantity})");
-
-            var now = DateTime.Now;
-            var splitNote = dto.Description ?? $"拆單：完成 {completedQty}，剩餘 {dto.RemainingQuantity}";
-
-            original.Status      = ScheduleStatus.Released;
-            original.ReleasedBy  = dto.ReleasedBy;
-            original.ReleasedAt  = now;
-            original.Description = splitNote;
-            original.UpdateAt    = now;
-
-            var child = new Schedule
-            {
-                ProductId   = original.ProductId,
-                ProcessId   = original.ProcessId,
-                Quantity    = dto.RemainingQuantity,
-                LotNo       = original.LotNo,
-                Status      = ScheduleStatus.Pending,
-                ReceivedBy  = dto.ReleasedBy,
-                ReceivedAt  = now,
-                ParentId    = original.ScheduleId,
-                Description = splitNote,
-                CreateAt    = now,
-                UpdateAt    = now
-            };
-            ctx.Schedules.Add(child);
-
-            await ctx.SaveChangesAsync().ConfigureAwait(false);
+            await _scheduleRep.SplitScheduleAsync(
+                dto.OriginalScheduleId, dto.RemainingQuantity, dto.ReleasedBy, DateTime.Now, dto.Description)
+                .ConfigureAwait(false);
         }
 
         #endregion

@@ -138,6 +138,17 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 () => service.ForceCompleteAsync(1, 1, null, "reason"));
         }
 
+        [Fact]
+        public async Task ForceCompleteAsync_WhenConnected_DelegatesToRepository()
+        {
+            _scheduleRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
+            var service = CreateService();
+
+            await service.ForceCompleteAsync(42, 7, 30, "reason");
+
+            _scheduleRep.Verify(r => r.ForceCompleteAsync(42, 7, It.IsAny<DateTime>(), 30, "reason"), Times.Once);
+        }
+
         // ─── SplitScheduleAsync ───────────────────────────────────────────────
 
         [Fact]
@@ -166,6 +177,20 @@ namespace FProductionDashBoard.Tests.DataServiceTests
 
             await Assert.ThrowsAsync<InvalidOperationException>(
                 () => service.SplitScheduleAsync(new ScheduleSplitDto { OriginalScheduleId = 1, RemainingQuantity = 40, ReleasedBy = 1 }));
+        }
+
+        [Fact]
+        public async Task SplitScheduleAsync_WhenConnected_DelegatesToRepository()
+        {
+            _scheduleRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
+            var service = CreateService();
+
+            await service.SplitScheduleAsync(new ScheduleSplitDto
+            {
+                OriginalScheduleId = 5, RemainingQuantity = 40, ReleasedBy = 3, Description = "note"
+            });
+
+            _scheduleRep.Verify(r => r.SplitScheduleAsync(5, 40, 3, It.IsAny<DateTime>(), "note"), Times.Once);
         }
     }
 }
