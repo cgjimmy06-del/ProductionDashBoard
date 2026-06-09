@@ -164,11 +164,11 @@
         </StackPanel>
 
         <!-- ========== Row3：DataGrid + 右側面板 ========== -->
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="3" x:Name="ContentGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5"/>
-                <ColumnDefinition Width="{Binding IsPanelVisible, Converter={StaticResource BoolToDetailWidthConverter}}"/>
+                <ColumnDefinition Width="0"/>
             </Grid.ColumnDefinitions>
 
             <!-- 左欄：DataGrid -->
