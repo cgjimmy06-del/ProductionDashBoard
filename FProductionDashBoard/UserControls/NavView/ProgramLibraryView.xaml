@@ -192,11 +192,11 @@
         </Grid>
 
         <!-- ========== Row2：卡片牆 + 右欄 ========== -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" x:Name="ContentGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="4"/>
-                <ColumnDefinition Width="{Binding IsDetailVisible, Converter={StaticResource BoolToDetailWidthConverter}}"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="0"/>
             </Grid.ColumnDefinitions>
 
             <!-- 左欄：WrapPanel 卡片牆 -->
