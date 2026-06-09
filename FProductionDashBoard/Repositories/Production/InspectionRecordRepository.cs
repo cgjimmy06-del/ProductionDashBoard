@@ -90,18 +90,5 @@ namespace FProductionDashBoard.Repositories
                 .OrderByDescending(r => r.CreateAt)
                 .ToListAsync().ConfigureAwait(false);
         }
-
-        /// <summary>
-        /// 查詢某時段的巡檢紀錄
-        /// </summary>
-        public async Task<List<InspectionRecord>> GetRecordsByTimeSlotAsync(int timeSlotId, DateTime date)
-        {
-            await using var ctx = _factory.CreateDbContext();
-            return await ctx.InspectionRecords
-                .Where(r => r.TimeSlotId == timeSlotId && r.CreateAt == date.Date)
-                .Include(r => r.Equipment)
-                .Include(r => r.Employee)
-                .ToListAsync().ConfigureAwait(false);
-        }
     }
 }
