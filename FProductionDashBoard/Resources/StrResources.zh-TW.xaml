@@ -248,6 +248,7 @@
     <sys:String x:Key="SsSyncLabel">同步上傳</sys:String>
     <sys:String x:Key="SsMissedCheckLabel">未巡檢偵測</sys:String>
     <sys:String x:Key="SsIdleLogoutLabel">閒置登出</sys:String>
+    <sys:String x:Key="SsSkipLoginLabel">跳過登入畫面</sys:String>
     <sys:String x:Key="SsEvery">每</sys:String>
     <sys:String x:Key="SsSecondUnit">秒</sys:String>
     <sys:String x:Key="SsHardwareHeader">硬體設定</sys:String>

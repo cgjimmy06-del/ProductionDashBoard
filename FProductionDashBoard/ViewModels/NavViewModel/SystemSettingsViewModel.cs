@@ -49,6 +49,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private int  missedCheckIntervalSec = 300;
         [ObservableProperty] private bool idleLogoutEnabled      = true;
         [ObservableProperty] private int  idleLogoutIntervalSec  = 600;
+        [ObservableProperty] private bool skipLoginScreen        = false;
 
         partial void OnBusinessHourChanged(int value)           => HasUnsavedChanges = true;
         partial void OnBusinessMinuteChanged(int value)         => HasUnsavedChanges = true;
@@ -58,6 +59,7 @@ namespace FProductionDashBoard.ViewModels
         partial void OnMissedCheckIntervalSecChanged(int value) => HasUnsavedChanges = true;
         partial void OnIdleLogoutEnabledChanged(bool value)     => HasUnsavedChanges = true;
         partial void OnIdleLogoutIntervalSecChanged(int value)  => HasUnsavedChanges = true;
+        partial void OnSkipLoginScreenChanged(bool value)       => HasUnsavedChanges = true;
 
         // 硬體設定
         [ObservableProperty] private string readerPort       = "COM3";
@@ -164,6 +166,7 @@ namespace FProductionDashBoard.ViewModels
             IdleLogoutIntervalSec  = sys.IdleLogoutIntervalSec;
             LogSaveToFile          = sys.LogSaveToFile;
             LogDaysToKeep          = sys.LogDaysToKeep;
+            SkipLoginScreen        = Properties.Settings.Default.SkipLoginScreen;
 
             var hw = _hardwareConfig.Current;
             ReaderPort                = hw.ReaderPort;
@@ -204,6 +207,7 @@ namespace FProductionDashBoard.ViewModels
                 DeviceReconnectEnabled    = DeviceReconnectEnabled,
                 DeviceReconnectIntervalSec = DeviceReconnectIntervalSec,
             });
+            Properties.Settings.Default.SkipLoginScreen = SkipLoginScreen;
             Properties.Settings.Default.Save();
             HasUnsavedChanges = false;
             _core.Log.AddLog(Properties.Resources.MainProgressSuccess, LogLevel.Success);
