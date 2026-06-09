@@ -1,6 +1,8 @@
 ﻿using FProductionDashBoard.Services.Offline;
 using FProductionDashBoard.Services.Offline.Handlers;
 using FProductionDashBoard.Services.WebApi;
+using MaterialDesignColors;
+using MaterialDesignThemes.Wpf;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,8 +40,9 @@ namespace FProductionDashBoard
 
 #if DEBUG
                 // 取得登入資訊 ( Debug 模式 )
-                string selectedServer = "TT";
-                var user = new UiModels.UserInfo() { UserId = "visitor", Name = "Debug Mode" };
+                var loginWindow = new LoginWindow();
+                string selectedServer = loginWindow.SelectedServer;
+                var user = loginWindow.User;
 #else
                 // 登入畫面 + 取得資訊
                 var loginWindow = new LoginWindow();
@@ -164,6 +167,7 @@ namespace FProductionDashBoard
                 // 載入持久化設定
                 _serviceProvider.GetRequiredService<Services.IConfigService<Dtos.SystemConfigDto>>().Load();
                 _serviceProvider.GetRequiredService<Services.IConfigService<Dtos.HardwareConfigDto>>().Load();
+
                 // 啟動登入權限
                 var authService = _serviceProvider.GetRequiredService<Services.AuthorizationService>();
                 try 
@@ -175,6 +179,7 @@ namespace FProductionDashBoard
                 }
                 catch { Debug.WriteLine("角色清單取得異常，進入離線模式..."); }
                 await authService.InitializeAsync(user);
+
                 // 預設啟動一台讀卡機（以硬體設定為準）
                 var hwCfg = _serviceProvider.GetRequiredService<Services.IConfigService<Dtos.HardwareConfigDto>>().Current;
                 _serviceProvider.GetRequiredService<Services.MultiCardReaderService>()

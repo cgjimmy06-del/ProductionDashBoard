@@ -28,9 +28,11 @@ namespace FProductionDashBoard.Repositories
             _factory = factory;
         }
 
+        private const int ConnectionTimeoutMs = 2000;
+
         public async Task<bool> CheckConnectionAsync()
         {
-            using var cts = new CancellationTokenSource(2000);
+            using var cts = new CancellationTokenSource(ConnectionTimeoutMs);
             await using var ctx = _factory.CreateDbContext();
             var connStr = ctx.Database.GetConnectionString()!;
             try
@@ -38,7 +40,7 @@ namespace FProductionDashBoard.Repositories
                 var result = await ctx.Database.CanConnectAsync(cts.Token).ConfigureAwait(false);
                 if (!result)
                     using (var c = new SqlConnection(connStr))
-                        SqlConnection.ClearPool(c); // Pool Manager ²M²z broken connection ¬° UI ­áµ²¥D¦]
+                        SqlConnection.ClearPool(c); // Pool Manager ï¿½Mï¿½z broken connection ï¿½ï¿½ UI ï¿½áµ²ï¿½Dï¿½]
                 return result;
             }
             catch

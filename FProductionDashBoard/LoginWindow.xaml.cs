@@ -19,8 +19,8 @@ namespace FProductionDashBoard
     /// </summary>
     public partial class LoginWindow : Window
     {
-        public string SelectedServer { get; set; } = "";
-        public UiModels.UserInfo User { get; set; } = new UiModels.UserInfo() { UserId = "unknown", Name = "unknown" };
+        public string SelectedServer { get; set; } = "TT";
+        public UiModels.UserInfo User { get; set; } = new UiModels.UserInfo() { UserId = "visitor", Name = "Debug", RoleId = 1, Id = 2 };
 
         public LoginWindow(bool isSettingsEnabled = true)
         {
