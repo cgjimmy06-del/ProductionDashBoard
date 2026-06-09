@@ -1,5 +1,6 @@
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
+using FProductionDashBoard.Services.Exceptions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -59,7 +60,7 @@ namespace FProductionDashBoard.Tests.Repositories
             var id = await InsertScheduleAsync(ScheduleStatus.Scheduled);
             var repository = CreateRepository();
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<BusinessRuleException>(
                 () => repository.MarkScheduledAsync(id, 1, DateTime.Today));
             Assert.Contains("狀態不允許", ex.Message);
         }
@@ -70,7 +71,7 @@ namespace FProductionDashBoard.Tests.Repositories
             var id = await InsertScheduleAsync(ScheduleStatus.Completed);
             var repository = CreateRepository();
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<BusinessRuleException>(
                 () => repository.MarkScheduledAsync(id, 1, DateTime.Today));
             Assert.Contains("狀態不允許", ex.Message);
         }
@@ -111,7 +112,7 @@ namespace FProductionDashBoard.Tests.Repositories
             var id = await InsertScheduleAsync(ScheduleStatus.Pending);
             var repository = CreateRepository();
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<BusinessRuleException>(
                 () => repository.MarkVerifiedAsync(id, 1, DateTime.Today, null, null));
             Assert.Contains("狀態不允許", ex.Message);
         }
@@ -138,7 +139,7 @@ namespace FProductionDashBoard.Tests.Repositories
             var id = await InsertScheduleAsync(ScheduleStatus.Scheduled);
             var repository = CreateRepository();
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<BusinessRuleException>(
                 () => repository.MarkReleasedAsync(id, 1, DateTime.Today, null));
             Assert.Contains("狀態不允許", ex.Message);
         }
@@ -177,7 +178,7 @@ namespace FProductionDashBoard.Tests.Repositories
             var id = await InsertScheduleAsync(ScheduleStatus.Released);
             var repository = CreateRepository();
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<BusinessRuleException>(
                 () => repository.MarkCancelledAsync(id, "test"));
             Assert.Contains("狀態不允許", ex.Message);
         }
@@ -188,9 +189,94 @@ namespace FProductionDashBoard.Tests.Repositories
             var id = await InsertScheduleAsync(ScheduleStatus.Cancelled);
             var repository = CreateRepository();
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            var ex = await Assert.ThrowsAsync<BusinessRuleException>(
                 () => repository.MarkCancelledAsync(id, "test"));
             Assert.Contains("狀態不允許", ex.Message);
+        }
+
+        // ─── ForceCompleteAsync ───────────────────────────────────────────────
+
+        [Fact]
+        public async Task ForceCompleteAsync_WhenPending_TransitionsToCompleted()
+        {
+            var id = await InsertScheduleAsync(ScheduleStatus.Pending, quantity: 50);
+            var repository = CreateRepository();
+
+            await repository.ForceCompleteAsync(id, 9, DateTime.Today, 40, "強制完成");
+
+            using var ctx = new MesDbContext(_options);
+            var s = await ctx.Schedules.FindAsync(id);
+            Assert.Equal(ScheduleStatus.Completed, s!.Status);
+            Assert.Equal(9, s.VerifiedBy);
+            Assert.Equal(40, s.ActualQuantity);
+            Assert.Equal("強制完成", s.Description);
+        }
+
+        [Fact]
+        public async Task ForceCompleteAsync_WhenActualQtyNull_UsesOriginalQuantity()
+        {
+            var id = await InsertScheduleAsync(ScheduleStatus.Pending, quantity: 70);
+            var repository = CreateRepository();
+
+            await repository.ForceCompleteAsync(id, 9, DateTime.Today, null, "強制完成");
+
+            using var ctx = new MesDbContext(_options);
+            var s = await ctx.Schedules.FindAsync(id);
+            Assert.Equal(70, s!.ActualQuantity);
+        }
+
+        [Fact]
+        public async Task ForceCompleteAsync_WhenNotPending_ThrowsBusinessRule()
+        {
+            var id = await InsertScheduleAsync(ScheduleStatus.Scheduled);
+            var repository = CreateRepository();
+
+            var ex = await Assert.ThrowsAsync<BusinessRuleException>(
+                () => repository.ForceCompleteAsync(id, 1, DateTime.Today, null, "x"));
+            Assert.Contains("狀態不允許", ex.Message);
+        }
+
+        // ─── SplitScheduleAsync ───────────────────────────────────────────────
+
+        [Fact]
+        public async Task SplitScheduleAsync_WhenCompleted_ReleasesOriginalAndCreatesChild()
+        {
+            var id = await InsertScheduleAsync(ScheduleStatus.Completed, quantity: 100, actualQuantity: 60);
+            var repository = CreateRepository();
+
+            await repository.SplitScheduleAsync(id, 40, 3, DateTime.Today, null);
+
+            using var ctx = new MesDbContext(_options);
+            var original = await ctx.Schedules.FindAsync(id);
+            Assert.Equal(ScheduleStatus.Released, original!.Status);
+            Assert.Equal(3, original.ReleasedBy);
+
+            var child = ctx.Schedules.Single(s => s.ParentId == id);
+            Assert.Equal(ScheduleStatus.Pending, child.Status);
+            Assert.Equal(40, child.Quantity);
+            Assert.Equal(original.ProductId, child.ProductId);
+        }
+
+        [Fact]
+        public async Task SplitScheduleAsync_WhenQtySumMismatch_ThrowsBusinessRule()
+        {
+            var id = await InsertScheduleAsync(ScheduleStatus.Completed, quantity: 100, actualQuantity: 60);
+            var repository = CreateRepository();
+
+            var ex = await Assert.ThrowsAsync<BusinessRuleException>(
+                () => repository.SplitScheduleAsync(id, 30, 3, DateTime.Today, null)); // 60 + 30 != 100
+            Assert.Contains("必須等於原始數量", ex.Message);
+        }
+
+        [Fact]
+        public async Task SplitScheduleAsync_WhenNotCompleted_ThrowsBusinessRule()
+        {
+            var id = await InsertScheduleAsync(ScheduleStatus.Pending);
+            var repository = CreateRepository();
+
+            var ex = await Assert.ThrowsAsync<BusinessRuleException>(
+                () => repository.SplitScheduleAsync(id, 5, 3, DateTime.Today, null));
+            Assert.Contains("不允許拆單", ex.Message);
         }
 
         // ─── Helpers ──────────────────────────────────────────────────────────
@@ -207,19 +293,20 @@ namespace FProductionDashBoard.Tests.Repositories
             return mock.Object;
         }
 
-        private async Task<int> InsertScheduleAsync(ScheduleStatus status, int quantity = 10)
+        private async Task<int> InsertScheduleAsync(ScheduleStatus status, int quantity = 10, int? actualQuantity = null)
         {
             using var ctx = new MesDbContext(_options);
             var schedule = new Schedule
             {
-                ProductId  = 1,
-                ProcessId  = 1,
-                Quantity   = quantity,
-                Status     = status,
-                ReceivedBy = 1,
-                ReceivedAt = DateTime.Today,
-                CreateAt   = DateTime.Today,
-                UpdateAt   = DateTime.Today
+                ProductId      = 1,
+                ProcessId      = 1,
+                Quantity       = quantity,
+                ActualQuantity = actualQuantity,
+                Status         = status,
+                ReceivedBy     = 1,
+                ReceivedAt     = DateTime.Today,
+                CreateAt       = DateTime.Today,
+                UpdateAt       = DateTime.Today
             };
             ctx.Schedules.Add(schedule);
             await ctx.SaveChangesAsync();
