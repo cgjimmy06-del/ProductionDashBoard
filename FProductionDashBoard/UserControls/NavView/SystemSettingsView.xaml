@@ -114,6 +114,21 @@
                         <TextBlock Text="{DynamicResource SsMinuteUnit}" VerticalAlignment="Center" Margin="4,0,0,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
                     </StackPanel>
+                    <Grid Margin="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="{DynamicResource SsSkipLoginLabel}"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <ToggleButton Grid.Column="1"
+                                      IsChecked="{Binding SkipLoginScreen}"
+                                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                      Margin="8,0"/>
+                    </Grid>
                 </StackPanel>
             </Border>
 

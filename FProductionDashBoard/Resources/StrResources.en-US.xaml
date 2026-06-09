@@ -248,6 +248,7 @@
     <sys:String x:Key="SsSyncLabel">Sync Upload</sys:String>
     <sys:String x:Key="SsMissedCheckLabel">Missed Check</sys:String>
     <sys:String x:Key="SsIdleLogoutLabel">Idle Logout</sys:String>
+    <sys:String x:Key="SsSkipLoginLabel">Skip Login Screen</sys:String>
     <sys:String x:Key="SsEvery">Every</sys:String>
     <sys:String x:Key="SsSecondUnit">sec</sys:String>
     <sys:String x:Key="SsHardwareHeader">Hardware Settings</sys:String>

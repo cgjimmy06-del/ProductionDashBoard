@@ -42,14 +42,15 @@ namespace FProductionDashBoard
                 // 取得登入資訊 ( Debug 模式 )
                 var loginWindow = new LoginWindow();
                 string selectedServer = loginWindow.SelectedServer;
-                var user = loginWindow.User;
+                var user = new UiModels.UserInfo() { UserId = "visitor", Name = "Debug", RoleId = 1, Id = 2 };
 #else
                 // 登入畫面 + 取得資訊
                 var loginWindow = new LoginWindow();
-                if (loginWindow.ShowDialog() != true) { Shutdown(); return; }
+                bool skipLogin = Properties.Settings.Default.SkipLoginScreen;
+                if (!skipLogin && loginWindow.ShowDialog() != true) { Shutdown(); return; }
 
                 // 取得登入資訊
-                string selectedServer = loginWindow.SelectedServer;
+                string selectedServer = skipLogin ? Properties.Settings.Default.Server : loginWindow.SelectedServer;
                 var user = loginWindow.User;
 #endif
 
