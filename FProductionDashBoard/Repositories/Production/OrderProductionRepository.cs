@@ -13,6 +13,27 @@ namespace FProductionDashBoard.Repositories
         {
         }
 
+        public new async Task<List<OrderProduction>> GetAllAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.OrderProductions
+                .Include(o => o.EquipmentProduct)
+                    .ThenInclude(ep => ep!.Sop)
+                    .ThenInclude(s => s!.Product)
+                    .ThenInclude(p => p!.Part)
+                .Include(o => o.EquipmentProduct)
+                    .ThenInclude(ep => ep!.Sop)
+                    .ThenInclude(s => s!.Product)
+                    .ThenInclude(p => p!.Model)
+                .Include(o => o.EquipmentProduct)
+                    .ThenInclude(ep => ep!.Sop)
+                    .ThenInclude(s => s!.Process)
+                .Include(o => o.StartedByEmployee)
+                .OrderBy(o => o.CreateAt)
+                .ToListAsync()
+                .ConfigureAwait(false);
+        }
+
         public async Task<List<OrderProduction>> GetByEquipmentAsync(int equipmentId)
         {
             await using var ctx = _factory.CreateDbContext();

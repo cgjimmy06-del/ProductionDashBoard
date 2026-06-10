@@ -164,6 +164,7 @@ namespace FProductionDashBoard
                 services.AddTransient<ViewModels.OperationViewModel>();
                 services.AddTransient<ViewModels.ProgramLibraryViewModel>();
                 services.AddTransient<ViewModels.ProductInOutViewModel>();
+                services.AddTransient<ViewModels.ScheduleViewModel>();
 
                 _serviceProvider = services.BuildServiceProvider();
                 // 載入持久化設定

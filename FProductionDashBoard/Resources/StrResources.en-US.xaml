@@ -403,4 +403,42 @@
     <sys:String x:Key="PioDialogRemainingQty">Remaining Qty</sys:String>
     <!--#endregion-->
 
+    <!--#region Schedule Management -->
+    <sys:String x:Key="SchStatTotalLabel">Total</sys:String>
+    <sys:String x:Key="SchStatPendingLabel">Pending</sys:String>
+    <sys:String x:Key="SchStatScheduledLabel">Scheduled</sys:String>
+    <sys:String x:Key="SchStatProductionDoneLabel">Production Done</sys:String>
+
+    <sys:String x:Key="SchFilterDateStart">Start Date</sys:String>
+    <sys:String x:Key="SchFilterDateEnd">End Date</sys:String>
+    <sys:String x:Key="SchFilterSearch">Part No. / Model / Lot No.</sys:String>
+    <sys:String x:Key="SchFilterProcess">Process</sys:String>
+
+    <sys:String x:Key="SchShortcutToday">Today</sys:String>
+    <sys:String x:Key="SchShortcutLast3Days">3 Days</sys:String>
+    <sys:String x:Key="SchShortcutLast5Days">5 Days</sys:String>
+    <sys:String x:Key="SchShortcutCurrentWeek">This Week</sys:String>
+    <sys:String x:Key="SchShortcutCurrentMonth">This Month</sys:String>
+    <sys:String x:Key="SchRefreshButton">Refresh</sys:String>
+
+    <sys:String x:Key="SchColId">#</sys:String>
+    <sys:String x:Key="SchColBrand">Brand</sys:String>
+    <sys:String x:Key="SchColPartNo">Part No.</sys:String>
+    <sys:String x:Key="SchColModel">Model</sys:String>
+    <sys:String x:Key="SchColProcess">Process</sys:String>
+    <sys:String x:Key="SchColProgress">Qty / Progress</sys:String>
+    <sys:String x:Key="SchColLotNo">Lot No.</sys:String>
+    <sys:String x:Key="SchColReceivedAt">Received</sys:String>
+    <sys:String x:Key="SchColStatus">Status</sys:String>
+
+    <sys:String x:Key="SchFilterAllActive">All (Active)</sys:String>
+    <sys:String x:Key="SchFilterPending">Pending</sys:String>
+    <sys:String x:Key="SchFilterScheduled">Scheduled</sys:String>
+    <sys:String x:Key="SchFilterProductionDone">Production Done</sys:String>
+    <sys:String x:Key="SchFilterSeparator">──────────</sys:String>
+    <sys:String x:Key="SchFilterCompleted">Completed</sys:String>
+    <sys:String x:Key="SchFilterReleased">Released</sys:String>
+    <sys:String x:Key="SchFilterCancelled">Cancelled</sys:String>
+    <!--#endregion-->
+
 </ResourceDictionary>

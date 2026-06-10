@@ -403,4 +403,42 @@
     <sys:String x:Key="PioDialogRemainingQty">剩餘數量</sys:String>
     <!--#endregion-->
 
+    <!--#region 排單管理（Schedule） -->
+    <sys:String x:Key="SchStatTotalLabel">全部</sys:String>
+    <sys:String x:Key="SchStatPendingLabel">待排單</sys:String>
+    <sys:String x:Key="SchStatScheduledLabel">已排單</sys:String>
+    <sys:String x:Key="SchStatProductionDoneLabel">生產完成</sys:String>
+
+    <sys:String x:Key="SchFilterDateStart">起始日期</sys:String>
+    <sys:String x:Key="SchFilterDateEnd">結束日期</sys:String>
+    <sys:String x:Key="SchFilterSearch">品號 / 型號 / 批號</sys:String>
+    <sys:String x:Key="SchFilterProcess">製程</sys:String>
+
+    <sys:String x:Key="SchShortcutToday">今日</sys:String>
+    <sys:String x:Key="SchShortcutLast3Days">3天</sys:String>
+    <sys:String x:Key="SchShortcutLast5Days">5天</sys:String>
+    <sys:String x:Key="SchShortcutCurrentWeek">當周</sys:String>
+    <sys:String x:Key="SchShortcutCurrentMonth">當月</sys:String>
+    <sys:String x:Key="SchRefreshButton">重新整理</sys:String>
+
+    <sys:String x:Key="SchColId">#</sys:String>
+    <sys:String x:Key="SchColBrand">品牌</sys:String>
+    <sys:String x:Key="SchColPartNo">品號</sys:String>
+    <sys:String x:Key="SchColModel">型號</sys:String>
+    <sys:String x:Key="SchColProcess">製程</sys:String>
+    <sys:String x:Key="SchColProgress">數量 / 進度</sys:String>
+    <sys:String x:Key="SchColLotNo">批號</sys:String>
+    <sys:String x:Key="SchColReceivedAt">入料日</sys:String>
+    <sys:String x:Key="SchColStatus">狀態</sys:String>
+
+    <sys:String x:Key="SchFilterAllActive">全部（進行中）</sys:String>
+    <sys:String x:Key="SchFilterPending">待排單</sys:String>
+    <sys:String x:Key="SchFilterScheduled">已排單</sys:String>
+    <sys:String x:Key="SchFilterProductionDone">生產完成</sys:String>
+    <sys:String x:Key="SchFilterSeparator">──────────</sys:String>
+    <sys:String x:Key="SchFilterCompleted">已驗收</sys:String>
+    <sys:String x:Key="SchFilterReleased">已出料</sys:String>
+    <sys:String x:Key="SchFilterCancelled">已取消</sys:String>
+    <!--#endregion-->
+
 </ResourceDictionary>
