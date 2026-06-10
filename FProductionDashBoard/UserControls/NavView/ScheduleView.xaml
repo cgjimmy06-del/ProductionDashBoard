@@ -219,17 +219,20 @@
                                 <ProgressBar Value="{Binding ActualQuantity, TargetNullValue=0}"
                                              Maximum="{Binding Quantity}"
                                              Height="6" Margin="0,0,0,2"/>
-                                <TextBlock FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}">
-                                    <Run Text="{Binding ActualQuantity, TargetNullValue=0}"/>
-                                    <Run Text=" / "/>
-                                    <Run Text="{Binding Quantity}"/>
-                                </TextBlock>
-                                <!-- 等待天數（Pending 且非當天才顯示） -->
-                                <TextBlock FontSize="11"
-                                           Text="{Binding WaitingDaysText}"
-                                           Foreground="{DynamicResource ErrorBrush}"
-                                           Visibility="{Binding WaitingDaysText,
-                                                        Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}">
+                                        <Run Text="{Binding ActualQuantity, TargetNullValue=0}"/>
+                                        <Run Text=" / "/>
+                                        <Run Text="{Binding Quantity}"/>
+                                    </TextBlock>
+                                    <!-- 等待天數（Pending 且非當天才顯示） -->
+                                    <TextBlock FontSize="11"
+                                               Text="{Binding WaitingDaysText}"
+                                               Foreground="{DynamicResource ErrorBrush}"
+                                               Margin="6,0,0,0"
+                                               Visibility="{Binding WaitingDaysText,
+                                                            Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
+                                </StackPanel>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
