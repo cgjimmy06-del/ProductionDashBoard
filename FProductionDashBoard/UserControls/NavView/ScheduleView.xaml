@@ -146,7 +146,8 @@
                       SelectedValuePath="Value">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Label}"/>
+                        <TextBlock Text="{Binding Value,
+                                          Converter={StaticResource ScheduleViewFilterToLabelConverter}}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
                 <ComboBox.ItemContainerStyle>

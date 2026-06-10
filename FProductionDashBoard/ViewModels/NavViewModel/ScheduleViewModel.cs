@@ -24,7 +24,7 @@ namespace FProductionDashBoard.ViewModels
         Cancelled
     }
 
-    public sealed record ScheduleViewFilterOption(string Label, ScheduleViewFilter Value);
+    public sealed record ScheduleViewFilterOption(ScheduleViewFilter Value);
 
     public partial class ScheduleViewModel : ObservableObject
     {
@@ -78,14 +78,14 @@ namespace FProductionDashBoard.ViewModels
 
             StatusFilterOptions = new ScheduleViewFilterOption[]
             {
-                new("全部（進行中）",  ScheduleViewFilter.AllActive),
-                new("待排單",         ScheduleViewFilter.Pending),
-                new("已排單",         ScheduleViewFilter.Scheduled),
-                new("生產完成",       ScheduleViewFilter.ProductionDone),
-                new("──────────",    ScheduleViewFilter.Separator),
-                new("已驗收",         ScheduleViewFilter.Completed),
-                new("已出料",         ScheduleViewFilter.Released),
-                new("已取消",         ScheduleViewFilter.Cancelled),
+                new(ScheduleViewFilter.AllActive),
+                new(ScheduleViewFilter.Pending),
+                new(ScheduleViewFilter.Scheduled),
+                new(ScheduleViewFilter.ProductionDone),
+                new(ScheduleViewFilter.Separator),
+                new(ScheduleViewFilter.Completed),
+                new(ScheduleViewFilter.Released),
+                new(ScheduleViewFilter.Cancelled),
             };
 
             DateRangeStart = DateTime.Today.AddDays(-30);
