@@ -430,6 +430,15 @@
     <sys:String x:Key="SchColLotNo">批號</sys:String>
     <sys:String x:Key="SchColReceivedAt">入料日</sys:String>
     <sys:String x:Key="SchColStatus">狀態</sys:String>
+
+    <sys:String x:Key="SchFilterAllActive">全部（進行中）</sys:String>
+    <sys:String x:Key="SchFilterPending">待排單</sys:String>
+    <sys:String x:Key="SchFilterScheduled">已排單</sys:String>
+    <sys:String x:Key="SchFilterProductionDone">生產完成</sys:String>
+    <sys:String x:Key="SchFilterSeparator">──────────</sys:String>
+    <sys:String x:Key="SchFilterCompleted">已驗收</sys:String>
+    <sys:String x:Key="SchFilterReleased">已出料</sys:String>
+    <sys:String x:Key="SchFilterCancelled">已取消</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

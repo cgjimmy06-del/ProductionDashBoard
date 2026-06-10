@@ -430,6 +430,15 @@
     <sys:String x:Key="SchColLotNo">Lot No.</sys:String>
     <sys:String x:Key="SchColReceivedAt">Received</sys:String>
     <sys:String x:Key="SchColStatus">Status</sys:String>
+
+    <sys:String x:Key="SchFilterAllActive">All (Active)</sys:String>
+    <sys:String x:Key="SchFilterPending">Pending</sys:String>
+    <sys:String x:Key="SchFilterScheduled">Scheduled</sys:String>
+    <sys:String x:Key="SchFilterProductionDone">Production Done</sys:String>
+    <sys:String x:Key="SchFilterSeparator">──────────</sys:String>
+    <sys:String x:Key="SchFilterCompleted">Completed</sys:String>
+    <sys:String x:Key="SchFilterReleased">Released</sys:String>
+    <sys:String x:Key="SchFilterCancelled">Cancelled</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

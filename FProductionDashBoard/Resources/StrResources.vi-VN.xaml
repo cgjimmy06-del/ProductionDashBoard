@@ -430,6 +430,15 @@
     <sys:String x:Key="SchColLotNo">Số lô</sys:String>
     <sys:String x:Key="SchColReceivedAt">Ngày nhập</sys:String>
     <sys:String x:Key="SchColStatus">Trạng thái</sys:String>
+
+    <sys:String x:Key="SchFilterAllActive">Tất cả (Đang xử lý)</sys:String>
+    <sys:String x:Key="SchFilterPending">Chờ sắp xếp</sys:String>
+    <sys:String x:Key="SchFilterScheduled">Đã sắp xếp</sys:String>
+    <sys:String x:Key="SchFilterProductionDone">Hoàn thành SX</sys:String>
+    <sys:String x:Key="SchFilterSeparator">──────────</sys:String>
+    <sys:String x:Key="SchFilterCompleted">Đã nghiệm thu</sys:String>
+    <sys:String x:Key="SchFilterReleased">Đã xuất liệu</sys:String>
+    <sys:String x:Key="SchFilterCancelled">Đã hủy</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

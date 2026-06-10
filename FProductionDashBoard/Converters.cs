@@ -245,6 +245,28 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+    public class ScheduleViewFilterToLabelConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            var key = value is ViewModels.ScheduleViewFilter f ? f switch
+            {
+                ViewModels.ScheduleViewFilter.AllActive      => "SchFilterAllActive",
+                ViewModels.ScheduleViewFilter.Pending        => "SchFilterPending",
+                ViewModels.ScheduleViewFilter.Scheduled      => "SchFilterScheduled",
+                ViewModels.ScheduleViewFilter.ProductionDone => "SchFilterProductionDone",
+                ViewModels.ScheduleViewFilter.Separator      => "SchFilterSeparator",
+                ViewModels.ScheduleViewFilter.Completed      => "SchFilterCompleted",
+                ViewModels.ScheduleViewFilter.Released       => "SchFilterReleased",
+                ViewModels.ScheduleViewFilter.Cancelled      => "SchFilterCancelled",
+                _                                            => null,
+            } : null;
+            return key != null && resources[key] is string label ? label : value?.ToString() ?? string.Empty;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
     public static class ListBoxBehavior
     {
         public static readonly DependencyProperty AutoScrollToEndProperty = DependencyProperty.RegisterAttached(
