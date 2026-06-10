@@ -935,6 +935,13 @@ namespace FProductionDashBoard.Services.V1
 
         #region 接單服務
 
+        public async Task<List<OrderProduction>> GetAllOrderProductionsAsync()
+        {
+            if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetAllOrderProductionsAsync] 接單 Repository 連線失敗");
+            return await _orderProductionRep.GetAllAsync().ConfigureAwait(false);
+        }
+
         public async Task<List<OrderProduction>> GetOrdersByEquipmentAsync(int equipmentId)
         {
             if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))

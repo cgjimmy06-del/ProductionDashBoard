@@ -8,6 +8,7 @@ namespace FProductionDashBoard.Repositories
     public interface IOrderProductionRepository
     {
         Task<bool> CheckConnectionAsync();
+        Task<List<OrderProduction>> GetAllAsync();
         // Returns Pending + InProduction + Completed orders (excludes Cancelled), ordered by create_at asc
         Task<List<OrderProduction>> GetByEquipmentAsync(int equipmentId);
         Task<OrderProduction?> GetInProductionByEquipmentAsync(int equipmentId);

@@ -36,6 +36,10 @@ namespace FProductionDashBoard.UiModels
         public string? Description { get; set; }
         public int? ParentId { get; set; }
 
+        // UI 衍生欄位，由 ScheduleViewModel 在載入後計算並設定
+        public string? DerivedBadge { get; set; }
+        public string? WaitingDaysText { get; set; }
+
         public static ScheduleUiModel FromEntity(Schedule s)
         {
             var part    = s.Product?.Part;
