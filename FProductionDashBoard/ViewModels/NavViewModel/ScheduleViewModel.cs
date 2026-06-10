@@ -445,7 +445,10 @@ namespace FProductionDashBoard.ViewModels
                 card.InProductionOrderCount = inProdOrders.Count;
                 card.TotalPendingQty      = pendingOrders.Sum(o => o.Quantity ?? 0)
                                           + inProdOrders.Sum(o => o.Quantity ?? 0);
-                card.InProductionInfo     = inProdOrders.FirstOrDefault()?.ProductName;
+                var inProdFirst           = inProdOrders.FirstOrDefault();
+                card.InProductionInfo     = inProdFirst != null
+                    ? $"{inProdFirst.ProductName} / {inProdFirst.ProcessName}"
+                    : null;
                 card.ActiveTuning         = inProgressTunings.FirstOrDefault(t => t.EquipmentId == eq.Id);
 
                 _allCards.Add(card);
