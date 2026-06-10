@@ -31,6 +31,8 @@ namespace FProductionDashBoard.ViewModels
         private readonly DashboardCoreServices _core;
         private readonly List<ScheduleUiModel> _allSchedules = new();
         private readonly List<OrderProductionInfo> _allOrders = new();
+        private readonly List<ScheduleEquipmentCardViewModel> _allCards = new();
+        private HashSet<(int ProductId, int ProcessId)> _visibleScheduleKeys = new();
 
         // 統計
         [ObservableProperty] private int statTotal;
@@ -51,12 +53,34 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private DateTime? dateRangeStart;
         [ObservableProperty] private DateTime? dateRangeEnd;
 
+        // Layer 2：選取排單
+        [ObservableProperty] private ScheduleUiModel? selectedSchedule;
+
+        // 右側統計列（Layer 2 才有意義）
+        [ObservableProperty] private int selectedScheduleOrderTotal;
+        [ObservableProperty] private int selectedScheduleOrderIncomplete;
+        [ObservableProperty] private string selectedScheduleEquipments = string.Empty;
+        public bool IsStatsPanelVisible => SelectedSchedule != null;
+
         public ICollectionView SchedulesView { get; }
+        public ICollectionView EquipmentCardsView { get; }
         public IReadOnlyList<ScheduleViewFilterOption> StatusFilterOptions { get; }
 
         partial void OnStatusFilterChanged(ScheduleViewFilter value) => ApplyFilter();
         partial void OnSearchTextChanged(string value) => ApplyFilter();
         partial void OnProcessFilterChanged(string value) => ApplyFilter();
+
+        partial void OnSelectedScheduleChanged(ScheduleUiModel? value)
+        {
+            if (value == null)
+                foreach (var c in _allCards) c.ResetForLayer1();
+            else
+                UpdateCardCompatibility(value);
+
+            EquipmentCardsView?.Refresh();
+            UpdateSelectedScheduleStats(value);
+            OnPropertyChanged(nameof(IsStatsPanelVisible));
+        }
 
         partial void OnDateRangeStartChanged(DateTime? value)
         {
@@ -64,12 +88,16 @@ namespace FProductionDashBoard.ViewModels
                 DateRangeEnd = value;
             ComputeStats();
             SchedulesView?.Refresh();
+            UpdateVisibleScheduleKeys();
+            EquipmentCardsView?.Refresh();
         }
 
         partial void OnDateRangeEndChanged(DateTime? value)
         {
             ComputeStats();
             SchedulesView?.Refresh();
+            UpdateVisibleScheduleKeys();
+            EquipmentCardsView?.Refresh();
         }
 
         public ScheduleViewModel(DashboardCoreServices core)
@@ -96,6 +124,13 @@ namespace FProductionDashBoard.ViewModels
             SchedulesView.SortDescriptions.Add(
                 new SortDescription(nameof(ScheduleUiModel.ScheduleId), ListSortDirection.Descending));
 
+            EquipmentCardsView = CollectionViewSource.GetDefaultView(_allCards);
+            EquipmentCardsView.Filter = FilterCard;
+            EquipmentCardsView.SortDescriptions.Add(
+                new SortDescription(nameof(ScheduleEquipmentCardViewModel.SortOrder), ListSortDirection.Ascending));
+            EquipmentCardsView.SortDescriptions.Add(
+                new SortDescription(nameof(ScheduleEquipmentCardViewModel.Name), ListSortDirection.Ascending));
+
             _ = LoadAllAsync();
         }
 
@@ -108,14 +143,25 @@ namespace FProductionDashBoard.ViewModels
             ComputeBadges();
             ComputeStats();
             SchedulesView.Refresh();
+            UpdateVisibleScheduleKeys();
+            EquipmentCardsView.Refresh();
+        }
+
+        public void InjectCardsForTest(List<EquipmentProduct> equipmentProducts, List<ProgramTuningRecord>? tunings = null)
+        {
+            BuildEquipmentCards(equipmentProducts, tunings ?? new());
+            UpdateVisibleScheduleKeys();
+            EquipmentCardsView.Refresh();
         }
 
         private async Task LoadAllAsync()
         {
             try
             {
-                var schedules = await _core.Data.GetAllSchedulesAsync();
-                var orders    = await _core.Data.GetAllOrderProductionsAsync();
+                var schedules    = await _core.Data.GetAllSchedulesAsync();
+                var orders       = await _core.Data.GetAllOrderProductionsAsync();
+                var allEps       = await _core.Data.GetAllEquipmentProductsAsync();
+                var inProgressTunings = await _core.Data.GetAllInProgressProgramTuningAsync();
 
                 _allSchedules.Clear();
                 _allSchedules.AddRange(schedules.Select(ScheduleUiModel.FromEntity));
@@ -125,7 +171,12 @@ namespace FProductionDashBoard.ViewModels
 
                 ComputeBadges();
                 ComputeStats();
+
+                BuildEquipmentCards(allEps, inProgressTunings);
+
                 SchedulesView.Refresh();
+                UpdateVisibleScheduleKeys();
+                EquipmentCardsView.Refresh();
             }
             catch (Exception ex)
             {
@@ -228,6 +279,8 @@ namespace FProductionDashBoard.ViewModels
         private void ApplyFilter()
         {
             SchedulesView?.Refresh();
+            UpdateVisibleScheduleKeys();
+            EquipmentCardsView?.Refresh();
             ComputeStats();
         }
 
@@ -337,6 +390,101 @@ namespace FProductionDashBoard.ViewModels
             var today = DateTime.Today;
             DateRangeStart = new DateTime(today.Year, today.Month, 1);
             DateRangeEnd   = DateRangeStart.Value.AddMonths(1).AddDays(-1);
+        }
+
+        // ─── 設備卡片牆 ───────────────────────────────────────────────────────────
+
+        private bool FilterCard(object obj)
+        {
+            if (obj is not ScheduleEquipmentCardViewModel card) return false;
+
+            if (SelectedSchedule != null)
+                return card.HasMatchingProgram;
+
+            if (_visibleScheduleKeys.Any())
+                return card.HasAnyFeasibleEpForKeys(_visibleScheduleKeys);
+
+            return true;
+        }
+
+        private void UpdateVisibleScheduleKeys()
+        {
+            _visibleScheduleKeys = _allSchedules
+                .Where(FilterSchedule)
+                .Select(s => (s.ProductId, s.ProcessId))
+                .ToHashSet();
+        }
+
+        private void BuildEquipmentCards(List<EquipmentProduct> allEps, List<ProgramTuningRecord> inProgressTunings)
+        {
+            _allCards.Clear();
+
+            foreach (var group in allEps.GroupBy(ep => ep.EquipmentId))
+            {
+                var eq = group.First().Equipment;
+                if (eq == null) continue;
+
+                var equipOrders   = _allOrders.Where(o => o.EquipmentId == eq.Id).ToList();
+                var pendingOrders = equipOrders.Where(o => o.Status == OrderProductionStatus.Pending).ToList();
+                var inProdOrders  = equipOrders.Where(o => o.Status == OrderProductionStatus.InProduction).ToList();
+
+                var card = new ScheduleEquipmentCardViewModel
+                {
+                    EquipmentId          = eq.Id,
+                    Code                 = eq.Code,
+                    Name                 = eq.Name,
+                    AllEquipmentProducts = group.ToList(),
+                };
+                card.PendingOrderCount    = pendingOrders.Count;
+                card.InProductionOrderCount = inProdOrders.Count;
+                card.TotalPendingQty      = pendingOrders.Sum(o => o.Quantity ?? 0);
+                card.InProductionInfo     = inProdOrders.FirstOrDefault()?.ProductName;
+                card.ActiveTuning         = inProgressTunings.FirstOrDefault(t => t.EquipmentId == eq.Id);
+
+                _allCards.Add(card);
+            }
+        }
+
+        private void UpdateCardCompatibility(ScheduleUiModel schedule)
+        {
+            foreach (var card in _allCards)
+            {
+                var matching = card.AllEquipmentProducts
+                    .Where(ep => ep.Sop?.ProductId == schedule.ProductId && ep.Sop?.ProcessId == schedule.ProcessId)
+                    .ToList();
+
+                card.HasMatchingProgram = matching.Any();
+
+                var feasible = matching.Where(ep => ep.ProductionStatus == TuningType.Feasible).ToList();
+                card.IsCompatibleWithSelectedSchedule = feasible.Any();
+                card.CompatibleEquipmentProducts = feasible;
+                card.FeasibleMatchingCount = feasible.Count;
+                card.TotalMatchingCount    = matching.Count;
+            }
+        }
+
+        private void UpdateSelectedScheduleStats(ScheduleUiModel? schedule)
+        {
+            if (schedule == null)
+            {
+                SelectedScheduleOrderTotal      = 0;
+                SelectedScheduleOrderIncomplete = 0;
+                SelectedScheduleEquipments      = string.Empty;
+                return;
+            }
+
+            var orders = _allOrders.Where(o => o.ScheduleId == schedule.ScheduleId).ToList();
+            SelectedScheduleOrderTotal = orders.Count(o => o.Status != OrderProductionStatus.Cancelled);
+            SelectedScheduleOrderIncomplete = orders.Count(o =>
+                o.Status == OrderProductionStatus.Pending || o.Status == OrderProductionStatus.InProduction);
+
+            var assignedIds = orders
+                .Where(o => o.Status != OrderProductionStatus.Cancelled)
+                .Select(o => o.EquipmentId)
+                .ToHashSet();
+            SelectedScheduleEquipments = string.Join(", ", _allCards
+                .Where(c => assignedIds.Contains(c.EquipmentId))
+                .Select(c => c.Name));
         }
     }
 }
