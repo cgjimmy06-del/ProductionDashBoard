@@ -190,5 +190,19 @@ namespace FProductionDashBoard.Repositories
             });
             await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
+
+        public async Task RecalcActualQuantityAsync(int scheduleId)
+        {
+            await using var ctx = _factory.CreateDbContext();
+            var schedule = await ctx.Schedules.FindAsync(scheduleId).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"[RecalcActualQuantityAsync] 找不到排程 ScheduleId={scheduleId}");
+            var totalQty = await ctx.OrderProductions
+                .Where(o => o.ScheduleId == scheduleId && o.Status != OrderProductionStatus.Cancelled)
+                .SumAsync(o => o.Quantity ?? 0)
+                .ConfigureAwait(false);
+            schedule.ActualQuantity = totalQty;
+            schedule.UpdateAt = DateTime.Now;
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
+        }
     }
 }

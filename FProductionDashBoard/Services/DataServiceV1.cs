@@ -973,6 +973,7 @@ namespace FProductionDashBoard.Services.V1
                 var schedule = await _scheduleRep.GetByIdWithDetailsAsync(scheduleId.Value).ConfigureAwait(false);
                 if (schedule?.Status == ScheduleStatus.Pending)
                     await _scheduleRep.MarkScheduledAsync(scheduleId.Value, createdBy, DateTime.Now).ConfigureAwait(false);
+                await _scheduleRep.RecalcActualQuantityAsync(scheduleId.Value).ConfigureAwait(false);
             }
             return orderId;
         }
@@ -995,7 +996,10 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[CancelOrderAsync] 接單 Repository 連線失敗");
+            var order = await _orderProductionRep.GetByIdAsync(orderId).ConfigureAwait(false);
             await _orderProductionRep.CancelAsync(orderId, description).ConfigureAwait(false);
+            if (order?.ScheduleId.HasValue == true)
+                await _scheduleRep.RecalcActualQuantityAsync(order.ScheduleId.Value).ConfigureAwait(false);
         }
 
         #endregion

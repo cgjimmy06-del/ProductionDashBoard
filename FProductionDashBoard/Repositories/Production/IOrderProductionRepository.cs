@@ -9,6 +9,7 @@ namespace FProductionDashBoard.Repositories
     {
         Task<bool> CheckConnectionAsync();
         Task<List<OrderProduction>> GetAllAsync();
+        Task<OrderProduction?> GetByIdAsync(int orderId);
         // Returns Pending + InProduction + Completed orders (excludes Cancelled), ordered by create_at asc
         Task<List<OrderProduction>> GetByEquipmentAsync(int equipmentId);
         Task<List<OrderProduction>> GetByScheduleAsync(int scheduleId);
