@@ -160,7 +160,7 @@ namespace FProductionDashBoard.ViewModels
             StatPending      = src.Count(s => s.Status == ScheduleStatus.Pending);
             StatPendingQty   = src.Where(s => s.Status == ScheduleStatus.Pending).Sum(s => s.Quantity);
             StatScheduled    = src.Count(s => s.Status == ScheduleStatus.Scheduled);
-            StatScheduledQty = src.Where(s => s.Status == ScheduleStatus.Scheduled).Sum(s => s.Quantity);
+            StatScheduledQty = src.Where(s => s.Status == ScheduleStatus.Scheduled).Sum(s => s.ActualQuantity ?? 0);
             StatCompleted    = src.Count(s => s.Status == ScheduleStatus.Completed);
             StatCompletedQty = src.Where(s => s.Status == ScheduleStatus.Completed).Sum(s => s.ActualQuantity ?? 0);
             StatReleased     = src.Count(s => s.Status == ScheduleStatus.Released);

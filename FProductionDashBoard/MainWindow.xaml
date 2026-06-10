@@ -58,6 +58,9 @@
             <DataTemplate DataType="{x:Type localvm:ProductInOutViewModel}">
                 <localuc:ProductInOutView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type localvm:ScheduleViewModel}">
+                <localuc:ScheduleView />
+            </DataTemplate>
 
         </ResourceDictionary>
     </Window.Resources>

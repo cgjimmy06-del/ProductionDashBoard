@@ -1,0 +1,316 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.ScheduleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:localvm="clr-namespace:FProductionDashBoard.ViewModels"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="1400">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Row 0：日期列 -->
+            <RowDefinition Height="Auto"/>  <!-- Row 1：統計列 -->
+            <RowDefinition Height="Auto"/>  <!-- Row 2：篩選列 -->
+            <RowDefinition Height="*"/>     <!-- Row 3：DataGrid -->
+        </Grid.RowDefinitions>
+
+        <!-- ========== Row 0：日期列 ========== -->
+        <DockPanel Grid.Row="0" Margin="0,0,0,10">
+
+            <!-- 右：重新整理按鈕 -->
+            <Button DockPanel.Dock="Right"
+                    Content="{DynamicResource SchRefreshButton}"
+                    Style="{DynamicResource FunctionButtonStyle}"
+                    Background="{DynamicResource PrimaryBrush}"
+                    Padding="8,2" Height="Auto"
+                    Command="{Binding RefreshCommand}"/>
+
+            <!-- 左：日期區間 + 快捷鍵 -->
+            <StackPanel Orientation="Horizontal">
+                <DatePicker SelectedDate="{Binding DateRangeStart}"
+                            materialDesign:HintAssist.Hint="{DynamicResource SchFilterDateStart}"
+                            Width="130" Margin="0,0,4,0"/>
+                <TextBlock Text="~" VerticalAlignment="Center" Margin="0,0,4,0"
+                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                <DatePicker SelectedDate="{Binding DateRangeEnd}"
+                            materialDesign:HintAssist.Hint="{DynamicResource SchFilterDateEnd}"
+                            Width="130" Margin="0,0,12,0"/>
+                <Button Content="{DynamicResource SchShortcutToday}"
+                        Style="{DynamicResource FunctionButtonStyle}"
+                        Background="{DynamicResource SecondaryBrush}"
+                        Padding="8,2" Height="Auto" Margin="0,0,4,0"
+                        Command="{Binding SetDateTodayCommand}"/>
+                <Button Content="{DynamicResource SchShortcutLast3Days}"
+                        Style="{DynamicResource FunctionButtonStyle}"
+                        Background="{DynamicResource SecondaryBrush}"
+                        Padding="8,2" Height="Auto" Margin="0,0,4,0"
+                        Command="{Binding SetDateLast3DaysCommand}"/>
+                <Button Content="{DynamicResource SchShortcutLast5Days}"
+                        Style="{DynamicResource FunctionButtonStyle}"
+                        Background="{DynamicResource SecondaryBrush}"
+                        Padding="8,2" Height="Auto" Margin="0,0,4,0"
+                        Command="{Binding SetDateLast5DaysCommand}"/>
+                <Button Content="{DynamicResource SchShortcutCurrentWeek}"
+                        Style="{DynamicResource FunctionButtonStyle}"
+                        Background="{DynamicResource SecondaryBrush}"
+                        Padding="8,2" Height="Auto" Margin="0,0,4,0"
+                        Command="{Binding SetDateCurrentWeekCommand}"/>
+                <Button Content="{DynamicResource SchShortcutCurrentMonth}"
+                        Style="{DynamicResource FunctionButtonStyle}"
+                        Background="{DynamicResource SecondaryBrush}"
+                        Padding="8,2" Height="Auto"
+                        Command="{Binding SetDateCurrentMonthCommand}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- ========== Row 1：統計列 ========== -->
+        <UniformGrid Grid.Row="1" Rows="1" Margin="0,0,0,10">
+
+            <!-- 全部 -->
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="{DynamicResource SchStatTotalLabel}" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding StatTotal}" Style="{StaticResource StatNumberStyle}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{Binding StatTotalQty, StringFormat='{}{0:N0} pcs'}"
+                               Style="{StaticResource StatQtyStyle}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 待排單 -->
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="{DynamicResource SchStatPendingLabel}" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding StatPending}" Style="{StaticResource StatNumberStyle}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{Binding StatPendingQty, StringFormat='{}{0:N0} pcs'}"
+                               Style="{StaticResource StatQtyStyle}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <!-- 待補排括號（count > 0 才顯示） -->
+                    <TextBlock>
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource StatQtyStyle}">
+                                <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding StatUnderScheduledCount}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                        <Run Text="(+"/><Run Text="{Binding StatUnderScheduledCount}"/><Run Text=" 筆 / "/><Run Text="{Binding StatUnderScheduledQtyDeficit}"/><Run Text=" 件待補排)"/>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <!-- 已排單（顯示 ActualQty） -->
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="{DynamicResource SchStatScheduledLabel}" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding StatScheduled}" Style="{StaticResource StatNumberStyle}"
+                               Foreground="{DynamicResource PrimaryBrush}"/>
+                    <TextBlock Text="{Binding StatScheduledActualQty, StringFormat='{}{0:N0} pcs'}"
+                               Style="{StaticResource StatQtyStyle}"
+                               Foreground="{DynamicResource PrimaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 生產完成（衍生） -->
+            <Border Style="{StaticResource StatCardBorderStyle}">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="{DynamicResource SchStatProductionDoneLabel}" Style="{StaticResource StatLabelStyle}"/>
+                    <TextBlock Text="{Binding StatProductionDone}" Style="{StaticResource StatNumberStyle}"
+                               Foreground="{DynamicResource SuccessBrush}"/>
+                    <TextBlock Text="{Binding StatProductionDoneActualQty, StringFormat='{}{0:N0} pcs'}"
+                               Style="{StaticResource StatQtyStyle}"
+                               Foreground="{DynamicResource SuccessBrush}"/>
+                </StackPanel>
+            </Border>
+
+        </UniformGrid>
+
+        <!-- ========== Row 2：篩選列 ========== -->
+        <Grid Grid.Row="2" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 狀態篩選 -->
+            <ComboBox Grid.Column="0" Margin="0,0,6,0"
+                      ItemsSource="{Binding StatusFilterOptions}"
+                      SelectedValue="{Binding StatusFilter}"
+                      SelectedValuePath="Value">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Label}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Value}" Value="{x:Static localvm:ScheduleViewFilter.Separator}">
+                                <Setter Property="IsEnabled" Value="False"/>
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+            </ComboBox>
+
+            <!-- 品號/型號/批號 搜尋 -->
+            <TextBox Grid.Column="1" Margin="0,0,6,0"
+                     materialDesign:HintAssist.Hint="{DynamicResource SchFilterSearch}"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=200}"/>
+
+            <!-- 製程 搜尋 -->
+            <TextBox Grid.Column="2" Margin="0"
+                     materialDesign:HintAssist.Hint="{DynamicResource SchFilterProcess}"
+                     Text="{Binding ProcessFilter, UpdateSourceTrigger=PropertyChanged, Delay=200}"/>
+        </Grid>
+
+        <!-- ========== Row 3：DataGrid ========== -->
+        <DataGrid Grid.Row="3"
+                  ItemsSource="{Binding SchedulesView}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  SelectionMode="Single"
+                  FontSize="14"
+                  RowHeight="30"
+                  VirtualizingPanel.IsVirtualizing="True"
+                  materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
+            <DataGrid.Columns>
+
+                <!-- # -->
+                <DataGridTextColumn Header="{DynamicResource SchColId}"
+                                    Binding="{Binding ScheduleId}"
+                                    Width="50"/>
+
+                <!-- 品牌 -->
+                <DataGridTextColumn Header="{DynamicResource SchColBrand}"
+                                    Binding="{Binding BrandName}"
+                                    Width="60"/>
+
+                <!-- 品號 -->
+                <DataGridTextColumn Header="{DynamicResource SchColPartNo}"
+                                    Binding="{Binding PartNo}"
+                                    Width="90"/>
+
+                <!-- 型號 -->
+                <DataGridTextColumn Header="{DynamicResource SchColModel}"
+                                    Binding="{Binding ModelName}"
+                                    Width="40"/>
+
+                <!-- 製程 -->
+                <DataGridTextColumn Header="{DynamicResource SchColProcess}"
+                                    Binding="{Binding ProcessName}"
+                                    Width="Auto"/>
+
+                <!-- 數量/進度（TemplateColumn） -->
+                <DataGridTemplateColumn Header="{DynamicResource SchColProgress}" Width="2*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel VerticalAlignment="Center" Margin="4,2">
+                                <ProgressBar Value="{Binding ActualQuantity, TargetNullValue=0}"
+                                             Maximum="{Binding Quantity}"
+                                             Height="6" Margin="0,0,0,2"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}">
+                                        <Run Text="{Binding ActualQuantity, TargetNullValue=0}"/>
+                                        <Run Text=" / "/>
+                                        <Run Text="{Binding Quantity}"/>
+                                    </TextBlock>
+                                    <!-- 等待天數（Pending 且非當天才顯示） -->
+                                    <TextBlock FontSize="11"
+                                               Text="{Binding WaitingDaysText}"
+                                               Foreground="{DynamicResource ErrorBrush}"
+                                               Margin="6,0,0,0"
+                                               Visibility="{Binding WaitingDaysText,
+                                                            Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- 批號 -->
+                <DataGridTextColumn Header="{DynamicResource SchColLotNo}"
+                                    Binding="{Binding LotNo, TargetNullValue='-'}"
+                                    Width="Auto"/>
+
+                <!-- 入料日 -->
+                <DataGridTextColumn Header="{DynamicResource SchColReceivedAt}"
+                                    Binding="{Binding ReceivedAt, StringFormat='MM/dd'}"
+                                    Width="60"/>
+
+                <!-- 狀態 + Derived Badge（TemplateColumn） -->
+                <DataGridTemplateColumn Header="{DynamicResource SchColStatus}" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0">
+                                <!-- Status Chip -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="8" Height="8" Margin="0,0,4,0"
+                                             VerticalAlignment="Center"
+                                             Fill="{Binding Status,
+                                                    Converter={StaticResource ScheduleStatusToBrushConverter}}"/>
+                                    <TextBlock Text="{Binding Status,
+                                                      Converter={StaticResource ScheduleStatusToLabelConverter}}"
+                                               Foreground="{Binding Status,
+                                                           Converter={StaticResource ScheduleStatusToBrushConverter}}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="ToolTip" Value="{Binding DerivedBadge}"/>
+                        </Style>
+                    </DataGridTemplateColumn.CellStyle>
+                </DataGridTemplateColumn>
+
+                <!-- Derived Badge -->
+                <DataGridTemplateColumn Header="" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DerivedBadge}"
+                                       VerticalAlignment="Center"
+                                       Margin="4,0"
+                                       FontSize="12"
+                                       Visibility="{Binding DerivedBadge,
+                                                    Converter={StaticResource StringHasValueToVisibilityConverter}}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DerivedBadge}" Value="⬟ 生產中">
+                                                <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding DerivedBadge}" Value="✓ 生產完成">
+                                                <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding DerivedBadge}" Value="⚠ 部分完成">
+                                                <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding DerivedBadge}" Value="⚠ 取消注意">
+                                                <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</UserControl>
