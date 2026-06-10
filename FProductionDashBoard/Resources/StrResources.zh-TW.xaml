@@ -408,6 +408,17 @@
     <sys:String x:Key="SchStatPendingLabel">待排單</sys:String>
     <sys:String x:Key="SchStatScheduledLabel">已排單</sys:String>
     <sys:String x:Key="SchStatProductionDoneLabel">生產完成</sys:String>
+    <sys:String x:Key="SchStatIdleCardLabel">閒置設備</sys:String>
+    <sys:String x:Key="SchStatLowLoadCardLabel">低負載設備</sys:String>
+
+    <sys:String x:Key="SchAssignButton">指派</sys:String>
+    <sys:String x:Key="SchCardOrders">接單</sys:String>
+    <sys:String x:Key="SchCardPrograms">可生產</sys:String>
+    <sys:String x:Key="SchCardTuningLabel">調試中</sys:String>
+    <sys:String x:Key="SchCardInProductionChip">生產中</sys:String>
+    <sys:String x:Key="SchCardLoadLow">低負載</sys:String>
+    <sys:String x:Key="SchCardLoadMid">中負載</sys:String>
+    <sys:String x:Key="SchCardLoadHigh">高負載</sys:String>
 
     <sys:String x:Key="SchFilterDateStart">起始日期</sys:String>
     <sys:String x:Key="SchFilterDateEnd">結束日期</sys:String>

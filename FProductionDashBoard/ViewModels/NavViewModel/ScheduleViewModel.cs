@@ -56,6 +56,10 @@ namespace FProductionDashBoard.ViewModels
         // Layer 2：選取排單
         [ObservableProperty] private ScheduleUiModel? selectedSchedule;
 
+        // 設備統計卡片（全體設備）
+        [ObservableProperty] private int statIdleCardCount;
+        [ObservableProperty] private int statLowLoadCardCount;
+
         // 右側統計列（Layer 2 才有意義）
         [ObservableProperty] private int selectedScheduleOrderTotal;
         [ObservableProperty] private int selectedScheduleOrderIncomplete;
@@ -150,6 +154,7 @@ namespace FProductionDashBoard.ViewModels
         public void InjectCardsForTest(List<EquipmentProduct> equipmentProducts, List<ProgramTuningRecord>? tunings = null)
         {
             BuildEquipmentCards(equipmentProducts, tunings ?? new());
+            ComputeCardStats();
             UpdateVisibleScheduleKeys();
             EquipmentCardsView.Refresh();
         }
@@ -173,6 +178,7 @@ namespace FProductionDashBoard.ViewModels
                 ComputeStats();
 
                 BuildEquipmentCards(allEps, inProgressTunings);
+                ComputeCardStats();
 
                 SchedulesView.Refresh();
                 UpdateVisibleScheduleKeys();
@@ -443,6 +449,14 @@ namespace FProductionDashBoard.ViewModels
 
                 _allCards.Add(card);
             }
+        }
+
+        private void ComputeCardStats()
+        {
+            StatIdleCardCount    = _allCards.Count(c => c.HasAnyFeasibleEp &&
+                                                        c.PendingOrderCount == 0 &&
+                                                        c.InProductionOrderCount == 0);
+            StatLowLoadCardCount = _allCards.Count(c => c.LoadLevel == ScheduleCardLoadLevel.Low);
         }
 
         private void UpdateCardCompatibility(ScheduleUiModel schedule)
