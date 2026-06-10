@@ -411,6 +411,11 @@
     <sys:String x:Key="SchStatIdleCardLabel">Máy nhàn rỗi</sys:String>
     <sys:String x:Key="SchStatLowLoadCardLabel">Máy tải thấp</sys:String>
 
+    <sys:String x:Key="SchAssignDialogSopType">Loại SOP</sys:String>
+    <sys:String x:Key="SchAssignDialogQty">Số lượng</sys:String>
+    <sys:String x:Key="SchAssignDialogScheduleQty">SL đặt hàng</sys:String>
+    <sys:String x:Key="SchAssignDialogEquipment">Thiết bị</sys:String>
+
     <sys:String x:Key="SchAssignButton">Giao việc</sys:String>
     <sys:String x:Key="SchCardOrders">Đơn hàng</sys:String>
     <sys:String x:Key="SchCardPrograms">Khả thi</sys:String>

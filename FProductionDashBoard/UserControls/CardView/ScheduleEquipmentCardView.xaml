@@ -126,13 +126,16 @@
                 </TextBlock>
             </StackPanel>
 
-            <!-- 指派按鈕（Commit 4 啟用） -->
+            <!-- 指派按鈕 -->
             <Button Content="{DynamicResource SchAssignButton}"
                     Style="{DynamicResource FunctionButtonStyle}"
                     Background="{DynamicResource PrimaryBrush}"
                     Padding="8,4" Height="Auto"
                     HorizontalAlignment="Stretch"
-                    IsEnabled="False"/>
+                    Command="{Binding DataContext.AssignOrderCommand,
+                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                    CommandParameter="{Binding}"
+                    IsEnabled="{Binding IsCompatibleWithSelectedSchedule}"/>
 
         </StackPanel>
     </Border>

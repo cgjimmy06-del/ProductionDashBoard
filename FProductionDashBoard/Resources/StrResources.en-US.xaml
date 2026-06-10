@@ -411,6 +411,11 @@
     <sys:String x:Key="SchStatIdleCardLabel">Idle Equip.</sys:String>
     <sys:String x:Key="SchStatLowLoadCardLabel">Low-Load Equip.</sys:String>
 
+    <sys:String x:Key="SchAssignDialogSopType">SOP Type</sys:String>
+    <sys:String x:Key="SchAssignDialogQty">Order Qty</sys:String>
+    <sys:String x:Key="SchAssignDialogScheduleQty">Schedule Qty</sys:String>
+    <sys:String x:Key="SchAssignDialogEquipment">Equipment</sys:String>
+
     <sys:String x:Key="SchAssignButton">Assign</sys:String>
     <sys:String x:Key="SchCardOrders">Orders</sys:String>
     <sys:String x:Key="SchCardPrograms">Feasible</sys:String>

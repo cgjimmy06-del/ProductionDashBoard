@@ -29,6 +29,7 @@ namespace FProductionDashBoard.ViewModels
     public partial class ScheduleViewModel : ObservableObject
     {
         private readonly DashboardCoreServices _core;
+        private readonly IDialogService _dialog;
         private readonly List<ScheduleUiModel> _allSchedules = new();
         private readonly List<OrderProductionInfo> _allOrders = new();
         private readonly List<ScheduleEquipmentCardViewModel> _allCards = new();
@@ -104,9 +105,10 @@ namespace FProductionDashBoard.ViewModels
             EquipmentCardsView?.Refresh();
         }
 
-        public ScheduleViewModel(DashboardCoreServices core)
+        public ScheduleViewModel(DashboardCoreServices core, IDialogService dialog)
         {
             _core = core;
+            _dialog = dialog;
 
             StatusFilterOptions = new ScheduleViewFilterOption[]
             {
@@ -340,6 +342,43 @@ namespace FProductionDashBoard.ViewModels
             if (!IsWithinDateRange(s)) return false;
 
             return true;
+        }
+
+        // ─── 排單指派 ─────────────────────────────────────────────────────────────
+
+        [RelayCommand]
+        private async Task AssignOrder(ScheduleEquipmentCardViewModel card)
+        {
+            if (SelectedSchedule == null || card.CompatibleEquipmentProducts.Count == 0) return;
+
+            var assignedQty = _allOrders
+                .Where(o => o.ScheduleId == SelectedSchedule.ScheduleId &&
+                            o.Status != OrderProductionStatus.Cancelled)
+                .Sum(o => o.Quantity ?? 0);
+            var remainingQty = Math.Max(0, SelectedSchedule.Quantity - assignedQty);
+
+            var dialogVm = new OrderAssignmentDialogViewModel(
+                SelectedSchedule, card.CompatibleEquipmentProducts, remainingQty, card.Name);
+
+            var result = _dialog.ShowDialog(dialogVm);
+            if (result == null) return;
+
+            try
+            {
+                await _core.Data.AddOrderAsync(
+                    result.EquipmentId,
+                    result.EquipmentProductId,
+                    result.Quantity,
+                    _core.Authorization.CurrentUser?.Id ?? 0,
+                    result.ScheduleId);
+                _core.Log.AddLog($"[排單管理] 指派成功：{SelectedSchedule.LotNo} → {card.Name}");
+                await LoadAllAsync();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[排單管理] 指派失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[AssignOrderAsync] {ex.Message}");
+            }
         }
 
         // ─── 重新整理 ─────────────────────────────────────────────────────────────

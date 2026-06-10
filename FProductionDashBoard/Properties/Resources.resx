@@ -396,6 +396,21 @@
   <data name="ScheduleOpForcedBySuffix" xml:space="preserve">
     <value></value>
   </data>
+  <data name="SchAssignDialogTitle" xml:space="preserve">
+    <value>Assign Order</value>
+  </data>
+  <data name="SchAssignNoSopSelected" xml:space="preserve">
+    <value>Please select a SOP type</value>
+  </data>
+  <data name="SchAssignQtyRequired" xml:space="preserve">
+    <value>Please enter order quantity</value>
+  </data>
+  <data name="SchAssignQtyExceeded" xml:space="preserve">
+    <value>Order quantity cannot exceed remaining quantity</value>
+  </data>
+  <data name="SchAssignQtyMaxHint" xml:space="preserve">
+    <value>Max: {0}</value>
+  </data>
   <data name="PioFormErrorProduct" xml:space="preserve">
     <value>Please select a product</value>
   </data>

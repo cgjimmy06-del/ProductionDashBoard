@@ -337,7 +337,8 @@ namespace FProductionDashBoard.Tests.ViewModels
             var log  = new LogService();
             var auth = new AuthorizationService();
             var cr   = new Mock<ICardReaderService>().Object;
-            return new ScheduleViewModel(new DashboardCoreServices(log, mock.Object, auth, cr));
+            var dialog = new Mock<IDialogService>().Object;
+            return new ScheduleViewModel(new DashboardCoreServices(log, mock.Object, auth, cr), dialog);
         }
 
         private static EquipmentProduct MakeEp(int productId, int processId, TuningType status, int eqId = 1)

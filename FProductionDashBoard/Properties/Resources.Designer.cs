@@ -696,6 +696,21 @@ namespace FProductionDashBoard.Properties {
         internal static string ScheduleOpForcedBySuffix {
             get { return ResourceManager.GetString("ScheduleOpForcedBySuffix", resourceCulture); }
         }
+        internal static string SchAssignDialogTitle {
+            get { return ResourceManager.GetString("SchAssignDialogTitle", resourceCulture); }
+        }
+        internal static string SchAssignNoSopSelected {
+            get { return ResourceManager.GetString("SchAssignNoSopSelected", resourceCulture); }
+        }
+        internal static string SchAssignQtyRequired {
+            get { return ResourceManager.GetString("SchAssignQtyRequired", resourceCulture); }
+        }
+        internal static string SchAssignQtyExceeded {
+            get { return ResourceManager.GetString("SchAssignQtyExceeded", resourceCulture); }
+        }
+        internal static string SchAssignQtyMaxHint {
+            get { return ResourceManager.GetString("SchAssignQtyMaxHint", resourceCulture); }
+        }
         internal static string PioFormErrorProduct {
             get { return ResourceManager.GetString("PioFormErrorProduct", resourceCulture); }
         }

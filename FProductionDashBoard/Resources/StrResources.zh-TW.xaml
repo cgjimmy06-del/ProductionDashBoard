@@ -411,6 +411,11 @@
     <sys:String x:Key="SchStatIdleCardLabel">閒置設備</sys:String>
     <sys:String x:Key="SchStatLowLoadCardLabel">低負載設備</sys:String>
 
+    <sys:String x:Key="SchAssignDialogSopType">SOP 類型</sys:String>
+    <sys:String x:Key="SchAssignDialogQty">接單數量</sys:String>
+    <sys:String x:Key="SchAssignDialogScheduleQty">排單數量</sys:String>
+    <sys:String x:Key="SchAssignDialogEquipment">設備</sys:String>
+
     <sys:String x:Key="SchAssignButton">指派</sys:String>
     <sys:String x:Key="SchCardOrders">接單</sys:String>
     <sys:String x:Key="SchCardPrograms">可生產</sys:String>
