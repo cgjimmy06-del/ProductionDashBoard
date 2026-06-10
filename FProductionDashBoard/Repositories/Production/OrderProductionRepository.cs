@@ -58,6 +58,28 @@ namespace FProductionDashBoard.Repositories
                 .ConfigureAwait(false);
         }
 
+        public async Task<List<OrderProduction>> GetByScheduleAsync(int scheduleId)
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.OrderProductions
+                .Where(o => o.ScheduleId == scheduleId)
+                .Include(o => o.EquipmentProduct)
+                    .ThenInclude(ep => ep!.Sop)
+                    .ThenInclude(s => s!.Product)
+                    .ThenInclude(p => p!.Part)
+                .Include(o => o.EquipmentProduct)
+                    .ThenInclude(ep => ep!.Sop)
+                    .ThenInclude(s => s!.Product)
+                    .ThenInclude(p => p!.Model)
+                .Include(o => o.EquipmentProduct)
+                    .ThenInclude(ep => ep!.Sop)
+                    .ThenInclude(s => s!.Process)
+                .Include(o => o.StartedByEmployee)
+                .OrderBy(o => o.CreateAt)
+                .ToListAsync()
+                .ConfigureAwait(false);
+        }
+
         public async Task<OrderProduction?> GetInProductionByEquipmentAsync(int equipmentId)
         {
             await using var ctx = _factory.CreateDbContext();
@@ -78,13 +100,14 @@ namespace FProductionDashBoard.Repositories
                 .ConfigureAwait(false);
         }
 
-        public async Task<int> AddAsync(int equipmentId, int equipmentProductId, int? quantity, int createdBy)
+        public async Task<int> AddAsync(int equipmentId, int equipmentProductId, int? quantity, int createdBy, int? scheduleId = null)
         {
             await using var ctx = _factory.CreateDbContext();
             var order = new OrderProduction
             {
                 EquipmentId = equipmentId,
                 EquipmentProductId = equipmentProductId,
+                ScheduleId = scheduleId,
                 Status = OrderProductionStatus.Pending,
                 Quantity = quantity,
                 CreatedBy = createdBy,

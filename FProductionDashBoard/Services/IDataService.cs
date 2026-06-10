@@ -122,8 +122,9 @@ namespace FProductionDashBoard.Services
         // ─── 接單服務 ─────────────────────────────────────────────────────────
         public Task<List<OrderProduction>> GetAllOrderProductionsAsync();
         public Task<List<OrderProduction>> GetOrdersByEquipmentAsync(int equipmentId);
+        public Task<List<OrderProduction>> GetOrdersByScheduleAsync(int scheduleId);
         public Task<OrderProduction?> GetInProductionOrderAsync(int equipmentId);
-        public Task<int> AddOrderAsync(int equipmentId, int equipmentProductId, int? quantity, int createdBy);
+        public Task<int> AddOrderAsync(int equipmentId, int equipmentProductId, int? quantity, int createdBy, int? scheduleId = null);
         public Task StartProductionAsync(int orderId, int startedBy);
         public Task EndProductionAsync(int orderId);
         public Task CancelOrderAsync(int orderId, string? description);
@@ -132,6 +133,7 @@ namespace FProductionDashBoard.Services
         public Task<int> StartProgramTuningAsync(int equipmentId, int equipmentProductId, TuningType type, int startedBy, DateTime startedAt);
         public Task EndProgramTuningAsync(int programTuningId, DateTime endedAt, string? description = null);
         public Task<ProgramTuningRecord?> GetInProgressProgramTuningAsync(int equipmentId);
+        public Task<List<ProgramTuningRecord>> GetAllInProgressProgramTuningAsync();
 
         // ─── MESInformation：客戶代碼 & MES 設備 ────────────────────────────
         /// <summary>
