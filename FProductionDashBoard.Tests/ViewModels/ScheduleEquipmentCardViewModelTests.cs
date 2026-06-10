@@ -185,6 +185,62 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.True(card.HasAnyFeasibleEpForKeys(keys));
         }
 
+        // ─── HasAnyCompatibleEpForKeys ────────────────────────────────────────
+
+        [Fact]
+        public void HasAnyCompatibleEpForKeys_MatchingFeasibleEp_True()
+        {
+            var card = MakeCard(new List<EquipmentProduct>
+            {
+                MakeEp(productId: 10, processId: 20, TuningType.Feasible),
+            });
+            var keys = new[] { (ProductId: 10, ProcessId: 20) };
+
+            Assert.True(card.HasAnyCompatibleEpForKeys(keys));
+        }
+
+        [Fact]
+        public void HasAnyCompatibleEpForKeys_MatchingNonFeasibleEp_True()
+        {
+            var card = MakeCard(new List<EquipmentProduct>
+            {
+                MakeEp(productId: 10, processId: 20, TuningType.Pending),
+            });
+            var keys = new[] { (ProductId: 10, ProcessId: 20) };
+
+            Assert.True(card.HasAnyCompatibleEpForKeys(keys));
+        }
+
+        [Fact]
+        public void HasAnyCompatibleEpForKeys_NoMatchingKey_False()
+        {
+            var card = MakeCard(new List<EquipmentProduct>
+            {
+                MakeEp(productId: 10, processId: 20, TuningType.Feasible),
+            });
+            var keys = new[] { (ProductId: 99, ProcessId: 99) };
+
+            Assert.False(card.HasAnyCompatibleEpForKeys(keys));
+        }
+
+        // ─── ActiveOrderCount ─────────────────────────────────────────────────
+
+        [Fact]
+        public void ActiveOrderCount_PendingPlusInProduction()
+        {
+            var card = MakeCard(new List<EquipmentProduct>(), pendingCount: 2, inProdCount: 3);
+
+            Assert.Equal(5, card.ActiveOrderCount);
+        }
+
+        [Fact]
+        public void ActiveOrderCount_NeitherPendingNorInProduction_Zero()
+        {
+            var card = MakeCard(new List<EquipmentProduct>());
+
+            Assert.Equal(0, card.ActiveOrderCount);
+        }
+
         // ─── FeasibleMatchingCount / TotalMatchingCount ───────────────────────
 
         [Fact]

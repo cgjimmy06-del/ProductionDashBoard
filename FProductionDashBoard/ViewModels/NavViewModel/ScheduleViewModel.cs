@@ -408,7 +408,7 @@ namespace FProductionDashBoard.ViewModels
                 return card.HasMatchingProgram;
 
             if (_visibleScheduleKeys.Any())
-                return card.HasAnyFeasibleEpForKeys(_visibleScheduleKeys);
+                return card.HasAnyCompatibleEpForKeys(_visibleScheduleKeys);
 
             return true;
         }
@@ -443,7 +443,8 @@ namespace FProductionDashBoard.ViewModels
                 };
                 card.PendingOrderCount    = pendingOrders.Count;
                 card.InProductionOrderCount = inProdOrders.Count;
-                card.TotalPendingQty      = pendingOrders.Sum(o => o.Quantity ?? 0);
+                card.TotalPendingQty      = pendingOrders.Sum(o => o.Quantity ?? 0)
+                                          + inProdOrders.Sum(o => o.Quantity ?? 0);
                 card.InProductionInfo     = inProdOrders.FirstOrDefault()?.ProductName;
                 card.ActiveTuning         = inProgressTunings.FirstOrDefault(t => t.EquipmentId == eq.Id);
 

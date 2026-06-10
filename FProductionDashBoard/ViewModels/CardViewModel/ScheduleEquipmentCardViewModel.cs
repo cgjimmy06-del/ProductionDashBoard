@@ -25,6 +25,10 @@ namespace FProductionDashBoard.ViewModels
                 ep.ProductionStatus == TuningType.Feasible &&
                 keys.Any(k => k.ProductId == ep.Sop?.ProductId && k.ProcessId == ep.Sop?.ProcessId));
 
+        public bool HasAnyCompatibleEpForKeys(IEnumerable<(int ProductId, int ProcessId)> keys)
+            => AllEquipmentProducts.Any(ep =>
+                keys.Any(k => k.ProductId == ep.Sop?.ProductId && k.ProcessId == ep.Sop?.ProcessId));
+
         // Layer 2（依選取排單動態更新）
         [ObservableProperty] private bool isCompatibleWithSelectedSchedule = true;
         public bool HasMatchingProgram { get; set; } = true;
@@ -37,6 +41,11 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private int pendingOrderCount;
         [ObservableProperty] private int inProductionOrderCount;
         [ObservableProperty] private int totalPendingQty;
+
+        public int ActiveOrderCount => PendingOrderCount + InProductionOrderCount;
+
+        partial void OnPendingOrderCountChanged(int value)      => OnPropertyChanged(nameof(ActiveOrderCount));
+        partial void OnInProductionOrderCountChanged(int value) => OnPropertyChanged(nameof(ActiveOrderCount));
 
         [ObservableProperty] private string? inProductionInfo;
         [ObservableProperty] private ProgramTuningRecord? activeTuning;

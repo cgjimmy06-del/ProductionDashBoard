@@ -61,30 +61,13 @@
                            FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
                            Margin="0,0,4,0"/>
                 <TextBlock FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}">
-                    <Run Text="{Binding PendingOrderCount, Mode=OneWay}"/><Run Text=" 筆"/>
+                    <Run Text="{Binding ActiveOrderCount, Mode=OneWay}"/><Run Text=" 筆 / "/>
+                    <Run Text="{Binding TotalPendingQty, Mode=OneWay}"/><Run Text=" 件"/>
                 </TextBlock>
             </StackPanel>
 
             <!-- Chip 區 -->
             <WrapPanel Margin="0,0,0,4">
-                <!-- 生產中 chip -->
-                <Border CornerRadius="6" Padding="6,2" Margin="0,0,4,2"
-                        Background="{DynamicResource PrimaryBrush}">
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding InProductionOrderCount}" Value="0">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                    <TextBlock Text="{DynamicResource SchCardInProductionChip}"
-                               FontSize="11" FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextDarkBrush}"/>
-                </Border>
-
                 <!-- 調試中 chip -->
                 <Border CornerRadius="6" Padding="6,2" Margin="0,0,4,2"
                         Background="{DynamicResource WarningBrush}">
