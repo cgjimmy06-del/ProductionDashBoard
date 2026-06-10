@@ -61,7 +61,7 @@
                            FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
                            Margin="0,0,4,0"/>
                 <TextBlock FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}">
-                    <Run Text="{Binding PendingOrderCount}"/><Run Text=" 筆"/>
+                    <Run Text="{Binding PendingOrderCount, Mode=OneWay}"/><Run Text=" 筆"/>
                 </TextBlock>
             </StackPanel>
 
@@ -135,17 +135,17 @@
                            FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
                            Margin="0,0,4,0"/>
                 <TextBlock FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}">
-                    <Run Text="{Binding FeasibleMatchingCount}"/>
+                    <Run Text="{Binding FeasibleMatchingCount, Mode=OneWay}"/>
                 </TextBlock>
                 <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.7">
                     <Run Text=" ("/>
-                    <Run Text="{Binding TotalMatchingCount}"/>
+                    <Run Text="{Binding TotalMatchingCount, Mode=OneWay}"/>
                     <Run Text=")"/>
                 </TextBlock>
                 <TextBlock Text=" / "
                            FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.6"/>
                 <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.7">
-                    <Run Text="{Binding TotalProgramCount}"/>
+                    <Run Text="{Binding TotalProgramCount, Mode=OneWay}"/>
                 </TextBlock>
             </StackPanel>
 
