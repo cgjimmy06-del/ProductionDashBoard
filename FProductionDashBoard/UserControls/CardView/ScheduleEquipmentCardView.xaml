@@ -81,21 +81,27 @@
                 </Border>
 
                 <!-- 負載 chip（橘/藍卡才顯示，即 TotalPendingQty > 0） -->
-                <Border CornerRadius="6" Padding="6,2" Margin="0,0,0,2"
-                        Background="{DynamicResource SecondaryBackgroundBrush}">
+                <Border CornerRadius="6" Padding="6,2" Margin="0,0,0,2">
                     <Border.Style>
                         <Style TargetType="Border">
                             <Setter Property="Visibility" Value="Visible"/>
+                            <Setter Property="Background" Value="{DynamicResource ChipLoadLowBrush}"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding LoadLevel}" Value="{x:Static localvm:ScheduleCardLoadLevel.None}">
                                     <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding LoadLevel}" Value="{x:Static localvm:ScheduleCardLoadLevel.Mid}">
+                                    <Setter Property="Background" Value="{DynamicResource ChipLoadMidBrush}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding LoadLevel}" Value="{x:Static localvm:ScheduleCardLoadLevel.High}">
+                                    <Setter Property="Background" Value="{DynamicResource ChipLoadHighBrush}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
                     <TextBlock Text="{Binding LoadLevel, Converter={StaticResource ScheduleCardLoadLevelToLabelConverter}}"
                                FontSize="11"
-                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                               Foreground="{DynamicResource TextDarkBrush}"/>
                 </Border>
             </WrapPanel>
 

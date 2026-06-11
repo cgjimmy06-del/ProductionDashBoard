@@ -78,6 +78,15 @@ _core.Log.AddErrorLog($"[方法名] {ex.Message}");                    // 工程
 3. `ex.Message` / `ex.StackTrace` 等系統產生內容保留原始語言
 4. 失敗的 `AddLog` 必須明確標示 `LogLevel.Error`
 
+### 語言資源完整性規則
+
+新增或修改語言資源時，**必須同時補全三份**，禁止僅填其中一語言：
+
+- `.resx` 三語言：`Resources.resx` / `Resources.zh-TW.resx` / `Resources.vi-VN.resx`
+- StrResources XAML 三語言：`StrResources.zh-TW.xaml` / `StrResources.en-US.xaml` / `StrResources.vi-VN.xaml`
+
+每次新增 key 後必須確認三份檔案 key 數一致，兩類語言資源（resx / StrResources）需分別同步確認。
+
 ### EF Core 欄位對應
 
 規則詳見 memory `feedback_efcore_column_mapping.md`。

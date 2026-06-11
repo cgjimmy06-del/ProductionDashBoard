@@ -216,13 +216,13 @@
                 <Border Grid.Row="0" Style="{StaticResource StatCardBorderStyle}" Margin="4,0,0,8"
                         Visibility="{Binding IsStatsPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal" Margin="8,4">
-                        <TextBlock Text="總 Order：" Style="{StaticResource StatLabelStyle}"/>
+                        <TextBlock Text="{DynamicResource SchStatPanelOrderTotal}" Style="{StaticResource StatLabelStyle}"/>
                         <TextBlock Text="{Binding SelectedScheduleOrderTotal}"
                                    FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBlock Text="  未完成：" Style="{StaticResource StatLabelStyle}" Margin="12,0,0,0"/>
+                        <TextBlock Text="{DynamicResource SchStatPanelIncomplete}" Style="{StaticResource StatLabelStyle}" Margin="12,0,0,0"/>
                         <TextBlock Text="{Binding SelectedScheduleOrderIncomplete}"
                                    FontSize="14" Foreground="{DynamicResource WarningBrush}"/>
-                        <TextBlock Text="  已安排：" Style="{StaticResource StatLabelStyle}" Margin="12,0,0,0"/>
+                        <TextBlock Text="{DynamicResource SchStatPanelEquipments}" Style="{StaticResource StatLabelStyle}" Margin="12,0,0,0"/>
                         <TextBlock Text="{Binding SelectedScheduleEquipments}"
                                    Style="{StaticResource StatLabelStyle}" FontSize="12"/>
                     </StackPanel>
