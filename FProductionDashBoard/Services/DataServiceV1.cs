@@ -949,6 +949,13 @@ namespace FProductionDashBoard.Services.V1
             return await _orderProductionRep.GetByEquipmentAsync(equipmentId).ConfigureAwait(false);
         }
 
+        public async Task<List<OrderProduction>> GetOrdersByScheduleAsync(int scheduleId)
+        {
+            if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetOrdersByScheduleAsync] 接單 Repository 連線失敗");
+            return await _orderProductionRep.GetByScheduleAsync(scheduleId).ConfigureAwait(false);
+        }
+
         public async Task<OrderProduction?> GetInProductionOrderAsync(int equipmentId)
         {
             if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
@@ -956,11 +963,19 @@ namespace FProductionDashBoard.Services.V1
             return await _orderProductionRep.GetInProductionByEquipmentAsync(equipmentId).ConfigureAwait(false);
         }
 
-        public async Task<int> AddOrderAsync(int equipmentId, int equipmentProductId, int? quantity, int createdBy)
+        public async Task<int> AddOrderAsync(int equipmentId, int equipmentProductId, int? quantity, int createdBy, int? scheduleId = null)
         {
             if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[AddOrderAsync] 接單 Repository 連線失敗");
-            return await _orderProductionRep.AddAsync(equipmentId, equipmentProductId, quantity, createdBy).ConfigureAwait(false);
+            var orderId = await _orderProductionRep.AddAsync(equipmentId, equipmentProductId, quantity, createdBy, scheduleId).ConfigureAwait(false);
+            if (scheduleId.HasValue)
+            {
+                var schedule = await _scheduleRep.GetByIdWithDetailsAsync(scheduleId.Value).ConfigureAwait(false);
+                if (schedule?.Status == ScheduleStatus.Pending)
+                    await _scheduleRep.MarkScheduledAsync(scheduleId.Value, createdBy, DateTime.Now).ConfigureAwait(false);
+                await _scheduleRep.RecalcActualQuantityAsync(scheduleId.Value).ConfigureAwait(false);
+            }
+            return orderId;
         }
 
         public async Task StartProductionAsync(int orderId, int startedBy)
@@ -981,7 +996,10 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[CancelOrderAsync] 接單 Repository 連線失敗");
+            var order = await _orderProductionRep.GetByIdAsync(orderId).ConfigureAwait(false);
             await _orderProductionRep.CancelAsync(orderId, description).ConfigureAwait(false);
+            if (order?.ScheduleId.HasValue == true)
+                await _scheduleRep.RecalcActualQuantityAsync(order.ScheduleId.Value).ConfigureAwait(false);
         }
 
         #endregion
@@ -1009,6 +1027,13 @@ namespace FProductionDashBoard.Services.V1
             if (!await _programTuningRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetInProgressProgramTuningAsync] 調試 Repository 連線失敗");
             return await _programTuningRep.GetInProgressByEquipmentAsync(equipmentId).ConfigureAwait(false);
+        }
+
+        public async Task<List<ProgramTuningRecord>> GetAllInProgressProgramTuningAsync()
+        {
+            if (!await _programTuningRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetAllInProgressProgramTuningAsync] 調試 Repository 連線失敗");
+            return await _programTuningRep.GetAllInProgressAsync().ConfigureAwait(false);
         }
 
         #endregion

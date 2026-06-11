@@ -139,7 +139,12 @@ namespace FProductionDashBoard.ViewModels
         partial void OnSopKeywordFilterChanged(string value)
         {
             RecomputeFormProductOptions();
-            RecomputeFormProcessOptions();
+            if (FormProduct == null)
+                FormProduct = FormProductOptions.FirstOrDefault();
+
+            //RecomputeFormProcessOptions();
+            //if (FormProcess == null)
+            //    FormProcess = FormProcessOptions.FirstOrDefault();
         }
 
         partial void OnFormProductChanged(Product? value)
@@ -148,6 +153,7 @@ namespace FProductionDashBoard.ViewModels
             FormSopType = null;
             IsSopTypeVisible = false;
             RecomputeFormProcessOptions();
+            FormProcess = FormProcessOptions.FirstOrDefault();
         }
 
         partial void OnFormProcessChanged(WorkProcess? value)
@@ -192,13 +198,8 @@ namespace FProductionDashBoard.ViewModels
                 .Where(s => s.ProductId == FormProduct.ProductId)
                 .Select(s => s.Process)
                 .Where(p => p != null)
-                .DistinctBy(p => p!.ProcessId))
-            {
-                if (!string.IsNullOrEmpty(SopKeywordFilter) &&
-                    (proc!.Name ?? "").IndexOf(SopKeywordFilter, StringComparison.OrdinalIgnoreCase) < 0)
-                    continue;
-                FormProcessOptions.Add(proc!);
-            }
+                .DistinctBy(p => p!.ProcessId)) FormProcessOptions.Add(proc!);
+
             if (prevProcessId != null && !FormProcessOptions.Any(p => p.ProcessId == prevProcessId))
                 FormProcess = null;
         }
@@ -223,6 +224,7 @@ namespace FProductionDashBoard.ViewModels
             }
             else if (types.Count > 1)
             {
+                FormSopType = FormSopTypeOptions.FirstOrDefault();
                 IsSopTypeVisible = true;
             }
             else
@@ -317,10 +319,10 @@ namespace FProductionDashBoard.ViewModels
             EditingProductId = null;
             FormSeqNo = ProductList.Any() ? ProductList.Max(ep => ep.SeqNo) + 1 : 1;
             SopKeywordFilter = "";
-            FormProduct = null;
-            FormProcess = null;
             FormSopType = null;
+            FormProcess = null;
             IsSopTypeVisible = false;
+            FormProduct = FormProductOptions.FirstOrDefault();
             FormProductionStatus = TuningType.Infeasible;
             FormErrorString = null;
             FormSuccessString = null;

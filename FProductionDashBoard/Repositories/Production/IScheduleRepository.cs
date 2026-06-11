@@ -18,5 +18,6 @@ namespace FProductionDashBoard.Repositories
         Task MarkCancelledAsync(int scheduleId, string? description);
         Task ForceCompleteAsync(int scheduleId, int verifiedBy, DateTime verifiedAt, int? actualQuantity, string description);
         Task SplitScheduleAsync(int originalId, int remainingQuantity, int releasedBy, DateTime releasedAt, string? description);
+        Task RecalcActualQuantityAsync(int scheduleId);
     }
 }

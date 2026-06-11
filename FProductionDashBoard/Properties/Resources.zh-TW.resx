@@ -351,6 +351,21 @@
   <data name="ScheduleOpForcedBySuffix" xml:space="preserve">
     <value>強制完成</value>
   </data>
+  <data name="SchAssignDialogTitle" xml:space="preserve">
+    <value>指派接單</value>
+  </data>
+  <data name="SchAssignNoSopSelected" xml:space="preserve">
+    <value>請選擇 SOP 類型</value>
+  </data>
+  <data name="SchAssignQtyRequired" xml:space="preserve">
+    <value>請輸入接單數量</value>
+  </data>
+  <data name="SchAssignQtyExceeded" xml:space="preserve">
+    <value>接單數量不能超過剩餘數量</value>
+  </data>
+  <data name="SchAssignQtyMaxHint" xml:space="preserve">
+    <value>最多 {0}</value>
+  </data>
   <data name="PioFormErrorProduct" xml:space="preserve">
     <value>請選擇產品</value>
   </data>
@@ -362,5 +377,11 @@
   </data>
   <data name="PioFormSubmitError" xml:space="preserve">
     <value>入料失敗，請重試</value>
+  </data>
+  <data name="WaitedDaysForSchedule" xml:space="preserve">
+    <value>已等待</value>
+  </data>
+  <data name="ComStrDay" xml:space="preserve">
+    <value>天</value>
   </data>
 </root>
