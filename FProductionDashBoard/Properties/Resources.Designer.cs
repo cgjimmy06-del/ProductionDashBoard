@@ -902,5 +902,17 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("SchOrderStatusCancelled", resourceCulture);
             }
         }
+        internal static string SchDerivedBadgeInProduction {
+            get { return ResourceManager.GetString("SchDerivedBadgeInProduction", resourceCulture); }
+        }
+        internal static string SchDerivedBadgeComplete {
+            get { return ResourceManager.GetString("SchDerivedBadgeComplete", resourceCulture); }
+        }
+        internal static string SchDerivedBadgePartial {
+            get { return ResourceManager.GetString("SchDerivedBadgePartial", resourceCulture); }
+        }
+        internal static string SchDerivedBadgeCancelNotice {
+            get { return ResourceManager.GetString("SchDerivedBadgeCancelNotice", resourceCulture); }
+        }
     }
 }

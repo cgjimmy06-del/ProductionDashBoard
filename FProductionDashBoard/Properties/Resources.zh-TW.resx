@@ -405,4 +405,16 @@
   <data name="SchOrderStatusCancelled" xml:space="preserve">
     <value>已取消</value>
   </data>
+  <data name="SchDerivedBadgeInProduction" xml:space="preserve">
+    <value>⬟ 生產中</value>
+  </data>
+  <data name="SchDerivedBadgeComplete" xml:space="preserve">
+    <value>✓ 生產完成</value>
+  </data>
+  <data name="SchDerivedBadgePartial" xml:space="preserve">
+    <value>⚠ 部分完成</value>
+  </data>
+  <data name="SchDerivedBadgeCancelNotice" xml:space="preserve">
+    <value>⚠ 取消注意</value>
+  </data>
 </root>

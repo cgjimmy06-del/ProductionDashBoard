@@ -87,7 +87,7 @@ namespace FProductionDashBoard.ViewModels
 
         partial void OnSelectedScheduleChanged(ScheduleUiModel? value)
         {
-            if (value != null) ClearEquipmentCardSelection();
+            if (SelectedEquipmentCard != null) return; // 焦點模式：忽略 schedule 選取，避免 row click 干擾指派按鈕
             if (value == null)
                 foreach (var c in _allCards) c.ResetForLayer1();
             else
@@ -224,7 +224,7 @@ namespace FProductionDashBoard.ViewModels
             var today = DateTime.Today;
             foreach (var s in _allSchedules)
             {
-                s.DerivedBadge = GetDerivedBadge(s.ScheduleId);
+                (s.DerivedBadge, s.DerivedBadgeKey) = GetDerivedBadge(s.ScheduleId);
 
                 if (s.Status == ScheduleStatus.Pending && s.ReceivedAt.HasValue)
                 {
@@ -249,17 +249,17 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
-        private string? GetDerivedBadge(int scheduleId)
+        private (string? badge, string? key) GetDerivedBadge(int scheduleId)
         {
             var orders = _allOrders.Where(o => o.ScheduleId == scheduleId).ToList();
-            if (!orders.Any()) return null;
+            if (!orders.Any()) return (null, null);
 
             if (orders.Any(o => o.Status == OrderProductionStatus.InProduction))
-                return "⬟ 生產中";
+                return (Properties.Resources.SchDerivedBadgeInProduction, "InProduction");
 
             var nonCancelled = orders.Where(o => o.Status != OrderProductionStatus.Cancelled).ToList();
             if (!nonCancelled.Any())
-                return "⚠ 取消注意";
+                return (Properties.Resources.SchDerivedBadgeCancelNotice, "CancelNotice");
 
             if (nonCancelled.All(o => o.Status == OrderProductionStatus.Completed))
             {
@@ -267,11 +267,13 @@ namespace FProductionDashBoard.ViewModels
                 if (schedule != null)
                 {
                     var actualQty = nonCancelled.Sum(o => o.Quantity ?? 0);
-                    return actualQty >= schedule.Quantity ? "✓ 生產完成" : "⚠ 部分完成";
+                    return actualQty >= schedule.Quantity
+                        ? (Properties.Resources.SchDerivedBadgeComplete, "Complete")
+                        : (Properties.Resources.SchDerivedBadgePartial, "Partial");
                 }
             }
 
-            return null;
+            return (null, null);
         }
 
         private bool IsWithinDateRange(ScheduleUiModel s)
@@ -311,7 +313,7 @@ namespace FProductionDashBoard.ViewModels
 
             var productionDone = src.Where(s =>
                 s.Status == ScheduleStatus.Scheduled &&
-                s.DerivedBadge == "✓ 生產完成").ToList();
+                s.DerivedBadgeKey == "Complete").ToList();
             StatProductionDone          = productionDone.Count;
             StatProductionDoneActualQty = productionDone.Sum(s => s.ActualQuantity ?? 0);
         }
@@ -329,8 +331,14 @@ namespace FProductionDashBoard.ViewModels
             if (obj is not ScheduleUiModel s) return false;
 
             if (SelectedEquipmentCard != null)
+            {
+                if (s.Status == ScheduleStatus.Completed ||
+                    s.Status == ScheduleStatus.Released  ||
+                    s.Status == ScheduleStatus.Cancelled)
+                    return false;
                 return SelectedEquipmentCard.HasAnyCompatibleEpForKeys(
                     new HashSet<(int, int)> { (s.ProductId, s.ProcessId) });
+            }
 
             switch (StatusFilter)
             {
@@ -345,7 +353,7 @@ namespace FProductionDashBoard.ViewModels
                     if (s.Status != ScheduleStatus.Scheduled) return false;
                     break;
                 case ScheduleViewFilter.ProductionDone:
-                    if (s.Status != ScheduleStatus.Scheduled || s.DerivedBadge != "✓ 生產完成")
+                    if (s.Status != ScheduleStatus.Scheduled || s.DerivedBadgeKey != "Complete")
                         return false;
                     break;
                 case ScheduleViewFilter.Completed:
@@ -430,6 +438,7 @@ namespace FProductionDashBoard.ViewModels
         private void DeselectEquipmentCard()
         {
             ClearEquipmentCardSelection();
+            SelectedSchedule = null;
             ApplyFilter();
         }
 

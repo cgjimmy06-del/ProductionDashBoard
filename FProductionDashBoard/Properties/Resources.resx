@@ -450,4 +450,16 @@
   <data name="SchOrderStatusCancelled" xml:space="preserve">
     <value>Cancelled</value>
   </data>
+  <data name="SchDerivedBadgeInProduction" xml:space="preserve">
+    <value>⬟ In Production</value>
+  </data>
+  <data name="SchDerivedBadgeComplete" xml:space="preserve">
+    <value>✓ Production Done</value>
+  </data>
+  <data name="SchDerivedBadgePartial" xml:space="preserve">
+    <value>⚠ Partial Done</value>
+  </data>
+  <data name="SchDerivedBadgeCancelNotice" xml:space="preserve">
+    <value>⚠ Cancel Notice</value>
+  </data>
 </root>

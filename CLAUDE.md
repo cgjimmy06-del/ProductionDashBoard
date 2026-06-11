@@ -87,6 +87,13 @@ _core.Log.AddErrorLog($"[方法名] {ex.Message}");                    // 工程
 
 每次新增 key 後必須確認三份檔案 key 數一致，兩類語言資源（resx / StrResources）需分別同步確認。
 
+> **⚠ resx 新增後必須手動更新 `Resources.Designer.cs`**：CLI build 不會觸發 resx 的 Designer 自動重新生成，需手動在 `Resources.Designer.cs` 補上對應的 `internal static string` property，格式如下：
+> ```csharp
+> internal static string MyNewKey {
+>     get { return ResourceManager.GetString("MyNewKey", resourceCulture); }
+> }
+> ```
+
 ### EF Core 欄位對應
 
 規則詳見 memory `feedback_efcore_column_mapping.md`。

@@ -397,9 +397,8 @@
                 </DataGridTemplateColumn>
 
                 <!-- Derived Badge（焦點模式隱藏） -->
-                <DataGridTemplateColumn Header="" Width="*"
-                    Visibility="{Binding DataContext.IsCardWallVisible, ElementName=ScheduleDataGrid,
-                                 Converter={StaticResource BooleanToVisibilityConverter}}">
+                <!-- Visibility 由 code-behind (ScheduleView.xaml.cs) 控制：DataGridColumn 不在 visual tree，ElementName binding 無效 -->
+                <DataGridTemplateColumn x:Name="DerivedBadgeColumn" Header="" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding DerivedBadge}"
@@ -412,16 +411,16 @@
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding DerivedBadge}" Value="⬟ 生產中">
+                                            <DataTrigger Binding="{Binding DerivedBadgeKey}" Value="InProduction">
                                                 <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Binding DerivedBadge}" Value="✓ 生產完成">
+                                            <DataTrigger Binding="{Binding DerivedBadgeKey}" Value="Complete">
                                                 <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Binding DerivedBadge}" Value="⚠ 部分完成">
+                                            <DataTrigger Binding="{Binding DerivedBadgeKey}" Value="Partial">
                                                 <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Binding DerivedBadge}" Value="⚠ 取消注意">
+                                            <DataTrigger Binding="{Binding DerivedBadgeKey}" Value="CancelNotice">
                                                 <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -433,16 +432,13 @@
                 </DataGridTemplateColumn>
 
                 <!-- 焦點模式指派欄（IsEquipmentDetailVisible 時顯示） -->
-                <DataGridTemplateColumn Width="110"
-                    Visibility="{Binding DataContext.IsEquipmentDetailVisible, ElementName=ScheduleDataGrid,
-                                 Converter={StaticResource BooleanToVisibilityConverter}}">
+                <!-- Visibility 由 code-behind (ScheduleView.xaml.cs) 控制：DataGridColumn 不在 visual tree，ElementName binding 無效 -->
+                <DataGridTemplateColumn x:Name="FocusAssignColumn" Width="110">
                     <DataGridTemplateColumn.Header>
-                        <TextBlock>
-                            <Run Text="{DynamicResource SchFocusAssignTo}"/>
-                            <Run Text=" "/>
-                            <Run Text="{Binding DataContext.SelectedEquipmentCard.Name,
-                                        ElementName=ScheduleDataGrid}"/>
-                        </TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{DynamicResource SchFocusAssignTo}"/>
+                            <TextBlock x:Name="FocusAssignHeaderMachineName" Margin="4,0,0,0"/>
+                        </StackPanel>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
