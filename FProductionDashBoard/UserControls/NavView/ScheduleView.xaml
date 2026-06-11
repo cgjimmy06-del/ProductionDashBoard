@@ -94,6 +94,7 @@
                         <TextBlock.Style>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource StatQtyStyle}">
                                 <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                <Setter Property="FontSize" Value="22"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding StatUnderScheduledCount}" Value="0">
                                         <Setter Property="Visibility" Value="Collapsed"/>
@@ -101,7 +102,9 @@
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <Run Text="(+"/><Run Text="{Binding StatUnderScheduledCount}"/><Run Text=" 筆 / "/><Run Text="{Binding StatUnderScheduledQtyDeficit}"/><Run Text=" 件待補排)"/>
+                        <Run Text="(+ "/><Run Text="{Binding StatUnderScheduledCount}"/>
+                        <Run Text=" / "/><Run Text="{Binding StatUnderScheduledQtyDeficit}"/>
+                        <Run Text=" pcs)"/>
                     </TextBlock>
                 </StackPanel>
             </Border>
@@ -134,8 +137,8 @@
             <Border Style="{StaticResource StatCardBorderStyle}">
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="{DynamicResource SchStatIdleCardLabel}" Style="{StaticResource StatLabelStyle}"/>
-                    <TextBlock Text="{Binding StatIdleCardCount}" Style="{StaticResource StatNumberStyle}"
-                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding StatIdleCardCount}" Style="{StaticResource StatQtyStyle}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                 </StackPanel>
             </Border>
 
@@ -143,8 +146,8 @@
             <Border Style="{StaticResource StatCardBorderStyle}">
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="{DynamicResource SchStatLowLoadCardLabel}" Style="{StaticResource StatLabelStyle}"/>
-                    <TextBlock Text="{Binding StatLowLoadCardCount}" Style="{StaticResource StatNumberStyle}"
-                               Foreground="{DynamicResource WarningBrush}"/>
+                    <TextBlock Text="{Binding StatLowLoadCardCount}" Style="{StaticResource StatQtyStyle}"
+                               Foreground="{DynamicResource PrimaryBrush}"/>
                 </StackPanel>
             </Border>
 
@@ -205,48 +208,66 @@
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                           Background="{DynamicResource BorderBrush}" ResizeDirection="Columns"/>
 
-            <!-- 右欄：右側統計列 + 設備卡片牆 -->
+            <!-- 右欄：卡片牆 or 設備焦點模式詳細面板 -->
             <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
 
-                <!-- 右側統計列（Layer 2 才顯示） -->
-                <Border Grid.Row="0" Style="{StaticResource StatCardBorderStyle}" Margin="4,0,0,8"
-                        Visibility="{Binding IsStatsPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <StackPanel Orientation="Horizontal" Margin="8,4">
-                        <TextBlock Text="總 Order：" Style="{StaticResource StatLabelStyle}"/>
-                        <TextBlock Text="{Binding SelectedScheduleOrderTotal}"
-                                   FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBlock Text="  未完成：" Style="{StaticResource StatLabelStyle}" Margin="12,0,0,0"/>
-                        <TextBlock Text="{Binding SelectedScheduleOrderIncomplete}"
-                                   FontSize="14" Foreground="{DynamicResource WarningBrush}"/>
-                        <TextBlock Text="  已安排：" Style="{StaticResource StatLabelStyle}" Margin="12,0,0,0"/>
-                        <TextBlock Text="{Binding SelectedScheduleEquipments}"
-                                   Style="{StaticResource StatLabelStyle}" FontSize="12"/>
-                    </StackPanel>
-                </Border>
+                <!-- 卡片牆面板（IsCardWallVisible 時顯示） -->
+                <Grid Visibility="{Binding IsCardWallVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <!-- 設備卡片牆 -->
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                    <ItemsControl ItemsSource="{Binding EquipmentCardsView}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <localuc:ScheduleEquipmentCardView Margin="4"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+                    <!-- 右側統計列（Layer 2 才顯示） -->
+                    <Border Grid.Row="0" Style="{StaticResource StatCardBorderStyle}"
+                            Margin="4,0,0,8"
+                            Visibility="{Binding IsStatsPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel Orientation="Horizontal" Margin="8,4">
+                            <TextBlock Text="{DynamicResource SchStatPanelOrderTotal}" Style="{StaticResource StatLabelStyle}"
+                                       Margin="0"/>
+                            <TextBlock Text="{Binding SelectedScheduleOrderTotal}"
+                                       FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}"
+                                       Margin="4,0"/>
+                            <TextBlock Text="{DynamicResource SchStatPanelIncomplete}" Style="{StaticResource StatLabelStyle}"
+                                       Margin="12,0,0,0"/>
+                            <TextBlock Text="{Binding SelectedScheduleOrderIncomplete}"
+                                       FontSize="16" Foreground="{DynamicResource ErrorBrush}"
+                                       Margin="4,0"/>
+                            <TextBlock Text="{DynamicResource SchStatPanelEquipments}" Style="{StaticResource StatLabelStyle}"
+                                       Margin="12,0,0,0"/>
+                            <TextBlock Text="{Binding SelectedScheduleEquipments}"
+                                       Style="{StaticResource StatLabelStyle}"
+                                       FontSize="16" Margin="4,0,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 設備卡片牆 -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding EquipmentCardsView}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <localuc:ScheduleEquipmentCardView Margin="4"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+
+                <!-- 設備詳細面板（IsEquipmentDetailVisible 時顯示） -->
+                <localuc:ScheduleEquipmentDetailView
+                    Visibility="{Binding IsEquipmentDetailVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    DataContext="{Binding}"/>
+
             </Grid>
 
             <!-- 左欄：DataGrid -->
-            <DataGrid Grid.Column="0"
+            <DataGrid x:Name="ScheduleDataGrid"
+                  Grid.Column="0"
                   ItemsSource="{Binding SchedulesView}"
                   SelectedItem="{Binding SelectedSchedule}"
                   AutoGenerateColumns="False"
@@ -303,9 +324,35 @@
                                     <TextBlock FontSize="11"
                                                Text="{Binding WaitingDaysText}"
                                                Foreground="{DynamicResource ErrorBrush}"
-                                               Margin="6,0,0,0"
+                                               Margin="8,0,0,0"
                                                Visibility="{Binding WaitingDaysText,
                                                             Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
+                                    <!-- 設備關聯指示器（有 active orders 且無等待天數文字時顯示） -->
+                                    <TextBlock FontSize="11"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
+                                               Margin="8,0,0,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding WaitingDaysText,
+                                                                                 Converter={StaticResource StringHasValueToVisibilityConverter}}"
+                                                                       Value="Collapsed"/>
+                                                            <Condition Binding="{Binding HasActiveOrders}"
+                                                                       Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                        <Run Text="⚙ "/>
+                                        <Run Text="{Binding ActiveEquipmentCount, Mode=OneWay}"/>
+                                        <Run Text=" · "/>
+                                        <Run Text="{Binding ActiveOrderCount, Mode=OneWay}"/>
+                                    </TextBlock>
                                 </StackPanel>
                             </StackPanel>
                         </DataTemplate>
@@ -349,8 +396,10 @@
                     </DataGridTemplateColumn.CellStyle>
                 </DataGridTemplateColumn>
 
-                <!-- Derived Badge -->
-                <DataGridTemplateColumn Header="" Width="*">
+                <!-- Derived Badge（焦點模式隱藏） -->
+                <DataGridTemplateColumn Header="" Width="*"
+                    Visibility="{Binding DataContext.IsCardWallVisible, ElementName=ScheduleDataGrid,
+                                 Converter={StaticResource BooleanToVisibilityConverter}}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding DerivedBadge}"
@@ -379,6 +428,31 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- 焦點模式指派欄（IsEquipmentDetailVisible 時顯示） -->
+                <DataGridTemplateColumn Width="110"
+                    Visibility="{Binding DataContext.IsEquipmentDetailVisible, ElementName=ScheduleDataGrid,
+                                 Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock>
+                            <Run Text="{DynamicResource SchFocusAssignTo}"/>
+                            <Run Text=" "/>
+                            <Run Text="{Binding DataContext.SelectedEquipmentCard.Name,
+                                        ElementName=ScheduleDataGrid}"/>
+                        </TextBlock>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="{DynamicResource SchFocusAssignButton}"
+                                    Style="{DynamicResource FunctionButtonStyle}"
+                                    Background="{DynamicResource SecondaryBrush}"
+                                    Padding="6,2" Height="Auto"
+                                    Command="{Binding DataContext.AssignScheduleToSelectedEquipmentCommand,
+                                              RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

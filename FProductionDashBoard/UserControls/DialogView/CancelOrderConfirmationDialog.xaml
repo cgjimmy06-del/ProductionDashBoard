@@ -1,0 +1,40 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.DialogView.CancelOrderConfirmationDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             Width="360" d:DesignHeight="220" d:DesignWidth="360" d:Background="White">
+
+    <StackPanel Margin="16,5">
+
+        <!-- 訊息 -->
+        <TextBlock Text="{Binding DialogInfoString}"
+                   FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                   Margin="0,0,0,8"/>
+
+        <!-- 接單資訊 -->
+        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                CornerRadius="4" Padding="10,6" Margin="0,0,0,12">
+            <TextBlock FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}">
+                <Run Text="#"/><Run Text="{Binding OrderId}"/>
+                <Run Text=" · "/>
+                <Run Text="{Binding ProductName}"/>
+                <Run Text=" ("/>
+                <Run Text="{Binding ProcessName}"/>
+                <Run Text=") · "/>
+                <Run Text="{Binding Quantity}"/>
+                <Run Text=" pcs"/>
+            </TextBlock>
+        </Border>
+
+        <!-- 取消原因（選填） -->
+        <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                 materialDesign:HintAssist.Hint="{DynamicResource SchCancelOrderDescLabel}"
+                 AcceptsReturn="False"
+                 MaxLength="200"
+                 Margin="0,0,0,4"/>
+
+    </StackPanel>
+</UserControl>

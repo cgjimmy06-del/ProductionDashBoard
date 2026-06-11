@@ -410,6 +410,9 @@
     <sys:String x:Key="SchStatProductionDoneLabel">生產完成</sys:String>
     <sys:String x:Key="SchStatIdleCardLabel">閒置設備</sys:String>
     <sys:String x:Key="SchStatLowLoadCardLabel">低負載設備</sys:String>
+    <sys:String x:Key="SchStatPanelOrderTotal">總排單：</sys:String>
+    <sys:String x:Key="SchStatPanelIncomplete">未完成：</sys:String>
+    <sys:String x:Key="SchStatPanelEquipments">已安排：</sys:String>
 
     <sys:String x:Key="SchAssignDialogSopType">SOP 類型</sys:String>
     <sys:String x:Key="SchAssignDialogQty">接單數量</sys:String>
@@ -455,6 +458,17 @@
     <sys:String x:Key="SchFilterCompleted">已驗收</sys:String>
     <sys:String x:Key="SchFilterReleased">已出料</sys:String>
     <sys:String x:Key="SchFilterCancelled">已取消</sys:String>
+
+    <sys:String x:Key="SchOrderStart">▶ 開始</sys:String>
+    <sys:String x:Key="SchOrderEnd">✓ 完成</sys:String>
+    <sys:String x:Key="SchOrderCancel">✕ 取消</sys:String>
+    <sys:String x:Key="SchDetailBack">← 返回</sys:String>
+    <sys:String x:Key="SchDetailPending">待生產：</sys:String>
+    <sys:String x:Key="SchDetailInProduction">生產中：</sys:String>
+    <sys:String x:Key="SchDetailPrograms">可生產程式：</sys:String>
+    <sys:String x:Key="SchDetailUnit">單/件</sys:String>
+    <sys:String x:Key="SchFocusAssignTo">指派給</sys:String>
+    <sys:String x:Key="SchFocusAssignButton">指派</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

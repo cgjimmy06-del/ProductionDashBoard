@@ -39,6 +39,9 @@ namespace FProductionDashBoard.UiModels
         // UI 衍生欄位，由 ScheduleViewModel 在載入後計算並設定
         public string? DerivedBadge { get; set; }
         public string? WaitingDaysText { get; set; }
+        public int ActiveEquipmentCount { get; set; }
+        public int ActiveOrderCount { get; set; }
+        public bool HasActiveOrders => ActiveOrderCount > 0;
 
         public static ScheduleUiModel FromEntity(Schedule s)
         {

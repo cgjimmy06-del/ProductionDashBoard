@@ -410,6 +410,9 @@
     <sys:String x:Key="SchStatProductionDoneLabel">Hoàn thành SX</sys:String>
     <sys:String x:Key="SchStatIdleCardLabel">Máy nhàn rỗi</sys:String>
     <sys:String x:Key="SchStatLowLoadCardLabel">Máy tải thấp</sys:String>
+    <sys:String x:Key="SchStatPanelOrderTotal">Tổng lịch:</sys:String>
+    <sys:String x:Key="SchStatPanelIncomplete">Chưa hoàn thành:</sys:String>
+    <sys:String x:Key="SchStatPanelEquipments">Đã phân công:</sys:String>
 
     <sys:String x:Key="SchAssignDialogSopType">Loại SOP</sys:String>
     <sys:String x:Key="SchAssignDialogQty">Số lượng</sys:String>
@@ -455,6 +458,17 @@
     <sys:String x:Key="SchFilterCompleted">Đã nghiệm thu</sys:String>
     <sys:String x:Key="SchFilterReleased">Đã xuất liệu</sys:String>
     <sys:String x:Key="SchFilterCancelled">Đã hủy</sys:String>
+
+    <sys:String x:Key="SchOrderStart">▶ Bắt đầu</sys:String>
+    <sys:String x:Key="SchOrderEnd">✓ Hoàn thành</sys:String>
+    <sys:String x:Key="SchOrderCancel">✕ Hủy</sys:String>
+    <sys:String x:Key="SchDetailBack">← Quay lại</sys:String>
+    <sys:String x:Key="SchDetailPending">Chờ SX:</sys:String>
+    <sys:String x:Key="SchDetailInProduction">Đang SX:</sys:String>
+    <sys:String x:Key="SchDetailPrograms">CT khả dụng:</sys:String>
+    <sys:String x:Key="SchDetailUnit">đơn/cái</sys:String>
+    <sys:String x:Key="SchFocusAssignTo">Phân công cho</sys:String>
+    <sys:String x:Key="SchFocusAssignButton">Phân công</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

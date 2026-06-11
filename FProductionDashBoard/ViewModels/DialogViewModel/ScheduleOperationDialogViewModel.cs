@@ -42,7 +42,7 @@ namespace FProductionDashBoard.ViewModels
                 Description = $"{Properties.Resources.ScheduleOpForcedByPrefix}{currentUserName}{Properties.Resources.ScheduleOpForcedBySuffix}";
 
             if (IsActualQtyVisible)
-                ActualQuantity = schedule.Quantity;
+                ActualQuantity = schedule.ActualQuantity ?? schedule.Quantity;
 
             if (IsRemainingQtyVisible)
             { 

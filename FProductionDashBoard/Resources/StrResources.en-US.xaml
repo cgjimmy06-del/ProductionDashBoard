@@ -410,6 +410,9 @@
     <sys:String x:Key="SchStatProductionDoneLabel">Production Done</sys:String>
     <sys:String x:Key="SchStatIdleCardLabel">Idle Equip.</sys:String>
     <sys:String x:Key="SchStatLowLoadCardLabel">Low-Load Equip.</sys:String>
+    <sys:String x:Key="SchStatPanelOrderTotal">Total:</sys:String>
+    <sys:String x:Key="SchStatPanelIncomplete">Incomplete:</sys:String>
+    <sys:String x:Key="SchStatPanelEquipments">Arranged:</sys:String>
 
     <sys:String x:Key="SchAssignDialogSopType">SOP Type</sys:String>
     <sys:String x:Key="SchAssignDialogQty">Order Qty</sys:String>
@@ -455,6 +458,17 @@
     <sys:String x:Key="SchFilterCompleted">Completed</sys:String>
     <sys:String x:Key="SchFilterReleased">Released</sys:String>
     <sys:String x:Key="SchFilterCancelled">Cancelled</sys:String>
+
+    <sys:String x:Key="SchOrderStart">▶ Start</sys:String>
+    <sys:String x:Key="SchOrderEnd">✓ Done</sys:String>
+    <sys:String x:Key="SchOrderCancel">✕ Cancel</sys:String>
+    <sys:String x:Key="SchDetailBack">← Back</sys:String>
+    <sys:String x:Key="SchDetailPending">Pending:</sys:String>
+    <sys:String x:Key="SchDetailInProduction">In Production:</sys:String>
+    <sys:String x:Key="SchDetailPrograms">Programs:</sys:String>
+    <sys:String x:Key="SchDetailUnit">ord/pcs</sys:String>
+    <sys:String x:Key="SchFocusAssignTo">Assign to</sys:String>
+    <sys:String x:Key="SchFocusAssignButton">Assign</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>
