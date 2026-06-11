@@ -79,6 +79,15 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Days 的當地語系化字串。
+        /// </summary>
+        internal static string ComStrDay {
+            get {
+                return ResourceManager.GetString("ComStrDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Device 的當地語系化字串。
         /// </summary>
         internal static string ComStrDevice {
@@ -511,6 +520,204 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Please select a process 的當地語系化字串。
+        /// </summary>
+        internal static string PioFormErrorProcess {
+            get {
+                return ResourceManager.GetString("PioFormErrorProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Please select a product 的當地語系化字串。
+        /// </summary>
+        internal static string PioFormErrorProduct {
+            get {
+                return ResourceManager.GetString("PioFormErrorProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Quantity must be greater than 0 的當地語系化字串。
+        /// </summary>
+        internal static string PioFormErrorQty {
+            get {
+                return ResourceManager.GetString("PioFormErrorQty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Failed to receive, please try again 的當地語系化字串。
+        /// </summary>
+        internal static string PioFormSubmitError {
+            get {
+                return ResourceManager.GetString("PioFormSubmitError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Edit Program Status 的當地語系化字串。
+        /// </summary>
+        internal static string ProgramStatusDialogTitle {
+            get {
+                return ResourceManager.GetString("ProgramStatusDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Please select a status 的當地語系化字串。
+        /// </summary>
+        internal static string ProgramStatusNoSelectionError {
+            get {
+                return ResourceManager.GetString("ProgramStatusNoSelectionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Assign Order 的當地語系化字串。
+        /// </summary>
+        internal static string SchAssignDialogTitle {
+            get {
+                return ResourceManager.GetString("SchAssignDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Please select a SOP type 的當地語系化字串。
+        /// </summary>
+        internal static string SchAssignNoSopSelected {
+            get {
+                return ResourceManager.GetString("SchAssignNoSopSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Order quantity cannot exceed remaining quantity 的當地語系化字串。
+        /// </summary>
+        internal static string SchAssignQtyExceeded {
+            get {
+                return ResourceManager.GetString("SchAssignQtyExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Max: {0} 的當地語系化字串。
+        /// </summary>
+        internal static string SchAssignQtyMaxHint {
+            get {
+                return ResourceManager.GetString("SchAssignQtyMaxHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Please enter order quantity 的當地語系化字串。
+        /// </summary>
+        internal static string SchAssignQtyRequired {
+            get {
+                return ResourceManager.GetString("SchAssignQtyRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Cancel Schedule 的當地語系化字串。
+        /// </summary>
+        internal static string ScheduleOpCancelTitle {
+            get {
+                return ResourceManager.GetString("ScheduleOpCancelTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Remarks is required 的當地語系化字串。
+        /// </summary>
+        internal static string ScheduleOpDescRequired {
+            get {
+                return ResourceManager.GetString("ScheduleOpDescRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Force Complete 的當地語系化字串。
+        /// </summary>
+        internal static string ScheduleOpForceCompleteTitle {
+            get {
+                return ResourceManager.GetString("ScheduleOpForceCompleteTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Force completed by  的當地語系化字串。
+        /// </summary>
+        internal static string ScheduleOpForcedByPrefix {
+            get {
+                return ResourceManager.GetString("ScheduleOpForcedByPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似  的當地語系化字串。
+        /// </summary>
+        internal static string ScheduleOpForcedBySuffix {
+            get {
+                return ResourceManager.GetString("ScheduleOpForcedBySuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Release 的當地語系化字串。
+        /// </summary>
+        internal static string ScheduleOpReleaseTitle {
+            get {
+                return ResourceManager.GetString("ScheduleOpReleaseTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Input cannot exceed remaining quantity 的當地語系化字串。
+        /// </summary>
+        internal static string ScheduleOpRemainingQtyExceeded {
+            get {
+                return ResourceManager.GetString("ScheduleOpRemainingQtyExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Max: {0} 的當地語系化字串。
+        /// </summary>
+        internal static string ScheduleOpRemainingQtyHint {
+            get {
+                return ResourceManager.GetString("ScheduleOpRemainingQtyHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Remaining quantity is required 的當地語系化字串。
+        /// </summary>
+        internal static string ScheduleOpRemainingQtyRequired {
+            get {
+                return ResourceManager.GetString("ScheduleOpRemainingQtyRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Split Order 的當地語系化字串。
+        /// </summary>
+        internal static string ScheduleOpSplitTitle {
+            get {
+                return ResourceManager.GetString("ScheduleOpSplitTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Verify Completion 的當地語系化字串。
+        /// </summary>
+        internal static string ScheduleOpVerifyTitle {
+            get {
+                return ResourceManager.GetString("ScheduleOpVerifyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Added successfully 的當地語系化字串。
         /// </summary>
         internal static string SopSuccessAdd {
@@ -601,24 +808,6 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
-        ///   查詢類似 Edit Program Status 的當地語系化字串。
-        /// </summary>
-        internal static string ProgramStatusDialogTitle {
-            get {
-                return ResourceManager.GetString("ProgramStatusDialogTitle", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查詢類似 Please select a status 的當地語系化字串。
-        /// </summary>
-        internal static string ProgramStatusNoSelectionError {
-            get {
-                return ResourceManager.GetString("ProgramStatusNoSelectionError", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   查詢類似 Select Tuning Operation 的當地語系化字串。
         /// </summary>
         internal static string TuningDialogTitle {
@@ -662,66 +851,14 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("TuningInProgressTeaching", resourceCulture);
             }
         }
-
-        internal static string ScheduleOpForceCompleteTitle {
-            get { return ResourceManager.GetString("ScheduleOpForceCompleteTitle", resourceCulture); }
-        }
-        internal static string ScheduleOpVerifyTitle {
-            get { return ResourceManager.GetString("ScheduleOpVerifyTitle", resourceCulture); }
-        }
-        internal static string ScheduleOpReleaseTitle {
-            get { return ResourceManager.GetString("ScheduleOpReleaseTitle", resourceCulture); }
-        }
-        internal static string ScheduleOpSplitTitle {
-            get { return ResourceManager.GetString("ScheduleOpSplitTitle", resourceCulture); }
-        }
-        internal static string ScheduleOpCancelTitle {
-            get { return ResourceManager.GetString("ScheduleOpCancelTitle", resourceCulture); }
-        }
-        internal static string ScheduleOpDescRequired {
-            get { return ResourceManager.GetString("ScheduleOpDescRequired", resourceCulture); }
-        }
-        internal static string ScheduleOpRemainingQtyRequired {
-            get { return ResourceManager.GetString("ScheduleOpRemainingQtyRequired", resourceCulture); }
-        }
-        internal static string ScheduleOpRemainingQtyHint {
-            get { return ResourceManager.GetString("ScheduleOpRemainingQtyHint", resourceCulture); }
-        }
-        internal static string ScheduleOpRemainingQtyExceeded {
-            get { return ResourceManager.GetString("ScheduleOpRemainingQtyExceeded", resourceCulture); }
-        }
-        internal static string ScheduleOpForcedByPrefix {
-            get { return ResourceManager.GetString("ScheduleOpForcedByPrefix", resourceCulture); }
-        }
-        internal static string ScheduleOpForcedBySuffix {
-            get { return ResourceManager.GetString("ScheduleOpForcedBySuffix", resourceCulture); }
-        }
-        internal static string SchAssignDialogTitle {
-            get { return ResourceManager.GetString("SchAssignDialogTitle", resourceCulture); }
-        }
-        internal static string SchAssignNoSopSelected {
-            get { return ResourceManager.GetString("SchAssignNoSopSelected", resourceCulture); }
-        }
-        internal static string SchAssignQtyRequired {
-            get { return ResourceManager.GetString("SchAssignQtyRequired", resourceCulture); }
-        }
-        internal static string SchAssignQtyExceeded {
-            get { return ResourceManager.GetString("SchAssignQtyExceeded", resourceCulture); }
-        }
-        internal static string SchAssignQtyMaxHint {
-            get { return ResourceManager.GetString("SchAssignQtyMaxHint", resourceCulture); }
-        }
-        internal static string PioFormErrorProduct {
-            get { return ResourceManager.GetString("PioFormErrorProduct", resourceCulture); }
-        }
-        internal static string PioFormErrorProcess {
-            get { return ResourceManager.GetString("PioFormErrorProcess", resourceCulture); }
-        }
-        internal static string PioFormErrorQty {
-            get { return ResourceManager.GetString("PioFormErrorQty", resourceCulture); }
-        }
-        internal static string PioFormSubmitError {
-            get { return ResourceManager.GetString("PioFormSubmitError", resourceCulture); }
+        
+        /// <summary>
+        ///   查詢類似 Waited 的當地語系化字串。
+        /// </summary>
+        internal static string WaitedDaysForSchedule {
+            get {
+                return ResourceManager.GetString("WaitedDaysForSchedule", resourceCulture);
+            }
         }
     }
 }

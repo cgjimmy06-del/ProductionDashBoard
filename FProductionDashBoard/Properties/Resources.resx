@@ -394,7 +394,7 @@
     <value>Force completed by </value>
   </data>
   <data name="ScheduleOpForcedBySuffix" xml:space="preserve">
-    <value></value>
+    <value />
   </data>
   <data name="SchAssignDialogTitle" xml:space="preserve">
     <value>Assign Order</value>
@@ -422,5 +422,11 @@
   </data>
   <data name="PioFormSubmitError" xml:space="preserve">
     <value>Failed to receive, please try again</value>
+  </data>
+  <data name="WaitedDaysForSchedule" xml:space="preserve">
+    <value>Waited</value>
+  </data>
+  <data name="ComStrDay" xml:space="preserve">
+    <value>Days</value>
   </data>
 </root>

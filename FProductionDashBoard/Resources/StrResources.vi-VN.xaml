@@ -410,6 +410,9 @@
     <sys:String x:Key="SchStatProductionDoneLabel">Hoàn thành SX</sys:String>
     <sys:String x:Key="SchStatIdleCardLabel">Máy nhàn rỗi</sys:String>
     <sys:String x:Key="SchStatLowLoadCardLabel">Máy tải thấp</sys:String>
+    <sys:String x:Key="SchStatPanelOrderTotal">Tổng lịch:</sys:String>
+    <sys:String x:Key="SchStatPanelIncomplete">Chưa hoàn thành:</sys:String>
+    <sys:String x:Key="SchStatPanelEquipments">Đã phân công:</sys:String>
 
     <sys:String x:Key="SchAssignDialogSopType">Loại SOP</sys:String>
     <sys:String x:Key="SchAssignDialogQty">Số lượng</sys:String>

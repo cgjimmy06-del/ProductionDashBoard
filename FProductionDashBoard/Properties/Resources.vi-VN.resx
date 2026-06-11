@@ -349,7 +349,22 @@
     <value>Cưỡng chế bởi </value>
   </data>
   <data name="ScheduleOpForcedBySuffix" xml:space="preserve">
-    <value></value>
+    <value />
+  </data>
+  <data name="SchAssignDialogTitle" xml:space="preserve">
+    <value>Phân công đơn hàng</value>
+  </data>
+  <data name="SchAssignNoSopSelected" xml:space="preserve">
+    <value>Vui lòng chọn loại SOP</value>
+  </data>
+  <data name="SchAssignQtyRequired" xml:space="preserve">
+    <value>Vui lòng nhập số lượng tiếp nhận</value>
+  </data>
+  <data name="SchAssignQtyExceeded" xml:space="preserve">
+    <value>Số lượng tiếp nhận không được vượt quá số lượng còn lại</value>
+  </data>
+  <data name="SchAssignQtyMaxHint" xml:space="preserve">
+    <value>Tối đa {0}</value>
   </data>
   <data name="PioFormErrorProduct" xml:space="preserve">
     <value>Vui lòng chọn sản phẩm</value>
@@ -362,5 +377,11 @@
   </data>
   <data name="PioFormSubmitError" xml:space="preserve">
     <value>Nhập kho thất bại, vui lòng thử lại</value>
+  </data>
+  <data name="WaitedDaysForSchedule" xml:space="preserve">
+    <value>Đã chờ</value>
+  </data>
+  <data name="ComStrDay" xml:space="preserve">
+    <value>ngày</value>
   </data>
 </root>

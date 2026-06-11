@@ -410,6 +410,9 @@
     <sys:String x:Key="SchStatProductionDoneLabel">生產完成</sys:String>
     <sys:String x:Key="SchStatIdleCardLabel">閒置設備</sys:String>
     <sys:String x:Key="SchStatLowLoadCardLabel">低負載設備</sys:String>
+    <sys:String x:Key="SchStatPanelOrderTotal">總排單：</sys:String>
+    <sys:String x:Key="SchStatPanelIncomplete">未完成：</sys:String>
+    <sys:String x:Key="SchStatPanelEquipments">已安排：</sys:String>
 
     <sys:String x:Key="SchAssignDialogSopType">SOP 類型</sys:String>
     <sys:String x:Key="SchAssignDialogQty">接單數量</sys:String>

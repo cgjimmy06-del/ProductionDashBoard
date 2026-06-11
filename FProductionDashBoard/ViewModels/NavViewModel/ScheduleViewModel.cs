@@ -206,8 +206,8 @@ namespace FProductionDashBoard.ViewModels
                     s.WaitingDaysText = days switch
                     {
                         0          => null,
-                        <= 5       => $"已等待 {days} 天",
-                        _          => $"⚠ 已等待 {days} 天"
+                        <= 5       => $"{Properties.Resources.WaitedDaysForSchedule} {days} {Properties.Resources.ComStrDay}",
+                        _          => $"⚠ {Properties.Resources.WaitedDaysForSchedule} {days} {Properties.Resources.ComStrDay}"
                     };
                 }
                 else
@@ -486,8 +486,7 @@ namespace FProductionDashBoard.ViewModels
                                           + inProdOrders.Sum(o => o.Quantity ?? 0);
                 var inProdFirst           = inProdOrders.FirstOrDefault();
                 card.InProductionInfo     = inProdFirst != null
-                    ? $"{inProdFirst.ProductName} / {inProdFirst.ProcessName}"
-                    : null;
+                    ? $"{inProdFirst.ProductName} · {inProdFirst.ProcessName}" : null;
                 card.ActiveTuning         = inProgressTunings.FirstOrDefault(t => t.EquipmentId == eq.Id);
 
                 _allCards.Add(card);

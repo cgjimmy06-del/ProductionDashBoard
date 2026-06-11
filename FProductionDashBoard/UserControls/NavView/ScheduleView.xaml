@@ -94,6 +94,7 @@
                         <TextBlock.Style>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource StatQtyStyle}">
                                 <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                <Setter Property="FontSize" Value="22"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding StatUnderScheduledCount}" Value="0">
                                         <Setter Property="Visibility" Value="Collapsed"/>
@@ -101,7 +102,9 @@
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                        <Run Text="(+"/><Run Text="{Binding StatUnderScheduledCount}"/><Run Text=" 筆 / "/><Run Text="{Binding StatUnderScheduledQtyDeficit}"/><Run Text=" 件待補排)"/>
+                        <Run Text="(+ "/><Run Text="{Binding StatUnderScheduledCount}"/>
+                        <Run Text=" / "/><Run Text="{Binding StatUnderScheduledQtyDeficit}"/>
+                        <Run Text=" pcs)"/>
                     </TextBlock>
                 </StackPanel>
             </Border>
@@ -134,8 +137,8 @@
             <Border Style="{StaticResource StatCardBorderStyle}">
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="{DynamicResource SchStatIdleCardLabel}" Style="{StaticResource StatLabelStyle}"/>
-                    <TextBlock Text="{Binding StatIdleCardCount}" Style="{StaticResource StatNumberStyle}"
-                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding StatIdleCardCount}" Style="{StaticResource StatQtyStyle}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                 </StackPanel>
             </Border>
 
@@ -143,8 +146,8 @@
             <Border Style="{StaticResource StatCardBorderStyle}">
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="{DynamicResource SchStatLowLoadCardLabel}" Style="{StaticResource StatLabelStyle}"/>
-                    <TextBlock Text="{Binding StatLowLoadCardCount}" Style="{StaticResource StatNumberStyle}"
-                               Foreground="{DynamicResource WarningBrush}"/>
+                    <TextBlock Text="{Binding StatLowLoadCardCount}" Style="{StaticResource StatQtyStyle}"
+                               Foreground="{DynamicResource PrimaryBrush}"/>
                 </StackPanel>
             </Border>
 
@@ -213,18 +216,25 @@
                 </Grid.RowDefinitions>
 
                 <!-- 右側統計列（Layer 2 才顯示） -->
-                <Border Grid.Row="0" Style="{StaticResource StatCardBorderStyle}" Margin="4,0,0,8"
+                <Border Grid.Row="0" Style="{StaticResource StatCardBorderStyle}" 
+                        Margin="4,0,0,8"
                         Visibility="{Binding IsStatsPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal" Margin="8,4">
-                        <TextBlock Text="總 Order：" Style="{StaticResource StatLabelStyle}"/>
+                        <TextBlock Text="{DynamicResource SchStatPanelOrderTotal}" Style="{StaticResource StatLabelStyle}"
+                                   Margin="0"/>
                         <TextBlock Text="{Binding SelectedScheduleOrderTotal}"
-                                   FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        <TextBlock Text="  未完成：" Style="{StaticResource StatLabelStyle}" Margin="12,0,0,0"/>
+                                   FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Margin="4,0"/>
+                        <TextBlock Text="{DynamicResource SchStatPanelIncomplete}" Style="{StaticResource StatLabelStyle}" 
+                                   Margin="12,0,0,0"/>
                         <TextBlock Text="{Binding SelectedScheduleOrderIncomplete}"
-                                   FontSize="14" Foreground="{DynamicResource WarningBrush}"/>
-                        <TextBlock Text="  已安排：" Style="{StaticResource StatLabelStyle}" Margin="12,0,0,0"/>
+                                   FontSize="16" Foreground="{DynamicResource ErrorBrush}"
+                                   Margin="4,0"/>
+                        <TextBlock Text="{DynamicResource SchStatPanelEquipments}" Style="{StaticResource StatLabelStyle}" 
+                                   Margin="12,0,0,0"/>
                         <TextBlock Text="{Binding SelectedScheduleEquipments}"
-                                   Style="{StaticResource StatLabelStyle}" FontSize="12"/>
+                                   Style="{StaticResource StatLabelStyle}" 
+                                   FontSize="16" Margin="4,0,0,0"/>
                     </StackPanel>
                 </Border>
 
@@ -303,7 +313,7 @@
                                     <TextBlock FontSize="11"
                                                Text="{Binding WaitingDaysText}"
                                                Foreground="{DynamicResource ErrorBrush}"
-                                               Margin="6,0,0,0"
+                                               Margin="8,0,0,0"
                                                Visibility="{Binding WaitingDaysText,
                                                             Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
                                 </StackPanel>

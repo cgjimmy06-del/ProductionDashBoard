@@ -55,6 +55,8 @@
     <SolidColorBrush x:Key="TextLightBrush" Color="{StaticResource TextLightColor}" />
     <SolidColorBrush x:Key="TextDarkBrush" Color="{StaticResource TextDarkColor}" />
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
+    <Color x:Key="TextSecondaryColor">#9E9E9E</Color>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
 
     <SolidColorBrush x:Key="SelectedBrush" Color="{StaticResource SelectedColor}" />
 
@@ -77,6 +79,14 @@
     <SolidColorBrush x:Key="ProgramPendingBrush"  Color="{StaticResource ProgramPendingColor}" />
     <SolidColorBrush x:Key="ProgramOffsetBrush"   Color="{StaticResource ProgramOffsetColor}" />
     <SolidColorBrush x:Key="ProgramErrorBrush"    Color="{StaticResource ProgramErrorColor}" />
+
+    <!-- 排單負載 Chip 顏色（兩主題共用柔和色） -->
+    <Color x:Key="ChipLoadLowColor">#81C784</Color>
+    <Color x:Key="ChipLoadMidColor">#FFB74D</Color>
+    <Color x:Key="ChipLoadHighColor">#E57373</Color>
+    <SolidColorBrush x:Key="ChipLoadLowBrush"  Color="{StaticResource ChipLoadLowColor}" />
+    <SolidColorBrush x:Key="ChipLoadMidBrush"  Color="{StaticResource ChipLoadMidColor}" />
+    <SolidColorBrush x:Key="ChipLoadHighBrush" Color="{StaticResource ChipLoadHighColor}" />
 
     <!--#endregion-->
     

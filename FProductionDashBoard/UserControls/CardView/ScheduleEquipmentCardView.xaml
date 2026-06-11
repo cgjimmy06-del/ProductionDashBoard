@@ -38,9 +38,9 @@
         <StackPanel>
 
             <!-- 標題：設備名稱 + 右上色碼點 -->
-            <Grid Margin="0,0,0,4">
+            <Grid Margin="0,0,0,6">
                 <TextBlock Text="{Binding Name}"
-                           FontSize="14" FontWeight="SemiBold"
+                           FontSize="16" FontWeight="SemiBold"
                            Foreground="{DynamicResource TextPrimaryBrush}"
                            TextTrimming="CharacterEllipsis"
                            VerticalAlignment="Center"/>
@@ -50,18 +50,18 @@
             </Grid>
 
             <!-- 接單資訊 -->
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                 <TextBlock Text="{DynamicResource SchCardOrders}"
                            FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
                            Margin="0,0,4,0"/>
-                <TextBlock FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}">
-                    <Run Text="{Binding ActiveOrderCount, Mode=OneWay}"/><Run Text=" 筆 / "/>
-                    <Run Text="{Binding TotalPendingQty, Mode=OneWay}"/><Run Text=" 件"/>
+                <TextBlock FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}">
+                    <Run Text="{Binding ActiveOrderCount, Mode=OneWay}"/><Run Text="  / "/>
+                    <Run Text="{Binding TotalPendingQty, Mode=OneWay}"/><Run Text=" pcs"/>
                 </TextBlock>
             </StackPanel>
 
             <!-- Chip 區 -->
-            <WrapPanel Margin="0,0,0,4">
+            <WrapPanel Margin="0,0,0,6">
                 <!-- 調試中 chip -->
                 <Border CornerRadius="6" Padding="6,2" Margin="0,0,4,2"
                         Background="{DynamicResource WarningBrush}">
@@ -76,53 +76,59 @@
                         </Style>
                     </Border.Style>
                     <TextBlock Text="{DynamicResource SchCardTuningLabel}"
-                               FontSize="11" FontWeight="SemiBold"
+                               FontSize="13" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextDarkBrush}"/>
                 </Border>
 
                 <!-- 負載 chip（橘/藍卡才顯示，即 TotalPendingQty > 0） -->
-                <Border CornerRadius="6" Padding="6,2" Margin="0,0,0,2"
-                        Background="{DynamicResource SecondaryBackgroundBrush}">
+                <Border CornerRadius="6" Padding="6,2" Margin="0,0,0,2">
                     <Border.Style>
                         <Style TargetType="Border">
                             <Setter Property="Visibility" Value="Visible"/>
+                            <Setter Property="Background" Value="{DynamicResource ChipLoadLowBrush}"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding LoadLevel}" Value="{x:Static localvm:ScheduleCardLoadLevel.None}">
                                     <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding LoadLevel}" Value="{x:Static localvm:ScheduleCardLoadLevel.Mid}">
+                                    <Setter Property="Background" Value="{DynamicResource ChipLoadMidBrush}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding LoadLevel}" Value="{x:Static localvm:ScheduleCardLoadLevel.High}">
+                                    <Setter Property="Background" Value="{DynamicResource ChipLoadHighBrush}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
                     <TextBlock Text="{Binding LoadLevel, Converter={StaticResource ScheduleCardLoadLevelToLabelConverter}}"
-                               FontSize="11"
-                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                               FontSize="13"
+                               Foreground="{DynamicResource TextDarkBrush}"/>
                 </Border>
             </WrapPanel>
 
             <!-- InProductionInfo（有接單進行中才顯示） -->
             <TextBlock Text="{Binding InProductionInfo}"
-                       FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
-                       TextTrimming="CharacterEllipsis" Margin="0,0,0,4"
+                       FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"
+                       TextTrimming="CharacterEllipsis" Margin="0,0,0,6"
                        Visibility="{Binding InProductionInfo,
                                    Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
 
             <!-- 程式資訊：可生產 F / 總計 N -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                 <TextBlock Text="{DynamicResource SchCardPrograms}"
-                           FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
+                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
                            Margin="0,0,4,0"/>
-                <TextBlock FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}">
+                <TextBlock FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}">
                     <Run Text="{Binding FeasibleMatchingCount, Mode=OneWay}"/>
                 </TextBlock>
-                <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.7">
-                    <Run Text=" ("/>
+                <TextBlock FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}">
+                    <Run Text=" ( "/>
                     <Run Text="{Binding TotalMatchingCount, Mode=OneWay}"/>
-                    <Run Text=")"/>
                 </TextBlock>
                 <TextBlock Text=" / "
-                           FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.6"/>
-                <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.7">
+                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                <TextBlock FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}">
                     <Run Text="{Binding TotalProgramCount, Mode=OneWay}"/>
+                    <Run Text=" )"/>
                 </TextBlock>
             </StackPanel>
 
