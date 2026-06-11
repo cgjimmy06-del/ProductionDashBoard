@@ -18,13 +18,13 @@
         <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                 CornerRadius="4" Padding="10,6" Margin="0,0,0,12">
             <TextBlock FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}">
-                <Run Text="#"/><Run Text="{Binding OrderId}"/>
+                <Run Text="#"/><Run Text="{Binding OrderId, Mode=OneWay}"/>
                 <Run Text=" · "/>
-                <Run Text="{Binding ProductName}"/>
+                <Run Text="{Binding ProductName, Mode=OneWay}"/>
                 <Run Text=" ("/>
-                <Run Text="{Binding ProcessName}"/>
+                <Run Text="{Binding ProcessName, Mode=OneWay}"/>
                 <Run Text=") · "/>
-                <Run Text="{Binding Quantity}"/>
+                <Run Text="{Binding Quantity, Mode=OneWay}"/>
                 <Run Text=" pcs"/>
             </TextBlock>
         </Border>

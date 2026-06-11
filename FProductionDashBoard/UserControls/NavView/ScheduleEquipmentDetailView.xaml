@@ -29,7 +29,7 @@
             <TextBlock FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
                        VerticalAlignment="Center" Margin="4,0,0,0">
                 <Run Text="("/>
-                <Run Text="{Binding SelectedEquipmentCard.Code}"/>
+                <Run Text="{Binding SelectedEquipmentCard.Code, Mode=OneWay}"/>
                 <Run Text=")"/>
             </TextBlock>
         </StackPanel>

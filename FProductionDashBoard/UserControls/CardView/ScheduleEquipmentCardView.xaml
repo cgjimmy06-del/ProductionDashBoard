@@ -51,6 +51,7 @@
                               RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                     CommandParameter="{Binding}"
                     Style="{StaticResource MaterialDesignFlatButton}"
+                    Height="Auto"
                     Background="Transparent"
                     Padding="0"
                     HorizontalContentAlignment="Stretch"
