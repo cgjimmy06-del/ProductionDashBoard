@@ -5,6 +5,7 @@ namespace FProductionDashBoard.UiModels
     public class OrderProductionInfo
     {
         public int OrderId { get; set; }
+        public int EquipmentId { get; set; }
         public int? ScheduleId { get; set; }
         public int EquipmentProductId { get; set; }
         public int SopId { get; set; }
@@ -22,6 +23,7 @@ namespace FProductionDashBoard.UiModels
         public static OrderProductionInfo FromEntity(OrderProduction o) => new()
         {
             OrderId = o.OrderId,
+            EquipmentId = o.EquipmentId,
             ScheduleId = o.ScheduleId,
             EquipmentProductId = o.EquipmentProductId,
             SopId = o.EquipmentProduct?.SopId ?? 0,

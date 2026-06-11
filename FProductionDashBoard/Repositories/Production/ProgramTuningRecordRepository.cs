@@ -52,6 +52,27 @@ namespace FProductionDashBoard.Repositories
             await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
+        public async Task<List<ProgramTuningRecord>> GetAllInProgressAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.ProgramTuningRecords
+                .Where(r => r.Status == ProgramTuningStatus.InProgress)
+                .Include(r => r.EquipmentProduct)
+                    .ThenInclude(ep => ep!.Sop)
+                    .ThenInclude(s => s!.Product)
+                    .ThenInclude(p => p!.Part)
+                .Include(r => r.EquipmentProduct)
+                    .ThenInclude(ep => ep!.Sop)
+                    .ThenInclude(s => s!.Product)
+                    .ThenInclude(p => p!.Model)
+                .Include(r => r.EquipmentProduct)
+                    .ThenInclude(ep => ep!.Sop)
+                    .ThenInclude(s => s!.Process)
+                .Include(r => r.StartedByEmployee)
+                .ToListAsync()
+                .ConfigureAwait(false);
+        }
+
         public async Task<ProgramTuningRecord?> GetInProgressByEquipmentAsync(int equipmentId)
         {
             await using var ctx = _factory.CreateDbContext();

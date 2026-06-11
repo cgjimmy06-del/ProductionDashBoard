@@ -1,0 +1,83 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.DialogView.OrderAssignmentDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             Width="360" d:DesignHeight="380" d:DesignWidth="360" d:Background="White">
+
+    <StackPanel Margin="16,5">
+
+        <!-- 排單資訊（唯讀） -->
+        <Grid Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource SchColPartNo}"
+                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding PartNo}"
+                       FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,3"
+                       TextTrimming="CharacterEllipsis"/>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource SchColModel}"
+                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ModelName}"
+                       FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,3"
+                       TextTrimming="CharacterEllipsis"/>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource SchColProcess}"
+                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ProcessName}"
+                       FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,3"
+                       TextTrimming="CharacterEllipsis"/>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource SchColLotNo}"
+                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding LotNo}"
+                       FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,3"
+                       TextTrimming="CharacterEllipsis"/>
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource SchAssignDialogScheduleQty}"
+                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3"/>
+            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding ScheduleQty}"
+                       FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,3"/>
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="{DynamicResource SchAssignDialogEquipment}"
+                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3"/>
+            <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding EquipmentName}"
+                       FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,3"
+                       TextTrimming="CharacterEllipsis"/>
+        </Grid>
+
+        <!-- SOP 類型 ComboBox -->
+        <ComboBox ItemsSource="{Binding CompatibleOptions}"
+                  SelectedItem="{Binding SelectedEquipmentProduct}"
+                  materialDesign:HintAssist.Hint="{DynamicResource SchAssignDialogSopType}"
+                  Margin="0,0,0,12">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Sop.SopType}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <!-- 接單數量 -->
+        <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}"
+                 materialDesign:HintAssist.Hint="{DynamicResource SchAssignDialogQty}"
+                 materialDesign:HintAssist.HelperText="{Binding MaxQtyHint}"
+                 materialDesign:HintAssist.HelperTextFontSize="12"
+                 Margin="0,0,0,4"/>
+
+    </StackPanel>
+</UserControl>

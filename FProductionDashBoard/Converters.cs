@@ -267,6 +267,40 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+    public class ScheduleCardColorToBrushConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            return value is ViewModels.ScheduleCardColor color ? color switch
+            {
+                ViewModels.ScheduleCardColor.Green  => (Brush)resources["SuccessBrush"],
+                ViewModels.ScheduleCardColor.Orange => (Brush)resources["WarningBrush"],
+                ViewModels.ScheduleCardColor.Blue   => (Brush)resources["PrimaryBrush"],
+                ViewModels.ScheduleCardColor.Gray   => (Brush)resources["BorderBrush"],
+                _                                   => (Brush)resources["BorderBrush"],
+            } : (Brush)resources["BorderBrush"];
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+    public class ScheduleCardLoadLevelToLabelConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            var key = value is ViewModels.ScheduleCardLoadLevel level ? level switch
+            {
+                ViewModels.ScheduleCardLoadLevel.Low  => "SchCardLoadLow",
+                ViewModels.ScheduleCardLoadLevel.Mid  => "SchCardLoadMid",
+                ViewModels.ScheduleCardLoadLevel.High => "SchCardLoadHigh",
+                _                                     => null,
+            } : null;
+            return key != null && resources[key] is string label ? label : string.Empty;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
     public static class ListBoxBehavior
     {
         public static readonly DependencyProperty AutoScrollToEndProperty = DependencyProperty.RegisterAttached(

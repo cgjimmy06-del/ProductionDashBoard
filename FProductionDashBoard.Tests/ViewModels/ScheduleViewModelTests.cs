@@ -28,7 +28,8 @@ namespace FProductionDashBoard.Tests.ViewModels
             var auth = new AuthorizationService();
             var cardReader = new Mock<ICardReaderService>().Object;
             var core = new DashboardCoreServices(log, mock.Object, auth, cardReader);
-            return new ScheduleViewModel(core);
+            var dialog = new Mock<IDialogService>().Object;
+            return new ScheduleViewModel(core, dialog);
         }
 
         private static ScheduleUiModel MakeSched(int id, ScheduleStatus status,

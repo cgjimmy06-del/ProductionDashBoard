@@ -59,6 +59,8 @@
             <local:ScheduleStatusToLabelConverter x:Key="ScheduleStatusToLabelConverter"/>
             <local:ScheduleViewFilterToLabelConverter x:Key="ScheduleViewFilterToLabelConverter"/>
             <local:TuningTypeToLabelConverter x:Key="TuningTypeToLabelConverter"/>
+            <local:ScheduleCardColorToBrushConverter x:Key="ScheduleCardColorToBrushConverter"/>
+            <local:ScheduleCardLoadLevelToLabelConverter x:Key="ScheduleCardLoadLevelToLabelConverter"/>
             <!--#endregion-->
             
         </ResourceDictionary>

@@ -408,6 +408,22 @@
     <sys:String x:Key="SchStatPendingLabel">Pending</sys:String>
     <sys:String x:Key="SchStatScheduledLabel">Scheduled</sys:String>
     <sys:String x:Key="SchStatProductionDoneLabel">Production Done</sys:String>
+    <sys:String x:Key="SchStatIdleCardLabel">Idle Equip.</sys:String>
+    <sys:String x:Key="SchStatLowLoadCardLabel">Low-Load Equip.</sys:String>
+
+    <sys:String x:Key="SchAssignDialogSopType">SOP Type</sys:String>
+    <sys:String x:Key="SchAssignDialogQty">Order Qty</sys:String>
+    <sys:String x:Key="SchAssignDialogScheduleQty">Schedule Qty</sys:String>
+    <sys:String x:Key="SchAssignDialogEquipment">Equipment</sys:String>
+
+    <sys:String x:Key="SchAssignButton">Assign</sys:String>
+    <sys:String x:Key="SchCardOrders">Orders</sys:String>
+    <sys:String x:Key="SchCardPrograms">Feasible</sys:String>
+    <sys:String x:Key="SchCardTuningLabel">Tuning</sys:String>
+    <sys:String x:Key="SchCardInProductionChip">In Prod.</sys:String>
+    <sys:String x:Key="SchCardLoadLow">Low Load</sys:String>
+    <sys:String x:Key="SchCardLoadMid">Mid Load</sys:String>
+    <sys:String x:Key="SchCardLoadHigh">High Load</sys:String>
 
     <sys:String x:Key="SchFilterDateStart">Start Date</sys:String>
     <sys:String x:Key="SchFilterDateEnd">End Date</sys:String>
