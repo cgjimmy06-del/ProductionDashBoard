@@ -10,7 +10,7 @@ from datetime import date
 from pathlib import Path
 
 OUTPUT_DIR = Path(__file__).parent
-VERSION_TAG = "v2.7.2"
+VERSION_TAG = "v3.0.0"
 XLSX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.xlsx"
 DOCX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.docx"
 PDF_PATH  = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.pdf"
@@ -625,7 +625,8 @@ def generate_word():
         ["v1.3", "2026-05-21", "AI-assisted Review", "二輪審查 + 18 項新發現 (P5-H1~L6) + 完整修復追蹤", "已歸檔"],
         ["v2.5", "2026-06-03", "AI-assisted Review", "V2.5.1 發佈版本更新；PR #62 硬體設定持久化（P5-L3 已解決）", "已歸檔"],
         ["v2.6", "2026-06-04", "AI-assisted Review", "V2.6.0 發佈版本更新；PR #64-66 Modbus TCP 支援 + ABB/Modbus code review 修正（High-1 資源釋放 + Low-1~5）", "已歸檔"],
-        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V2.7.2 發佈版本更新；新增出入料管理（PR#73-74）+ ICollectionView 效能強化與日期篩選（PR#75）+ code review 修復（PR#76-77）", "更新版"],
+        ["v2.7.2", "2026-06-09", "AI-assisted Review", "V2.7.2 發佈版本更新；新增出入料管理（PR#73-74）+ ICollectionView 效能強化與日期篩選（PR#75）+ code review 修復（PR#76-77）", "已歸檔"],
+        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V3.0.0 發佈版本更新；排單管理（PR#81~84：排單清單、設備卡片牆、接單指派、焦點模式、取消訂單）+ DeviceCard UX 主次按鈕 + ABB 傳送開關 + Help menu（PR#85）", "更新版"],
     ]
     rev_tbl = doc.add_table(rows=len(rev_history)+1, cols=5)
     rev_tbl.style = "Table Grid"
