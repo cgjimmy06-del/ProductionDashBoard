@@ -246,7 +246,7 @@ namespace FProductionDashBoard.ViewModels
         private async Task StartProductionWithSeqNoAsync(int orderId, int seqNo)
         {
             // 1) ABB 設備：先寫入 SeqNo，失敗則中止、不更新訂單（不做任何狀態阻擋，由設備決定成敗）
-            if (_abbClient != null)
+            if (_abbClient != null && _hardwareConfig.Current.AbbWriteSeqNoEnabled)
             {
                 try
                 {
@@ -268,7 +268,7 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 // DB 失敗但 SeqNo 已寫入 → 復原為 0，避免機器人留著無對應訂單的 SeqNo
-                if (_abbClient != null) ResetSeqNoFireAndForget();
+                if (_abbClient != null && _hardwareConfig.Current.AbbWriteSeqNoEnabled) ResetSeqNoFireAndForget();
                 _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - 接單操作失敗", LogLevel.Error);
                 _core.Log.AddErrorLog($"[StartProductionWithSeqNoAsync] {ex.Message}");
             }

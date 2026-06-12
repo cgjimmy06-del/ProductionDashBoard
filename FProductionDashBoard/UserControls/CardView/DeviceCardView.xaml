@@ -72,16 +72,44 @@
             <!-- 主體內容 -->
             <StackPanel Grid.Column="1" Margin="5,0,0,0" Orientation="Vertical">
 
-                <!-- 機台名稱列 -->
-                <DockPanel Margin="0,5,5,0">
-                    <Button DockPanel.Dock="Right"
-                            Style="{StaticResource MaterialDesignIconButton}"
-                            Command="{Binding OrderCommand}"
-                            VerticalAlignment="Center"
-                            ToolTip="{DynamicResource OrderListButtonTooltip}"
-                            Width="44" Height="44">
-                        <materialDesign:PackIcon Kind="ClipboardListOutline" Width="26" Height="26"/>
-                    </Button>
+                <!-- 機台名稱 + 狀態 Chip 列 -->
+                <DockPanel Margin="0,5,5,2">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- 時段 chip -->
+                        <Border CornerRadius="8"
+                                BorderBrush="{DynamicResource SecondaryBrush}"
+                                BorderThickness="1"
+                                Padding="8,2"
+                                Margin="0,0,6,0"
+                                Visibility="{Binding HasCurrentTimeSlot, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock Text="{Binding CurrentTimeSlotLabel}"
+                                       FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource SecondaryBrush}"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <!-- ABB Auto 模式 chip -->
+                        <Border CornerRadius="8"
+                                Background="{DynamicResource WarningBrush}"
+                                Padding="8,2"
+                                Margin="0,0,6,0"
+                                Visibility="{Binding IsAbbAutoMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock Text="{DynamicResource AbbAutoModeChip}"
+                                       FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextDarkBrush}"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <!-- 生產中 chip -->
+                        <Border CornerRadius="8"
+                                Background="{DynamicResource SuccessBrush}"
+                                Padding="8,2"
+                                Margin="0,0,4,0"
+                                Visibility="{Binding IsProducing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock Text="{DynamicResource DeviceInProduction}"
+                                       FontSize="13" FontWeight="SemiBold"
+                                       Foreground="White"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
                     <TextBlock Text="{Binding Info.Name}" d:Text="A1"
                                FontWeight="Bold" FontSize="30" Cursor="Hand"
                                TextDecorations="Underline"
@@ -112,68 +140,42 @@
                                Margin="0,0,12,0"/>
                 </StackPanel>
 
-                <!-- 狀態列 -->
-                <StackPanel Orientation="Horizontal" Margin="5,4,5,2">
-                    <!-- 時段 chip -->
-                    <Border CornerRadius="8"
-                            BorderBrush="{DynamicResource SecondaryBrush}"
-                            BorderThickness="1"
-                            Padding="8,2"
-                            Margin="0,0,6,0"
-                            Visibility="{Binding HasCurrentTimeSlot, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <TextBlock Text="{Binding CurrentTimeSlotLabel}"
-                                   FontSize="13" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource SecondaryBrush}"
-                                   VerticalAlignment="Center"/>
-                    </Border>
-                    <!-- ABB Auto 模式 chip -->
-                    <Border CornerRadius="8"
-                            Background="{DynamicResource WarningBrush}"
-                            Padding="8,2"
-                            Margin="0,0,6,0"
-                            Visibility="{Binding IsAbbAutoMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <TextBlock Text="{DynamicResource AbbAutoModeChip}"
-                                   FontSize="13" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextDarkBrush}"
-                                   VerticalAlignment="Center"/>
-                    </Border>
-                    <!-- 生產中 chip -->
-                    <Border CornerRadius="8"
-                            Background="{DynamicResource SuccessBrush}"
-                            Padding="8,2"
-                            Visibility="{Binding IsProducing, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <TextBlock Text="{DynamicResource DeviceInProduction}"
-                                   FontSize="13" FontWeight="SemiBold"
-                                   Foreground="White"
-                                   VerticalAlignment="Center"/>
-                    </Border>
-                </StackPanel>
+                <Separator Margin="5,4,5,0"/>
 
-                <!-- 按鈕列 -->
-                <StackPanel Orientation="Horizontal" Margin="5">
-                    <Button Margin="0, 5, 5, 5"
-                            Style="{DynamicResource DeviceMainButtonStyle}"
+                <!-- 主要按鈕列（接單、調試） -->
+                <UniformGrid Rows="1" Margin="5,0,5,0">
+                    <Button Style="{StaticResource DevicePrimaryButtonStyle}"
+                            Command="{Binding OrderCommand}"
+                            ToolTip="{DynamicResource OrderListButtonTooltip}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ClipboardListOutline"
+                                                     Width="16" Height="16"
+                                                     VerticalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource OrderButton}"
+                                       Margin="4,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource DevicePrimaryButtonStyle}"
+                            Content="{DynamicResource OperationButton}"
+                            Command="{Binding TuningCommand}"/>
+                </UniformGrid>
+
+                <Separator Margin="5,2,5,0"/>
+
+                <!-- 次要按鈕列（換料、首檢、巡檢） -->
+                <StackPanel Orientation="Horizontal" Margin="5,0,5,4">
+                    <Button Style="{StaticResource DeviceSecondaryButtonStyle}"
                             Content="{DynamicResource MetarialChangeButton}"
                             Command="{Binding MaterialsChangeCommand}"/>
-
-                    <Button Margin="5"
-                            Style="{DynamicResource DeviceMainButtonStyle}"
+                    <Button Style="{StaticResource DeviceSecondaryButtonStyle}"
                             Content="{DynamicResource FirstInspectionButton}"
                             Command="{Binding FirstInspectionCommand}"
-                            Background="{Binding FirstInspectionStatus, 
+                            Background="{Binding FirstInspectionStatus,
                                     Converter={StaticResource BoolToColorConverter},
-                                    ConverterParameter='NoError'}">
-                    </Button>
-
-                    <Button Margin="5"
-                            Style="{DynamicResource DeviceMainButtonStyle}"
-                            Content="{DynamicResource RoutineInspectionButton}" 
+                                    ConverterParameter='NoError'}"/>
+                    <Button Style="{StaticResource DeviceSecondaryButtonStyle}"
+                            Content="{DynamicResource RoutineInspectionButton}"
                             Command="{Binding RoutineInspectionCommand}"/>
-
-                    <Button Margin="5"
-                            Style="{DynamicResource DeviceMainButtonStyle}"
-                            Content="{DynamicResource OperationButton}" 
-                            Command="{Binding TuningCommand}"/>
                 </StackPanel>
 
                 <!-- 巡檢燈 -->

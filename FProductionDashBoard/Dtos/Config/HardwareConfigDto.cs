@@ -9,5 +9,6 @@ namespace FProductionDashBoard.Dtos
         public string AbbSeqNoVariable { get; set; } = "MES_project";
         public bool   DeviceReconnectEnabled     { get; set; } = true;
         public int    DeviceReconnectIntervalSec { get; set; } = 10;
+        public bool   AbbWriteSeqNoEnabled       { get; set; } = true;
     }
 }

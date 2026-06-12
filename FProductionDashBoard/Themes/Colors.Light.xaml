@@ -80,6 +80,7 @@
     <SolidColorBrush x:Key="ButtonSecondaryLightBrush" Color="{StaticResource ButtonSecondaryLightColor}" />
     <SolidColorBrush x:Key="ButtonWarningBrush" Color="{StaticResource ButtonWarningColor}" />
     <SolidColorBrush x:Key="ButtonErrorBrush" Color="{StaticResource ButtonErrorColor}" />
+    <SolidColorBrush x:Key="DevicePrimaryActionBrush" Color="#2A5580" />
 
     <SolidColorBrush x:Key="ProgramFeasibleBrush" Color="{StaticResource ProgramFeasibleColor}" />
     <SolidColorBrush x:Key="ProgramPendingBrush"  Color="{StaticResource ProgramPendingColor}" />

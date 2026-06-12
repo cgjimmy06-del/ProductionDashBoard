@@ -330,6 +330,37 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <Style x:Key="DevicePrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Padding" Value="8,5"/>
+        <Setter Property="Margin" Value="4,4"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="5"/>
+        <Setter Property="Background" Value="{DynamicResource DevicePrimaryActionBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextLightBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="DeviceSecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Height" Value="33"/>
+        <Setter Property="Padding" Value="6,3"/>
+        <Setter Property="Margin" Value="4,2"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryLightBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
     <Style x:Key="TuningOverlayButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="#CCEEEEEE"/>
         <Setter Property="BorderThickness" Value="0"/>

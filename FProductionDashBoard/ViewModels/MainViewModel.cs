@@ -60,6 +60,7 @@ namespace FProductionDashBoard.ViewModels
         public IAsyncRelayCommand LogoutCommand { get; }
         public IRelayCommand TestCommand { get; }
         public ICommand CollapseNavCommand { get; }
+        public ICommand ShowAboutCommand { get; }
         public LogPanelViewModel LogPanel { get; }
         public SystemSettingsViewModel SystemSettings { get; }
 
@@ -108,6 +109,14 @@ namespace FProductionDashBoard.ViewModels
 
             TestCommand = new RelayCommand(() => { },
                 () => _core.Authorization.HasPermission(PermissionId.Test));
+
+            ShowAboutCommand = new RelayCommand(() =>
+            {
+                var title    = Application.Current.TryFindResource("SsAboutHeader") as string ?? "About";
+                var verLabel = Application.Current.TryFindResource("SsVersionLabel") as string ?? "Version";
+                MessageBox.Show($"{verLabel}: {AppVersion}", title,
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+            });
         }
 
         #region -- 載入初始化 --

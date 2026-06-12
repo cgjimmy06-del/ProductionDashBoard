@@ -70,6 +70,7 @@ namespace FProductionDashBoard.ViewModels
 
         [ObservableProperty] private bool deviceReconnectEnabled     = true;
         [ObservableProperty] private int  deviceReconnectIntervalSec = 10;
+        [ObservableProperty] private bool abbWriteSeqNoEnabled       = true;
 
         partial void OnReaderPortChanged(string value)              => HasUnsavedChanges = true;
         partial void OnReaderBaudChanged(int value)                 => HasUnsavedChanges = true;
@@ -78,6 +79,7 @@ namespace FProductionDashBoard.ViewModels
         partial void OnAbbSeqNoVariableChanged(string value)        => HasUnsavedChanges = true;
         partial void OnDeviceReconnectEnabledChanged(bool value)    => HasUnsavedChanges = true;
         partial void OnDeviceReconnectIntervalSecChanged(int value) => HasUnsavedChanges = true;
+        partial void OnAbbWriteSeqNoEnabledChanged(bool value)      => HasUnsavedChanges = true;
 
         // 日誌設定（直接映射 LogService，setter 同時觸發 HasUnsavedChanges）
         public bool LogSaveToFile
@@ -176,6 +178,7 @@ namespace FProductionDashBoard.ViewModels
             AbbSeqNoVariable          = hw.AbbSeqNoVariable;
             DeviceReconnectEnabled    = hw.DeviceReconnectEnabled;
             DeviceReconnectIntervalSec = hw.DeviceReconnectIntervalSec;
+            AbbWriteSeqNoEnabled       = hw.AbbWriteSeqNoEnabled;
 
             HasUnsavedChanges = false;
 
@@ -206,6 +209,7 @@ namespace FProductionDashBoard.ViewModels
                 AbbSeqNoVariable          = AbbSeqNoVariable,
                 DeviceReconnectEnabled    = DeviceReconnectEnabled,
                 DeviceReconnectIntervalSec = DeviceReconnectIntervalSec,
+                AbbWriteSeqNoEnabled       = AbbWriteSeqNoEnabled,
             });
             Properties.Settings.Default.SkipLoginScreen = SkipLoginScreen;
             Properties.Settings.Default.Save();

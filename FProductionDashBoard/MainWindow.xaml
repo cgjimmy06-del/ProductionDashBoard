@@ -110,6 +110,10 @@
                           CommandParameter="{x:Static localvm:NavMode.SystemSettings}"
                           InputGestureText="Ctrl+,"/>
             </MenuItem>
+            <MenuItem Header="{DynamicResource MenuHelp}">
+                <MenuItem Header="{DynamicResource MenuHelpAbout}"
+                          Command="{Binding ShowAboutCommand}"/>
+            </MenuItem>
         </Menu>
 
         <!-- ToolBar 區域 -->

@@ -34,6 +34,8 @@
     <sys:String x:Key="MenuToolsSettings">_Advanced Settings</sys:String>
     <sys:String x:Key="MenuViewLanguage">_Language</sys:String>
     <sys:String x:Key="MenuViewTheme">_Theme</sys:String>
+    <sys:String x:Key="MenuHelp">_Help</sys:String>
+    <sys:String x:Key="MenuHelpAbout">_About...</sys:String>
     <sys:String x:Key="ProgramLibraryNavButton">Program Library</sys:String>
     <sys:String x:Key="ProductInOutNavButton">Product In/Out</sys:String>
     <sys:String x:Key="SystemSettingsNavButton">System Settings</sys:String>
@@ -60,6 +62,7 @@
     <sys:String x:Key="TuningTeachingButton">Teaching</sys:String>
     <sys:String x:Key="TuningOffsetButton">Offset</sys:String>
     <sys:String x:Key="OrderListButtonTooltip">Open the order list page</sys:String>
+    <sys:String x:Key="OrderButton">Order</sys:String>
     <sys:String x:Key="TuningClickToEnd">Click anywhere to end</sys:String>
     <!--#endregion-->
     <!--#region dialog window 彈出視窗 -->
@@ -259,6 +262,7 @@
     <sys:String x:Key="SsAbbSeqNoTask">Task</sys:String>
     <sys:String x:Key="SsAbbSeqNoModule">Module</sys:String>
     <sys:String x:Key="SsAbbSeqNoVariable">Variable</sys:String>
+    <sys:String x:Key="SsAbbWriteSeqNoEnabled">Send SeqNo to ABB</sys:String>
     <sys:String x:Key="SsDeviceReconnectSubHeader">Device Reconnect</sys:String>
     <sys:String x:Key="SsDeviceReconnect">Auto Reconnect</sys:String>
     <sys:String x:Key="SsAboutHeader">About</sys:String>
