@@ -72,7 +72,7 @@ namespace FProductionDashBoard.ViewModels
                     break;
 
                 case NavMode.Equipment:
-                    if (!_core.Authorization.HasPermission(PermissionId.Setting)) return false;
+                    if (!_core.Authorization.HasPermission(PermissionId.View)) return false;
                     content = _serviceProvider.GetRequiredService<HardwareViewModel>();
                     break;
 
