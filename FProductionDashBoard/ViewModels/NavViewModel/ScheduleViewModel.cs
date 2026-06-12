@@ -399,6 +399,8 @@ namespace FProductionDashBoard.ViewModels
             EquipDetailPendingQty   = EquipDetailInProductionQty   = 0;
             OnPropertyChanged(nameof(IsCardWallVisible));
             OnPropertyChanged(nameof(IsEquipmentDetailVisible));
+            foreach (var c in _allCards) c.ResetForLayer1();
+            EquipmentCardsView?.Refresh();
         }
 
         private void UpdateSelectedEquipmentOrders()
@@ -452,7 +454,11 @@ namespace FProductionDashBoard.ViewModels
                              ep.Sop?.ProductId == schedule.ProductId &&
                              ep.Sop?.ProcessId == schedule.ProcessId)
                 .ToList();
-            if (compatible.Count == 0) return;
+            if (compatible.Count == 0)
+            {
+                _core.Log.AddLog($"[排單管理] {schedule.LotNo ?? schedule.PartNo} 在 {SelectedEquipmentCard.Name} 無 Feasible 程式，無法指派");
+                return;
+            }
 
             var assignedQty = _allOrders
                 .Where(o => o.ScheduleId == schedule.ScheduleId &&

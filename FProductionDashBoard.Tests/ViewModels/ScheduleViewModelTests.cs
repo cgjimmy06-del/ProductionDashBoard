@@ -695,5 +695,58 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal(2, schedules[0].ActiveEquipmentCount);
             Assert.True(schedules[0].HasActiveOrders);
         }
+
+        // ─── 焦點模式返回後卡片狀態重置（Medium-1 回歸）────────────────────────
+
+        [Fact]
+        public void DeselectEquipmentCard_AfterLayer2_ResetsAllCardCompatibility()
+        {
+            var vm = CreateVm();
+            var schedules = new List<ScheduleUiModel>
+            {
+                MakeSchedWithProduct(1, ScheduleStatus.Pending, productId: 1, processId: 1),
+            };
+            vm.InjectDataForTest(schedules, new List<OrderProductionInfo>());
+
+            var compatibleEp = new EquipmentProduct
+            {
+                EquipmentId      = 10,
+                ProductionStatus = TuningType.Feasible,
+                Sop              = new SopChecklist { ProductId = 1, ProcessId = 1 }
+            };
+            var otherEp = new EquipmentProduct
+            {
+                EquipmentId      = 20,
+                ProductionStatus = TuningType.Feasible,
+                Sop              = new SopChecklist { ProductId = 2, ProcessId = 2 }
+            };
+            vm.InjectCardsForTest(new List<EquipmentProduct> { compatibleEp, otherEp });
+
+            // Layer 2：選取排單，otherCard 應標記為不相容
+            vm.SelectedSchedule = schedules[0];
+            var cards = vm.EquipmentCardsView.Cast<ScheduleEquipmentCardViewModel>().ToList();
+            var allCards = new[] { compatibleEp, otherEp }
+                .Select(ep => vm.EquipmentCardsView.Cast<ScheduleEquipmentCardViewModel>()
+                    .FirstOrDefault(c => c.EquipmentId == ep.EquipmentId))
+                .Where(c => c != null).ToList();
+
+            // 進入焦點模式（點設備卡片）
+            var cardToFocus = MakeFocusCard(10, "M10", productId: 1, processId: 1);
+            vm.SelectEquipmentCardCommand.Execute(cardToFocus);
+            Assert.NotNull(vm.SelectedEquipmentCard);
+
+            // 返回：呼叫 DeselectEquipmentCard
+            vm.DeselectEquipmentCardCommand.Execute(null);
+
+            // 所有卡片的相容性旗標應已重置
+            var allVisible = vm.EquipmentCardsView.Cast<ScheduleEquipmentCardViewModel>().ToList();
+            Assert.All(allVisible, c =>
+            {
+                Assert.True(c.HasMatchingProgram);
+                Assert.True(c.IsCompatibleWithSelectedSchedule);
+            });
+            Assert.Null(vm.SelectedEquipmentCard);
+            Assert.Null(vm.SelectedSchedule);
+        }
     }
 }

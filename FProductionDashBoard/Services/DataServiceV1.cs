@@ -969,12 +969,7 @@ namespace FProductionDashBoard.Services.V1
                 throw new InvalidOperationException("[AddOrderAsync] 接單 Repository 連線失敗");
             var orderId = await _orderProductionRep.AddAsync(equipmentId, equipmentProductId, quantity, createdBy, scheduleId).ConfigureAwait(false);
             if (scheduleId.HasValue)
-            {
-                var schedule = await _scheduleRep.GetByIdWithDetailsAsync(scheduleId.Value).ConfigureAwait(false);
-                if (schedule?.Status == ScheduleStatus.Pending)
-                    await _scheduleRep.MarkScheduledAsync(scheduleId.Value, createdBy, DateTime.Now).ConfigureAwait(false);
-                await _scheduleRep.RecalcActualQuantityAsync(scheduleId.Value).ConfigureAwait(false);
-            }
+                await _scheduleRep.MarkScheduledAndRecalcAsync(scheduleId.Value, createdBy, DateTime.Now).ConfigureAwait(false);
             return orderId;
         }
 

@@ -432,9 +432,6 @@
   <data name="SchCancelOrderDialogTitle" xml:space="preserve">
     <value>Cancel Order</value>
   </data>
-  <data name="SchCancelOrderMsg" xml:space="preserve">
-    <value>Confirm cancel the following order?</value>
-  </data>
   <data name="SchCancelOrderDescLabel" xml:space="preserve">
     <value>Reason (optional)</value>
   </data>

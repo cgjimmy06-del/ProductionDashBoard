@@ -204,5 +204,31 @@ namespace FProductionDashBoard.Repositories
             schedule.UpdateAt = DateTime.Now;
             await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
+
+        public async Task MarkScheduledAndRecalcAsync(int scheduleId, int userId, DateTime now)
+        {
+            await using var ctx = _factory.CreateDbContext();
+            await using var tx = await ctx.Database.BeginTransactionAsync().ConfigureAwait(false);
+
+            var schedule = await ctx.Schedules.FindAsync(scheduleId).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"[MarkScheduledAndRecalcAsync] 找不到排程 ScheduleId={scheduleId}");
+
+            if (schedule.Status == ScheduleStatus.Pending)
+            {
+                schedule.Status      = ScheduleStatus.Scheduled;
+                schedule.ScheduledBy = userId;
+                schedule.ScheduledAt = now;
+            }
+
+            var totalQty = await ctx.OrderProductions
+                .Where(o => o.ScheduleId == scheduleId && o.Status != OrderProductionStatus.Cancelled)
+                .SumAsync(o => o.Quantity ?? 0)
+                .ConfigureAwait(false);
+            schedule.ActualQuantity = totalQty;
+            schedule.UpdateAt = now;
+
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
+            await tx.CommitAsync().ConfigureAwait(false);
+        }
     }
 }

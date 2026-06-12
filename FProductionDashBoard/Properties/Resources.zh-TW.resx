@@ -387,9 +387,6 @@
   <data name="SchCancelOrderDialogTitle" xml:space="preserve">
     <value>取消接單</value>
   </data>
-  <data name="SchCancelOrderMsg" xml:space="preserve">
-    <value>確認取消以下接單？</value>
-  </data>
   <data name="SchCancelOrderDescLabel" xml:space="preserve">
     <value>取消原因（選填）</value>
   </data>
