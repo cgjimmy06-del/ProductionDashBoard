@@ -16,6 +16,7 @@
     <Color x:Key="TextLightColor">#FFFFFF</Color>
     <Color x:Key="TextDarkColor">#212121</Color>
     <Color x:Key="TextPrimaryColor">#212121</Color>
+    <Color x:Key="TextSecondaryColor">#757575</Color>
     <!-- 選取狀態 -->
     <Color x:Key="SelectedColor">#0277BD</Color>
     <!-- 狀態燈顏色 -->
@@ -39,6 +40,12 @@
     <Color x:Key="ProgramPendingColor">#3A9DB5</Color>
     <Color x:Key="ProgramOffsetColor">#C07820</Color>
     <Color x:Key="ProgramErrorColor">#B84848</Color>
+    
+    <!-- 排單負載 Chip 顏色（兩主題共用柔和色） -->
+    <Color x:Key="ChipLoadLowColor">#81C784</Color>
+    <Color x:Key="ChipLoadMidColor">#FFB74D</Color>
+    <Color x:Key="ChipLoadHighColor">#E57373</Color>
+    
     <!--#endregion-->
 
     <!--#region 合成筆刷 Brush -->
@@ -55,7 +62,6 @@
     <SolidColorBrush x:Key="TextLightBrush" Color="{StaticResource TextLightColor}" />
     <SolidColorBrush x:Key="TextDarkBrush" Color="{StaticResource TextDarkColor}" />
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
-    <Color x:Key="TextSecondaryColor">#757575</Color>
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
 
     <SolidColorBrush x:Key="SelectedBrush" Color="{StaticResource SelectedColor}" />
@@ -80,10 +86,6 @@
     <SolidColorBrush x:Key="ProgramOffsetBrush"   Color="{StaticResource ProgramOffsetColor}" />
     <SolidColorBrush x:Key="ProgramErrorBrush"    Color="{StaticResource ProgramErrorColor}" />
 
-    <!-- 排單負載 Chip 顏色（兩主題共用柔和色） -->
-    <Color x:Key="ChipLoadLowColor">#81C784</Color>
-    <Color x:Key="ChipLoadMidColor">#FFB74D</Color>
-    <Color x:Key="ChipLoadHighColor">#E57373</Color>
     <SolidColorBrush x:Key="ChipLoadLowBrush"  Color="{StaticResource ChipLoadLowColor}" />
     <SolidColorBrush x:Key="ChipLoadMidBrush"  Color="{StaticResource ChipLoadMidColor}" />
     <SolidColorBrush x:Key="ChipLoadHighBrush" Color="{StaticResource ChipLoadHighColor}" />

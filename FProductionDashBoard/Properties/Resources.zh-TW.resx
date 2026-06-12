@@ -384,4 +384,37 @@
   <data name="ComStrDay" xml:space="preserve">
     <value>天</value>
   </data>
+  <data name="SchCancelOrderDialogTitle" xml:space="preserve">
+    <value>取消接單</value>
+  </data>
+  <data name="SchCancelOrderMsg" xml:space="preserve">
+    <value>確認取消以下接單？</value>
+  </data>
+  <data name="SchCancelOrderDescLabel" xml:space="preserve">
+    <value>取消原因（選填）</value>
+  </data>
+  <data name="SchOrderStatusPending" xml:space="preserve">
+    <value>待生產</value>
+  </data>
+  <data name="SchOrderStatusInProduction" xml:space="preserve">
+    <value>生產中</value>
+  </data>
+  <data name="SchOrderStatusCompleted" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="SchOrderStatusCancelled" xml:space="preserve">
+    <value>已取消</value>
+  </data>
+  <data name="SchDerivedBadgeInProduction" xml:space="preserve">
+    <value>⬟ 生產中</value>
+  </data>
+  <data name="SchDerivedBadgeComplete" xml:space="preserve">
+    <value>✓ 生產完成</value>
+  </data>
+  <data name="SchDerivedBadgePartial" xml:space="preserve">
+    <value>⚠ 部分完成</value>
+  </data>
+  <data name="SchDerivedBadgeCancelNotice" xml:space="preserve">
+    <value>⚠ 取消注意</value>
+  </data>
 </root>

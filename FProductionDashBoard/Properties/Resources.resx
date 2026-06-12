@@ -429,4 +429,37 @@
   <data name="ComStrDay" xml:space="preserve">
     <value>Days</value>
   </data>
+  <data name="SchCancelOrderDialogTitle" xml:space="preserve">
+    <value>Cancel Order</value>
+  </data>
+  <data name="SchCancelOrderMsg" xml:space="preserve">
+    <value>Confirm cancel the following order?</value>
+  </data>
+  <data name="SchCancelOrderDescLabel" xml:space="preserve">
+    <value>Reason (optional)</value>
+  </data>
+  <data name="SchOrderStatusPending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="SchOrderStatusInProduction" xml:space="preserve">
+    <value>In Prod.</value>
+  </data>
+  <data name="SchOrderStatusCompleted" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="SchOrderStatusCancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="SchDerivedBadgeInProduction" xml:space="preserve">
+    <value>⬟ In Production</value>
+  </data>
+  <data name="SchDerivedBadgeComplete" xml:space="preserve">
+    <value>✓ Production Done</value>
+  </data>
+  <data name="SchDerivedBadgePartial" xml:space="preserve">
+    <value>⚠ Partial Done</value>
+  </data>
+  <data name="SchDerivedBadgeCancelNotice" xml:space="preserve">
+    <value>⚠ Cancel Notice</value>
+  </data>
 </root>

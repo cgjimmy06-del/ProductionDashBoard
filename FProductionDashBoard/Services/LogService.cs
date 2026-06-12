@@ -81,6 +81,7 @@ namespace FProductionDashBoard.Services
                 _ = Task.Run(() => CleanupOldLogs(_logFileName));
             }
 
+            if (Application.Current != null)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 var resources = Application.Current.Resources;
@@ -116,6 +117,7 @@ namespace FProductionDashBoard.Services
                 _ = Task.Run(() => CleanupOldLogs(_errorLogFileName));
             }
 
+            if (Application.Current != null)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 var resources = Application.Current.Resources;

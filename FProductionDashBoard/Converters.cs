@@ -301,6 +301,21 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+    public class OrderProductionStatusToLabelConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => value is Models.OrderProductionStatus s ? s switch
+            {
+                Models.OrderProductionStatus.Pending       => Properties.Resources.SchOrderStatusPending,
+                Models.OrderProductionStatus.InProduction  => Properties.Resources.SchOrderStatusInProduction,
+                Models.OrderProductionStatus.Completed     => Properties.Resources.SchOrderStatusCompleted,
+                Models.OrderProductionStatus.Cancelled     => Properties.Resources.SchOrderStatusCancelled,
+                _                                          => value.ToString() ?? string.Empty,
+            } : string.Empty;
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+
     public static class ListBoxBehavior
     {
         public static readonly DependencyProperty AutoScrollToEndProperty = DependencyProperty.RegisterAttached(

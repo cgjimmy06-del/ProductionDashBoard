@@ -61,6 +61,7 @@
             <local:TuningTypeToLabelConverter x:Key="TuningTypeToLabelConverter"/>
             <local:ScheduleCardColorToBrushConverter x:Key="ScheduleCardColorToBrushConverter"/>
             <local:ScheduleCardLoadLevelToLabelConverter x:Key="ScheduleCardLoadLevelToLabelConverter"/>
+            <local:OrderProductionStatusToLabelConverter x:Key="OrderProductionStatusToLabelConverter"/>
             <!--#endregion-->
             
         </ResourceDictionary>

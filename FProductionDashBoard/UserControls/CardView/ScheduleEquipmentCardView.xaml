@@ -28,6 +28,10 @@
                         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                         <Setter Property="Opacity" Value="0.5"/>
                     </DataTrigger>
+                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                        <Setter Property="BorderThickness" Value="3"/>
+                    </DataTrigger>
                 </Style.Triggers>
             </Style>
         </Border.Style>
@@ -35,105 +39,126 @@
             <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.15"/>
         </Border.Effect>
 
-        <StackPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <!-- 標題：設備名稱 + 右上色碼點 -->
-            <Grid Margin="0,0,0,6">
-                <TextBlock Text="{Binding Name}"
-                           FontSize="16" FontWeight="SemiBold"
-                           Foreground="{DynamicResource TextPrimaryBrush}"
-                           TextTrimming="CharacterEllipsis"
-                           VerticalAlignment="Center"/>
-                <Ellipse Width="10" Height="10"
-                         HorizontalAlignment="Right" VerticalAlignment="Top"
-                         Fill="{Binding CardColor, Converter={StaticResource ScheduleCardColorToBrushConverter}}"/>
-            </Grid>
+            <!-- Row 0：整張內容區包在 FlatButton 裡（可點擊選取設備） -->
+            <Button Grid.Row="0"
+                    Command="{Binding DataContext.SelectEquipmentCardCommand,
+                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                    CommandParameter="{Binding}"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    Height="120"
+                    Background="Transparent"
+                    Padding="0"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch">
+                <StackPanel>
 
-            <!-- 接單資訊 -->
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                <TextBlock Text="{DynamicResource SchCardOrders}"
-                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
-                           Margin="0,0,4,0"/>
-                <TextBlock FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}">
-                    <Run Text="{Binding ActiveOrderCount, Mode=OneWay}"/><Run Text="  / "/>
-                    <Run Text="{Binding TotalPendingQty, Mode=OneWay}"/><Run Text=" pcs"/>
-                </TextBlock>
-            </StackPanel>
+                    <!-- 標題：設備名稱 + 右上色碼點 -->
+                    <Grid Margin="0,0,0,6">
+                        <TextBlock Text="{Binding Name}"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center"/>
+                        <Ellipse Width="10" Height="10"
+                                 HorizontalAlignment="Right" VerticalAlignment="Top"
+                                 Fill="{Binding CardColor, Converter={StaticResource ScheduleCardColorToBrushConverter}}"/>
+                    </Grid>
 
-            <!-- Chip 區 -->
-            <WrapPanel Margin="0,0,0,6">
-                <!-- 調試中 chip -->
-                <Border CornerRadius="6" Padding="6,2" Margin="0,0,4,2"
-                        Background="{DynamicResource WarningBrush}">
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ActiveTuning}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                    <TextBlock Text="{DynamicResource SchCardTuningLabel}"
-                               FontSize="13" FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextDarkBrush}"/>
-                </Border>
+                    <!-- 接單資訊 -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <TextBlock Text="{DynamicResource SchCardOrders}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="0,0,4,0"/>
+                        <TextBlock FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}">
+                            <Run Text="{Binding ActiveOrderCount, Mode=OneWay}"/><Run Text="  / "/>
+                            <Run Text="{Binding TotalPendingQty, Mode=OneWay}"/><Run Text=" pcs"/>
+                        </TextBlock>
+                    </StackPanel>
 
-                <!-- 負載 chip（橘/藍卡才顯示，即 TotalPendingQty > 0） -->
-                <Border CornerRadius="6" Padding="6,2" Margin="0,0,0,2">
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Setter Property="Background" Value="{DynamicResource ChipLoadLowBrush}"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding LoadLevel}" Value="{x:Static localvm:ScheduleCardLoadLevel.None}">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding LoadLevel}" Value="{x:Static localvm:ScheduleCardLoadLevel.Mid}">
-                                    <Setter Property="Background" Value="{DynamicResource ChipLoadMidBrush}"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding LoadLevel}" Value="{x:Static localvm:ScheduleCardLoadLevel.High}">
-                                    <Setter Property="Background" Value="{DynamicResource ChipLoadHighBrush}"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                    <TextBlock Text="{Binding LoadLevel, Converter={StaticResource ScheduleCardLoadLevelToLabelConverter}}"
-                               FontSize="13"
-                               Foreground="{DynamicResource TextDarkBrush}"/>
-                </Border>
-            </WrapPanel>
+                    <!-- 程式資訊：可生產 F / 總計 N -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <TextBlock Text="{DynamicResource SchCardPrograms}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="0,0,4,0"/>
+                        <TextBlock FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}">
+                            <Run Text="{Binding FeasibleMatchingCount, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}">
+                            <Run Text=" ( "/>
+                            <Run Text="{Binding TotalMatchingCount, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock Text=" / "
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}">
+                            <Run Text="{Binding TotalProgramCount, Mode=OneWay}"/>
+                            <Run Text=" )"/>
+                        </TextBlock>
+                    </StackPanel>
 
-            <!-- InProductionInfo（有接單進行中才顯示） -->
-            <TextBlock Text="{Binding InProductionInfo}"
-                       FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"
-                       TextTrimming="CharacterEllipsis" Margin="0,0,0,6"
-                       Visibility="{Binding InProductionInfo,
-                                   Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
+                    <!-- Chip 區 -->
+                    <WrapPanel Margin="0,0,0,6">
+                        <!-- 調試中 chip -->
+                        <Border CornerRadius="6" Padding="6,2" Margin="0,0,4,2"
+                                Background="{DynamicResource WarningBrush}">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActiveTuning}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{DynamicResource SchCardTuningLabel}"
+                                       FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextDarkBrush}"/>
+                        </Border>
 
-            <!-- 程式資訊：可生產 F / 總計 N -->
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                <TextBlock Text="{DynamicResource SchCardPrograms}"
-                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
-                           Margin="0,0,4,0"/>
-                <TextBlock FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}">
-                    <Run Text="{Binding FeasibleMatchingCount, Mode=OneWay}"/>
-                </TextBlock>
-                <TextBlock FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}">
-                    <Run Text=" ( "/>
-                    <Run Text="{Binding TotalMatchingCount, Mode=OneWay}"/>
-                </TextBlock>
-                <TextBlock Text=" / "
-                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                <TextBlock FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}">
-                    <Run Text="{Binding TotalProgramCount, Mode=OneWay}"/>
-                    <Run Text=" )"/>
-                </TextBlock>
-            </StackPanel>
+                        <!-- 負載 chip（橘/藍卡才顯示，即 TotalPendingQty > 0） -->
+                        <Border CornerRadius="6" Padding="6,2" Margin="0,0,0,2">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Setter Property="Background" Value="{DynamicResource ChipLoadLowBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding LoadLevel}" Value="{x:Static localvm:ScheduleCardLoadLevel.None}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding LoadLevel}" Value="{x:Static localvm:ScheduleCardLoadLevel.Mid}">
+                                            <Setter Property="Background" Value="{DynamicResource ChipLoadMidBrush}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding LoadLevel}" Value="{x:Static localvm:ScheduleCardLoadLevel.High}">
+                                            <Setter Property="Background" Value="{DynamicResource ChipLoadHighBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding LoadLevel, Converter={StaticResource ScheduleCardLoadLevelToLabelConverter}}"
+                                       FontSize="13"
+                                       Foreground="{DynamicResource TextDarkBrush}"/>
+                        </Border>
+                    </WrapPanel>
 
-            <!-- 指派按鈕 -->
-            <Button Content="{DynamicResource SchAssignButton}"
+                    <!-- InProductionInfo（有接單進行中才顯示） -->
+                    <TextBlock Text="{Binding InProductionInfo}"
+                               FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"
+                               TextTrimming="CharacterEllipsis" Margin="0,0,0,6"
+                               Visibility="{Binding InProductionInfo,
+                                           Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
+
+                </StackPanel>
+            </Button>
+
+            <!-- Row 1：指派按鈕（與 Row 0 Button 為兄弟節點，無 bubbling 衝突） -->
+            <Button Grid.Row="1"
+                    Content="{DynamicResource SchAssignButton}"
                     Style="{DynamicResource FunctionButtonStyle}"
                     Background="{DynamicResource PrimaryBrush}"
                     Padding="8,4" Height="Auto"
@@ -143,6 +168,6 @@
                     CommandParameter="{Binding}"
                     IsEnabled="{Binding IsCompatibleWithSelectedSchedule}"/>
 
-        </StackPanel>
+        </Grid>
     </Border>
 </UserControl>

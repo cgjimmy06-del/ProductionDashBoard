@@ -67,6 +67,16 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string selectedScheduleEquipments = string.Empty;
         public bool IsStatsPanelVisible => SelectedSchedule != null;
 
+        // 設備焦點模式
+        [ObservableProperty] private ScheduleEquipmentCardViewModel? selectedEquipmentCard;
+        [ObservableProperty] private List<OrderProductionInfo> selectedEquipmentOrders = new();
+        [ObservableProperty] private int equipDetailPendingCount;
+        [ObservableProperty] private int equipDetailInProductionCount;
+        [ObservableProperty] private int equipDetailPendingQty;
+        [ObservableProperty] private int equipDetailInProductionQty;
+        public bool IsCardWallVisible        => SelectedEquipmentCard == null;
+        public bool IsEquipmentDetailVisible => SelectedEquipmentCard != null;
+
         public ICollectionView SchedulesView { get; }
         public ICollectionView EquipmentCardsView { get; }
         public IReadOnlyList<ScheduleViewFilterOption> StatusFilterOptions { get; }
@@ -77,6 +87,7 @@ namespace FProductionDashBoard.ViewModels
 
         partial void OnSelectedScheduleChanged(ScheduleUiModel? value)
         {
+            if (SelectedEquipmentCard != null) return; // 焦點模式：忽略 schedule 選取，避免 row click 干擾指派按鈕
             if (value == null)
                 foreach (var c in _allCards) c.ResetForLayer1();
             else
@@ -179,12 +190,27 @@ namespace FProductionDashBoard.ViewModels
                 ComputeBadges();
                 ComputeStats();
 
+                var previousEquipmentId = SelectedEquipmentCard?.EquipmentId;
+
                 BuildEquipmentCards(allEps, inProgressTunings);
                 ComputeCardStats();
 
                 SchedulesView.Refresh();
                 UpdateVisibleScheduleKeys();
                 EquipmentCardsView.Refresh();
+
+                if (previousEquipmentId.HasValue)
+                {
+                    var restoredCard = _allCards.FirstOrDefault(c => c.EquipmentId == previousEquipmentId);
+                    if (restoredCard != null)
+                    {
+                        SelectedEquipmentCard = restoredCard;
+                        restoredCard.IsSelected = true;
+                        OnPropertyChanged(nameof(IsCardWallVisible));
+                        OnPropertyChanged(nameof(IsEquipmentDetailVisible));
+                    }
+                }
+                UpdateSelectedEquipmentOrders();
             }
             catch (Exception ex)
             {
@@ -198,7 +224,7 @@ namespace FProductionDashBoard.ViewModels
             var today = DateTime.Today;
             foreach (var s in _allSchedules)
             {
-                s.DerivedBadge = GetDerivedBadge(s.ScheduleId);
+                (s.DerivedBadge, s.DerivedBadgeKey) = GetDerivedBadge(s.ScheduleId);
 
                 if (s.Status == ScheduleStatus.Pending && s.ReceivedAt.HasValue)
                 {
@@ -214,20 +240,26 @@ namespace FProductionDashBoard.ViewModels
                 {
                     s.WaitingDaysText = null;
                 }
+
+                var activeOrders = _allOrders.Where(o =>
+                    o.ScheduleId == s.ScheduleId &&
+                    (o.Status == OrderProductionStatus.Pending || o.Status == OrderProductionStatus.InProduction)).ToList();
+                s.ActiveOrderCount     = activeOrders.Count;
+                s.ActiveEquipmentCount = activeOrders.Select(o => o.EquipmentId).Distinct().Count();
             }
         }
 
-        private string? GetDerivedBadge(int scheduleId)
+        private (string? badge, string? key) GetDerivedBadge(int scheduleId)
         {
             var orders = _allOrders.Where(o => o.ScheduleId == scheduleId).ToList();
-            if (!orders.Any()) return null;
+            if (!orders.Any()) return (null, null);
 
             if (orders.Any(o => o.Status == OrderProductionStatus.InProduction))
-                return "⬟ 生產中";
+                return (Properties.Resources.SchDerivedBadgeInProduction, "InProduction");
 
             var nonCancelled = orders.Where(o => o.Status != OrderProductionStatus.Cancelled).ToList();
             if (!nonCancelled.Any())
-                return "⚠ 取消注意";
+                return (Properties.Resources.SchDerivedBadgeCancelNotice, "CancelNotice");
 
             if (nonCancelled.All(o => o.Status == OrderProductionStatus.Completed))
             {
@@ -235,11 +267,13 @@ namespace FProductionDashBoard.ViewModels
                 if (schedule != null)
                 {
                     var actualQty = nonCancelled.Sum(o => o.Quantity ?? 0);
-                    return actualQty >= schedule.Quantity ? "✓ 生產完成" : "⚠ 部分完成";
+                    return actualQty >= schedule.Quantity
+                        ? (Properties.Resources.SchDerivedBadgeComplete, "Complete")
+                        : (Properties.Resources.SchDerivedBadgePartial, "Partial");
                 }
             }
 
-            return null;
+            return (null, null);
         }
 
         private bool IsWithinDateRange(ScheduleUiModel s)
@@ -279,7 +313,7 @@ namespace FProductionDashBoard.ViewModels
 
             var productionDone = src.Where(s =>
                 s.Status == ScheduleStatus.Scheduled &&
-                s.DerivedBadge == "✓ 生產完成").ToList();
+                s.DerivedBadgeKey == "Complete").ToList();
             StatProductionDone          = productionDone.Count;
             StatProductionDoneActualQty = productionDone.Sum(s => s.ActualQuantity ?? 0);
         }
@@ -296,6 +330,16 @@ namespace FProductionDashBoard.ViewModels
         {
             if (obj is not ScheduleUiModel s) return false;
 
+            if (SelectedEquipmentCard != null)
+            {
+                if (s.Status == ScheduleStatus.Completed ||
+                    s.Status == ScheduleStatus.Released  ||
+                    s.Status == ScheduleStatus.Cancelled)
+                    return false;
+                return SelectedEquipmentCard.HasAnyCompatibleEpForKeys(
+                    new HashSet<(int, int)> { (s.ProductId, s.ProcessId) });
+            }
+
             switch (StatusFilter)
             {
                 case ScheduleViewFilter.AllActive:
@@ -309,7 +353,7 @@ namespace FProductionDashBoard.ViewModels
                     if (s.Status != ScheduleStatus.Scheduled) return false;
                     break;
                 case ScheduleViewFilter.ProductionDone:
-                    if (s.Status != ScheduleStatus.Scheduled || s.DerivedBadge != "✓ 生產完成")
+                    if (s.Status != ScheduleStatus.Scheduled || s.DerivedBadgeKey != "Complete")
                         return false;
                     break;
                 case ScheduleViewFilter.Completed:
@@ -342,6 +386,154 @@ namespace FProductionDashBoard.ViewModels
             if (!IsWithinDateRange(s)) return false;
 
             return true;
+        }
+
+        // ─── 設備焦點模式 ──────────────────────────────────────────────────────────
+
+        private void ClearEquipmentCardSelection()
+        {
+            if (SelectedEquipmentCard != null) SelectedEquipmentCard.IsSelected = false;
+            SelectedEquipmentCard = null;
+            SelectedEquipmentOrders = new();
+            EquipDetailPendingCount = EquipDetailInProductionCount = 0;
+            EquipDetailPendingQty   = EquipDetailInProductionQty   = 0;
+            OnPropertyChanged(nameof(IsCardWallVisible));
+            OnPropertyChanged(nameof(IsEquipmentDetailVisible));
+        }
+
+        private void UpdateSelectedEquipmentOrders()
+        {
+            if (SelectedEquipmentCard == null)
+            {
+                SelectedEquipmentOrders = new();
+                EquipDetailPendingCount = EquipDetailInProductionCount = 0;
+                EquipDetailPendingQty   = EquipDetailInProductionQty   = 0;
+                return;
+            }
+            var orders = _allOrders
+                .Where(o => o.EquipmentId == SelectedEquipmentCard.EquipmentId)
+                .OrderBy(o => o.Status).ThenBy(o => o.OrderId)
+                .ToList();
+            SelectedEquipmentOrders      = orders;
+            EquipDetailPendingCount      = orders.Count(o => o.Status == OrderProductionStatus.Pending);
+            EquipDetailInProductionCount = orders.Count(o => o.Status == OrderProductionStatus.InProduction);
+            EquipDetailPendingQty        = orders.Where(o => o.Status == OrderProductionStatus.Pending).Sum(o => o.Quantity ?? 0);
+            EquipDetailInProductionQty   = orders.Where(o => o.Status == OrderProductionStatus.InProduction).Sum(o => o.Quantity ?? 0);
+        }
+
+        [RelayCommand]
+        private void SelectEquipmentCard(ScheduleEquipmentCardViewModel card)
+        {
+            ClearEquipmentCardSelection();
+            SelectedEquipmentCard = card;
+            card.IsSelected = true;
+            SelectedSchedule = null;
+            OnPropertyChanged(nameof(IsCardWallVisible));
+            OnPropertyChanged(nameof(IsEquipmentDetailVisible));
+            UpdateSelectedEquipmentOrders();
+            ApplyFilter();
+        }
+
+        [RelayCommand]
+        private void DeselectEquipmentCard()
+        {
+            ClearEquipmentCardSelection();
+            SelectedSchedule = null;
+            ApplyFilter();
+        }
+
+        [RelayCommand]
+        private async Task AssignScheduleToSelectedEquipment(ScheduleUiModel schedule)
+        {
+            if (SelectedEquipmentCard == null) return;
+
+            var compatible = SelectedEquipmentCard.AllEquipmentProducts
+                .Where(ep => ep.ProductionStatus == TuningType.Feasible &&
+                             ep.Sop?.ProductId == schedule.ProductId &&
+                             ep.Sop?.ProcessId == schedule.ProcessId)
+                .ToList();
+            if (compatible.Count == 0) return;
+
+            var assignedQty = _allOrders
+                .Where(o => o.ScheduleId == schedule.ScheduleId &&
+                            o.Status != OrderProductionStatus.Cancelled)
+                .Sum(o => o.Quantity ?? 0);
+            var remainingQty = Math.Max(0, schedule.Quantity - assignedQty);
+
+            var dialogVm = new OrderAssignmentDialogViewModel(
+                schedule, compatible, remainingQty, SelectedEquipmentCard.Name);
+
+            var result = _dialog.ShowDialog(dialogVm);
+            if (result == null) return;
+
+            try
+            {
+                await _core.Data.AddOrderAsync(
+                    result.EquipmentId,
+                    result.EquipmentProductId,
+                    result.Quantity,
+                    _core.Authorization.CurrentUser?.Id ?? 0,
+                    result.ScheduleId);
+                _core.Log.AddLog($"[排單管理] 焦點模式指派成功：{schedule.LotNo} → {SelectedEquipmentCard.Name}");
+                await LoadAllAsync();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[排單管理] 焦點模式指派失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[AssignScheduleToSelectedEquipment] {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task StartOrderProduction(OrderProductionInfo order)
+        {
+            try
+            {
+                await _core.Data.StartProductionAsync(order.OrderId, _core.Authorization.CurrentUser?.Id ?? 0);
+                _core.Log.AddLog($"[排單管理] 開始生產：#{order.OrderId} {order.ProductName}");
+                await LoadAllAsync();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[排單管理] 開始生產失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[StartOrderProduction] {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task EndOrderProduction(OrderProductionInfo order)
+        {
+            try
+            {
+                await _core.Data.EndProductionAsync(order.OrderId);
+                _core.Log.AddLog($"[排單管理] 結束生產：#{order.OrderId} {order.ProductName}");
+                await LoadAllAsync();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[排單管理] 結束生產失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[EndOrderProduction] {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task CancelOrderProduction(OrderProductionInfo order)
+        {
+            var dialogVm = new CancelOrderConfirmationDialogViewModel(order);
+            _dialog.ShowDialog(dialogVm);
+            if (!dialogVm.IsConfirmed) return;
+
+            try
+            {
+                await _core.Data.CancelOrderAsync(order.OrderId, dialogVm.Result?.Description);
+                _core.Log.AddLog($"[排單管理] 取消接單：#{order.OrderId} {order.ProductName}");
+                await LoadAllAsync();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[排單管理] 取消接單失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[CancelOrderProduction] {ex.Message}");
+            }
         }
 
         // ─── 排單指派 ─────────────────────────────────────────────────────────────
