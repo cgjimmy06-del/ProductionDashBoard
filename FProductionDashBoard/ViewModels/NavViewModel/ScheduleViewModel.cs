@@ -26,6 +26,14 @@ namespace FProductionDashBoard.ViewModels
 
     public sealed record ScheduleViewFilterOption(ScheduleViewFilter Value);
 
+    public static class DerivedBadgeKeys
+    {
+        public const string InProduction = "InProduction";
+        public const string Complete     = "Complete";
+        public const string Partial      = "Partial";
+        public const string CancelNotice = "CancelNotice";
+    }
+
     public partial class ScheduleViewModel : ObservableObject
     {
         private readonly DashboardCoreServices _core;
@@ -195,10 +203,6 @@ namespace FProductionDashBoard.ViewModels
                 BuildEquipmentCards(allEps, inProgressTunings);
                 ComputeCardStats();
 
-                SchedulesView.Refresh();
-                UpdateVisibleScheduleKeys();
-                EquipmentCardsView.Refresh();
-
                 if (previousEquipmentId.HasValue)
                 {
                     var restoredCard = _allCards.FirstOrDefault(c => c.EquipmentId == previousEquipmentId);
@@ -210,6 +214,11 @@ namespace FProductionDashBoard.ViewModels
                         OnPropertyChanged(nameof(IsEquipmentDetailVisible));
                     }
                 }
+
+                SchedulesView.Refresh();
+                UpdateVisibleScheduleKeys();
+                EquipmentCardsView.Refresh();
+
                 UpdateSelectedEquipmentOrders();
             }
             catch (Exception ex)
@@ -255,11 +264,11 @@ namespace FProductionDashBoard.ViewModels
             if (!orders.Any()) return (null, null);
 
             if (orders.Any(o => o.Status == OrderProductionStatus.InProduction))
-                return (Properties.Resources.SchDerivedBadgeInProduction, "InProduction");
+                return (Properties.Resources.SchDerivedBadgeInProduction, DerivedBadgeKeys.InProduction);
 
             var nonCancelled = orders.Where(o => o.Status != OrderProductionStatus.Cancelled).ToList();
             if (!nonCancelled.Any())
-                return (Properties.Resources.SchDerivedBadgeCancelNotice, "CancelNotice");
+                return (Properties.Resources.SchDerivedBadgeCancelNotice, DerivedBadgeKeys.CancelNotice);
 
             if (nonCancelled.All(o => o.Status == OrderProductionStatus.Completed))
             {
@@ -268,8 +277,8 @@ namespace FProductionDashBoard.ViewModels
                 {
                     var actualQty = nonCancelled.Sum(o => o.Quantity ?? 0);
                     return actualQty >= schedule.Quantity
-                        ? (Properties.Resources.SchDerivedBadgeComplete, "Complete")
-                        : (Properties.Resources.SchDerivedBadgePartial, "Partial");
+                        ? (Properties.Resources.SchDerivedBadgeComplete, DerivedBadgeKeys.Complete)
+                        : (Properties.Resources.SchDerivedBadgePartial, DerivedBadgeKeys.Partial);
                 }
             }
 
@@ -313,7 +322,7 @@ namespace FProductionDashBoard.ViewModels
 
             var productionDone = src.Where(s =>
                 s.Status == ScheduleStatus.Scheduled &&
-                s.DerivedBadgeKey == "Complete").ToList();
+                s.DerivedBadgeKey == DerivedBadgeKeys.Complete).ToList();
             StatProductionDone          = productionDone.Count;
             StatProductionDoneActualQty = productionDone.Sum(s => s.ActualQuantity ?? 0);
         }
@@ -353,7 +362,7 @@ namespace FProductionDashBoard.ViewModels
                     if (s.Status != ScheduleStatus.Scheduled) return false;
                     break;
                 case ScheduleViewFilter.ProductionDone:
-                    if (s.Status != ScheduleStatus.Scheduled || s.DerivedBadgeKey != "Complete")
+                    if (s.Status != ScheduleStatus.Scheduled || s.DerivedBadgeKey != DerivedBadgeKeys.Complete)
                         return false;
                     break;
                 case ScheduleViewFilter.Completed:
@@ -399,6 +408,8 @@ namespace FProductionDashBoard.ViewModels
             EquipDetailPendingQty   = EquipDetailInProductionQty   = 0;
             OnPropertyChanged(nameof(IsCardWallVisible));
             OnPropertyChanged(nameof(IsEquipmentDetailVisible));
+            foreach (var c in _allCards) c.ResetForLayer1();
+            EquipmentCardsView?.Refresh();
         }
 
         private void UpdateSelectedEquipmentOrders()
@@ -452,7 +463,11 @@ namespace FProductionDashBoard.ViewModels
                              ep.Sop?.ProductId == schedule.ProductId &&
                              ep.Sop?.ProcessId == schedule.ProcessId)
                 .ToList();
-            if (compatible.Count == 0) return;
+            if (compatible.Count == 0)
+            {
+                _core.Log.AddLog($"[排單管理] {schedule.LotNo ?? schedule.PartNo} 在 {SelectedEquipmentCard.Name} 無 Feasible 程式，無法指派");
+                return;
+            }
 
             var assignedQty = _allOrders
                 .Where(o => o.ScheduleId == schedule.ScheduleId &&
@@ -520,12 +535,12 @@ namespace FProductionDashBoard.ViewModels
         private async Task CancelOrderProduction(OrderProductionInfo order)
         {
             var dialogVm = new CancelOrderConfirmationDialogViewModel(order);
-            _dialog.ShowDialog(dialogVm);
-            if (!dialogVm.IsConfirmed) return;
+            var result = _dialog.ShowDialog(dialogVm);
+            if (result == null) return;
 
             try
             {
-                await _core.Data.CancelOrderAsync(order.OrderId, dialogVm.Result?.Description);
+                await _core.Data.CancelOrderAsync(order.OrderId, result.Description);
                 _core.Log.AddLog($"[排單管理] 取消接單：#{order.OrderId} {order.ProductName}");
                 await LoadAllAsync();
             }
@@ -576,18 +591,7 @@ namespace FProductionDashBoard.ViewModels
         // ─── 重新整理 ─────────────────────────────────────────────────────────────
 
         [RelayCommand]
-        private async Task Refresh()
-        {
-            try
-            {
-                await LoadAllAsync().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _core.Log.AddLog("[排單管理] 重新整理失敗", LogLevel.Error);
-                _core.Log.AddErrorLog($"[Refresh] {ex.Message}");
-            }
-        }
+        private Task Refresh() => LoadAllAsync();
 
         // ─── 日期快捷鍵 ──────────────────────────────────────────────────────────
 

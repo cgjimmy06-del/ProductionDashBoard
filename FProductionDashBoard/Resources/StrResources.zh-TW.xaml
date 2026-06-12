@@ -469,6 +469,7 @@
     <sys:String x:Key="SchDetailUnit">(單/件)</sys:String>
     <sys:String x:Key="SchFocusAssignTo">指派給</sys:String>
     <sys:String x:Key="SchFocusAssignButton">指派</sys:String>
+    <sys:String x:Key="SchCancelOrderDescLabel">取消原因（選填）</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

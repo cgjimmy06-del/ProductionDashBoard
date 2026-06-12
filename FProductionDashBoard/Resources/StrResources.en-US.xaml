@@ -469,6 +469,7 @@
     <sys:String x:Key="SchDetailUnit">(ord/pcs)</sys:String>
     <sys:String x:Key="SchFocusAssignTo">Assign to</sys:String>
     <sys:String x:Key="SchFocusAssignButton">Assign</sys:String>
+    <sys:String x:Key="SchCancelOrderDescLabel">Reason (optional)</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

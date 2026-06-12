@@ -141,10 +141,6 @@ namespace FProductionDashBoard.ViewModels
             RecomputeFormProductOptions();
             if (FormProduct == null)
                 FormProduct = FormProductOptions.FirstOrDefault();
-
-            //RecomputeFormProcessOptions();
-            //if (FormProcess == null)
-            //    FormProcess = FormProcessOptions.FirstOrDefault();
         }
 
         partial void OnFormProductChanged(Product? value)

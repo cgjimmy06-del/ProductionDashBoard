@@ -469,6 +469,7 @@
     <sys:String x:Key="SchDetailUnit">(đơn/cái)</sys:String>
     <sys:String x:Key="SchFocusAssignTo">Phân công cho</sys:String>
     <sys:String x:Key="SchFocusAssignButton">Phân công</sys:String>
+    <sys:String x:Key="SchCancelOrderDescLabel">Lý do (tuỳ chọn)</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>
