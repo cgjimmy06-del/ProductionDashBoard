@@ -29,6 +29,9 @@ namespace FProductionDashBoard.ViewModels
             => AllEquipmentProducts.Any(ep =>
                 keys.Any(k => k.ProductId == ep.Sop?.ProductId && k.ProcessId == ep.Sop?.ProcessId));
 
+        // 焦點模式選取狀態
+        [ObservableProperty] private bool isSelected;
+
         // Layer 2（依選取排單動態更新）
         [ObservableProperty] private bool isCompatibleWithSelectedSchedule = true;
         public bool HasMatchingProgram { get; set; } = true;

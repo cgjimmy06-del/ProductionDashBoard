@@ -6,6 +6,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FProductionDashBoard.Tests.ViewModels
@@ -57,6 +58,60 @@ namespace FProductionDashBoard.Tests.ViewModels
                 Status      = status,
                 Quantity    = quantity
             };
+
+        private static OrderProductionInfo MakeOrderForEquip(int orderId, int equipmentId, OrderProductionStatus status, int quantity = 50)
+            => new()
+            {
+                OrderId     = orderId,
+                EquipmentId = equipmentId,
+                Status      = status,
+                Quantity    = quantity
+            };
+
+        private static ScheduleUiModel MakeSchedWithProduct(int id, ScheduleStatus status, int productId, int processId)
+            => new()
+            {
+                ScheduleId  = id,
+                Status      = status,
+                ProductId   = productId,
+                ProcessId   = processId,
+                PartNo      = "P1",
+                Quantity    = 100,
+                ReceivedAt  = DateTime.Today
+            };
+
+        private static ScheduleEquipmentCardViewModel MakeFocusCard(int equipmentId, string name, int productId = 1, int processId = 1)
+        {
+            var ep = new EquipmentProduct
+            {
+                EquipmentId      = equipmentId,
+                ProductionStatus = TuningType.Feasible,
+                Sop              = new SopChecklist { ProductId = productId, ProcessId = processId }
+            };
+            return new ScheduleEquipmentCardViewModel
+            {
+                EquipmentId          = equipmentId,
+                Code                 = $"M{equipmentId:D2}",
+                Name                 = name,
+                AllEquipmentProducts = new List<EquipmentProduct> { ep }
+            };
+        }
+
+        private static (ScheduleViewModel vm, Mock<IDataService> dataMock, Mock<IDialogService> dialogMock) CreateVmWithFullMock()
+        {
+            var dataMock = new Mock<IDataService>();
+            dataMock.Setup(d => d.GetAllSchedulesAsync()).ReturnsAsync(new List<Schedule>());
+            dataMock.Setup(d => d.GetAllOrderProductionsAsync()).ReturnsAsync(new List<OrderProduction>());
+            dataMock.Setup(d => d.GetAllEquipmentProductsAsync()).ReturnsAsync(new List<EquipmentProduct>());
+            dataMock.Setup(d => d.GetAllInProgressProgramTuningAsync()).ReturnsAsync(new List<ProgramTuningRecord>());
+            var log        = new LogService();
+            var auth       = new AuthorizationService();
+            var cardReader = new Mock<ICardReaderService>().Object;
+            var core       = new DashboardCoreServices(log, dataMock.Object, auth, cardReader);
+            var dialogMock = new Mock<IDialogService>();
+            var vm         = new ScheduleViewModel(core, dialogMock.Object);
+            return (vm, dataMock, dialogMock);
+        }
 
         // ─── Filter：AllActive ────────────────────────────────────────────────
 
@@ -435,6 +490,210 @@ namespace FProductionDashBoard.Tests.ViewModels
             vm.InjectDataForTest(schedules, new List<OrderProductionInfo>());
 
             Assert.Null(schedules[0].WaitingDaysText);
+        }
+
+        // ─── PR3：設備焦點模式 ───────────────────────────────────────────────────
+
+        [Fact]
+        public void SelectEquipmentCard_SetsIsSelectedAndPopulatesOrders()
+        {
+            var vm = CreateVm();
+            var orders = new List<OrderProductionInfo>
+            {
+                MakeOrderForEquip(101, equipmentId: 1, OrderProductionStatus.Pending, 50),
+                MakeOrderForEquip(102, equipmentId: 2, OrderProductionStatus.Pending, 30),
+            };
+            vm.InjectDataForTest(new List<ScheduleUiModel>(), orders);
+
+            var card = MakeFocusCard(1, "Machine-01");
+            vm.SelectEquipmentCardCommand.Execute(card);
+
+            Assert.Same(card, vm.SelectedEquipmentCard);
+            Assert.True(card.IsSelected);
+            Assert.True(vm.IsEquipmentDetailVisible);
+            Assert.False(vm.IsCardWallVisible);
+            Assert.Single(vm.SelectedEquipmentOrders);
+            Assert.Equal(101, vm.SelectedEquipmentOrders[0].OrderId);
+        }
+
+        [Fact]
+        public void SelectEquipmentCard_ClearsSelectedSchedule()
+        {
+            var vm = CreateVm();
+            var schedule = MakeSched(1, ScheduleStatus.Pending);
+            vm.InjectDataForTest(new List<ScheduleUiModel> { schedule }, new List<OrderProductionInfo>());
+            vm.DateRangeStart = null;
+            vm.DateRangeEnd   = null;
+            vm.SelectedSchedule = schedule;
+
+            var card = MakeFocusCard(1, "Machine-01");
+            vm.SelectEquipmentCardCommand.Execute(card);
+
+            Assert.Null(vm.SelectedSchedule);
+        }
+
+        [Fact]
+        public void DeselectEquipmentCard_ResetsToLayer1()
+        {
+            var vm = CreateVm();
+            vm.InjectDataForTest(new List<ScheduleUiModel>(), new List<OrderProductionInfo>());
+
+            var card = MakeFocusCard(1, "Machine-01");
+            vm.SelectEquipmentCardCommand.Execute(card);
+            Assert.True(vm.IsEquipmentDetailVisible);
+
+            vm.DeselectEquipmentCardCommand.Execute(null);
+
+            Assert.Null(vm.SelectedEquipmentCard);
+            Assert.False(card.IsSelected);
+            Assert.True(vm.IsCardWallVisible);
+            Assert.False(vm.IsEquipmentDetailVisible);
+            Assert.Empty(vm.SelectedEquipmentOrders);
+        }
+
+        [Fact]
+        public void SelectSchedule_ClearsSelectedEquipmentCard()
+        {
+            var vm = CreateVm();
+            var schedule = MakeSched(1, ScheduleStatus.Pending);
+            vm.InjectDataForTest(new List<ScheduleUiModel> { schedule }, new List<OrderProductionInfo>());
+            vm.DateRangeStart = null;
+            vm.DateRangeEnd   = null;
+
+            var card = MakeFocusCard(1, "Machine-01");
+            vm.SelectEquipmentCardCommand.Execute(card);
+            Assert.NotNull(vm.SelectedEquipmentCard);
+
+            vm.SelectedSchedule = schedule;
+
+            Assert.Null(vm.SelectedEquipmentCard);
+            Assert.False(card.IsSelected);
+        }
+
+        [Fact]
+        public void FilterSchedule_FocusMode_OnlyShowsCompatibleSchedules()
+        {
+            var vm = CreateVm();
+            var schedules = new List<ScheduleUiModel>
+            {
+                MakeSchedWithProduct(1, ScheduleStatus.Pending, productId: 1, processId: 1),
+                MakeSchedWithProduct(2, ScheduleStatus.Pending, productId: 2, processId: 1),
+            };
+            vm.InjectDataForTest(schedules, new List<OrderProductionInfo>());
+            vm.DateRangeStart = null;
+            vm.DateRangeEnd   = null;
+
+            var card = MakeFocusCard(1, "Machine-01", productId: 1, processId: 1);
+            vm.SelectEquipmentCardCommand.Execute(card);
+
+            var visible = vm.SchedulesView.Cast<ScheduleUiModel>().ToList();
+            Assert.Single(visible);
+            Assert.Equal(1, visible[0].ScheduleId);
+        }
+
+        [Fact]
+        public void UpdateSelectedEquipmentOrders_ComputesStatsCorrectly()
+        {
+            var vm = CreateVm();
+            var orders = new List<OrderProductionInfo>
+            {
+                MakeOrderForEquip(101, 1, OrderProductionStatus.Pending,      50),
+                MakeOrderForEquip(102, 1, OrderProductionStatus.Pending,      30),
+                MakeOrderForEquip(103, 1, OrderProductionStatus.InProduction, 80),
+            };
+            vm.InjectDataForTest(new List<ScheduleUiModel>(), orders);
+
+            var card = MakeFocusCard(1, "Machine-01");
+            vm.SelectEquipmentCardCommand.Execute(card);
+
+            Assert.Equal(2, vm.EquipDetailPendingCount);
+            Assert.Equal(80, vm.EquipDetailPendingQty);
+            Assert.Equal(1, vm.EquipDetailInProductionCount);
+            Assert.Equal(80, vm.EquipDetailInProductionQty);
+        }
+
+        [Fact]
+        public async Task StartOrderProduction_CallsServiceAndReloads()
+        {
+            var (vm, dataMock, _) = CreateVmWithFullMock();
+            dataMock.Setup(d => d.StartProductionAsync(It.IsAny<int>(), It.IsAny<int>()))
+                    .Returns(Task.CompletedTask);
+            var order = MakeOrderForEquip(101, 1, OrderProductionStatus.Pending);
+
+            await vm.StartOrderProductionCommand.ExecuteAsync(order);
+
+            dataMock.Verify(d => d.StartProductionAsync(101, It.IsAny<int>()), Times.Once);
+            dataMock.Verify(d => d.GetAllSchedulesAsync(), Times.AtLeast(1));
+        }
+
+        [Fact]
+        public async Task EndOrderProduction_CallsServiceAndReloads()
+        {
+            var (vm, dataMock, _) = CreateVmWithFullMock();
+            dataMock.Setup(d => d.EndProductionAsync(It.IsAny<int>()))
+                    .Returns(Task.CompletedTask);
+            var order = MakeOrderForEquip(102, 1, OrderProductionStatus.InProduction);
+
+            await vm.EndOrderProductionCommand.ExecuteAsync(order);
+
+            dataMock.Verify(d => d.EndProductionAsync(102), Times.Once);
+            dataMock.Verify(d => d.GetAllSchedulesAsync(), Times.AtLeast(1));
+        }
+
+        [Fact]
+        public async Task CancelOrderProduction_ConfirmedWithDescription_CallsService()
+        {
+            var (vm, dataMock, dialogMock) = CreateVmWithFullMock();
+            dataMock.Setup(d => d.CancelOrderAsync(It.IsAny<int>(), It.IsAny<string?>()))
+                    .Returns(Task.CompletedTask);
+            dialogMock.Setup(d => d.ShowDialog(It.IsAny<CancelOrderConfirmationDialogViewModel>()))
+                      .Callback<DialogBaseViewModel<CancelOrderResult>>(raw =>
+                      {
+                          var dvm = (CancelOrderConfirmationDialogViewModel)raw;
+                          dvm.Description = "test reason";
+                          dvm.ConfirmCommand.Execute(null);
+                      })
+                      .Returns<DialogBaseViewModel<CancelOrderResult>>(raw => ((CancelOrderConfirmationDialogViewModel)raw).Result);
+            var order = MakeOrderForEquip(103, 1, OrderProductionStatus.Pending);
+
+            await vm.CancelOrderProductionCommand.ExecuteAsync(order);
+
+            dataMock.Verify(d => d.CancelOrderAsync(103, "test reason"), Times.Once);
+        }
+
+        [Fact]
+        public async Task CancelOrderProduction_Dismissed_DoesNotCallService()
+        {
+            var (vm, dataMock, dialogMock) = CreateVmWithFullMock();
+            dialogMock.Setup(d => d.ShowDialog(It.IsAny<CancelOrderConfirmationDialogViewModel>()))
+                      .Returns<CancelOrderConfirmationDialogViewModel>(dvm => null);
+            var order = MakeOrderForEquip(103, 1, OrderProductionStatus.Pending);
+
+            await vm.CancelOrderProductionCommand.ExecuteAsync(order);
+
+            dataMock.Verify(d => d.CancelOrderAsync(It.IsAny<int>(), It.IsAny<string?>()), Times.Never);
+        }
+
+        [Fact]
+        public void ComputeBadges_SetsActiveOrderCountAndEquipmentCount()
+        {
+            var vm = CreateVm();
+            var schedules = new List<ScheduleUiModel>
+            {
+                MakeSched(1, ScheduleStatus.Scheduled, quantity: 100),
+            };
+            var orders = new List<OrderProductionInfo>
+            {
+                new() { OrderId = 101, ScheduleId = 1, EquipmentId = 1, Status = OrderProductionStatus.Pending,      Quantity = 30 },
+                new() { OrderId = 102, ScheduleId = 1, EquipmentId = 2, Status = OrderProductionStatus.InProduction, Quantity = 50 },
+                new() { OrderId = 103, ScheduleId = 1, EquipmentId = 1, Status = OrderProductionStatus.Completed,    Quantity = 20 },
+            };
+            vm.InjectDataForTest(schedules, orders);
+
+            // 2 active orders (Pending + InProduction), 2 distinct equipments
+            Assert.Equal(2, schedules[0].ActiveOrderCount);
+            Assert.Equal(2, schedules[0].ActiveEquipmentCount);
+            Assert.True(schedules[0].HasActiveOrders);
         }
     }
 }

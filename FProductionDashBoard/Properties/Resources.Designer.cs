@@ -860,5 +860,59 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("WaitedDaysForSchedule", resourceCulture);
             }
         }
+
+        internal static string SchCancelOrderDialogTitle {
+            get {
+                return ResourceManager.GetString("SchCancelOrderDialogTitle", resourceCulture);
+            }
+        }
+
+        internal static string SchCancelOrderMsg {
+            get {
+                return ResourceManager.GetString("SchCancelOrderMsg", resourceCulture);
+            }
+        }
+
+        internal static string SchCancelOrderDescLabel {
+            get {
+                return ResourceManager.GetString("SchCancelOrderDescLabel", resourceCulture);
+            }
+        }
+
+        internal static string SchOrderStatusPending {
+            get {
+                return ResourceManager.GetString("SchOrderStatusPending", resourceCulture);
+            }
+        }
+
+        internal static string SchOrderStatusInProduction {
+            get {
+                return ResourceManager.GetString("SchOrderStatusInProduction", resourceCulture);
+            }
+        }
+
+        internal static string SchOrderStatusCompleted {
+            get {
+                return ResourceManager.GetString("SchOrderStatusCompleted", resourceCulture);
+            }
+        }
+
+        internal static string SchOrderStatusCancelled {
+            get {
+                return ResourceManager.GetString("SchOrderStatusCancelled", resourceCulture);
+            }
+        }
+        internal static string SchDerivedBadgeInProduction {
+            get { return ResourceManager.GetString("SchDerivedBadgeInProduction", resourceCulture); }
+        }
+        internal static string SchDerivedBadgeComplete {
+            get { return ResourceManager.GetString("SchDerivedBadgeComplete", resourceCulture); }
+        }
+        internal static string SchDerivedBadgePartial {
+            get { return ResourceManager.GetString("SchDerivedBadgePartial", resourceCulture); }
+        }
+        internal static string SchDerivedBadgeCancelNotice {
+            get { return ResourceManager.GetString("SchDerivedBadgeCancelNotice", resourceCulture); }
+        }
     }
 }
