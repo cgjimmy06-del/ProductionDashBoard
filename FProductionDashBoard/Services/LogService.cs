@@ -82,29 +82,31 @@ namespace FProductionDashBoard.Services
             }
 
             if (Application.Current != null)
-            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                var resources = Application.Current.Resources;
-                entry.Color = level switch
+                Application.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    LogLevel.Success => (Brush)resources["SuccessBrush"],
-                    LogLevel.Warning => (Brush)resources["AlertBrush"],
-                    LogLevel.Error => (Brush)resources["ErrorBrush"],
-                    LogLevel.Info => (Brush)resources["InfoBrush"],
-                    LogLevel.Processing => (Brush)resources["ProcessingBrush"],
-                    _ => (Brush)resources["IdleBrush"]
-                };
-                entry.Icon = level switch
-                {
-                    LogLevel.Success => PackIconKind.CheckCircle,
-                    LogLevel.Warning => PackIconKind.AlertOutline,
-                    LogLevel.Error => PackIconKind.Error,
-                    LogLevel.Info => PackIconKind.Notebook,
-                    LogLevel.Processing => PackIconKind.ProgressClock,
-                    _ => PackIconKind.AlertOutline
-                };
-                Logs.Add(entry);
-            }, DispatcherPriority.Background);
+                    var resources = Application.Current.Resources;
+                    entry.Color = level switch
+                    {
+                        LogLevel.Success => (Brush)resources["SuccessBrush"],
+                        LogLevel.Warning => (Brush)resources["AlertBrush"],
+                        LogLevel.Error => (Brush)resources["ErrorBrush"],
+                        LogLevel.Info => (Brush)resources["InfoBrush"],
+                        LogLevel.Processing => (Brush)resources["ProcessingBrush"],
+                        _ => (Brush)resources["IdleBrush"]
+                    };
+                    entry.Icon = level switch
+                    {
+                        LogLevel.Success => PackIconKind.CheckCircle,
+                        LogLevel.Warning => PackIconKind.AlertOutline,
+                        LogLevel.Error => PackIconKind.Error,
+                        LogLevel.Info => PackIconKind.Notebook,
+                        LogLevel.Processing => PackIconKind.ProgressClock,
+                        _ => PackIconKind.AlertOutline
+                    };
+                    Logs.Add(entry);
+                }, DispatcherPriority.Background);
+            }
         }
 
         public void AddErrorLog(string message)
@@ -118,14 +120,16 @@ namespace FProductionDashBoard.Services
             }
 
             if (Application.Current != null)
-            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                var resources = Application.Current.Resources;
-                entry.Color = (Brush)resources["ErrorBrush"];
-                entry.Icon = PackIconKind.Error;
-                ErrorLogs.Add(entry);
-                IsNewErrorLog = true;
-            }, DispatcherPriority.Background);
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    var resources = Application.Current.Resources;
+                    entry.Color = (Brush)resources["ErrorBrush"];
+                    entry.Icon = PackIconKind.Error;
+                    ErrorLogs.Add(entry);
+                    IsNewErrorLog = true;
+                }, DispatcherPriority.Background);
+            }
         }
 
         private string GetLogFilePathWithDate(string logtitle)

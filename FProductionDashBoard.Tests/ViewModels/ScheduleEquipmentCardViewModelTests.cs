@@ -140,7 +140,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             {
                 MakeEp(productId: 10, processId: 20, TuningType.Feasible),
             });
-            var keys = new[] { (ProductId: 10, ProcessId: 20) };
+            var keys = new HashSet<(int ProductId, int ProcessId)> { (10, 20) };
 
             Assert.True(card.HasAnyFeasibleEpForKeys(keys));
         }
@@ -152,7 +152,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             {
                 MakeEp(productId: 10, processId: 20, TuningType.Pending),
             });
-            var keys = new[] { (ProductId: 10, ProcessId: 20) };
+            var keys = new HashSet<(int ProductId, int ProcessId)> { (10, 20) };
 
             Assert.False(card.HasAnyFeasibleEpForKeys(keys));
         }
@@ -164,7 +164,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             {
                 MakeEp(productId: 10, processId: 99, TuningType.Feasible),
             });
-            var keys = new[] { (ProductId: 10, ProcessId: 20) };
+            var keys = new HashSet<(int ProductId, int ProcessId)> { (10, 20) };
 
             Assert.False(card.HasAnyFeasibleEpForKeys(keys));
         }
@@ -176,10 +176,10 @@ namespace FProductionDashBoard.Tests.ViewModels
             {
                 MakeEp(productId: 10, processId: 20, TuningType.Feasible),
             });
-            var keys = new[]
+            var keys = new HashSet<(int ProductId, int ProcessId)>
             {
-                (ProductId: 99, ProcessId: 99),
-                (ProductId: 10, ProcessId: 20),
+                (99, 99),
+                (10, 20),
             };
 
             Assert.True(card.HasAnyFeasibleEpForKeys(keys));
@@ -194,7 +194,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             {
                 MakeEp(productId: 10, processId: 20, TuningType.Feasible),
             });
-            var keys = new[] { (ProductId: 10, ProcessId: 20) };
+            var keys = new HashSet<(int ProductId, int ProcessId)> { (10, 20) };
 
             Assert.True(card.HasAnyCompatibleEpForKeys(keys));
         }
@@ -206,7 +206,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             {
                 MakeEp(productId: 10, processId: 20, TuningType.Pending),
             });
-            var keys = new[] { (ProductId: 10, ProcessId: 20) };
+            var keys = new HashSet<(int ProductId, int ProcessId)> { (10, 20) };
 
             Assert.True(card.HasAnyCompatibleEpForKeys(keys));
         }
@@ -218,7 +218,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             {
                 MakeEp(productId: 10, processId: 20, TuningType.Feasible),
             });
-            var keys = new[] { (ProductId: 99, ProcessId: 99) };
+            var keys = new HashSet<(int ProductId, int ProcessId)> { (99, 99) };
 
             Assert.False(card.HasAnyCompatibleEpForKeys(keys));
         }

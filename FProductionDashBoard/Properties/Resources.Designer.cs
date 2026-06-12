@@ -867,12 +867,6 @@ namespace FProductionDashBoard.Properties {
             }
         }
 
-        internal static string SchCancelOrderMsg {
-            get {
-                return ResourceManager.GetString("SchCancelOrderMsg", resourceCulture);
-            }
-        }
-
         internal static string SchCancelOrderDescLabel {
             get {
                 return ResourceManager.GetString("SchCancelOrderDescLabel", resourceCulture);

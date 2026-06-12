@@ -13,7 +13,7 @@ namespace FProductionDashBoard.Repositories
         {
         }
 
-        public new async Task<List<OrderProduction>> GetAllAsync()
+        public async Task<List<OrderProduction>> GetAllWithDetailsAsync()
         {
             await using var ctx = _factory.CreateDbContext();
             return await ctx.OrderProductions
