@@ -43,6 +43,7 @@ namespace FProductionDashBoard.ViewModels
         #region -- 介面邏輯 --
         [ObservableProperty] private bool isCollapsedNav = false;
         [ObservableProperty] private bool isLogPanelVisible = true;
+        [ObservableProperty] private bool isAiAgentVisible = false;
         [ObservableProperty] private int progressValue = 0;
         [ObservableProperty] private string progressString = Properties.Resources.MainProgressIdle;
         [ObservableProperty] private bool isProgressIndeterminate = false;
@@ -62,6 +63,7 @@ namespace FProductionDashBoard.ViewModels
         public ICommand CollapseNavCommand { get; }
         public ICommand ShowAboutCommand { get; }
         public LogPanelViewModel LogPanel { get; }
+        public AIAgentViewModel AiAgent { get; }
         public SystemSettingsViewModel SystemSettings { get; }
 
         private Action? _onUserChanged;
@@ -98,6 +100,7 @@ namespace FProductionDashBoard.ViewModels
             LogoutCommand = new AsyncRelayCommand(LogoutAsync);
 
             LogPanel = sp.GetRequiredService<LogPanelViewModel>();
+            AiAgent = sp.GetRequiredService<AIAgentViewModel>();
             SystemSettings = sp.GetRequiredService<SystemSettingsViewModel>();
             SystemSettings.LoadFromSettings();
 

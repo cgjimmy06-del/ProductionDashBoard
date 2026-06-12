@@ -24,6 +24,7 @@
     <sys:String x:Key="LargeFontButtonTooltip">放大字體</sys:String>
     <sys:String x:Key="LogSaveButtonTooltip">儲存當前訊息紀錄(含異常)</sys:String>
     <sys:String x:Key="ToggleLogPanelTooltip">顯示/隱藏訊息面板</sys:String>
+    <sys:String x:Key="ToggleAiAgentTooltip">顯示/隱藏 AI 助理</sys:String>
     <sys:String x:Key="LayoutSingleTooltip">單格</sys:String>
     <sys:String x:Key="LayoutHSplitTooltip">左右分割</sys:String>
     <sys:String x:Key="LayoutVSplitTooltip">上下分割</sys:String>
