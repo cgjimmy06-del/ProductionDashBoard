@@ -939,7 +939,7 @@ namespace FProductionDashBoard.Services.V1
         {
             if (!await _orderProductionRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllOrderProductionsAsync] 接單 Repository 連線失敗");
-            return await _orderProductionRep.GetAllAsync().ConfigureAwait(false);
+            return await _orderProductionRep.GetAllWithDetailsAsync().ConfigureAwait(false);
         }
 
         public async Task<List<OrderProduction>> GetOrdersByEquipmentAsync(int equipmentId)

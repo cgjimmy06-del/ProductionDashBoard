@@ -20,14 +20,16 @@ namespace FProductionDashBoard.ViewModels
         public bool HasAnyFeasibleEp
             => AllEquipmentProducts.Any(ep => ep.ProductionStatus == TuningType.Feasible);
 
-        public bool HasAnyFeasibleEpForKeys(IEnumerable<(int ProductId, int ProcessId)> keys)
+        public bool HasAnyFeasibleEpForKeys(IReadOnlySet<(int ProductId, int ProcessId)> keys)
             => AllEquipmentProducts.Any(ep =>
                 ep.ProductionStatus == TuningType.Feasible &&
-                keys.Any(k => k.ProductId == ep.Sop?.ProductId && k.ProcessId == ep.Sop?.ProcessId));
+                ep.Sop != null &&
+                keys.Contains((ep.Sop.ProductId, ep.Sop.ProcessId)));
 
-        public bool HasAnyCompatibleEpForKeys(IEnumerable<(int ProductId, int ProcessId)> keys)
+        public bool HasAnyCompatibleEpForKeys(IReadOnlySet<(int ProductId, int ProcessId)> keys)
             => AllEquipmentProducts.Any(ep =>
-                keys.Any(k => k.ProductId == ep.Sop?.ProductId && k.ProcessId == ep.Sop?.ProcessId));
+                ep.Sop != null &&
+                keys.Contains((ep.Sop.ProductId, ep.Sop.ProcessId)));
 
         // 焦點模式選取狀態
         [ObservableProperty] private bool isSelected;
