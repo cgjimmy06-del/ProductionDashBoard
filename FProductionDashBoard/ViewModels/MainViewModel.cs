@@ -60,6 +60,7 @@ namespace FProductionDashBoard.ViewModels
         public IAsyncRelayCommand LogoutCommand { get; }
         public IRelayCommand TestCommand { get; }
         public ICommand CollapseNavCommand { get; }
+        public ICommand ShowAboutCommand { get; }
         public LogPanelViewModel LogPanel { get; }
         public SystemSettingsViewModel SystemSettings { get; }
 
@@ -106,8 +107,17 @@ namespace FProductionDashBoard.ViewModels
             _onUserChanged = () => OnUserChanged();
             _core.Authorization.UserChanged += _onUserChanged;
 
-            TestCommand = new RelayCommand(() => { },
-                () => _core.Authorization.HasPermission(PermissionId.Test));
+            // 關於 - 版本 / 金鑰
+            ShowAboutCommand = new RelayCommand(() =>
+            {
+                var title    = Application.Current.TryFindResource("SsAboutHeader") as string ?? "About";
+                var verLabel = Application.Current.TryFindResource("SsVersionLabel") as string ?? "Version";
+                MessageBox.Show($"{verLabel}: {AppVersion}", title,
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+            });
+
+            // 測試
+            TestCommand = new RelayCommand(() => {});
         }
 
         #region -- 載入初始化 --
@@ -194,10 +204,6 @@ namespace FProductionDashBoard.ViewModels
                     LogoutCommand.NotifyCanExecuteChanged();
                     OnPropertyChanged(nameof(CurrentUser));
                     OnPropertyChanged(nameof(IsLoggedIn));
-
-#if DEBUG
-                    TestCommand.NotifyCanExecuteChanged();
-#endif
                 }
                 catch (Exception ex)
                 {

@@ -22,12 +22,29 @@ namespace FProductionDashBoard
             bool isOn = (bool)value;
             
             if (parameter?.ToString() == "NoError")
-            { return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["PrimaryBrush"]; }
+            { return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["ErrorBrush"]; }
 
             if (parameter?.ToString() == "Invert")
                 isOn = !isOn;
 
             return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["ErrorBrush"];
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        { throw new NotImplementedException(); }
+    }
+    public class BoolToTransparentConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isOn = (bool)value;
+
+            if (parameter?.ToString() == "NoError")
+            { return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["Transparent"]; }
+
+            if (parameter?.ToString() == "Invert")
+                isOn = !isOn;
+
+            return isOn ? Application.Current.Resources["SuccessBrush"] : Application.Current.Resources["Transparent"];
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         { throw new NotImplementedException(); }

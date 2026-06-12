@@ -63,6 +63,7 @@
     <SolidColorBrush x:Key="TextDarkBrush" Color="{StaticResource TextDarkColor}" />
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
+    <SolidColorBrush x:Key="TextPrimaryInvertBrush" Color="{StaticResource TextLightColor}" />
 
     <SolidColorBrush x:Key="SelectedBrush" Color="{StaticResource SelectedColor}" />
     
@@ -80,6 +81,7 @@
     <SolidColorBrush x:Key="ButtonSecondaryLightBrush" Color="{StaticResource ButtonSecondaryLightColor}" />
     <SolidColorBrush x:Key="ButtonWarningBrush" Color="{StaticResource ButtonWarningColor}" />
     <SolidColorBrush x:Key="ButtonErrorBrush" Color="{StaticResource ButtonErrorColor}" />
+    <SolidColorBrush x:Key="DevicePrimaryActionBrush" Color="#2A5580" />
 
     <SolidColorBrush x:Key="ProgramFeasibleBrush" Color="{StaticResource ProgramFeasibleColor}" />
     <SolidColorBrush x:Key="ProgramPendingBrush"  Color="{StaticResource ProgramPendingColor}" />

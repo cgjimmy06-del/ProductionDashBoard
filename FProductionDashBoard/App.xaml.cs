@@ -42,7 +42,7 @@ namespace FProductionDashBoard
                 // 取得登入資訊 ( Debug 模式 )
                 var loginWindow = new LoginWindow();
                 string selectedServer = loginWindow.SelectedServer;
-                var user = new UiModels.UserInfo() { UserId = "visitor", Name = "Debug", RoleId = 1, Id = 2 };
+                var user = loginWindow.User; user.Name = "Debug";
 #else
                 // 登入畫面 + 取得資訊
                 var loginWindow = new LoginWindow();
