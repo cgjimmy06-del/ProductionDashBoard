@@ -34,6 +34,8 @@
     <sys:String x:Key="MenuToolsSettings">進階設定(_,)</sys:String>
     <sys:String x:Key="MenuViewLanguage">語言(_L)</sys:String>
     <sys:String x:Key="MenuViewTheme">主題(_H)</sys:String>
+    <sys:String x:Key="MenuHelp">幫助(_B)</sys:String>
+    <sys:String x:Key="MenuHelpAbout">關於(_A)...</sys:String>
     <sys:String x:Key="ProgramLibraryNavButton">程式庫管理</sys:String>
     <sys:String x:Key="ProductInOutNavButton">進出料</sys:String>
     <sys:String x:Key="SystemSettingsNavButton">系統設定</sys:String>
@@ -60,6 +62,7 @@
     <sys:String x:Key="TuningTeachingButton">帶點</sys:String>
     <sys:String x:Key="TuningOffsetButton">調品質</sys:String>
     <sys:String x:Key="OrderListButtonTooltip">開啟訂單清單頁面</sys:String>
+    <sys:String x:Key="OrderButton">接單</sys:String>
     <sys:String x:Key="TuningClickToEnd">點擊任意處結束</sys:String>
     <!--#endregion-->
     <!--#region dialog window 彈出視窗 -->
@@ -259,6 +262,7 @@
     <sys:String x:Key="SsAbbSeqNoTask">任務名稱</sys:String>
     <sys:String x:Key="SsAbbSeqNoModule">模組名稱</sys:String>
     <sys:String x:Key="SsAbbSeqNoVariable">變數名稱</sys:String>
+    <sys:String x:Key="SsAbbWriteSeqNoEnabled">傳送序號至 ABB</sys:String>
     <sys:String x:Key="SsDeviceReconnectSubHeader">設備重連</sys:String>
     <sys:String x:Key="SsDeviceReconnect">自動重連</sys:String>
     <sys:String x:Key="SsAboutHeader">關於</sys:String>

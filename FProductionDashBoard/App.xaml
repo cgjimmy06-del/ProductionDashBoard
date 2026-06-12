@@ -44,6 +44,7 @@
 
             <!--#region 自訂 Converter -->
             <local:BoolToColorConverter x:Key="BoolToColorConverter"/>
+            <local:BoolToTransparentConverter x:Key="BoolToTransparentConverter"/>
             <local:BoolToAlertIconConverter x:Key="BoolToAlertConverter"/>
             <local:IntToColorConverter x:Key="IntToColorConverter"/>
             <local:StringNullOrEmptyToVisibilityConverter x:Key="PlaceholderConverter"/>
