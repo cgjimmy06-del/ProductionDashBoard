@@ -475,6 +475,8 @@
     <sys:String x:Key="SchFocusAssignTo">Assign to</sys:String>
     <sys:String x:Key="SchFocusAssignButton">Assign</sys:String>
     <sys:String x:Key="SchCancelOrderDescLabel">Reason (optional)</sys:String>
+    <sys:String x:Key="SsAiApiKeyHeader">AI Settings</sys:String>
+    <sys:String x:Key="SsAiApiKeyLabel">API Key</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

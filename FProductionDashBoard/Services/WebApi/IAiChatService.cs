@@ -5,6 +5,7 @@ namespace FProductionDashBoard.Services.WebApi
     public interface IAiChatService
     {
         bool IsConfigured { get; }
+        string[] AvailableModels { get; }
 
         Task<string> SendAsync(
             string model,
