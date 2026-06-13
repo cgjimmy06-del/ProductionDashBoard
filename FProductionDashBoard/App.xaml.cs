@@ -148,6 +148,13 @@ namespace FProductionDashBoard
                     client.Timeout = TimeSpan.FromSeconds(5);
                 });
 
+                // 註冊 AI Chat 服務
+                services.Configure<Services.WebApi.AiApiOptions>(config.GetSection("AiApi"));
+                services.AddHttpClient<Services.WebApi.IAiChatService, Services.WebApi.OpenAiChatService>(client =>
+                {
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                });
+
                 // 註冊 Facade
                 services.AddScoped<Services.DashboardCoreServices>();
 

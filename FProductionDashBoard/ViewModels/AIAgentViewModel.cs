@@ -1,30 +1,35 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FProductionDashBoard.Services;
+using FProductionDashBoard.Services.WebApi;
 using FProductionDashBoard.UiModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
-using System.Windows.Threading;
 
 namespace FProductionDashBoard.ViewModels
 {
     public partial class AIAgentViewModel : ObservableObject
     {
+        private readonly IAiChatService _aiChatService;
+        private readonly DashboardCoreServices _core;
+
         #region -- 模型設定 --
         public string[] AvailableModels { get; } =
         [
-            "claude-sonnet-4-6",
-            "claude-opus-4-8",
-            "claude-haiku-4-5"
+            "gpt-4o",
+            "gpt-4o-mini",
+            "gpt-4-turbo"
         ];
 
-        [ObservableProperty] private string selectedModel = "claude-sonnet-4-6";
+        [ObservableProperty] private string selectedModel = "gpt-4o";
         #endregion
 
         #region -- 對話狀態 --
         [ObservableProperty] private ChatSession currentSession = null!;
         [ObservableProperty] private string inputText = "";
         [ObservableProperty] private bool isTyping = false;
+        [ObservableProperty] private string? configWarning;
         #endregion
 
         #region -- 歷史與分類 --
@@ -46,9 +51,12 @@ namespace FProductionDashBoard.ViewModels
         public IRelayCommand<string> SelectCategoryChipCommand { get; }
         #endregion
 
-        public AIAgentViewModel()
+        public AIAgentViewModel(IAiChatService aiChatService, DashboardCoreServices core)
         {
-            SendCommand          = new RelayCommand(Send, () => !string.IsNullOrWhiteSpace(InputText) && !IsTyping);
+            _aiChatService = aiChatService;
+            _core = core;
+
+            SendCommand          = new AsyncRelayCommand(SendAsync, () => !string.IsNullOrWhiteSpace(InputText) && !IsTyping);
             NewSessionCommand    = new RelayCommand(StartNewSession);
             ToggleHistoryCommand = new RelayCommand(() => IsHistoryVisible = !IsHistoryVisible);
             LoadSessionCommand   = new RelayCommand<ChatSession>(LoadSession);
@@ -59,12 +67,15 @@ namespace FProductionDashBoard.ViewModels
             FilteredSessions.Filter = FilterSession;
 
             StartNewSession();
+
+            if (!_aiChatService.IsConfigured)
+                ConfigWarning = "AI 功能尚未啟用";
         }
 
-        partial void OnSearchTextChanged(string value)     => FilteredSessions.Refresh();
-        partial void OnSelectedCategoryChanged(string value) => FilteredSessions.Refresh();
-        partial void OnInputTextChanged(string value)      => SendCommand.NotifyCanExecuteChanged();
-        partial void OnIsTypingChanged(bool value)         => SendCommand.NotifyCanExecuteChanged();
+        partial void OnSearchTextChanged(string value)        => FilteredSessions.Refresh();
+        partial void OnSelectedCategoryChanged(string value)  => FilteredSessions.Refresh();
+        partial void OnInputTextChanged(string value)         => SendCommand.NotifyCanExecuteChanged();
+        partial void OnIsTypingChanged(bool value)            => SendCommand.NotifyCanExecuteChanged();
 
         private bool FilterSession(object obj)
         {
@@ -79,7 +90,7 @@ namespace FProductionDashBoard.ViewModels
         {
             var session = new ChatSession
             {
-                Title    = $"新對話",
+                Title     = "新對話",
                 ModelUsed = SelectedModel,
                 LastTime  = DateTime.Now
             };
@@ -101,7 +112,7 @@ namespace FProductionDashBoard.ViewModels
             IsHistoryVisible = false;
         }
 
-        private void Send()
+        private async Task SendAsync()
         {
             var text = InputText.Trim();
             if (string.IsNullOrEmpty(text)) return;
@@ -124,20 +135,37 @@ namespace FProductionDashBoard.ViewModels
             var typing = new ChatMessage { Sender = ChatSender.Ai, IsTyping = true, Time = DateTime.Now };
             CurrentSession.Messages.Add(typing);
 
-            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1.5) };
-            timer.Tick += (_, _) =>
+            try
             {
-                timer.Stop();
+                var reply = await _aiChatService.SendAsync(
+                    SelectedModel,
+                    CurrentSession.Messages.Where(m => !m.IsTyping).SkipLast(1),
+                    text);
+
                 CurrentSession.Messages.Remove(typing);
                 CurrentSession.Messages.Add(new ChatMessage
                 {
                     Sender  = ChatSender.Ai,
-                    Content = $"[{SelectedModel}] 這是模擬回應。AI 功能尚未接入，請稍後實作。",
+                    Content = reply,
                     Time    = DateTime.Now
                 });
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[AI 助理] 送出訊息失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[SendAsync] {ex.Message}");
+                CurrentSession.Messages.Remove(typing);
+                CurrentSession.Messages.Add(new ChatMessage
+                {
+                    Sender  = ChatSender.Ai,
+                    Content = ex.Message.Contains("逾時") ? "請求逾時，請重試" : "訊息傳送失敗，請稍後再試",
+                    Time    = DateTime.Now
+                });
+            }
+            finally
+            {
                 IsTyping = false;
-            };
-            timer.Start();
+            }
         }
     }
 }
