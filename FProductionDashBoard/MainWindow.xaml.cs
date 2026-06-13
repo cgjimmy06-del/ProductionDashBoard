@@ -9,6 +9,7 @@ namespace FProductionDashBoard
     public partial class MainWindow : Window
     {
         private double _savedLogPanelHeight = 150;
+        private double _savedAiAgentWidth = 350;
 
         public MainWindow()
         {
@@ -44,6 +45,10 @@ namespace FProductionDashBoard
             if (e.PropertyName == nameof(ViewModels.MainViewModel.IsLogPanelVisible)
                 && sender is ViewModels.MainViewModel vm)
                 ApplyLogPanelVisibility(vm.IsLogPanelVisible);
+
+            if (e.PropertyName == nameof(ViewModels.MainViewModel.IsAiAgentVisible)
+                && sender is ViewModels.MainViewModel vm2)
+                ApplyAiAgentVisibility(vm2.IsAiAgentVisible);
         }
 
         private void ApplyLogPanelVisibility(bool isVisible)
@@ -62,6 +67,25 @@ namespace FProductionDashBoard
                     _savedLogPanelHeight = panelRow.Height.Value;
                 splitterRow.Height = new GridLength(0);
                 panelRow.Height    = new GridLength(0);
+            }
+        }
+
+        private void ApplyAiAgentVisibility(bool isVisible)
+        {
+            var splitterCol = MainAreaGrid.ColumnDefinitions[2];
+            var panelCol    = MainAreaGrid.ColumnDefinitions[3];
+
+            if (isVisible)
+            {
+                splitterCol.Width = new GridLength(5);
+                panelCol.Width    = new GridLength(_savedAiAgentWidth);
+            }
+            else
+            {
+                if (panelCol.Width.Value > 0)
+                    _savedAiAgentWidth = panelCol.Width.Value;
+                splitterCol.Width = new GridLength(0);
+                panelCol.Width    = new GridLength(0);
             }
         }
     }

@@ -210,6 +210,12 @@
                     </Button.Style>
                     <materialDesign:PackIcon Kind="ViewGrid" Width="18" Height="18"/>
                 </Button>
+                <Separator/>
+                <ToggleButton ToolTip="{DynamicResource ToggleAiAgentTooltip}"
+                              Foreground="{DynamicResource TextPrimaryBrush}"
+                              IsChecked="{Binding IsAiAgentVisible, Mode=TwoWay}">
+                    <materialDesign:PackIcon Kind="Robot" Width="20" Height="20"/>
+                </ToggleButton>
             </ToolBar>
         </ToolBarTray>
 
@@ -327,12 +333,16 @@
         </StatusBar>
 
         <!-- 主區域(中) -->
-        <Grid Margin="0" Background="{DynamicResource BackgroundBrush}">
+        <Grid x:Name="MainAreaGrid" Margin="0" Background="{DynamicResource BackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <!-- 導覽列 -->
                 <ColumnDefinition Width="Auto"/>
                 <!-- 主內容 -->
                 <ColumnDefinition Width="*"/>
+                <!-- AI Agent Splitter（初始隱藏） -->
+                <ColumnDefinition Width="0"/>
+                <!-- AI Agent 面板（初始隱藏） -->
+                <ColumnDefinition Width="0"/>
             </Grid.ColumnDefinitions>
             <!-- 導覽列 -->
             <Border Grid.Column="0" Margin="0" d:Width="200"
@@ -597,6 +607,16 @@
                 <!-- 狀態訊息區 -->
                 <localuc:LogPanel Grid.Row="2" DataContext="{Binding LogPanel}"/>
             </Grid>
+            <!-- AI Agent GridSplitter -->
+            <GridSplitter Grid.Column="2"
+                          VerticalAlignment="Stretch"
+                          HorizontalAlignment="Center"
+                          Width="5"
+                          ResizeDirection="Columns"
+                          ResizeBehavior="PreviousAndNext"
+                          Background="{DynamicResource BorderBrush}"/>
+            <!-- AI Agent 面板 -->
+            <localuc:AIAgentView Grid.Column="3" DataContext="{Binding AiAgent}"/>
         </Grid>
     </DockPanel>
 </Window>
