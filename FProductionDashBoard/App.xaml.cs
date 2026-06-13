@@ -140,12 +140,20 @@ namespace FProductionDashBoard
                     client.Timeout = TimeSpan.FromSeconds(5);
                 });
 
+                // 註冊 上傳 Log WebApi 服務
                 var logUploadBaseUrl = config["LogUploadApi:BaseUrl"] ?? "";
                 services.AddHttpClient<Services.WebApi.ILogUploadService, Services.WebApi.LogUploadService>(client =>
                 {
                     if (Uri.TryCreate(logUploadBaseUrl, UriKind.Absolute, out var baseUri))
                         client.BaseAddress = baseUri;
                     client.Timeout = TimeSpan.FromSeconds(5);
+                });
+
+                // 註冊 AI Chat 服務
+                services.Configure<Services.WebApi.AiApiOptions>(config.GetSection("AiApi"));
+                services.AddHttpClient<Services.WebApi.IAiChatService, Services.WebApi.OpenAiChatService>(client =>
+                {
+                    client.Timeout = TimeSpan.FromSeconds(30);
                 });
 
                 // 註冊 Facade
