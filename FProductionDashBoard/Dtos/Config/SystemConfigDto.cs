@@ -12,5 +12,6 @@ namespace FProductionDashBoard.Dtos
         public int  IdleLogoutIntervalSec  { get; set; } = 600;
         public bool LogSaveToFile          { get; set; } = false;
         public int  LogDaysToKeep          { get; set; } = 7;
+        public string AiApiKey             { get; set; } = "";
     }
 }

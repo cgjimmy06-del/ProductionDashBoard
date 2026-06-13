@@ -70,7 +70,8 @@ namespace FProductionDashBoard.ViewModels
 
         [ObservableProperty] private bool deviceReconnectEnabled     = true;
         [ObservableProperty] private int  deviceReconnectIntervalSec = 10;
-        [ObservableProperty] private bool abbWriteSeqNoEnabled       = true;
+        [ObservableProperty] private bool   abbWriteSeqNoEnabled = true;
+        [ObservableProperty] private string aiApiKey            = "";
 
         partial void OnReaderPortChanged(string value)              => HasUnsavedChanges = true;
         partial void OnReaderBaudChanged(int value)                 => HasUnsavedChanges = true;
@@ -79,7 +80,8 @@ namespace FProductionDashBoard.ViewModels
         partial void OnAbbSeqNoVariableChanged(string value)        => HasUnsavedChanges = true;
         partial void OnDeviceReconnectEnabledChanged(bool value)    => HasUnsavedChanges = true;
         partial void OnDeviceReconnectIntervalSecChanged(int value) => HasUnsavedChanges = true;
-        partial void OnAbbWriteSeqNoEnabledChanged(bool value)      => HasUnsavedChanges = true;
+        partial void OnAbbWriteSeqNoEnabledChanged(bool value) => HasUnsavedChanges = true;
+        partial void OnAiApiKeyChanged(string value)            => HasUnsavedChanges = true;
 
         // 日誌設定（直接映射 LogService，setter 同時觸發 HasUnsavedChanges）
         public bool LogSaveToFile
@@ -179,6 +181,7 @@ namespace FProductionDashBoard.ViewModels
             DeviceReconnectEnabled    = hw.DeviceReconnectEnabled;
             DeviceReconnectIntervalSec = hw.DeviceReconnectIntervalSec;
             AbbWriteSeqNoEnabled       = hw.AbbWriteSeqNoEnabled;
+            AiApiKey                   = sys.AiApiKey;
 
             HasUnsavedChanges = false;
 
@@ -199,6 +202,7 @@ namespace FProductionDashBoard.ViewModels
                 IdleLogoutIntervalSec  = IdleLogoutIntervalSec,
                 LogSaveToFile          = LogSaveToFile,
                 LogDaysToKeep          = LogDaysToKeep,
+                AiApiKey               = AiApiKey,
             });
             _hardwareConfig.Save(new HardwareConfigDto
             {
