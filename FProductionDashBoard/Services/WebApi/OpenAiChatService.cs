@@ -35,14 +35,12 @@ namespace FProductionDashBoard.Services.WebApi
                 .Append(new { role = "user", content = userMessage })
                 .ToArray<object>();
 
-            var body = JsonSerializer.Serialize(new { model, messages });
-            var request = new HttpRequestMessage(
-                HttpMethod.Post,
-                $"{_options.BaseUrl.TrimEnd('/')}/v1/chat/completions")
+            var body = JsonSerializer.Serialize(new { model, input = messages });
+            var request = new HttpRequestMessage(HttpMethod.Post, _options.BaseUrl)
             {
                 Content = new StringContent(body, Encoding.UTF8, "application/json")
             };
-            request.Headers.Add("Authorization", $"Bearer {_options.ApiKey}");
+            request.Headers.Add("api-key", _options.ApiKey);
 
             HttpResponseMessage response;
             try
@@ -64,9 +62,9 @@ namespace FProductionDashBoard.Services.WebApi
             var json = await response.Content.ReadAsStringAsync();
             using var doc = JsonDocument.Parse(json);
             return doc.RootElement
-                .GetProperty("choices")[0]
-                .GetProperty("message")
-                .GetProperty("content")
+                .GetProperty("output")[0]
+                .GetProperty("content")[0]
+                .GetProperty("text")
                 .GetString() ?? "";
         }
     }
