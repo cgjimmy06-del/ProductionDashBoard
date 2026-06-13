@@ -475,6 +475,8 @@
     <sys:String x:Key="SchFocusAssignTo">指派給</sys:String>
     <sys:String x:Key="SchFocusAssignButton">指派</sys:String>
     <sys:String x:Key="SchCancelOrderDescLabel">取消原因（選填）</sys:String>
+    <sys:String x:Key="SsAiApiKeyHeader">AI 設定</sys:String>
+    <sys:String x:Key="SsAiApiKeyLabel">API 金鑰</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

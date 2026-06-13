@@ -15,14 +15,9 @@ namespace FProductionDashBoard.ViewModels
         private readonly DashboardCoreServices _core;
 
         #region -- 模型設定 --
-        public string[] AvailableModels { get; } =
-        [
-            "gpt-4o",
-            "gpt-4o-mini",
-            "gpt-4-turbo"
-        ];
+        public string[] AvailableModels => _aiChatService.AvailableModels;
 
-        [ObservableProperty] private string selectedModel = "gpt-4o";
+        [ObservableProperty] private string selectedModel = "";
         #endregion
 
         #region -- 對話狀態 --
@@ -55,6 +50,7 @@ namespace FProductionDashBoard.ViewModels
         {
             _aiChatService = aiChatService;
             _core = core;
+            SelectedModel = _aiChatService.AvailableModels.FirstOrDefault() ?? "";
 
             SendCommand          = new AsyncRelayCommand(SendAsync, () => !string.IsNullOrWhiteSpace(InputText) && !IsTyping);
             NewSessionCommand    = new RelayCommand(StartNewSession);
@@ -149,6 +145,7 @@ namespace FProductionDashBoard.ViewModels
                     Content = reply,
                     Time    = DateTime.Now
                 });
+                ConfigWarning = null;
             }
             catch (Exception ex)
             {
