@@ -42,7 +42,8 @@
         <PasswordBox x:Name="PasswordBox" Margin="5,5,5,0" Padding="4"
                      materialDesign:HintAssist.Hint="{DynamicResource RequiredText}"
                      materialDesign:HintAssist.IsFloating="False"
-                     materialDesign:PasswordBoxAssist.Password="{Binding Password, Mode=TwoWay}"/>
+                     materialDesign:PasswordBoxAssist.Password="{Binding Password, 
+                                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         <TextBlock Text="{Binding Errorinfo}" d:Text="Error" Margin="5,0,0,15"
                    Foreground="{DynamicResource ErrorBrush}"/>
         <!-- 記住/登入/快速登入 -->

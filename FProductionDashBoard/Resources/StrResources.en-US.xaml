@@ -24,6 +24,7 @@
     <sys:String x:Key="LargeFontButtonTooltip">Make the text bigger</sys:String>
     <sys:String x:Key="LogSaveButtonTooltip">Save current logs and errorlogs</sys:String>
     <sys:String x:Key="ToggleLogPanelTooltip">Show/Hide Log Panel</sys:String>
+    <sys:String x:Key="ToggleAiAgentTooltip">Show/Hide AI Agent</sys:String>
     <sys:String x:Key="LayoutSingleTooltip">Single</sys:String>
     <sys:String x:Key="LayoutHSplitTooltip">Horizontal Split</sys:String>
     <sys:String x:Key="LayoutVSplitTooltip">Vertical Split</sys:String>

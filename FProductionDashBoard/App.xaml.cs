@@ -159,6 +159,7 @@ namespace FProductionDashBoard
                 services.AddScoped<ViewModels.SettingViewModel>();
                 services.AddScoped<ViewModels.HardwareViewModel>();
                 services.AddScoped<ViewModels.LogPanelViewModel>();
+                services.AddScoped<ViewModels.AIAgentViewModel>();
                 services.AddScoped<ViewModels.SystemSettingsViewModel>();
                 services.AddScoped<ViewModels.HomeViewModel>();
                 services.AddTransient<ViewModels.OperationViewModel>();
