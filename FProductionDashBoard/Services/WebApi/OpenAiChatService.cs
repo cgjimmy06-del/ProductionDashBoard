@@ -30,13 +30,15 @@ namespace FProductionDashBoard.Services.WebApi
             !string.IsNullOrEmpty(_options.BaseUrl) &&
             !string.IsNullOrEmpty(_systemConfig.Current.AiApiKey);
 
-        public string[] AvailableModels => ["gpt-5.4", "gpt-5.4-mini"];
+        public string[] AvailableModels => ["gpt-5.4-mini", "gpt-5.4"];
 
         public async Task<string> SendAsync(
             string model,
             IEnumerable<ChatMessage> history,
             string userMessage,
-            IReadOnlyList<AiToolDefinition>? tools = null)
+            IReadOnlyList<AiToolDefinition>? tools = null,
+            string? systemPrompt = null,
+            CancellationToken ct = default)
         {
             if (!IsConfigured)
                 throw new InvalidOperationException("[SendAsync] AI 未設定：請於系統設定填入 AiApi:BaseUrl / ApiKey");
@@ -60,6 +62,9 @@ namespace FProductionDashBoard.Services.WebApi
                     ["input"] = inputItems.DeepClone()
                 };
 
+                if (!string.IsNullOrEmpty(systemPrompt))
+                    bodyObj["instructions"] = systemPrompt;
+
                 if (tools is { Count: > 0 })
                     bodyObj["tools"] = BuildToolsArray(tools);
 
@@ -73,9 +78,13 @@ namespace FProductionDashBoard.Services.WebApi
                 HttpResponseMessage response;
                 try
                 {
-                    response = await _httpClient.SendAsync(request);
+                    response = await _httpClient.SendAsync(request, ct);
                 }
-                catch (TaskCanceledException)
+                catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch (OperationCanceledException)
                 {
                     throw new InvalidOperationException("[SendAsync] 請求逾時，請重試");
                 }

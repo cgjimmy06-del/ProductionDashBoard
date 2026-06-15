@@ -25,6 +25,19 @@ public class AiAgentToolService
         _ => []
     };
 
+    public string GetSystemPromptForMode(string mode) => mode switch
+    {
+        "Schedule" =>
+            "你是工廠現場生產管理系統的 AI 助理，專門協助排單分析。" +
+            "回答前請先使用 query_schedules 工具取得最新資料，再以白話整理分析結果。" +
+            "不可憑空猜測數字或排單狀態。" +
+            "預設以繁體中文（台灣）回覆；若使用者以其他語言提問，則以相同語言回覆。簡潔易懂。",
+        _ =>
+            "你是工廠現場生產管理系統的 AI 助理。" +
+            "協助操作人員解答與生產製程、品質、設備相關問題，簡潔易懂，避免使用技術術語。" +
+            "預設以繁體中文（台灣）回覆；若使用者以其他語言提問，則以相同語言回覆。"
+    };
+
     private static JsonObject BuildQuerySchedulesSchema() => JsonNode.Parse("""
         {
             "type": "object",
