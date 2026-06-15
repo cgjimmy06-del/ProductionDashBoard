@@ -226,9 +226,35 @@
                         Width="36" Height="36" Padding="0"
                         Background="{DynamicResource PrimaryBrush}"
                         Foreground="{DynamicResource TextLightBrush}"
-                        Style="{StaticResource MaterialDesignRaisedButton}"
                         ToolTip="{DynamicResource AiSend}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsTyping}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <materialDesign:PackIcon Kind="Send" Width="18" Height="18"/>
+                </Button>
+                <Button Grid.Column="1" Margin="6,0,0,0"
+                        Command="{Binding CancelCommand}"
+                        Width="36" Height="36" Padding="0"
+                        Background="{DynamicResource ErrorBrush}"
+                        Foreground="{DynamicResource TextLightBrush}"
+                        ToolTip="{DynamicResource AiCancelTooltip}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsTyping}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <materialDesign:PackIcon Kind="Stop" Width="18" Height="18"/>
                 </Button>
             </Grid>
         </Border>

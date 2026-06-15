@@ -432,4 +432,7 @@
   <data name="AiMaxRoundsExceeded" xml:space="preserve">
     <value>Vượt quá giới hạn gọi công cụ. Vui lòng đặt lại câu hỏi.</value>
   </data>
+  <data name="AiCancelled" xml:space="preserve">
+    <value>Đã hủy</value>
+  </data>
 </root>

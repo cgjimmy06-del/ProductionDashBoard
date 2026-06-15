@@ -12,6 +12,8 @@ namespace FProductionDashBoard.Services.WebApi
             string model,
             IEnumerable<ChatMessage> history,
             string userMessage,
-            IReadOnlyList<AiToolDefinition>? tools = null);
+            IReadOnlyList<AiToolDefinition>? tools = null,
+            string? systemPrompt = null,
+            CancellationToken ct = default);
     }
 }

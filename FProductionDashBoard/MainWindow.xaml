@@ -213,7 +213,8 @@
                 <Separator/>
                 <ToggleButton ToolTip="{DynamicResource ToggleAiAgentTooltip}"
                               Foreground="{DynamicResource TextPrimaryBrush}"
-                              IsChecked="{Binding IsAiAgentVisible, Mode=TwoWay}">
+                              IsChecked="{Binding IsAiAgentVisible, Mode=TwoWay}"
+                              Visibility="{x:Static local:App.DebugVisibility}">
                     <materialDesign:PackIcon Kind="Robot" Width="20" Height="20"/>
                 </ToggleButton>
             </ToolBar>
