@@ -414,4 +414,22 @@
   <data name="SchDerivedBadgeCancelNotice" xml:space="preserve">
     <value>⚠ 取消注意</value>
   </data>
+  <data name="AiDefaultTitle" xml:space="preserve">
+    <value>新對話</value>
+  </data>
+  <data name="AiWelcome" xml:space="preserve">
+    <value>您好！我是 AI 助理，可以協助分析資料、討論業務問題或回答系統相關問題。</value>
+  </data>
+  <data name="AiNotConfigured" xml:space="preserve">
+    <value>AI 功能尚未設定，請至系統設定輸入 API 金鑰</value>
+  </data>
+  <data name="AiTimeout" xml:space="preserve">
+    <value>傳送逾時，請稍後再試</value>
+  </data>
+  <data name="AiSendFailed" xml:space="preserve">
+    <value>傳送失敗，請稍後再試</value>
+  </data>
+  <data name="AiMaxRoundsExceeded" xml:space="preserve">
+    <value>工具呼叫次數超過上限，請重新提問</value>
+  </data>
 </root>

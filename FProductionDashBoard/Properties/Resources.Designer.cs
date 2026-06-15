@@ -908,5 +908,23 @@ namespace FProductionDashBoard.Properties {
         internal static string SchDerivedBadgeCancelNotice {
             get { return ResourceManager.GetString("SchDerivedBadgeCancelNotice", resourceCulture); }
         }
+        internal static string AiDefaultTitle {
+            get { return ResourceManager.GetString("AiDefaultTitle", resourceCulture); }
+        }
+        internal static string AiWelcome {
+            get { return ResourceManager.GetString("AiWelcome", resourceCulture); }
+        }
+        internal static string AiNotConfigured {
+            get { return ResourceManager.GetString("AiNotConfigured", resourceCulture); }
+        }
+        internal static string AiTimeout {
+            get { return ResourceManager.GetString("AiTimeout", resourceCulture); }
+        }
+        internal static string AiSendFailed {
+            get { return ResourceManager.GetString("AiSendFailed", resourceCulture); }
+        }
+        internal static string AiMaxRoundsExceeded {
+            get { return ResourceManager.GetString("AiMaxRoundsExceeded", resourceCulture); }
+        }
     }
 }

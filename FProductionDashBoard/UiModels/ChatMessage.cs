@@ -8,5 +8,6 @@ namespace FProductionDashBoard.UiModels
         public string Content     { get; init; } = "";
         public DateTime Time      { get; init; } = DateTime.Now;
         public bool IsTyping      { get; init; }
+        public bool IsUiOnly      { get; init; }
     }
 }

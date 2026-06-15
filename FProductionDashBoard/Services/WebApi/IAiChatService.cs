@@ -1,3 +1,4 @@
+using FProductionDashBoard.Services.AiTools;
 using FProductionDashBoard.UiModels;
 
 namespace FProductionDashBoard.Services.WebApi
@@ -10,6 +11,7 @@ namespace FProductionDashBoard.Services.WebApi
         Task<string> SendAsync(
             string model,
             IEnumerable<ChatMessage> history,
-            string userMessage);
+            string userMessage,
+            IReadOnlyList<AiToolDefinition>? tools = null);
     }
 }

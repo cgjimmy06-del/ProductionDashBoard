@@ -459,4 +459,22 @@
   <data name="SchDerivedBadgeCancelNotice" xml:space="preserve">
     <value>⚠ Cancel Notice</value>
   </data>
+  <data name="AiDefaultTitle" xml:space="preserve">
+    <value>New Conversation</value>
+  </data>
+  <data name="AiWelcome" xml:space="preserve">
+    <value>Hello! I am your AI assistant. I can help analyze data, discuss business processes, or answer system-related questions.</value>
+  </data>
+  <data name="AiNotConfigured" xml:space="preserve">
+    <value>AI not configured. Please enter API key in settings.</value>
+  </data>
+  <data name="AiTimeout" xml:space="preserve">
+    <value>Request timed out, please try again.</value>
+  </data>
+  <data name="AiSendFailed" xml:space="preserve">
+    <value>Send failed, please try again.</value>
+  </data>
+  <data name="AiMaxRoundsExceeded" xml:space="preserve">
+    <value>Tool call limit exceeded, please rephrase your question.</value>
+  </data>
 </root>

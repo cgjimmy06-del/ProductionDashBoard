@@ -478,5 +478,19 @@
     <sys:String x:Key="SsAiApiKeyHeader">Cài đặt AI</sys:String>
     <sys:String x:Key="SsAiApiKeyLabel">Khóa API</sys:String>
     <!--#endregion-->
+    <!--#region AI Agent 面板 -->
+    <sys:String x:Key="AiAgentTitle">Trợ lý AI</sys:String>
+    <sys:String x:Key="AiNewChat">Hội thoại mới</sys:String>
+    <sys:String x:Key="AiHistory">Lịch sử</sys:String>
+    <sys:String x:Key="AiInputHint">Nhập câu hỏi... (Enter để gửi)</sys:String>
+    <sys:String x:Key="AiSend">Gửi (Enter)</sys:String>
+    <sys:String x:Key="AiSearchHint">Tìm kiếm...</sys:String>
+    <sys:String x:Key="AiSenderAi">[AI]</sys:String>
+    <sys:String x:Key="AiSenderYou">[Bạn]</sys:String>
+    <sys:String x:Key="AiThinking">▌ Đang suy nghĩ...</sys:String>
+    <sys:String x:Key="AiModeAll">Tất cả</sys:String>
+    <sys:String x:Key="AiModeChat">Hỏi đáp</sys:String>
+    <sys:String x:Key="AiModeSchedule">Đơn hàng</sys:String>
+    <!--#endregion-->
 
 </ResourceDictionary>

@@ -414,4 +414,22 @@
   <data name="SchDerivedBadgeCancelNotice" xml:space="preserve">
     <value>⚠ Chú ý hủy</value>
   </data>
+  <data name="AiDefaultTitle" xml:space="preserve">
+    <value>Hội thoại mới</value>
+  </data>
+  <data name="AiWelcome" xml:space="preserve">
+    <value>Xin chào! Tôi là trợ lý AI. Tôi có thể giúp phân tích dữ liệu, thảo luận quy trình hoặc trả lời câu hỏi hệ thống.</value>
+  </data>
+  <data name="AiNotConfigured" xml:space="preserve">
+    <value>Chưa cấu hình AI. Vui lòng nhập API key trong cài đặt.</value>
+  </data>
+  <data name="AiTimeout" xml:space="preserve">
+    <value>Yêu cầu quá thời gian. Vui lòng thử lại.</value>
+  </data>
+  <data name="AiSendFailed" xml:space="preserve">
+    <value>Gửi thất bại. Vui lòng thử lại.</value>
+  </data>
+  <data name="AiMaxRoundsExceeded" xml:space="preserve">
+    <value>Vượt quá giới hạn gọi công cụ. Vui lòng đặt lại câu hỏi.</value>
+  </data>
 </root>
