@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
 
         <!-- ========== Row 0：日期列 ========== -->
-        <DockPanel Grid.Row="0" Margin="0,0,0,10">
+        <DockPanel Grid.Row="0" Margin="0,0,0,5">
 
             <!-- 右：重新整理按鈕 -->
             <Button DockPanel.Dock="Right"
@@ -66,7 +66,7 @@
         </DockPanel>
 
         <!-- ========== Row 1：統計列 ========== -->
-        <UniformGrid Grid.Row="1" Rows="1" Margin="0,0,0,10">
+        <UniformGrid Grid.Row="1" Rows="1" Margin="0,0,0,5">
 
             <!-- 全部 -->
             <Border Style="{StaticResource StatCardBorderStyle}">
@@ -154,7 +154,7 @@
         </UniformGrid>
 
         <!-- ========== Row 2：篩選列 ========== -->
-        <Grid Grid.Row="2" Margin="0,0,0,10">
+        <Grid Grid.Row="2" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="160"/>
                 <ColumnDefinition Width="*"/>
