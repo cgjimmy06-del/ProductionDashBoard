@@ -155,6 +155,7 @@ namespace FProductionDashBoard
                 {
                     client.Timeout = TimeSpan.FromSeconds(30);
                 });
+                services.AddScoped<Services.AiTools.AiAgentToolService>();
 
                 // 註冊 Facade
                 services.AddScoped<Services.DashboardCoreServices>();

@@ -1,10 +1,12 @@
 using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.Services.AiTools;
 using FProductionDashBoard.UiModels;
 using Microsoft.Extensions.Options;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace FProductionDashBoard.Services.WebApi
 {
@@ -13,6 +15,8 @@ namespace FProductionDashBoard.Services.WebApi
         private readonly HttpClient _httpClient;
         private readonly AiApiOptions _options;
         private readonly IConfigService<SystemConfigDto> _systemConfig;
+
+        private const int MaxToolRounds = 5;
 
         public OpenAiChatService(HttpClient httpClient, IOptions<AiApiOptions> options,
             IConfigService<SystemConfigDto> systemConfig)
@@ -28,52 +32,111 @@ namespace FProductionDashBoard.Services.WebApi
 
         public string[] AvailableModels => ["gpt-5.4", "gpt-5.4-mini"];
 
-        public async Task<string> SendAsync(string model, IEnumerable<ChatMessage> history, string userMessage)
+        public async Task<string> SendAsync(
+            string model,
+            IEnumerable<ChatMessage> history,
+            string userMessage,
+            IReadOnlyList<AiToolDefinition>? tools = null)
         {
             if (!IsConfigured)
                 throw new InvalidOperationException("[SendAsync] AI 未設定：請於系統設定填入 AiApi:BaseUrl / ApiKey");
 
-            var messages = history
-                .Where(m => !m.IsTyping)
-                .Select(m => new
+            var inputItems = new JsonArray();
+            foreach (var m in history.Where(m => !m.IsTyping))
+            {
+                inputItems.Add(JsonNode.Parse(JsonSerializer.Serialize(new
                 {
                     role    = m.Sender == ChatSender.User ? "user" : "assistant",
                     content = m.Content
-                })
-                .Append(new { role = "user", content = userMessage })
-                .ToArray<object>();
-
-            var body = JsonSerializer.Serialize(new { model, input = messages });
-            var request = new HttpRequestMessage(HttpMethod.Post, _options.BaseUrl)
-            {
-                Content = new StringContent(body, Encoding.UTF8, "application/json")
-            };
-            request.Headers.Add("api-key", _systemConfig.Current.AiApiKey);
-
-            HttpResponseMessage response;
-            try
-            {
-                response = await _httpClient.SendAsync(request);
+                })));
             }
-            catch (TaskCanceledException)
+            inputItems.Add(JsonNode.Parse(JsonSerializer.Serialize(new { role = "user", content = userMessage })));
+
+            for (int round = 0; round < MaxToolRounds; round++)
             {
-                throw new InvalidOperationException("[SendAsync] 請求逾時，請重試");
-            }
-            catch (HttpRequestException ex)
-            {
-                throw new InvalidOperationException($"[SendAsync] 連線失敗：{ex.Message}");
+                var bodyObj = new JsonObject
+                {
+                    ["model"] = model,
+                    ["input"] = inputItems.DeepClone()
+                };
+
+                if (tools is { Count: > 0 })
+                    bodyObj["tools"] = BuildToolsArray(tools);
+
+                var bodyJson = bodyObj.ToJsonString();
+                var request = new HttpRequestMessage(HttpMethod.Post, _options.BaseUrl)
+                {
+                    Content = new StringContent(bodyJson, Encoding.UTF8, "application/json")
+                };
+                request.Headers.Add("api-key", _systemConfig.Current.AiApiKey);
+
+                HttpResponseMessage response;
+                try
+                {
+                    response = await _httpClient.SendAsync(request);
+                }
+                catch (TaskCanceledException)
+                {
+                    throw new InvalidOperationException("[SendAsync] 請求逾時，請重試");
+                }
+                catch (HttpRequestException ex)
+                {
+                    throw new InvalidOperationException($"[SendAsync] 連線失敗：{ex.Message}");
+                }
+
+                if (!response.IsSuccessStatusCode)
+                    throw new InvalidOperationException($"[SendAsync] OpenAI API 回應失敗：{(int)response.StatusCode}");
+
+                var json = await response.Content.ReadAsStringAsync();
+                var root = JsonNode.Parse(json)!;
+                var output = root["output"]!.AsArray();
+
+                var funcCallNode = output.FirstOrDefault(n => n?["type"]?.GetValue<string>() == "function_call");
+                if (funcCallNode == null)
+                {
+                    // 一般文字回應，結束迴圈
+                    return output[0]!["content"]![0]!["text"]?.GetValue<string>() ?? "";
+                }
+
+                // 執行工具
+                var callId   = funcCallNode["call_id"]!.GetValue<string>();
+                var funcName = funcCallNode["name"]!.GetValue<string>();
+                var argsNode = JsonNode.Parse(funcCallNode["arguments"]!.GetValue<string>()) as JsonObject
+                               ?? new JsonObject();
+
+                var tool = tools?.FirstOrDefault(t => t.Name == funcName);
+                string toolResult;
+                if (tool != null)
+                    toolResult = await tool.Handler(argsNode);
+                else
+                    toolResult = """{"error":"unknown_tool"}""";
+
+                inputItems.Add(funcCallNode.DeepClone());
+                inputItems.Add(JsonNode.Parse(JsonSerializer.Serialize(new
+                {
+                    type     = "function_call_output",
+                    call_id  = callId,
+                    output   = toolResult
+                })));
             }
 
-            if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException($"[SendAsync] OpenAI API 回應失敗：{(int)response.StatusCode}");
+            return Properties.Resources.AiMaxRoundsExceeded;
+        }
 
-            var json = await response.Content.ReadAsStringAsync();
-            using var doc = JsonDocument.Parse(json);
-            return doc.RootElement
-                .GetProperty("output")[0]
-                .GetProperty("content")[0]
-                .GetProperty("text")
-                .GetString() ?? "";
+        private static JsonArray BuildToolsArray(IReadOnlyList<AiToolDefinition> tools)
+        {
+            var arr = new JsonArray();
+            foreach (var t in tools)
+            {
+                arr.Add(new JsonObject
+                {
+                    ["type"]        = "function",
+                    ["name"]        = t.Name,
+                    ["description"] = t.Description,
+                    ["parameters"]  = t.Parameters.DeepClone()
+                });
+            }
+            return arr;
         }
     }
 }

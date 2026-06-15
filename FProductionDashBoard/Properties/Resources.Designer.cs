@@ -923,5 +923,8 @@ namespace FProductionDashBoard.Properties {
         internal static string AiSendFailed {
             get { return ResourceManager.GetString("AiSendFailed", resourceCulture); }
         }
+        internal static string AiMaxRoundsExceeded {
+            get { return ResourceManager.GetString("AiMaxRoundsExceeded", resourceCulture); }
+        }
     }
 }

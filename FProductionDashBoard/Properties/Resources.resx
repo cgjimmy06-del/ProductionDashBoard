@@ -474,4 +474,7 @@
   <data name="AiSendFailed" xml:space="preserve">
     <value>Send failed, please try again.</value>
   </data>
+  <data name="AiMaxRoundsExceeded" xml:space="preserve">
+    <value>Tool call limit exceeded, please rephrase your question.</value>
+  </data>
 </root>

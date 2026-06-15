@@ -429,4 +429,7 @@
   <data name="AiSendFailed" xml:space="preserve">
     <value>傳送失敗，請稍後再試</value>
   </data>
+  <data name="AiMaxRoundsExceeded" xml:space="preserve">
+    <value>工具呼叫次數超過上限，請重新提問</value>
+  </data>
 </root>

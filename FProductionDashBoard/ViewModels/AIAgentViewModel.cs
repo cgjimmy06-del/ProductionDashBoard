@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.Services.AiTools;
 using FProductionDashBoard.Services.WebApi;
 using FProductionDashBoard.UiModels;
 using System.Collections.ObjectModel;
@@ -13,6 +14,7 @@ namespace FProductionDashBoard.ViewModels
     {
         private readonly IAiChatService _aiChatService;
         private readonly DashboardCoreServices _core;
+        private readonly AiAgentToolService _toolService;
 
         #region -- 模型設定 --
         public string[] AvailableModels => _aiChatService.AvailableModels;
@@ -49,10 +51,11 @@ namespace FProductionDashBoard.ViewModels
         public IRelayCommand<string> SelectHistoryFilterCommand    { get; }
         #endregion
 
-        public AIAgentViewModel(IAiChatService aiChatService, DashboardCoreServices core)
+        public AIAgentViewModel(IAiChatService aiChatService, DashboardCoreServices core, AiAgentToolService toolService)
         {
             _aiChatService = aiChatService;
             _core = core;
+            _toolService = toolService;
             SelectedModel = _aiChatService.AvailableModels.FirstOrDefault() ?? "";
 
             SendCommand             = new AsyncRelayCommand(SendAsync, () => !string.IsNullOrWhiteSpace(InputText) && !IsTyping);
@@ -139,10 +142,12 @@ namespace FProductionDashBoard.ViewModels
 
             try
             {
+                var modeTools = _toolService.GetToolsForMode(SelectedMode);
                 var reply = await _aiChatService.SendAsync(
                     SelectedModel,
                     CurrentSession.Messages.Where(m => !m.IsTyping && !m.IsUiOnly).SkipLast(1),
-                    text);
+                    text,
+                    modeTools.Count > 0 ? modeTools : null);
 
                 CurrentSession.Messages.Remove(typing);
                 CurrentSession.Messages.Add(new ChatMessage
