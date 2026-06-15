@@ -30,10 +30,12 @@ namespace FProductionDashBoard.ViewModels
         #region -- 歷史與分類 --
         [ObservableProperty] private bool isHistoryVisible = false;
         [ObservableProperty] private string searchText = "";
-        [ObservableProperty] private string selectedCategory = "全部";
+        [ObservableProperty] private string selectedMode = "Chat";
+        [ObservableProperty] private string selectedHistoryFilter = "All";
 
         public ObservableCollection<ChatSession> AllSessions { get; } = new();
-        public ObservableCollection<string> Categories { get; } = new() { "全部", "排單分析", "程式碼", "設計討論" };
+        public List<string> AvailableModes    { get; } = ["Chat", "Schedule"];
+        public List<string> HistoryFilterOptions { get; } = ["All", "Chat", "Schedule"];
         public ICollectionView FilteredSessions { get; }
         #endregion
 
@@ -41,9 +43,10 @@ namespace FProductionDashBoard.ViewModels
         public IRelayCommand SendCommand          { get; }
         public IRelayCommand NewSessionCommand    { get; }
         public IRelayCommand ToggleHistoryCommand { get; }
-        public IRelayCommand<ChatSession> LoadSessionCommand   { get; }
-        public IRelayCommand<ChatSession> ToggleStarCommand    { get; }
-        public IRelayCommand<string> SelectCategoryChipCommand { get; }
+        public IRelayCommand<ChatSession> LoadSessionCommand       { get; }
+        public IRelayCommand<ChatSession> ToggleStarCommand        { get; }
+        public IRelayCommand<string> SelectModeCommand             { get; }
+        public IRelayCommand<string> SelectHistoryFilterCommand    { get; }
         #endregion
 
         public AIAgentViewModel(IAiChatService aiChatService, DashboardCoreServices core)
@@ -52,12 +55,13 @@ namespace FProductionDashBoard.ViewModels
             _core = core;
             SelectedModel = _aiChatService.AvailableModels.FirstOrDefault() ?? "";
 
-            SendCommand          = new AsyncRelayCommand(SendAsync, () => !string.IsNullOrWhiteSpace(InputText) && !IsTyping);
-            NewSessionCommand    = new RelayCommand(StartNewSession);
-            ToggleHistoryCommand = new RelayCommand(() => IsHistoryVisible = !IsHistoryVisible);
-            LoadSessionCommand   = new RelayCommand<ChatSession>(LoadSession);
-            ToggleStarCommand    = new RelayCommand<ChatSession>(s => { if (s != null) s.IsStarred = !s.IsStarred; });
-            SelectCategoryChipCommand = new RelayCommand<string>(cat => { if (cat != null) SelectedCategory = cat; });
+            SendCommand             = new AsyncRelayCommand(SendAsync, () => !string.IsNullOrWhiteSpace(InputText) && !IsTyping);
+            NewSessionCommand       = new RelayCommand(StartNewSession);
+            ToggleHistoryCommand    = new RelayCommand(() => IsHistoryVisible = !IsHistoryVisible);
+            LoadSessionCommand      = new RelayCommand<ChatSession>(LoadSession);
+            ToggleStarCommand       = new RelayCommand<ChatSession>(s => { if (s != null) s.IsStarred = !s.IsStarred; });
+            SelectModeCommand          = new RelayCommand<string>(mode   => { if (mode   != null) SelectedMode          = mode;   });
+            SelectHistoryFilterCommand = new RelayCommand<string>(filter => { if (filter != null) SelectedHistoryFilter  = filter; });
 
             FilteredSessions = CollectionViewSource.GetDefaultView(AllSessions);
             FilteredSessions.Filter = FilterSession;
@@ -65,18 +69,18 @@ namespace FProductionDashBoard.ViewModels
             StartNewSession();
 
             if (!_aiChatService.IsConfigured)
-                ConfigWarning = "AI 功能尚未啟用";
+                ConfigWarning = Properties.Resources.AiNotConfigured;
         }
 
-        partial void OnSearchTextChanged(string value)        => FilteredSessions.Refresh();
-        partial void OnSelectedCategoryChanged(string value)  => FilteredSessions.Refresh();
-        partial void OnInputTextChanged(string value)         => SendCommand.NotifyCanExecuteChanged();
-        partial void OnIsTypingChanged(bool value)            => SendCommand.NotifyCanExecuteChanged();
+        partial void OnSearchTextChanged(string value)             => FilteredSessions.Refresh();
+        partial void OnSelectedHistoryFilterChanged(string value)  => FilteredSessions.Refresh();
+        partial void OnInputTextChanged(string value)              => SendCommand.NotifyCanExecuteChanged();
+        partial void OnIsTypingChanged(bool value)                 => SendCommand.NotifyCanExecuteChanged();
 
         private bool FilterSession(object obj)
         {
             if (obj is not ChatSession s) return false;
-            bool catMatch = SelectedCategory == "全部" || s.Category == SelectedCategory;
+            bool catMatch = SelectedHistoryFilter == "All" || s.Category == SelectedHistoryFilter;
             bool searchMatch = string.IsNullOrWhiteSpace(SearchText)
                 || s.Title.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
             return catMatch && searchMatch;
@@ -86,15 +90,17 @@ namespace FProductionDashBoard.ViewModels
         {
             var session = new ChatSession
             {
-                Title     = "新對話",
+                Title     = Properties.Resources.AiDefaultTitle,
                 ModelUsed = SelectedModel,
-                LastTime  = DateTime.Now
+                LastTime  = DateTime.Now,
+                Category  = SelectedMode
             };
             session.Messages.Add(new ChatMessage
             {
-                Sender  = ChatSender.Ai,
-                Content = "您好！我是 AI 助理，可以協助分析程式碼、討論架構設計或回答開發問題。",
-                Time    = DateTime.Now
+                Sender   = ChatSender.Ai,
+                Content  = Properties.Resources.AiWelcome,
+                Time     = DateTime.Now,
+                IsUiOnly = true
             });
             CurrentSession = session;
             AllSessions.Insert(0, session);
@@ -120,7 +126,7 @@ namespace FProductionDashBoard.ViewModels
                 Time    = DateTime.Now
             });
 
-            if (CurrentSession.Title == "新對話" && CurrentSession.Messages.Count == 2)
+            if (CurrentSession.Title == Properties.Resources.AiDefaultTitle && CurrentSession.Messages.Count == 2)
                 CurrentSession.Title = text.Length > 20 ? text[..20] + "…" : text;
 
             CurrentSession.ModelUsed = SelectedModel;
@@ -135,7 +141,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 var reply = await _aiChatService.SendAsync(
                     SelectedModel,
-                    CurrentSession.Messages.Where(m => !m.IsTyping).SkipLast(1),
+                    CurrentSession.Messages.Where(m => !m.IsTyping && !m.IsUiOnly).SkipLast(1),
                     text);
 
                 CurrentSession.Messages.Remove(typing);
@@ -147,6 +153,18 @@ namespace FProductionDashBoard.ViewModels
                 });
                 ConfigWarning = null;
             }
+            catch (TaskCanceledException)
+            {
+                _core.Log.AddLog("[AI 助理] 送出訊息逾時", LogLevel.Error);
+                _core.Log.AddErrorLog("[SendAsync] Request timed out");
+                CurrentSession.Messages.Remove(typing);
+                CurrentSession.Messages.Add(new ChatMessage
+                {
+                    Sender  = ChatSender.Ai,
+                    Content = Properties.Resources.AiTimeout,
+                    Time    = DateTime.Now
+                });
+            }
             catch (Exception ex)
             {
                 _core.Log.AddLog("[AI 助理] 送出訊息失敗", LogLevel.Error);
@@ -155,7 +173,7 @@ namespace FProductionDashBoard.ViewModels
                 CurrentSession.Messages.Add(new ChatMessage
                 {
                     Sender  = ChatSender.Ai,
-                    Content = ex.Message.Contains("逾時") ? "請求逾時，請重試" : "訊息傳送失敗，請稍後再試",
+                    Content = Properties.Resources.AiSendFailed,
                     Time    = DateTime.Now
                 });
             }

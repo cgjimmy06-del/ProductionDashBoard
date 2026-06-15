@@ -478,5 +478,19 @@
     <sys:String x:Key="SsAiApiKeyHeader">AI 設定</sys:String>
     <sys:String x:Key="SsAiApiKeyLabel">API 金鑰</sys:String>
     <!--#endregion-->
+    <!--#region AI Agent 面板 -->
+    <sys:String x:Key="AiAgentTitle">AI 助理</sys:String>
+    <sys:String x:Key="AiNewChat">新對話</sys:String>
+    <sys:String x:Key="AiHistory">歷史對話</sys:String>
+    <sys:String x:Key="AiInputHint">輸入問題... (Enter 送出)</sys:String>
+    <sys:String x:Key="AiSend">傳送 (Enter)</sys:String>
+    <sys:String x:Key="AiSearchHint">搜尋對話...</sys:String>
+    <sys:String x:Key="AiSenderAi">[AI]</sys:String>
+    <sys:String x:Key="AiSenderYou">[您]</sys:String>
+    <sys:String x:Key="AiThinking">▌ 思考中...</sys:String>
+    <sys:String x:Key="AiModeAll">全部</sys:String>
+    <sys:String x:Key="AiModeChat">一般問答</sys:String>
+    <sys:String x:Key="AiModeSchedule">排單分析</sys:String>
+    <!--#endregion-->
 
 </ResourceDictionary>

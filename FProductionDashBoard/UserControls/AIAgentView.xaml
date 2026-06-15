@@ -26,11 +26,11 @@
                                    Foreground="{DynamicResource PrimaryBrush}">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="Text" Value="[AI]"/>
+                                    <Setter Property="Text" Value="{DynamicResource AiSenderAi}"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Sender}" Value="User">
                                             <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}"/>
-                                            <Setter Property="Text" Value="[您]"/>
+                                            <Setter Property="Text" Value="{DynamicResource AiSenderYou}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -49,7 +49,7 @@
                             <Style TargetType="TextBlock">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsTyping}" Value="True">
-                                        <Setter Property="Text" Value="▌ 思考中..."/>
+                                        <Setter Property="Text" Value="{DynamicResource AiThinking}"/>
                                         <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -119,19 +119,19 @@
                         <materialDesign:PackIcon Kind="Robot" Width="20" Height="20"
                                                  Foreground="{DynamicResource PrimaryBrush}"
                                                  VerticalAlignment="Center"/>
-                        <TextBlock Text="AI 助理" FontWeight="SemiBold" FontSize="16" Margin="5,0,0,0"
+                        <TextBlock Text="{DynamicResource AiAgentTitle}" FontWeight="SemiBold" FontSize="16" Margin="5,0,0,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
                         <Button Style="{StaticResource MaterialDesignFlatButton}"
                                 Command="{Binding NewSessionCommand}"
-                                ToolTip="新對話" Padding="4" Height="28" Width="28">
+                                ToolTip="{DynamicResource AiNewChat}" Padding="4" Height="28" Width="28">
                             <materialDesign:PackIcon Kind="PlusCircleOutline" Width="20" Height="20"
                                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </Button>
                         <ToggleButton Style="{StaticResource FunctionToggleButtonStyle}"
                                       IsChecked="{Binding IsHistoryVisible}"
-                                      ToolTip="歷史對話" Height="28" Width="28" Margin="4,0">
+                                      ToolTip="{DynamicResource AiHistory}" Height="28" Width="28" Margin="4,0">
                             <materialDesign:PackIcon Kind="History" Width="20" Height="20"/>
                         </ToggleButton>
                     </StackPanel>
@@ -141,10 +141,10 @@
                           SelectedItem="{Binding SelectedModel}"
                           Margin="0,4,0,2" FontSize="13"
                           Foreground="{DynamicResource TextPrimaryBrush}"/>
-                <!-- 分類 Chip -->
+                <!-- 模式 Chip -->
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
                               Margin="0,2,0,0">
-                    <ItemsControl ItemsSource="{Binding Categories}">
+                    <ItemsControl ItemsSource="{Binding AvailableModes}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal"/>
@@ -152,18 +152,19 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button Content="{Binding}" Margin="0,0,4,0" Padding="8,2"
-                                        FontSize="12" Height="22"
-                                        Command="{Binding DataContext.SelectCategoryChipCommand,
+                                <Button Margin="0,0,4,0" Padding="8,2" Height="22"
+                                        Command="{Binding DataContext.SelectModeCommand,
                                                   RelativeSource={RelativeSource AncestorType=UserControl}}"
                                         CommandParameter="{Binding}">
+                                    <TextBlock Text="{Binding Converter={StaticResource AiAgentModeToLabelConverter}}"
+                                               FontSize="12"/>
                                     <Button.Style>
                                         <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
                                             <Style.Triggers>
                                                 <DataTrigger Value="True">
                                                     <DataTrigger.Binding>
                                                         <MultiBinding Converter="{StaticResource StringEqualityMultiConverter}">
-                                                            <Binding Path="DataContext.SelectedCategory"
+                                                            <Binding Path="DataContext.SelectedMode"
                                                                      RelativeSource="{RelativeSource AncestorType=UserControl}"/>
                                                             <Binding/>
                                                         </MultiBinding>
@@ -212,7 +213,7 @@
                          AcceptsReturn="False" TextWrapping="Wrap"
                          MaxHeight="80" VerticalScrollBarVisibility="Auto"
                          FontSize="12" Padding="6,4"
-                         materialDesign:HintAssist.Hint="輸入問題... (Enter 送出)"
+                         materialDesign:HintAssist.Hint="{DynamicResource AiInputHint}"
                          Foreground="{DynamicResource TextPrimaryBrush}">
                     <TextBox.InputBindings>
                         <KeyBinding Key="Return" Command="{Binding SendCommand}"/>
@@ -224,7 +225,7 @@
                         Background="{DynamicResource PrimaryBrush}"
                         Foreground="{DynamicResource TextLightBrush}"
                         Style="{StaticResource MaterialDesignRaisedButton}"
-                        ToolTip="傳送 (Enter)">
+                        ToolTip="{DynamicResource AiSend}">
                     <materialDesign:PackIcon Kind="Send" Width="18" Height="18"/>
                 </Button>
             </Grid>
@@ -261,7 +262,7 @@
                             <materialDesign:PackIcon Kind="ArrowLeft" Width="16" Height="16"
                                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </Button>
-                        <TextBlock Text="歷史對話" FontWeight="SemiBold" FontSize="13" Margin="4,0"
+                        <TextBlock Text="{DynamicResource AiHistory}" FontWeight="SemiBold" FontSize="13" Margin="4,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"
                                    VerticalAlignment="Center" DockPanel.Dock="Left"/>
                         <Button DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFlatButton}"
@@ -277,30 +278,31 @@
                 <TextBox Grid.Row="1" Margin="8,6"
                          Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                          FontSize="12"
-                         materialDesign:HintAssist.Hint="搜尋對話..."
+                         materialDesign:HintAssist.Hint="{DynamicResource AiSearchHint}"
                          Foreground="{DynamicResource TextPrimaryBrush}"/>
 
-                <!-- 分類 Filter Chip -->
+                <!-- 歷史篩選 Chip -->
                 <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto"
                               VerticalScrollBarVisibility="Disabled" Margin="8,0,8,6">
-                    <ItemsControl ItemsSource="{Binding Categories}">
+                    <ItemsControl ItemsSource="{Binding HistoryFilterOptions}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button Content="{Binding}" Margin="0,0,4,0" Padding="8,2"
-                                        FontSize="12" Height="22"
-                                        Command="{Binding DataContext.SelectCategoryChipCommand,
+                                <Button Margin="0,0,4,0" Padding="8,2" Height="22"
+                                        Command="{Binding DataContext.SelectHistoryFilterCommand,
                                                   RelativeSource={RelativeSource AncestorType=UserControl}}"
                                         CommandParameter="{Binding}">
+                                    <TextBlock Text="{Binding Converter={StaticResource AiAgentModeToLabelConverter}}"
+                                               FontSize="12"/>
                                     <Button.Style>
                                         <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
                                             <Style.Triggers>
                                                 <DataTrigger Value="True">
                                                     <DataTrigger.Binding>
                                                         <MultiBinding Converter="{StaticResource StringEqualityMultiConverter}">
-                                                            <Binding Path="DataContext.SelectedCategory"
+                                                            <Binding Path="DataContext.SelectedHistoryFilter"
                                                                      RelativeSource="{RelativeSource AncestorType=UserControl}"/>
                                                             <Binding/>
                                                         </MultiBinding>

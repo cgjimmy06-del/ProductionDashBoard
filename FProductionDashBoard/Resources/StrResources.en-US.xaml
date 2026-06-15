@@ -478,5 +478,19 @@
     <sys:String x:Key="SsAiApiKeyHeader">AI Settings</sys:String>
     <sys:String x:Key="SsAiApiKeyLabel">API Key</sys:String>
     <!--#endregion-->
+    <!--#region AI Agent 面板 -->
+    <sys:String x:Key="AiAgentTitle">AI Agent</sys:String>
+    <sys:String x:Key="AiNewChat">New Chat</sys:String>
+    <sys:String x:Key="AiHistory">History</sys:String>
+    <sys:String x:Key="AiInputHint">Type a message... (Enter to send)</sys:String>
+    <sys:String x:Key="AiSend">Send (Enter)</sys:String>
+    <sys:String x:Key="AiSearchHint">Search chats...</sys:String>
+    <sys:String x:Key="AiSenderAi">[AI]</sys:String>
+    <sys:String x:Key="AiSenderYou">[You]</sys:String>
+    <sys:String x:Key="AiThinking">▌ Thinking...</sys:String>
+    <sys:String x:Key="AiModeAll">All</sys:String>
+    <sys:String x:Key="AiModeChat">Chat</sys:String>
+    <sys:String x:Key="AiModeSchedule">Schedule</sys:String>
+    <!--#endregion-->
 
 </ResourceDictionary>
