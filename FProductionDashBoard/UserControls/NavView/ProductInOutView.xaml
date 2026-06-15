@@ -13,11 +13,51 @@
             <RowDefinition Height="Auto"/>  <!-- 日期篩選列 -->
             <RowDefinition Height="Auto"/>  <!-- 統計列 -->
             <RowDefinition Height="Auto"/>  <!-- 篩選列 -->
+            <RowDefinition Height="Auto"/>  <!-- 折疊箭頭 -->
             <RowDefinition Height="*"/>     <!-- 主內容 -->
         </Grid.RowDefinitions>
-
+        
+        <!-- ========== Row0：日期篩選列 ========== -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,5"
+                    Visibility="{Binding IsFilterPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DatePicker SelectedDate="{Binding DateRangeStart}"
+                        materialDesign:HintAssist.Hint="{DynamicResource PioFilterDateStart}"
+                        Width="130" Margin="0,0,4,0"/>
+            <TextBlock Text="~" VerticalAlignment="Center" Margin="0,0,4,0"
+                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+            <DatePicker SelectedDate="{Binding DateRangeEnd}"
+                        materialDesign:HintAssist.Hint="{DynamicResource PioFilterDateEnd}"
+                        Width="130" Margin="0,0,12,0"/>
+            <Button Content="{DynamicResource PioShortcutToday}"
+                    Style="{DynamicResource FunctionButtonStyle}"
+                    Background="{DynamicResource SecondaryBrush}"
+                    Padding="8,2" Height="Auto" Margin="0,0,4,0"
+                    Command="{Binding SetDateTodayCommand}"/>
+            <Button Content="{DynamicResource PioShortcutLast3Days}"
+                    Style="{DynamicResource FunctionButtonStyle}"
+                    Background="{DynamicResource SecondaryBrush}"
+                    Padding="8,2" Height="Auto" Margin="0,0,4,0"
+                    Command="{Binding SetDateLast3DaysCommand}"/>
+            <Button Content="{DynamicResource PioShortcutLast5Days}"
+                    Style="{DynamicResource FunctionButtonStyle}"
+                    Background="{DynamicResource SecondaryBrush}"
+                    Padding="8,2" Height="Auto" Margin="0,0,4,0"
+                    Command="{Binding SetDateLast5DaysCommand}"/>
+            <Button Content="{DynamicResource PioShortcutCurrentWeek}"
+                    Style="{DynamicResource FunctionButtonStyle}"
+                    Background="{DynamicResource SecondaryBrush}"
+                    Padding="8,2" Height="Auto" Margin="0,0,4,0"
+                    Command="{Binding SetDateCurrentWeekCommand}"/>
+            <Button Content="{DynamicResource PioShortcutCurrentMonth}"
+                    Style="{DynamicResource FunctionButtonStyle}"
+                    Background="{DynamicResource SecondaryBrush}"
+                    Padding="8,2" Height="Auto"
+                    Command="{Binding SetDateCurrentMonthCommand}"/>
+        </StackPanel>
+        
         <!-- ========== Row1：統計列 ========== -->
-        <UniformGrid Grid.Row="1" Rows="1" Margin="0,0,0,5">
+        <UniformGrid Grid.Row="1" Rows="1" Margin="0,0,0,5"
+                     Visibility="{Binding IsFilterPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
             <Border Style="{StaticResource StatCardBorderStyle}">
                 <StackPanel HorizontalAlignment="Center">
@@ -77,7 +117,8 @@
         </UniformGrid>
 
         <!-- ========== Row2：篩選列 ========== -->
-        <Grid Grid.Row="2" Margin="0,0,0,5">
+        <Grid Grid.Row="2" Margin="0,0,0,2"
+              Visibility="{Binding IsFilterPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="160"/>
                 <ColumnDefinition Width="*"/>
@@ -126,45 +167,27 @@
                     Command="{Binding OpenFormCommand}"/>
         </Grid>
 
-        <!-- ========== Row0：日期篩選列 ========== -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,5">
-            <DatePicker SelectedDate="{Binding DateRangeStart}"
-                        materialDesign:HintAssist.Hint="{DynamicResource PioFilterDateStart}"
-                        Width="130" Margin="0,0,4,0"/>
-            <TextBlock Text="~" VerticalAlignment="Center" Margin="0,0,4,0"
-                       Foreground="{DynamicResource TextSecondaryBrush}"/>
-            <DatePicker SelectedDate="{Binding DateRangeEnd}"
-                        materialDesign:HintAssist.Hint="{DynamicResource PioFilterDateEnd}"
-                        Width="130" Margin="0,0,12,0"/>
-            <Button Content="{DynamicResource PioShortcutToday}"
-                    Style="{DynamicResource FunctionButtonStyle}"
-                    Background="{DynamicResource SecondaryBrush}"
-                    Padding="8,2" Height="Auto" Margin="0,0,4,0"
-                    Command="{Binding SetDateTodayCommand}"/>
-            <Button Content="{DynamicResource PioShortcutLast3Days}"
-                    Style="{DynamicResource FunctionButtonStyle}"
-                    Background="{DynamicResource SecondaryBrush}"
-                    Padding="8,2" Height="Auto" Margin="0,0,4,0"
-                    Command="{Binding SetDateLast3DaysCommand}"/>
-            <Button Content="{DynamicResource PioShortcutLast5Days}"
-                    Style="{DynamicResource FunctionButtonStyle}"
-                    Background="{DynamicResource SecondaryBrush}"
-                    Padding="8,2" Height="Auto" Margin="0,0,4,0"
-                    Command="{Binding SetDateLast5DaysCommand}"/>
-            <Button Content="{DynamicResource PioShortcutCurrentWeek}"
-                    Style="{DynamicResource FunctionButtonStyle}"
-                    Background="{DynamicResource SecondaryBrush}"
-                    Padding="8,2" Height="Auto" Margin="0,0,4,0"
-                    Command="{Binding SetDateCurrentWeekCommand}"/>
-            <Button Content="{DynamicResource PioShortcutCurrentMonth}"
-                    Style="{DynamicResource FunctionButtonStyle}"
-                    Background="{DynamicResource SecondaryBrush}"
-                    Padding="8,2" Height="Auto"
-                    Command="{Binding SetDateCurrentMonthCommand}"/>
-        </StackPanel>
+        <!-- ========== Row3：篩選面板切換 ========== -->
+        <Button Grid.Row="3"
+                Style="{StaticResource FilterPanelToggleButtonStyle}"
+                Command="{Binding ToggleFilterPanelCommand}"
+                ToolTip="{DynamicResource FilterPanelToggleTooltip}">
+            <materialDesign:PackIcon Width="16" Height="16">
+                <materialDesign:PackIcon.Style>
+                    <Style TargetType="materialDesign:PackIcon">
+                        <Setter Property="Kind" Value="ChevronUp"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsFilterPanelVisible}" Value="False">
+                                <Setter Property="Kind" Value="ChevronDown"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </materialDesign:PackIcon.Style>
+            </materialDesign:PackIcon>
+        </Button>
 
-        <!-- ========== Row3：DataGrid + 右側面板 ========== -->
-        <Grid Grid.Row="3" x:Name="ContentGrid">
+        <!-- ========== Row4：DataGrid + 右側面板 ========== -->
+        <Grid Grid.Row="4" x:Name="ContentGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5"/>
