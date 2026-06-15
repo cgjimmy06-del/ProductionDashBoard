@@ -302,20 +302,16 @@ namespace FProductionDashBoard.ViewModels
 
         private void ApplyTheme(bool isDark)
         {
-            var themeName = isDark ? "Dark" : "Light";
-            var dictTheme = new ResourceDictionary();
-            dictTheme.Source = new Uri($"Themes/Theme.{themeName}.xaml", UriKind.Relative);
+            var newSource = new Uri($"Themes/Theme.{(isDark ? "Dark" : "Light")}.xaml", UriKind.Relative);
 
-            var oldDictTheme = Application.Current.Resources.MergedDictionaries
-                .FirstOrDefault(d => d.Source != null && d.Source.OriginalString.Contains("Themes/Theme"));
+            var existingThemeDict = Application.Current.Resources.MergedDictionaries.
+                FirstOrDefault(d => d.Source != null && d.Source.OriginalString.Contains("Themes/Theme"));
 
-            if (oldDictTheme != null)
-            {
-                int index = Application.Current.Resources.MergedDictionaries.IndexOf(oldDictTheme);
-                Application.Current.Resources.MergedDictionaries.RemoveAt(index);
-                Application.Current.Resources.MergedDictionaries.Insert(index, dictTheme);
-            }
-            else Application.Current.Resources.MergedDictionaries.Add(dictTheme);
+            if (existingThemeDict != null)
+                existingThemeDict.Source = newSource;
+            else
+                Application.Current.Resources.MergedDictionaries.Add(
+                    new ResourceDictionary { Source = newSource });
 
             if (isDark) _paletteHelper.SetTheme(_darkTheme);
             else _paletteHelper.SetTheme(_lightTheme);

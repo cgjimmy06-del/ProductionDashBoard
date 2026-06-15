@@ -291,6 +291,23 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+    public class AiAgentModeToLabelConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            var resKey = (value as string) switch
+            {
+                "All"      => "AiModeAll",
+                "Chat"     => "AiModeChat",
+                "Schedule" => "AiModeSchedule",
+                _          => null,
+            };
+            return resKey != null && resources[resKey] is string label ? label : value?.ToString() ?? string.Empty;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
     public class ScheduleCardColorToBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
