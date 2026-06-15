@@ -61,6 +61,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string processFilter = string.Empty;
         [ObservableProperty] private DateTime? dateRangeStart;
         [ObservableProperty] private DateTime? dateRangeEnd;
+        [ObservableProperty] private bool isFilterPanelVisible = true;
 
         // Layer 2：選取排單
         [ObservableProperty] private ScheduleUiModel? selectedSchedule;
@@ -593,6 +594,9 @@ namespace FProductionDashBoard.ViewModels
 
         [RelayCommand]
         private Task Refresh() => LoadAllAsync();
+
+        [RelayCommand]
+        private void ToggleFilterPanel() => IsFilterPanelVisible = !IsFilterPanelVisible;
 
         // ─── 日期快捷鍵 ──────────────────────────────────────────────────────────
 

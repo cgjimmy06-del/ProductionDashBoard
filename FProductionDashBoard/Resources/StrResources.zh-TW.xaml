@@ -492,6 +492,7 @@
     <sys:String x:Key="AiModeChat">一般問答</sys:String>
     <sys:String x:Key="AiModeSchedule">排單分析</sys:String>
     <sys:String x:Key="AiCancelTooltip">取消</sys:String>
+    <sys:String x:Key="FilterPanelToggleTooltip">展開/折疊篩選</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

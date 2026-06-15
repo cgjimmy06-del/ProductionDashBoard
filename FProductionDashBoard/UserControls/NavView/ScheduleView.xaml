@@ -13,11 +13,13 @@
             <RowDefinition Height="Auto"/>  <!-- Row 0：日期列 -->
             <RowDefinition Height="Auto"/>  <!-- Row 1：統計列 -->
             <RowDefinition Height="Auto"/>  <!-- Row 2：篩選列 -->
-            <RowDefinition Height="*"/>     <!-- Row 3：DataGrid -->
+            <RowDefinition Height="Auto"/>  <!-- Row 3：折疊箭頭 -->
+            <RowDefinition Height="*"/>     <!-- Row 4：DataGrid -->
         </Grid.RowDefinitions>
 
         <!-- ========== Row 0：日期列 ========== -->
-        <DockPanel Grid.Row="0" Margin="0,0,0,10">
+        <DockPanel Grid.Row="0" Margin="0,0,0,5"
+                   Visibility="{Binding IsFilterPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
             <!-- 右：重新整理按鈕 -->
             <Button DockPanel.Dock="Right"
@@ -66,7 +68,8 @@
         </DockPanel>
 
         <!-- ========== Row 1：統計列 ========== -->
-        <UniformGrid Grid.Row="1" Rows="1" Margin="0,0,0,10">
+        <UniformGrid Grid.Row="1" Rows="1" Margin="0,0,0,5"
+                     Visibility="{Binding IsFilterPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
             <!-- 全部 -->
             <Border Style="{StaticResource StatCardBorderStyle}">
@@ -154,7 +157,8 @@
         </UniformGrid>
 
         <!-- ========== Row 2：篩選列 ========== -->
-        <Grid Grid.Row="2" Margin="0,0,0,10">
+        <Grid Grid.Row="2" Margin="0,0,0,2"
+              Visibility="{Binding IsFilterPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="160"/>
                 <ColumnDefinition Width="*"/>
@@ -195,8 +199,27 @@
                      Text="{Binding ProcessFilter, UpdateSourceTrigger=PropertyChanged, Delay=200}"/>
         </Grid>
 
-        <!-- ========== Row 3：DataGrid + GridSplitter + 設備卡片牆 ========== -->
-        <Grid Grid.Row="3" x:Name="ScheduleContentGrid">
+        <!-- ========== Row 3：篩選面板切換 ========== -->
+        <Button Grid.Row="3"
+                Style="{StaticResource FilterPanelToggleButtonStyle}"
+                Command="{Binding ToggleFilterPanelCommand}"
+                ToolTip="{DynamicResource FilterPanelToggleTooltip}">
+            <materialDesign:PackIcon Width="16" Height="16">
+                <materialDesign:PackIcon.Style>
+                    <Style TargetType="materialDesign:PackIcon">
+                        <Setter Property="Kind" Value="ChevronUp"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsFilterPanelVisible}" Value="False">
+                                <Setter Property="Kind" Value="ChevronDown"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </materialDesign:PackIcon.Style>
+            </materialDesign:PackIcon>
+        </Button>
+
+        <!-- ========== Row 4：DataGrid + GridSplitter + 設備卡片牆 ========== -->
+        <Grid Grid.Row="4" x:Name="ScheduleContentGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5"/>
