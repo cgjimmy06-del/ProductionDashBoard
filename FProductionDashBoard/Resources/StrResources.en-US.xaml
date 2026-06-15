@@ -491,6 +491,7 @@
     <sys:String x:Key="AiModeAll">All</sys:String>
     <sys:String x:Key="AiModeChat">Chat</sys:String>
     <sys:String x:Key="AiModeSchedule">Schedule</sys:String>
+    <sys:String x:Key="AiCancelTooltip">Cancel</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

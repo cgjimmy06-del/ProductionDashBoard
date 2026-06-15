@@ -477,4 +477,7 @@
   <data name="AiMaxRoundsExceeded" xml:space="preserve">
     <value>Tool call limit exceeded, please rephrase your question.</value>
   </data>
+  <data name="AiCancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
 </root>

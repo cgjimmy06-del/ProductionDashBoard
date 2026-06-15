@@ -15,6 +15,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly IAiChatService _aiChatService;
         private readonly DashboardCoreServices _core;
         private readonly AiAgentToolService _toolService;
+        private CancellationTokenSource? _cts;
 
         #region -- 模型設定 --
         public string[] AvailableModels => _aiChatService.AvailableModels;
@@ -43,6 +44,7 @@ namespace FProductionDashBoard.ViewModels
 
         #region -- Commands --
         public IRelayCommand SendCommand          { get; }
+        public IRelayCommand CancelCommand        { get; }
         public IRelayCommand NewSessionCommand    { get; }
         public IRelayCommand ToggleHistoryCommand { get; }
         public IRelayCommand<ChatSession> LoadSessionCommand       { get; }
@@ -59,6 +61,7 @@ namespace FProductionDashBoard.ViewModels
             SelectedModel = _aiChatService.AvailableModels.FirstOrDefault() ?? "";
 
             SendCommand             = new AsyncRelayCommand(SendAsync, () => !string.IsNullOrWhiteSpace(InputText) && !IsTyping);
+            CancelCommand           = new RelayCommand(() => _cts?.Cancel(), () => IsTyping);
             NewSessionCommand       = new RelayCommand(StartNewSession);
             ToggleHistoryCommand    = new RelayCommand(() => IsHistoryVisible = !IsHistoryVisible);
             LoadSessionCommand      = new RelayCommand<ChatSession>(LoadSession);
@@ -78,7 +81,11 @@ namespace FProductionDashBoard.ViewModels
         partial void OnSearchTextChanged(string value)             => FilteredSessions.Refresh();
         partial void OnSelectedHistoryFilterChanged(string value)  => FilteredSessions.Refresh();
         partial void OnInputTextChanged(string value)              => SendCommand.NotifyCanExecuteChanged();
-        partial void OnIsTypingChanged(bool value)                 => SendCommand.NotifyCanExecuteChanged();
+        partial void OnIsTypingChanged(bool value)
+        {
+            SendCommand.NotifyCanExecuteChanged();
+            CancelCommand.NotifyCanExecuteChanged();
+        }
 
         private bool FilterSession(object obj)
         {
@@ -140,14 +147,18 @@ namespace FProductionDashBoard.ViewModels
             var typing = new ChatMessage { Sender = ChatSender.Ai, IsTyping = true, Time = DateTime.Now };
             CurrentSession.Messages.Add(typing);
 
+            _cts = new CancellationTokenSource();
             try
             {
-                var modeTools = _toolService.GetToolsForMode(SelectedMode);
+                var systemPrompt = _toolService.GetSystemPromptForMode(SelectedMode);
+                var modeTools    = _toolService.GetToolsForMode(SelectedMode);
                 var reply = await _aiChatService.SendAsync(
                     SelectedModel,
                     CurrentSession.Messages.Where(m => !m.IsTyping && !m.IsUiOnly).SkipLast(1),
                     text,
-                    modeTools.Count > 0 ? modeTools : null);
+                    modeTools.Count > 0 ? modeTools : null,
+                    systemPrompt,
+                    _cts.Token);
 
                 CurrentSession.Messages.Remove(typing);
                 CurrentSession.Messages.Add(new ChatMessage
@@ -158,15 +169,13 @@ namespace FProductionDashBoard.ViewModels
                 });
                 ConfigWarning = null;
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException)
             {
-                _core.Log.AddLog("[AI 助理] 送出訊息逾時", LogLevel.Error);
-                _core.Log.AddErrorLog("[SendAsync] Request timed out");
                 CurrentSession.Messages.Remove(typing);
                 CurrentSession.Messages.Add(new ChatMessage
                 {
                     Sender  = ChatSender.Ai,
-                    Content = Properties.Resources.AiTimeout,
+                    Content = Properties.Resources.AiCancelled,
                     Time    = DateTime.Now
                 });
             }
@@ -184,6 +193,8 @@ namespace FProductionDashBoard.ViewModels
             }
             finally
             {
+                _cts.Dispose();
+                _cts = null;
                 IsTyping = false;
             }
         }

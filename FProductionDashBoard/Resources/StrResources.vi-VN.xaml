@@ -491,6 +491,7 @@
     <sys:String x:Key="AiModeAll">Tất cả</sys:String>
     <sys:String x:Key="AiModeChat">Hỏi đáp</sys:String>
     <sys:String x:Key="AiModeSchedule">Đơn hàng</sys:String>
+    <sys:String x:Key="AiCancelTooltip">Hủy</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>
