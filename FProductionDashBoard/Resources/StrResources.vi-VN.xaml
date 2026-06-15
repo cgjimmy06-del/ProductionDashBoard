@@ -492,6 +492,7 @@
     <sys:String x:Key="AiModeChat">Hỏi đáp</sys:String>
     <sys:String x:Key="AiModeSchedule">Đơn hàng</sys:String>
     <sys:String x:Key="AiCancelTooltip">Hủy</sys:String>
+    <sys:String x:Key="FilterPanelToggleTooltip">Mở rộng/Thu gọn bộ lọc</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

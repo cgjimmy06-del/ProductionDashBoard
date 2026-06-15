@@ -13,11 +13,13 @@
             <RowDefinition Height="Auto"/>  <!-- 日期篩選列 -->
             <RowDefinition Height="Auto"/>  <!-- 統計列 -->
             <RowDefinition Height="Auto"/>  <!-- 篩選列 -->
+            <RowDefinition Height="Auto"/>  <!-- 折疊箭頭 -->
             <RowDefinition Height="*"/>     <!-- 主內容 -->
         </Grid.RowDefinitions>
 
         <!-- ========== Row0：統計列 ========== -->
-        <UniformGrid Grid.Row="1" Rows="1" Margin="0,0,0,10">
+        <UniformGrid Grid.Row="1" Rows="1" Margin="0,0,0,10"
+                     Visibility="{Binding IsFilterPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
             <Border Style="{StaticResource StatCardBorderStyle}">
                 <StackPanel HorizontalAlignment="Center">
@@ -77,7 +79,8 @@
         </UniformGrid>
 
         <!-- ========== Row1：篩選列 ========== -->
-        <Grid Grid.Row="2" Margin="0,0,0,10">
+        <Grid Grid.Row="2" Margin="0,0,0,10"
+              Visibility="{Binding IsFilterPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="160"/>
                 <ColumnDefinition Width="*"/>
@@ -127,7 +130,8 @@
         </Grid>
 
         <!-- ========== Row2：日期篩選列 ========== -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10"
+                    Visibility="{Binding IsFilterPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <DatePicker SelectedDate="{Binding DateRangeStart}"
                         materialDesign:HintAssist.Hint="{DynamicResource PioFilterDateStart}"
                         Width="130" Margin="0,0,4,0"/>
@@ -163,8 +167,27 @@
                     Command="{Binding SetDateCurrentMonthCommand}"/>
         </StackPanel>
 
-        <!-- ========== Row3：DataGrid + 右側面板 ========== -->
-        <Grid Grid.Row="3" x:Name="ContentGrid">
+        <!-- ========== Row3：篩選面板切換 ========== -->
+        <Button Grid.Row="3"
+                Style="{StaticResource FilterPanelToggleButtonStyle}"
+                Command="{Binding ToggleFilterPanelCommand}"
+                ToolTip="{DynamicResource FilterPanelToggleTooltip}">
+            <materialDesign:PackIcon Width="16" Height="16">
+                <materialDesign:PackIcon.Style>
+                    <Style TargetType="materialDesign:PackIcon">
+                        <Setter Property="Kind" Value="ChevronUp"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsFilterPanelVisible}" Value="False">
+                                <Setter Property="Kind" Value="ChevronDown"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </materialDesign:PackIcon.Style>
+            </materialDesign:PackIcon>
+        </Button>
+
+        <!-- ========== Row4：DataGrid + 右側面板 ========== -->
+        <Grid Grid.Row="4" x:Name="ContentGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5"/>

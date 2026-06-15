@@ -542,4 +542,13 @@
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 
+    <Style x:Key="FilterPanelToggleButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+        <Setter Property="Height" Value="22"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+        <Setter Property="materialDesign:RippleAssist.Feedback" Value="Transparent"/>
+        <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp0"/>
+    </Style>
+
 </ResourceDictionary>

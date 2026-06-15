@@ -42,6 +42,7 @@ namespace FProductionDashBoard.ViewModels
         // 日期篩選
         [ObservableProperty] private DateTime? dateRangeStart;
         [ObservableProperty] private DateTime? dateRangeEnd;
+        [ObservableProperty] private bool isFilterPanelVisible = true;
 
         public ICollectionView SchedulesView { get; }
 
@@ -273,6 +274,11 @@ namespace FProductionDashBoard.ViewModels
             DateRangeStart = new DateTime(today.Year, today.Month, 1);
             DateRangeEnd   = DateRangeStart.Value.AddMonths(1).AddDays(-1);
         }
+
+        // ─── 篩選面板切換 ────────────────────────────────────────────────────────
+
+        [RelayCommand]
+        private void ToggleFilterPanel() => IsFilterPanelVisible = !IsFilterPanelVisible;
 
         // ─── 面板控制 ─────────────────────────────────────────────────────────
 
