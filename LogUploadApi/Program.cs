@@ -44,6 +44,10 @@ app.MapPost("/api/logs/upload", async (IFormFile file) =>
     {
         // Path.GetFileName strips directory traversal attempts (e.g. "../../evil.exe")
         var safeName = Path.GetFileName(file.FileName);
+        var allowedExtensions = new[] { ".log", ".txt", ".zip" };
+        var ext = Path.GetExtension(safeName).ToLowerInvariant();
+        if (!allowedExtensions.Contains(ext))
+            return Results.BadRequest("不支援的檔案類型");
         // Timestamp prefix avoids name collisions when the same file is uploaded multiple times
         var fileName = $"{DateTime.Now:yyyyMMdd_HHmmss}_{safeName}";
         var filePath = Path.Combine(storagePath, fileName);
@@ -53,9 +57,9 @@ app.MapPost("/api/logs/upload", async (IFormFile file) =>
 
         return Results.Ok(new { fileName });
     }
-    catch (Exception ex)
+    catch (Exception)
     {
-        return Results.Problem(ex.Message);
+        return Results.Problem("上傳失敗，請稍後再試");
     }
 // DisableAntiforgery is required for multipart/form-data uploads from non-browser clients
 }).DisableAntiforgery();

@@ -17,7 +17,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace FProductionDashBoard.Services.V1
+namespace FProductionDashBoard.Services
 {
     public class DataService : IDataService
     {

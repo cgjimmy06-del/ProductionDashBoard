@@ -28,7 +28,7 @@ namespace FProductionDashBoard.Services
                 .Build();
             return _cachedConfig;
         }
-        public static bool checkConnection(string serverKey)
+        public static bool CheckConnection(string serverKey)
         {
             var config = GetCachedConfig();
             var connStr = config.GetConnectionString($"{serverKey}_MESDashboard");
@@ -51,7 +51,7 @@ namespace FProductionDashBoard.Services
                 Debug.WriteLine($"[checkConnection] {normalex.Message}"); return false;
             }
         }
-        public static UiModels.UserInfo? validateUser(string serverKey, string userid, string password)
+        public static UiModels.UserInfo? ValidateUser(string serverKey, string userid, string password)
         {
             var config = GetCachedConfig();
             var connStr = config.GetConnectionString($"{serverKey}_MESDashboard");
