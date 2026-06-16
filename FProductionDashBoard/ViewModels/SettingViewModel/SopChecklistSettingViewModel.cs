@@ -163,6 +163,7 @@ namespace FProductionDashBoard.ViewModels
                     ItemFormMaterialId = FixtureMaterials.FirstOrDefault()?.MaterialId;
                     break;
                 case CheckType.Quantity:
+                case CheckType.ManHour:
                     ItemFormWorkstationNo = null;
                     ItemFormMaterialId = null;
                     ItemFormContent = null;
@@ -323,6 +324,7 @@ namespace FProductionDashBoard.ViewModels
                     { FormErrorString = Properties.Resources.SopValidationFixture; return; }
                     break;
                 case CheckType.Quantity:
+                case CheckType.ManHour:
                     if (ItemFormQuantity == null) ItemFormQuantity = 0;
                     break;
                 case CheckType.Other:
@@ -342,7 +344,7 @@ namespace FProductionDashBoard.ViewModels
                 WorkstationNo = ItemFormCheckType == CheckType.Station ? ItemFormWorkstationNo : null,
                 MaterialId = (ItemFormCheckType == CheckType.Station || ItemFormCheckType == CheckType.Fixture) ? ItemFormMaterialId : null,
                 MaterialName = mat?.Name,
-                Quantity = ItemFormCheckType == CheckType.Quantity ? ItemFormQuantity : null,
+                Quantity = (ItemFormCheckType == CheckType.Quantity || ItemFormCheckType == CheckType.ManHour) ? ItemFormQuantity : null,
                 Content = ItemFormCheckType == CheckType.Other ? ItemFormContent : null,
                 Remark = ItemFormRemark
             };

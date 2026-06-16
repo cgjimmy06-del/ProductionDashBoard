@@ -306,6 +306,36 @@ namespace FProductionDashBoard.Tests.ViewModels
         }
 
         [Fact]
+        public void OnCheckTypeChange_ManHour_ClearsOtherFields()
+        {
+            var vm = CreateVm();
+            vm.ItemFormWorkstationNo = 1;
+            vm.ItemFormMaterialId = 10;
+            vm.ItemFormContent = "some text";
+
+            vm.ItemFormCheckType = CheckType.ManHour;
+
+            Assert.Null(vm.ItemFormWorkstationNo);
+            Assert.Null(vm.ItemFormMaterialId);
+            Assert.Null(vm.ItemFormContent);
+            Assert.Equal(0, vm.ItemFormQuantity);
+        }
+
+        [Fact]
+        public void SaveItem_ManHour_NullQuantityDefaultsToZero()
+        {
+            var vm = CreateVm();
+            vm.OpenNewItemFormCommand.Execute(null);
+            vm.ItemFormCheckType = CheckType.ManHour;
+            vm.ItemFormQuantity = null;
+            vm.SaveItemCommand.Execute(null);
+            Assert.True(string.IsNullOrEmpty(vm.FormErrorString));
+            Assert.Single(vm.FormItems);
+            Assert.Equal(0, vm.FormItems[0].Quantity);
+            Assert.Equal(CheckType.ManHour, vm.FormItems[0].CheckType);
+        }
+
+        [Fact]
         public void SaveItem_Other_RequiresContent()
         {
             var vm = CreateVm();

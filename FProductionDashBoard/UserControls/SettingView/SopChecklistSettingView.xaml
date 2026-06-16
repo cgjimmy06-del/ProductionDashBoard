@@ -315,6 +315,9 @@
                                                         <DataTrigger Binding="{Binding CheckType}" Value="{x:Static models:CheckType.Quantity}">
                                                             <Setter Property="Text" Value="{DynamicResource CheckTypeQuantity}"/>
                                                         </DataTrigger>
+                                                        <DataTrigger Binding="{Binding CheckType}" Value="{x:Static models:CheckType.ManHour}">
+                                                            <Setter Property="Text" Value="{DynamicResource CheckTypeManHour}"/>
+                                                        </DataTrigger>
                                                         <DataTrigger Binding="{Binding CheckType}" Value="{x:Static models:CheckType.Other}">
                                                             <Setter Property="Text" Value="{DynamicResource CheckTypeOther}"/>
                                                         </DataTrigger>
@@ -403,6 +406,9 @@
                                                                 <DataTrigger Binding="{Binding}" Value="{x:Static models:CheckType.Quantity}">
                                                                     <Setter Property="Text" Value="{DynamicResource CheckTypeQuantity}"/>
                                                                 </DataTrigger>
+                                                                <DataTrigger Binding="{Binding}" Value="{x:Static models:CheckType.ManHour}">
+                                                                    <Setter Property="Text" Value="{DynamicResource CheckTypeManHour}"/>
+                                                                </DataTrigger>
                                                                 <DataTrigger Binding="{Binding}" Value="{x:Static models:CheckType.Other}">
                                                                     <Setter Property="Text" Value="{DynamicResource CheckTypeOther}"/>
                                                                 </DataTrigger>
@@ -482,6 +488,23 @@
                                 <TextBlock Text="{DynamicResource SopItemQuantity}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 <TextBox Text="{Binding ItemFormQuantity, UpdateSourceTrigger=PropertyChanged}"
                                          materialDesign:HintAssist.Hint="{DynamicResource SopItemQuantity}"/>
+                            </StackPanel>
+
+                            <!-- ManHour: Quantity (秒) -->
+                            <StackPanel Margin="4,4,4,0">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ItemFormCheckType}" Value="{x:Static models:CheckType.ManHour}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <TextBlock Text="{DynamicResource CheckTypeManHour}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBox Text="{Binding ItemFormQuantity, UpdateSourceTrigger=PropertyChanged}"
+                                         materialDesign:HintAssist.Hint="{DynamicResource CheckTypeManHour}"/>
                             </StackPanel>
 
                             <!-- Other: Content -->
