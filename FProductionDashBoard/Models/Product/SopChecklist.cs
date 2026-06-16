@@ -20,6 +20,7 @@ namespace FProductionDashBoard.Models
         Station,  // 工位：使用 workstation_no + material_id
         Fixture,  // 治夾具：使用 material_id
         Quantity, // 數量：使用 quantity
+        ManHour,  // 工時（秒）：使用 quantity，記錄生產一件所需工時
         Other,    // 其他：使用 content（文字說明型）
     }
 

@@ -431,6 +431,7 @@ namespace FProductionDashBoard.ViewModels
                 CheckType.Station  => $"工位 #{item.WorkstationNo} - {item.Material?.Name ?? "(無)"}",
                 CheckType.Fixture  => $"治夾具 - {item.Material?.Name ?? "(無)"}",
                 CheckType.Quantity => $"數量 {item.Quantity} 件",
+                CheckType.ManHour  => $"工時 {item.Quantity} 秒",
                 _                  => item.Content ?? item.Remark ?? "(無說明)"
             };
     }
