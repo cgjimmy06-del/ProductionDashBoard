@@ -110,13 +110,22 @@ namespace FProductionDashBoard.ViewModels
             _onUserChanged = () => OnUserChanged();
             _core.Authorization.UserChanged += _onUserChanged;
 
-            // 關於 - 版本 / 金鑰
+            // 關於 - 版本 / ABB SDK / AI API Key
             ShowAboutCommand = new RelayCommand(() =>
             {
                 var title    = Application.Current.TryFindResource("SsAboutHeader") as string ?? "About";
                 var verLabel = Application.Current.TryFindResource("SsVersionLabel") as string ?? "Version";
-                MessageBox.Show($"{verLabel}: {AppVersion}", title,
-                                MessageBoxButton.OK, MessageBoxImage.Information);
+
+                var abbStatus = DeviceDrivers.Abb.AbbRobotClient.IsAbbPcSdkAvailable()
+                    ? Properties.Resources.AboutSdkInstalled
+                    : Properties.Resources.AboutSdkNotInstalled;
+                var aiStatus = !string.IsNullOrEmpty(_systemConfig.Current.AiApiKey)
+                    ? Properties.Resources.AboutApiKeyConfigured
+                    : Properties.Resources.AboutApiKeyNotConfigured;
+
+                MessageBox.Show(
+                    $"{verLabel}: {AppVersion}\n\nABB PC SDK: {abbStatus}\nAI API Key: {aiStatus}",
+                    title, MessageBoxButton.OK, MessageBoxImage.Information);
             });
 
             // 測試
