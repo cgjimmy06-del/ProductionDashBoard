@@ -61,11 +61,110 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 ✓ Configured 的當地語系化字串。
+        /// </summary>
+        internal static string AboutApiKeyConfigured {
+            get {
+                return ResourceManager.GetString("AboutApiKeyConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 ✗ Not Configured 的當地語系化字串。
+        /// </summary>
+        internal static string AboutApiKeyNotConfigured {
+            get {
+                return ResourceManager.GetString("AboutApiKeyNotConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 ✓ Installed 的當地語系化字串。
+        /// </summary>
+        internal static string AboutSdkInstalled {
+            get {
+                return ResourceManager.GetString("AboutSdkInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 ✗ Not Installed 的當地語系化字串。
+        /// </summary>
+        internal static string AboutSdkNotInstalled {
+            get {
+                return ResourceManager.GetString("AboutSdkNotInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Please loaded at least one device! 的當地語系化字串。
         /// </summary>
         internal static string AddDeviceNonSelectionError {
             get {
                 return ResourceManager.GetString("AddDeviceNonSelectionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Cancelled 的當地語系化字串。
+        /// </summary>
+        internal static string AiCancelled {
+            get {
+                return ResourceManager.GetString("AiCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 New Conversation 的當地語系化字串。
+        /// </summary>
+        internal static string AiDefaultTitle {
+            get {
+                return ResourceManager.GetString("AiDefaultTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Tool call limit exceeded, please rephrase your question. 的當地語系化字串。
+        /// </summary>
+        internal static string AiMaxRoundsExceeded {
+            get {
+                return ResourceManager.GetString("AiMaxRoundsExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 AI not configured. Please enter API key in settings. 的當地語系化字串。
+        /// </summary>
+        internal static string AiNotConfigured {
+            get {
+                return ResourceManager.GetString("AiNotConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Send failed, please try again. 的當地語系化字串。
+        /// </summary>
+        internal static string AiSendFailed {
+            get {
+                return ResourceManager.GetString("AiSendFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Request timed out, please try again. 的當地語系化字串。
+        /// </summary>
+        internal static string AiTimeout {
+            get {
+                return ResourceManager.GetString("AiTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Hello! I am your AI assistant. I can help analyze data, discuss business processes, or answer system-related questions. 的當地語系化字串。
+        /// </summary>
+        internal static string AiWelcome {
+            get {
+                return ResourceManager.GetString("AiWelcome", resourceCulture);
             }
         }
         
@@ -619,6 +718,60 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Reason (optional) 的當地語系化字串。
+        /// </summary>
+        internal static string SchCancelOrderDescLabel {
+            get {
+                return ResourceManager.GetString("SchCancelOrderDescLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Cancel Order 的當地語系化字串。
+        /// </summary>
+        internal static string SchCancelOrderDialogTitle {
+            get {
+                return ResourceManager.GetString("SchCancelOrderDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 ⚠ Cancel Notice 的當地語系化字串。
+        /// </summary>
+        internal static string SchDerivedBadgeCancelNotice {
+            get {
+                return ResourceManager.GetString("SchDerivedBadgeCancelNotice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 ✓ Production Done 的當地語系化字串。
+        /// </summary>
+        internal static string SchDerivedBadgeComplete {
+            get {
+                return ResourceManager.GetString("SchDerivedBadgeComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 ⬟ In Production 的當地語系化字串。
+        /// </summary>
+        internal static string SchDerivedBadgeInProduction {
+            get {
+                return ResourceManager.GetString("SchDerivedBadgeInProduction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 ⚠ Partial Done 的當地語系化字串。
+        /// </summary>
+        internal static string SchDerivedBadgePartial {
+            get {
+                return ResourceManager.GetString("SchDerivedBadgePartial", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Cancel Schedule 的當地語系化字串。
         /// </summary>
         internal static string ScheduleOpCancelTitle {
@@ -714,6 +867,42 @@ namespace FProductionDashBoard.Properties {
         internal static string ScheduleOpVerifyTitle {
             get {
                 return ResourceManager.GetString("ScheduleOpVerifyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Cancelled 的當地語系化字串。
+        /// </summary>
+        internal static string SchOrderStatusCancelled {
+            get {
+                return ResourceManager.GetString("SchOrderStatusCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Done 的當地語系化字串。
+        /// </summary>
+        internal static string SchOrderStatusCompleted {
+            get {
+                return ResourceManager.GetString("SchOrderStatusCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 In Prod. 的當地語系化字串。
+        /// </summary>
+        internal static string SchOrderStatusInProduction {
+            get {
+                return ResourceManager.GetString("SchOrderStatusInProduction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Pending 的當地語系化字串。
+        /// </summary>
+        internal static string SchOrderStatusPending {
+            get {
+                return ResourceManager.GetString("SchOrderStatusPending", resourceCulture);
             }
         }
         
@@ -859,76 +1048,6 @@ namespace FProductionDashBoard.Properties {
             get {
                 return ResourceManager.GetString("WaitedDaysForSchedule", resourceCulture);
             }
-        }
-
-        internal static string SchCancelOrderDialogTitle {
-            get {
-                return ResourceManager.GetString("SchCancelOrderDialogTitle", resourceCulture);
-            }
-        }
-
-        internal static string SchCancelOrderDescLabel {
-            get {
-                return ResourceManager.GetString("SchCancelOrderDescLabel", resourceCulture);
-            }
-        }
-
-        internal static string SchOrderStatusPending {
-            get {
-                return ResourceManager.GetString("SchOrderStatusPending", resourceCulture);
-            }
-        }
-
-        internal static string SchOrderStatusInProduction {
-            get {
-                return ResourceManager.GetString("SchOrderStatusInProduction", resourceCulture);
-            }
-        }
-
-        internal static string SchOrderStatusCompleted {
-            get {
-                return ResourceManager.GetString("SchOrderStatusCompleted", resourceCulture);
-            }
-        }
-
-        internal static string SchOrderStatusCancelled {
-            get {
-                return ResourceManager.GetString("SchOrderStatusCancelled", resourceCulture);
-            }
-        }
-        internal static string SchDerivedBadgeInProduction {
-            get { return ResourceManager.GetString("SchDerivedBadgeInProduction", resourceCulture); }
-        }
-        internal static string SchDerivedBadgeComplete {
-            get { return ResourceManager.GetString("SchDerivedBadgeComplete", resourceCulture); }
-        }
-        internal static string SchDerivedBadgePartial {
-            get { return ResourceManager.GetString("SchDerivedBadgePartial", resourceCulture); }
-        }
-        internal static string SchDerivedBadgeCancelNotice {
-            get { return ResourceManager.GetString("SchDerivedBadgeCancelNotice", resourceCulture); }
-        }
-        internal static string AiDefaultTitle {
-            get { return ResourceManager.GetString("AiDefaultTitle", resourceCulture); }
-        }
-        internal static string AiWelcome {
-            get { return ResourceManager.GetString("AiWelcome", resourceCulture); }
-        }
-        internal static string AiNotConfigured {
-            get { return ResourceManager.GetString("AiNotConfigured", resourceCulture); }
-        }
-        internal static string AiTimeout {
-            get { return ResourceManager.GetString("AiTimeout", resourceCulture); }
-        }
-        internal static string AiSendFailed {
-            get { return ResourceManager.GetString("AiSendFailed", resourceCulture); }
-        }
-        internal static string AiMaxRoundsExceeded {
-            get { return ResourceManager.GetString("AiMaxRoundsExceeded", resourceCulture); }
-        }
-
-        internal static string AiCancelled {
-            get { return ResourceManager.GetString("AiCancelled", resourceCulture); }
         }
     }
 }

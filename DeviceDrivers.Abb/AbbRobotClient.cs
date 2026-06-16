@@ -475,4 +475,10 @@ public sealed class AbbRobotClient : IAbbRobotClient
 
     private void ThrowIfDisposed()
         => ObjectDisposedException.ThrowIf(_disposed, this);
+
+    public static bool IsAbbPcSdkAvailable()
+    {
+        try { _ = new NetworkScanner(); return true; }
+        catch { return false; }
+    }
 }
