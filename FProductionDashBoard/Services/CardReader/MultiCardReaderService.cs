@@ -1,6 +1,6 @@
 namespace FProductionDashBoard.Services
 {
-    public class MultiCardReaderService : ICardReaderService
+    public class MultiCardReaderService : ICardReaderService, IDisposable
     {
         private readonly List<CardReaderService> _readers = new();
 
@@ -28,5 +28,13 @@ namespace FProductionDashBoard.Services
         }
 
         private void OnCardRead(object? sender, CardReadEventArgs e) => CardRead?.Invoke(sender, e);
+
+        public void Dispose()
+        {
+            Stop();
+            foreach (var r in _readers)
+                r.Dispose();
+            _readers.Clear();
+        }
     }
 }

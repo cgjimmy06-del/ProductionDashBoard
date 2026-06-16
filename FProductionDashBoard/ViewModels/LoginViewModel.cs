@@ -104,10 +104,10 @@ namespace FProductionDashBoard.ViewModels
 
             if (loginSource == "Normal") // 只有常規登入要經過資料庫驗證
             {
-                if (!LoginDapper.checkConnection(SelectedServer))
+                if (!LoginDapper.CheckConnection(SelectedServer))
                 { Errorinfo = Properties.Resources.LogInConnectionError; return; }
                 // 之後password透過EncryptionService加密後儲存
-                user = LoginDapper.validateUser(SelectedServer, UserId, Password);
+                user = LoginDapper.ValidateUser(SelectedServer, UserId, Password);
             }
 
             if (user != null)
