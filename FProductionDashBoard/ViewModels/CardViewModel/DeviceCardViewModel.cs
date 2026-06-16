@@ -7,7 +7,6 @@ using FProductionDashBoard.Models;
 using FProductionDashBoard.Properties;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.Services.Exceptions;
-using FProductionDashBoard.Services.V1;
 using FProductionDashBoard.UiModels;
 using FProductionDashBoard.UserControls;
 using MaterialDesignThemes.Wpf;

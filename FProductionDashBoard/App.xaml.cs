@@ -109,7 +109,7 @@ namespace FProductionDashBoard
                 services.AddTransient<IPendingOperationHandler, RoutineInspectionSyncHandler>();
 
                 // 註冊 Service
-                services.AddScoped<Services.IDataService, Services.V1.DataService>();
+                services.AddScoped<Services.IDataService, Services.DataService>();
                 services.AddScoped<Services.LogService>();
                 services.AddSingleton<Services.AuthorizationService>();
                 services.AddSingleton<Services.IDialogService, Services.DialogService>();
@@ -208,10 +208,16 @@ namespace FProductionDashBoard
             }
             catch(Exception ex)
             {
-                MessageBox.Show($"啟動失敗: \n\n {ex.GetType().Name}\n{ex.Message}", 
+                MessageBox.Show($"啟動失敗: \n\n {ex.GetType().Name}\n{ex.Message}",
                     "錯誤", MessageBoxButton.OK, MessageBoxImage.Error);
                 Shutdown();
             }
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            _serviceProvider?.Dispose();
+            base.OnExit(e);
         }
     }
 
