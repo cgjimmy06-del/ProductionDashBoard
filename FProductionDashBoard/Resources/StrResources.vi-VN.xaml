@@ -134,6 +134,7 @@
     <sys:String x:Key="CheckTypeStation">Trạm</sys:String>
     <sys:String x:Key="CheckTypeFixture">Đồ gá</sys:String>
     <sys:String x:Key="CheckTypeQuantity">Số lượng</sys:String>
+    <sys:String x:Key="CheckTypeManHour">Công giờ (s)</sys:String>
     <sys:String x:Key="CheckTypeOther">Khác</sys:String>
     <!-- Common headers / tooltips -->
     <sys:String x:Key="SettingActionDataGridHeader">Thao tác</sys:String>
