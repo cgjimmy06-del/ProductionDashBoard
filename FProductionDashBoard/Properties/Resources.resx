@@ -480,4 +480,16 @@
   <data name="AiCancelled" xml:space="preserve">
     <value>Cancelled</value>
   </data>
+  <data name="AboutSdkInstalled" xml:space="preserve">
+    <value>✓ 已安裝</value>
+  </data>
+  <data name="AboutSdkNotInstalled" xml:space="preserve">
+    <value>✗ 未安裝</value>
+  </data>
+  <data name="AboutApiKeyConfigured" xml:space="preserve">
+    <value>✓ 已設定</value>
+  </data>
+  <data name="AboutApiKeyNotConfigured" xml:space="preserve">
+    <value>✗ 未設定</value>
+  </data>
 </root>

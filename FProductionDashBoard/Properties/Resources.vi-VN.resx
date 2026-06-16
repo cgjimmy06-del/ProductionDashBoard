@@ -435,4 +435,16 @@
   <data name="AiCancelled" xml:space="preserve">
     <value>Đã hủy</value>
   </data>
+  <data name="AboutSdkInstalled" xml:space="preserve">
+    <value>✓ Đã cài đặt</value>
+  </data>
+  <data name="AboutSdkNotInstalled" xml:space="preserve">
+    <value>✗ Chưa cài đặt</value>
+  </data>
+  <data name="AboutApiKeyConfigured" xml:space="preserve">
+    <value>✓ Đã cấu hình</value>
+  </data>
+  <data name="AboutApiKeyNotConfigured" xml:space="preserve">
+    <value>✗ Chưa cấu hình</value>
+  </data>
 </root>

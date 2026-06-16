@@ -930,5 +930,17 @@ namespace FProductionDashBoard.Properties {
         internal static string AiCancelled {
             get { return ResourceManager.GetString("AiCancelled", resourceCulture); }
         }
+        internal static string AboutSdkInstalled {
+            get { return ResourceManager.GetString("AboutSdkInstalled", resourceCulture); }
+        }
+        internal static string AboutSdkNotInstalled {
+            get { return ResourceManager.GetString("AboutSdkNotInstalled", resourceCulture); }
+        }
+        internal static string AboutApiKeyConfigured {
+            get { return ResourceManager.GetString("AboutApiKeyConfigured", resourceCulture); }
+        }
+        internal static string AboutApiKeyNotConfigured {
+            get { return ResourceManager.GetString("AboutApiKeyNotConfigured", resourceCulture); }
+        }
     }
 }
