@@ -109,6 +109,7 @@
     <sys:String x:Key="SopTypeACME">ACME</sys:String>
     <sys:String x:Key="SopTypeTC">TC</sys:String>
     <sys:String x:Key="SopTypeOther">其他</sys:String>
+    <sys:String x:Key="SopEnsureProductButton">檢查產品</sys:String>
     <sys:String x:Key="SopModelFilter">型號篩選</sys:String>
     <sys:String x:Key="SopModelFilterHint">輸入 3 碼可新建</sys:String>
     <sys:String x:Key="SopFilterHint">件號 / 品名 / 工序 / 備註</sys:String>

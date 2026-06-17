@@ -110,6 +110,8 @@ namespace FProductionDashBoard.Services
         public Task AddSopChecklistAsync(SopChecklistFormDto dto);
         public Task UpdateSopChecklistAsync(SopChecklistFormDto dto);
         public Task DeleteSopChecklistAsync(int id);
+        /// <returns>true = newly created; false = already existed</returns>
+        public Task<bool> EnsureProductExistsAsync(int partId, int modelId);
 
         // ─── 設定：機台可生產清單 CRUD ─────────────────────────────────────
         public Task<List<EquipmentProduct>> GetAllEquipmentProductsAsync();

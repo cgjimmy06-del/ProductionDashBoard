@@ -109,6 +109,7 @@
     <sys:String x:Key="SopTypeACME">ACME</sys:String>
     <sys:String x:Key="SopTypeTC">TC</sys:String>
     <sys:String x:Key="SopTypeOther">Other</sys:String>
+    <sys:String x:Key="SopEnsureProductButton">Check Product</sys:String>
     <sys:String x:Key="SopModelFilter">Model filter</sys:String>
     <sys:String x:Key="SopModelFilterHint">Enter 3 chars to enable creation</sys:String>
     <sys:String x:Key="SopFilterHint">Part / Name / Process / Remark</sys:String>

@@ -48,8 +48,12 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(BeginCreateModelCommand))]
         private string modelFilter = "";
-        [ObservableProperty] private int? formPartId;
-        [ObservableProperty] private int? formModelId;
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(CheckOrCreateProductCommand))]
+        private int? formPartId;
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(CheckOrCreateProductCommand))]
+        private int? formModelId;
         [ObservableProperty] private int? formProcessId;
         [ObservableProperty] private SopType formSopType = SopType.Develop;
         [ObservableProperty] private string? formRemark;
@@ -119,6 +123,10 @@ namespace FProductionDashBoard.ViewModels
                 }
                 FilteredPartList.Add(p);
             }
+            if (FilteredPartList.Count > 0 && (FormPartId == null || FilteredPartList.All(p => p.PartId != FormPartId)))
+                FormPartId = FilteredPartList[0].PartId;
+            else if (FilteredPartList.Count == 0)
+                FormPartId = null;
         }
 
         private void RecomputeFilteredModelList()
@@ -131,6 +139,10 @@ namespace FProductionDashBoard.ViewModels
                     continue;
                 FilteredModelList.Add(m);
             }
+            if (FilteredModelList.Count > 0 && (FormModelId == null || FilteredModelList.All(m => m.ModelId != FormModelId)))
+                FormModelId = FilteredModelList[0].ModelId;
+            else if (FilteredModelList.Count == 0)
+                FormModelId = null;
         }
 
         private int AssignNextStationNo()
@@ -419,6 +431,29 @@ namespace FProductionDashBoard.ViewModels
                 FormErrorString = ex.Message;
                 _core.Log.AddLog($"SOP 管理 - 刪除 SOP 失敗 (檢查是否被機台清單引用): {ex.Message}", LogLevel.Error);
                 _core.Log.AddErrorLog($"[DeleteAsync] {ex.Message}");
+            }
+        }
+
+        // ── 確認 Product 命令 ────────────────────────────────────────
+        private bool CanCheckOrCreateProduct() => FormPartId != null && FormModelId != null;
+
+        [RelayCommand(CanExecute = nameof(CanCheckOrCreateProduct))]
+        private async Task CheckOrCreateProductAsync()
+        {
+            var part = PartList.FirstOrDefault(p => p.PartId == FormPartId);
+            var model = ModelList.FirstOrDefault(m => m.ModelId == FormModelId);
+            var label = $"{part?.PartNo}_{model?.Name}";
+            try
+            {
+                var isNew = await _core.Data.EnsureProductExistsAsync(FormPartId!.Value, FormModelId!.Value);
+                _core.Log.AddLog(isNew
+                    ? $"SOP 管理 - {label} 為新產品，已新增"
+                    : $"SOP 管理 - {label} 已存在");
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog($"SOP 管理 - 確認 Product 失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[CheckOrCreateProductAsync] {ex.Message}");
             }
         }
 
