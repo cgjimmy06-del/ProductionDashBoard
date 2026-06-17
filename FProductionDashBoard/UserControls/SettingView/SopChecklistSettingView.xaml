@@ -57,7 +57,7 @@
                             <TextBlock>
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
-                                        <Setter Property="Text" Value="{Binding Value}"/>
+                                        <Setter Property="Text" Value="{Binding Value, Converter={StaticResource SopTypeToLabelConverter}}"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
                                                 <Setter Property="Text" Value="{DynamicResource SopTypeFilterAll}"/>
@@ -86,7 +86,7 @@
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTextColumn Header="{DynamicResource SopProcess}" Binding="{Binding Process.Name}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="{DynamicResource SopType}" Binding="{Binding SopType}" Width="50"
+                    <DataGridTextColumn Header="{DynamicResource SopType}" Binding="{Binding SopType, Converter={StaticResource SopTypeToLabelConverter}}" Width="50"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
@@ -127,7 +127,7 @@
                     <TextBlock Text="{Binding FormTitle}"
                                Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
                                Foreground="{DynamicResource TextPrimaryBrush}"
-                               Margin="0,0,0,8"/>
+                               Margin="0,0,0,4"/>
 
                     <!-- ── 表頭區 ── -->
                     <TextBlock Text="{DynamicResource SopHeaderSection}"
@@ -136,15 +136,16 @@
                                Margin="0,0,0,4"/>
 
                     <!-- Row 1：Part（左）+ Model（右） -->
-                    <Grid Margin="0,0,0,4">
+                    <Grid Margin="0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8*"/>
+                            <ColumnDefinition Width="39*"/>
                             <ColumnDefinition Width="8"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="47*"/>
                         </Grid.ColumnDefinitions>
 
                         <!-- 件號區 -->
-                        <StackPanel Grid.Column="0" Margin="4">
+                        <StackPanel Grid.Column="0" Margin="4,0,4,0" Grid.ColumnSpan="2">
                             <TextBlock Text="{DynamicResource SopPartFilter}"
                                        Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
@@ -161,9 +162,9 @@
                                         Command="{Binding BeginCreatePartCommand}"
                                         Content="{DynamicResource SopAddPart}"/>
                             </Grid>
-                  
+
                             <!-- inline Part 新增卡片 -->
-                            <Border Margin="0,8,0,0" Padding="8"
+                            <Border Margin="0,2,0,0" Padding="4"
                                     Background="{DynamicResource PrimaryBackgroundBrush}"
                                     BorderBrush="{DynamicResource MaterialDesignDivider}"
                                     BorderThickness="1"
@@ -201,7 +202,7 @@
                         </StackPanel>
 
                         <!-- 型號區 -->
-                        <StackPanel Grid.Column="2" Margin="4">
+                        <StackPanel Grid.Column="3" Margin="4,0,4,0">
                             <TextBlock Text="{DynamicResource SopModelFilter}"
                                        Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
@@ -220,7 +221,7 @@
                             </Grid>
 
                             <!-- inline Model 新增卡片 -->
-                            <Border Margin="0,8,0,0" Padding="8"
+                            <Border Margin="0,2,0,0" Padding="4"
                                     Background="{DynamicResource PrimaryBackgroundBrush}"
                                     BorderBrush="{DynamicResource MaterialDesignDivider}"
                                     BorderThickness="1"
@@ -233,7 +234,7 @@
                                              MaxLength="20"
                                              materialDesign:HintAssist.Hint="{DynamicResource SopModelRemark}"
                                              Text="{Binding NewModelRemark, UpdateSourceTrigger=PropertyChanged}"/>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
                                         <Button Margin="0,0,8,0"
                                                 Style="{StaticResource MaterialDesignOutlinedButton}"
                                                 Foreground="{DynamicResource PrimaryBrush}"
@@ -256,8 +257,16 @@
                         </StackPanel>
                     </Grid>
 
+                    <!-- 確認 Product 按鈕 -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,2,4,2">
+                        <Button FontSize="12" Height="25" Width="100"
+                                Command="{Binding CheckOrCreateProductCommand}"
+                                Content="{DynamicResource SopEnsureProductButton}"
+                                Style="{StaticResource FunctionButtonStyle}"/>
+                    </StackPanel>
+
                     <!-- Row 2：Process + SopType + Remark -->
-                    <Grid Margin="0,0,0,4">
+                    <Grid Margin="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -273,11 +282,18 @@
                         <StackPanel Grid.Column="1" Margin="4">
                             <TextBlock Text="{DynamicResource SopType}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <ComboBox ItemsSource="{Binding SopTypes}"
-                                      SelectedItem="{Binding FormSopType}"/>
+                                      SelectedItem="{Binding FormSopType}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={StaticResource SopTypeToLabelConverter}}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Margin="4">
                             <TextBlock Text="{DynamicResource SopRemark}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <TextBox materialDesign:HintAssist.Hint="{DynamicResource SopRemark}"
+                                     Padding="3" Margin="0"
                                      Text="{Binding FormRemark, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>

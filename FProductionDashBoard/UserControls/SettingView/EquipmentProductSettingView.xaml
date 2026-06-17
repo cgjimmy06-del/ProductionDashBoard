@@ -165,7 +165,7 @@
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                             <DataGridTextColumn Header="{DynamicResource EqprodProcess}" Binding="{Binding Sop.Process.Name}" Width="*"
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                            <DataGridTextColumn Header="{DynamicResource EqprodSopType}" Binding="{Binding Sop.SopType}" Width="60"
+                            <DataGridTextColumn Header="{DynamicResource EqprodSopType}" Binding="{Binding Sop.SopType, Converter={StaticResource SopTypeToLabelConverter}}" Width="60"
                                                 ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                             <DataGridTemplateColumn Header="{DynamicResource EqprodProductionStatus}" Width="80">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -301,12 +301,18 @@
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Grid.Column="2" Margin="4"
-                                            Visibility="{Binding IsSopTypeVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            IsEnabled="{Binding IsSopTypeVisible}">
                                     <TextBlock Text="{DynamicResource EqprodSopTypeLabel}"
                                                Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                                     <ComboBox ItemsSource="{Binding FormSopTypeOptions}"
-                                              SelectedItem="{Binding FormSopType}"/>
+                                              SelectedItem="{Binding FormSopType}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Converter={StaticResource SopTypeToLabelConverter}}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
                                 </StackPanel>
                             </Grid>
 

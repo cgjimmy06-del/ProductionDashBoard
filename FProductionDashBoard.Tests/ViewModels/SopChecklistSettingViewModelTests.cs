@@ -57,7 +57,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             _data.Setup(d => d.GetWorkProcessesAsync()).ReturnsAsync([new WorkProcess { ProcessId = 1, Name = "加工" }]);
             _data.Setup(d => d.GetMaterialsByTypeAsync(1)).ReturnsAsync([new Material { MaterialId = 10, Name = "Station-1" }]);
             _data.Setup(d => d.GetMaterialsByTypeAsync(2)).ReturnsAsync([new Material { MaterialId = 20, Name = "Fixture-1" }]);
-            _data.Setup(d => d.GetAllSopChecklistsAsync()).ReturnsAsync([BuildSop(1, "ABC11111", "100A", "加工", SopType.A)]);
+            _data.Setup(d => d.GetAllSopChecklistsAsync()).ReturnsAsync([BuildSop(1, "ABC11111", "100A", "加工", SopType.Open)]);
 
             var vm = CreateVm();
             await ((CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)vm.LoadCommand).ExecuteAsync(null);
@@ -82,9 +82,9 @@ namespace FProductionDashBoard.Tests.ViewModels
             _data.Setup(d => d.GetWorkProcessesAsync()).ReturnsAsync([]);
             _data.Setup(d => d.GetMaterialsByTypeAsync(It.IsAny<int>())).ReturnsAsync([]);
             _data.Setup(d => d.GetAllSopChecklistsAsync()).ReturnsAsync([
-                BuildSop(1, "ABC11111", "100A", "加工", SopType.A),
-                BuildSop(2, "DEF22222", "200B", "組裝", SopType.B),
-                BuildSop(3, "ABC99999", "100A", "包裝", SopType.A)
+                BuildSop(1, "ABC11111", "100A", "加工", SopType.Open),
+                BuildSop(2, "DEF22222", "200B", "組裝", SopType.Close),
+                BuildSop(3, "ABC99999", "100A", "包裝", SopType.Open)
             ]);
 
             var vm = CreateVm();
@@ -108,18 +108,18 @@ namespace FProductionDashBoard.Tests.ViewModels
             _data.Setup(d => d.GetWorkProcessesAsync()).ReturnsAsync([]);
             _data.Setup(d => d.GetMaterialsByTypeAsync(It.IsAny<int>())).ReturnsAsync([]);
             _data.Setup(d => d.GetAllSopChecklistsAsync()).ReturnsAsync([
-                BuildSop(1, "ABC11111", "100A", "加工", SopType.A),
-                BuildSop(2, "DEF22222", "200B", "組裝", SopType.B),
-                BuildSop(3, "ABC99999", "100A", "包裝", SopType.A)
+                BuildSop(1, "ABC11111", "100A", "加工", SopType.Open),
+                BuildSop(2, "DEF22222", "200B", "組裝", SopType.Close),
+                BuildSop(3, "ABC99999", "100A", "包裝", SopType.Open)
             ]);
 
             var vm = CreateVm();
             await ((CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)vm.LoadCommand).ExecuteAsync(null);
 
-            vm.SopTypeFilter = SopType.A;
+            vm.SopTypeFilter = SopType.Open;
             Assert.Equal(2, vm.FilteredSopList.Count);
 
-            vm.SopTypeFilter = SopType.B;
+            vm.SopTypeFilter = SopType.Close;
             Assert.Single(vm.FilteredSopList);
 
             vm.SopTypeFilter = null; // 全部
@@ -460,7 +460,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             vm.FormPartId = 1;
             vm.FormModelId = 100;
             vm.FormProcessId = 1;
-            vm.FormSopType = SopType.B;
+            vm.FormSopType = SopType.Close;
             vm.FormRemark = "test";
             vm.FormItems.Add(new SopChecklistItemFormDto { Seq = 1, CheckType = CheckType.Quantity, Quantity = 50 });
 
@@ -470,7 +470,7 @@ namespace FProductionDashBoard.Tests.ViewModels
                 dto.PartId == 1 &&
                 dto.ModelId == 100 &&
                 dto.ProcessId == 1 &&
-                dto.SopType == SopType.B &&
+                dto.SopType == SopType.Close &&
                 dto.Remark == "test" &&
                 dto.Items.Count == 1)), Times.Once);
             _data.Verify(d => d.UpdateSopChecklistAsync(It.IsAny<SopChecklistFormDto>()), Times.Never);

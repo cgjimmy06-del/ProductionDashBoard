@@ -103,6 +103,13 @@
     <sys:String x:Key="SettingTabSopChecklist">Quản lý SOP</sys:String>
     <!-- Quản lý SOP -->
     <sys:String x:Key="SopTypeFilterAll">Tất cả</sys:String>
+    <sys:String x:Key="SopTypeDevelop">Phát triển</sys:String>
+    <sys:String x:Key="SopTypeOpen">Kiểu mở</sys:String>
+    <sys:String x:Key="SopTypeClose">Kiểu hộp</sys:String>
+    <sys:String x:Key="SopTypeACME">ACME</sys:String>
+    <sys:String x:Key="SopTypeTC">TC</sys:String>
+    <sys:String x:Key="SopTypeOther">Khác</sys:String>
+    <sys:String x:Key="SopEnsureProductButton">Kiểm tra SP</sys:String>
     <sys:String x:Key="SopModelFilter">Lọc Model</sys:String>
     <sys:String x:Key="SopModelFilterHint">Nhập 3 ký tự để tạo mới</sys:String>
     <sys:String x:Key="SopFilterHint">Part / Tên / Quá trình / Ghi chú</sys:String>

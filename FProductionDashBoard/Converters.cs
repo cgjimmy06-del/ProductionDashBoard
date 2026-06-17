@@ -232,6 +232,26 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+    public class SopTypeToLabelConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            var key = value is Models.SopType t ? t switch
+            {
+                Models.SopType.Develop => "SopTypeDevelop",
+                Models.SopType.Open    => "SopTypeOpen",
+                Models.SopType.Close   => "SopTypeClose",
+                Models.SopType.ACME    => "SopTypeACME",
+                Models.SopType.TC      => "SopTypeTC",
+                Models.SopType.Other   => "SopTypeOther",
+                _                      => null,
+            } : null;
+            return key != null && resources[key] is string label ? label : value?.ToString() ?? string.Empty;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
     public class ScheduleStatusToBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

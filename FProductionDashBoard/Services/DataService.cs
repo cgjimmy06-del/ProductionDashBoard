@@ -839,6 +839,20 @@ namespace FProductionDashBoard.Services
             await _sopChecklistRep.DeleteAsync(id).ConfigureAwait(false);
         }
 
+        public async Task<bool> EnsureProductExistsAsync(int partId, int modelId)
+        {
+            await using var ctx = _mesFactory.CreateDbContext();
+            var existing = await ctx.Products
+                .FirstOrDefaultAsync(p => p.PartId == partId && p.ModelId == modelId)
+                .ConfigureAwait(false);
+            if (existing != null) return false;
+
+            var p = new Product { PartId = partId, ModelId = modelId };
+            ctx.Products.Add(p);
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
+            return true;
+        }
+
         // 取或建 Product：UI 不暴露 Product；EnsureProductAsync 由 SOP 寫入時自動處理
         private static async Task<int> EnsureProductAsync(MesDbContext ctx, int partId, int modelId)
         {

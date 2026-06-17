@@ -62,6 +62,7 @@
             <local:ScheduleViewFilterToLabelConverter x:Key="ScheduleViewFilterToLabelConverter"/>
             <local:AiAgentModeToLabelConverter x:Key="AiAgentModeToLabelConverter"/>
             <local:TuningTypeToLabelConverter x:Key="TuningTypeToLabelConverter"/>
+            <local:SopTypeToLabelConverter x:Key="SopTypeToLabelConverter"/>
             <local:ScheduleCardColorToBrushConverter x:Key="ScheduleCardColorToBrushConverter"/>
             <local:ScheduleCardLoadLevelToLabelConverter x:Key="ScheduleCardLoadLevelToLabelConverter"/>
             <local:OrderProductionStatusToLabelConverter x:Key="OrderProductionStatusToLabelConverter"/>
