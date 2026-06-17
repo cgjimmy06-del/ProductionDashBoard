@@ -103,6 +103,12 @@
     <sys:String x:Key="SettingTabSopChecklist">SOP Checklist</sys:String>
     <!-- SOP Checklist -->
     <sys:String x:Key="SopTypeFilterAll">All</sys:String>
+    <sys:String x:Key="SopTypeDevelop">Develop</sys:String>
+    <sys:String x:Key="SopTypeOpen">Open</sys:String>
+    <sys:String x:Key="SopTypeClose">Close</sys:String>
+    <sys:String x:Key="SopTypeACME">ACME</sys:String>
+    <sys:String x:Key="SopTypeTC">TC</sys:String>
+    <sys:String x:Key="SopTypeOther">Other</sys:String>
     <sys:String x:Key="SopModelFilter">Model filter</sys:String>
     <sys:String x:Key="SopModelFilterHint">Enter 3 chars to enable creation</sys:String>
     <sys:String x:Key="SopFilterHint">Part / Name / Process / Remark</sys:String>

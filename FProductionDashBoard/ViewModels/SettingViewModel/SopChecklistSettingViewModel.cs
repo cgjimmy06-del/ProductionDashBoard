@@ -51,7 +51,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private int? formPartId;
         [ObservableProperty] private int? formModelId;
         [ObservableProperty] private int? formProcessId;
-        [ObservableProperty] private SopType formSopType = SopType.A;
+        [ObservableProperty] private SopType formSopType = SopType.Develop;
         [ObservableProperty] private string? formRemark;
 
         // ── inline Part 新增 ────────────────────────────────────────
@@ -519,7 +519,7 @@ namespace FProductionDashBoard.ViewModels
             FormPartId = null;
             FormModelId = null;
             FormProcessId = null;
-            FormSopType = SopType.A;
+            FormSopType = SopType.Develop;
             FormRemark = null;
             FormItems.Clear();
             IsCreatingPart = false;

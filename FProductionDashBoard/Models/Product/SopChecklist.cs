@@ -7,11 +7,12 @@ namespace FProductionDashBoard.Models
 {
     public enum SopType
     {
-        A,
-        B,
-        C,
-        D,
-        E,
+        Develop,
+        Open,
+        Close,
+        ACME,
+        TC,
+        Other,
     }
 
     // 點檢類型：字串存（SQL 欄位 varchar(10)）

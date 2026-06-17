@@ -57,7 +57,7 @@
                             <TextBlock>
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
-                                        <Setter Property="Text" Value="{Binding Value}"/>
+                                        <Setter Property="Text" Value="{Binding Value, Converter={StaticResource SopTypeToLabelConverter}}"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
                                                 <Setter Property="Text" Value="{DynamicResource SopTypeFilterAll}"/>
@@ -86,7 +86,7 @@
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTextColumn Header="{DynamicResource SopProcess}" Binding="{Binding Process.Name}" Width="*"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
-                    <DataGridTextColumn Header="{DynamicResource SopType}" Binding="{Binding SopType}" Width="50"
+                    <DataGridTextColumn Header="{DynamicResource SopType}" Binding="{Binding SopType, Converter={StaticResource SopTypeToLabelConverter}}" Width="50"
                                         ElementStyle="{StaticResource CenterTextBlockStyle}"/>
                     <DataGridTemplateColumn Header="{DynamicResource SettingActionDataGridHeader}" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
@@ -273,7 +273,13 @@
                         <StackPanel Grid.Column="1" Margin="4">
                             <TextBlock Text="{DynamicResource SopType}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <ComboBox ItemsSource="{Binding SopTypes}"
-                                      SelectedItem="{Binding FormSopType}"/>
+                                      SelectedItem="{Binding FormSopType}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={StaticResource SopTypeToLabelConverter}}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Margin="4">
                             <TextBlock Text="{DynamicResource SopRemark}" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
