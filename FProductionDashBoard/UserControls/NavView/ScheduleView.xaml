@@ -77,7 +77,7 @@
                     <TextBlock Text="{DynamicResource SchStatTotalLabel}" Style="{StaticResource StatLabelStyle}"/>
                     <TextBlock Text="{Binding StatTotal}" Style="{StaticResource StatNumberStyle}"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    <TextBlock Text="{Binding StatTotalQty, StringFormat='{}{0:N0} pcs'}"
+                    <TextBlock Text="{Binding StatTotalQty, StringFormat='{}{0:N0}'}"
                                Style="{StaticResource StatQtyStyle}"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                 </StackPanel>
@@ -89,7 +89,7 @@
                     <TextBlock Text="{DynamicResource SchStatPendingLabel}" Style="{StaticResource StatLabelStyle}"/>
                     <TextBlock Text="{Binding StatPending}" Style="{StaticResource StatNumberStyle}"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    <TextBlock Text="{Binding StatPendingQty, StringFormat='{}{0:N0} pcs'}"
+                    <TextBlock Text="{Binding StatPendingQty, StringFormat='{}{0:N0}'}"
                                Style="{StaticResource StatQtyStyle}"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <!-- 待補排括號（count > 0 才顯示） -->
@@ -107,7 +107,7 @@
                         </TextBlock.Style>
                         <Run Text="(+ "/><Run Text="{Binding StatUnderScheduledCount}"/>
                         <Run Text=" / "/><Run Text="{Binding StatUnderScheduledQtyDeficit}"/>
-                        <Run Text=" pcs)"/>
+                        <Run Text=")"/>
                     </TextBlock>
                 </StackPanel>
             </Border>
@@ -118,7 +118,7 @@
                     <TextBlock Text="{DynamicResource SchStatScheduledLabel}" Style="{StaticResource StatLabelStyle}"/>
                     <TextBlock Text="{Binding StatScheduled}" Style="{StaticResource StatNumberStyle}"
                                Foreground="{DynamicResource PrimaryBrush}"/>
-                    <TextBlock Text="{Binding StatScheduledActualQty, StringFormat='{}{0:N0} pcs'}"
+                    <TextBlock Text="{Binding StatScheduledActualQty, StringFormat='{}{0:N0}'}"
                                Style="{StaticResource StatQtyStyle}"
                                Foreground="{DynamicResource PrimaryBrush}"/>
                 </StackPanel>
@@ -130,7 +130,7 @@
                     <TextBlock Text="{DynamicResource SchStatProductionDoneLabel}" Style="{StaticResource StatLabelStyle}"/>
                     <TextBlock Text="{Binding StatProductionDone}" Style="{StaticResource StatNumberStyle}"
                                Foreground="{DynamicResource SuccessBrush}"/>
-                    <TextBlock Text="{Binding StatProductionDoneActualQty, StringFormat='{}{0:N0} pcs'}"
+                    <TextBlock Text="{Binding StatProductionDoneActualQty, StringFormat='{}{0:N0}'}"
                                Style="{StaticResource StatQtyStyle}"
                                Foreground="{DynamicResource SuccessBrush}"/>
                 </StackPanel>
@@ -383,9 +383,9 @@
                 </DataGridTemplateColumn>
 
                 <!-- 批號 -->
-                <DataGridTextColumn Header="{DynamicResource SchColLotNo}"
+                <!--<DataGridTextColumn Header="{DynamicResource SchColLotNo}"
                                     Binding="{Binding LotNo, TargetNullValue='-'}"
-                                    Width="Auto"/>
+                                    Width="Auto"/>-->
 
                 <!-- 入料日 -->
                 <DataGridTextColumn Header="{DynamicResource SchColReceivedAt}"
@@ -421,7 +421,7 @@
 
                 <!-- Derived Badge（焦點模式隱藏） -->
                 <!-- Visibility 由 code-behind (ScheduleView.xaml.cs) 控制：DataGridColumn 不在 visual tree，ElementName binding 無效 -->
-                <DataGridTemplateColumn x:Name="DerivedBadgeColumn" Header="" Width="100">
+                <DataGridTemplateColumn x:Name="DerivedBadgeColumn" Header="" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding DerivedBadge}"

@@ -64,7 +64,7 @@
                     <TextBlock Text="{DynamicResource PioStatTotalLabel}" Style="{StaticResource StatLabelStyle}"/>
                     <TextBlock Text="{Binding StatTotal}" Style="{StaticResource StatNumberStyle}"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    <TextBlock Text="{Binding StatTotalQty, StringFormat='{}{0:N0} pcs'}" 
+                    <TextBlock Text="{Binding StatTotalQty, StringFormat='{}{0:N0}'}" 
                                Style="{StaticResource StatQtyStyle}"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                 </StackPanel>
@@ -75,7 +75,7 @@
                     <TextBlock Text="{DynamicResource PioStatPendingLabel}" Style="{StaticResource StatLabelStyle}"/>
                     <TextBlock Text="{Binding StatPending}" Style="{StaticResource StatNumberStyle}"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    <TextBlock Text="{Binding StatPendingQty, StringFormat='{}{0:N0} pcs'}" 
+                    <TextBlock Text="{Binding StatPendingQty, StringFormat='{}{0:N0}'}" 
                                Style="{StaticResource StatQtyStyle}"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                 </StackPanel>
@@ -86,7 +86,7 @@
                     <TextBlock Text="{DynamicResource PioStatScheduledLabel}" Style="{StaticResource StatLabelStyle}"/>
                     <TextBlock Text="{Binding StatScheduled}" Style="{StaticResource StatNumberStyle}"
                                Foreground="{DynamicResource PrimaryBrush}"/>
-                    <TextBlock Text="{Binding StatScheduledQty, StringFormat='{}{0:N0} pcs'}" 
+                    <TextBlock Text="{Binding StatScheduledQty, StringFormat='{}{0:N0}'}" 
                                Style="{StaticResource StatQtyStyle}"
                                Foreground="{DynamicResource PrimaryBrush}"/>
                 </StackPanel>
@@ -97,7 +97,7 @@
                     <TextBlock Text="{DynamicResource PioStatCompletedLabel}" Style="{StaticResource StatLabelStyle}"/>
                     <TextBlock Text="{Binding StatCompleted}" Style="{StaticResource StatNumberStyle}"
                                Foreground="{DynamicResource SuccessBrush}"/>
-                    <TextBlock Text="{Binding StatCompletedQty, StringFormat='{}{0:N0} pcs'}" 
+                    <TextBlock Text="{Binding StatCompletedQty, StringFormat='{}{0:N0}'}" 
                                Style="{StaticResource StatQtyStyle}"
                                Foreground="{DynamicResource SuccessBrush}"/>
                 </StackPanel>
@@ -108,7 +108,7 @@
                     <TextBlock Text="{DynamicResource PioStatReleasedLabel}" Style="{StaticResource StatLabelStyle}"/>
                     <TextBlock Text="{Binding StatReleased}" Style="{StaticResource StatNumberStyle}"
                                Foreground="{DynamicResource SecondaryBrush}"/>
-                    <TextBlock Text="{Binding StatReleasedQty, StringFormat='{}{0:N0} pcs'}" 
+                    <TextBlock Text="{Binding StatReleasedQty, StringFormat='{}{0:N0}'}" 
                                Style="{StaticResource StatQtyStyle}"
                                Foreground="{DynamicResource SecondaryBrush}"/>
                 </StackPanel>
