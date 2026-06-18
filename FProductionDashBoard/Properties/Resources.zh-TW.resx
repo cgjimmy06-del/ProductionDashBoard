@@ -414,6 +414,12 @@
   <data name="SchDerivedBadgeCancelNotice" xml:space="preserve">
     <value>⚠ 取消注意</value>
   </data>
+  <data name="SchDerivedBadgeDevelop" xml:space="preserve">
+    <value>◈ 開發</value>
+  </data>
+  <data name="SchDerivedBadgeNewProduct" xml:space="preserve">
+    <value>◈ 新產品</value>
+  </data>
   <data name="AiDefaultTitle" xml:space="preserve">
     <value>新對話</value>
   </data>
