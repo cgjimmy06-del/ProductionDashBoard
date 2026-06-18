@@ -213,7 +213,7 @@
     <!-- ProductInOut DataGrid Actions 欄按鈕樣式 -->
     <Style x:Key="PioForceCompleteButtonStyle" TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
         <Setter Property="Visibility" Value="Collapsed"/>
-        <Setter Property="Background" Value="{DynamicResource WarningBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource ButtonWarningBrush}"/>
         <Style.Triggers>
             <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Pending}">
                 <Setter Property="Visibility" Value="Visible"/>
@@ -481,6 +481,14 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- SOP 狀態 Chip（ProductInOutView DataGrid） -->
+    <Style x:Key="PioSopChipStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="4,2"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 
     <!-- 程式庫管理統計小卡 -->

@@ -6,6 +6,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:FProductionDashBoard"
              xmlns:localvm="clr-namespace:FProductionDashBoard.ViewModels"
+             xmlns:models="clr-namespace:FProductionDashBoard.Models"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="1200">
     <Grid Margin="12">
@@ -73,11 +74,21 @@
             <Border Style="{StaticResource StatCardBorderStyle}">
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="{DynamicResource PioStatPendingLabel}" Style="{StaticResource StatLabelStyle}"/>
-                    <TextBlock Text="{Binding StatPending}" Style="{StaticResource StatNumberStyle}"
-                               Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    <TextBlock Text="{Binding StatPendingQty, StringFormat='{}{0:N0}'}" 
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding StatPending}" Style="{StaticResource StatNumberStyle}"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{Binding StatPendingDevelopCount, StringFormat='({0})'}"
+                                   Style="{StaticResource StatNumberStyle}"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Margin="4,0,0,0"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding StatPendingQty, StringFormat='{}{0:N0}'}"
                                Style="{StaticResource StatQtyStyle}"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{Binding StatPendingDevelopQty, StringFormat='({0:N0})'}"
+                               Style="{StaticResource StatNumberStyle}"
+                               Foreground="{DynamicResource ErrorBrush}"
+                               HorizontalAlignment="Center"/>
                 </StackPanel>
             </Border>
 
@@ -124,6 +135,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <!-- 狀態篩選 -->
@@ -159,8 +171,37 @@
                      materialDesign:HintAssist.Hint="{DynamicResource PioFilterProcess}"
                      Text="{Binding ProcessFilter, UpdateSourceTrigger=PropertyChanged, Delay=200}"/>
 
+            <!-- SOP 類型篩選 -->
+            <ComboBox Grid.Column="3" Margin="0,0,6,0" Width="100"
+                      ItemsSource="{Binding SopFilterOptions}"
+                      SelectedValue="{Binding SopFilter}"
+                      SelectedValuePath="Value">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{DynamicResource PioFilterSopAll}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Value}" Value="New">
+                                            <Setter Property="Text" Value="{DynamicResource PioFilterSopNew}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Value}" Value="Develop">
+                                            <Setter Property="Text" Value="{DynamicResource PioFilterSopDevelop}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Value}" Value="Mass">
+                                            <Setter Property="Text" Value="{DynamicResource PioFilterSopMass}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
             <!-- + 入料按鈕 -->
-            <Button Grid.Column="3" Margin="0,0,6,0"
+            <Button Grid.Column="4" Margin="0,0,6,0"
                     Content="{DynamicResource PioReceiveButton}"
                     Style="{DynamicResource FunctionButtonStyle}"
                     Background="{DynamicResource SecondaryBrush}"
@@ -285,6 +326,44 @@
                                                    VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- SOP 類型 Chip -->
+                    <DataGridTemplateColumn Header="" Width="34" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border>
+                                    <Border.Style>
+                                        <Style TargetType="Border" BasedOn="{StaticResource PioSopChipStyle}">
+                                            <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SopType}" Value="{x:Null}">
+                                                    <Setter Property="Background" Value="{DynamicResource ErrorBrush}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SopType}" Value="{x:Static models:SopType.Develop}">
+                                                    <Setter Property="Background" Value="{DynamicResource ButtonWarningBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="{DynamicResource PioSopChipMass}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SopType}" Value="{x:Null}">
+                                                        <Setter Property="Text" Value="{DynamicResource PioSopChipNew}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding SopType}" Value="{x:Static models:SopType.Develop}">
+                                                        <Setter Property="Text" Value="{DynamicResource PioSopChipDevelop}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

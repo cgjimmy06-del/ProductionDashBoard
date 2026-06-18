@@ -414,6 +414,13 @@
     <sys:String x:Key="PioDialogDescription">Ghi chú</sys:String>
     <sys:String x:Key="PioDialogActualQty">SL thực</sys:String>
     <sys:String x:Key="PioDialogRemainingQty">SL còn lại</sys:String>
+    <sys:String x:Key="PioSopChipNew">Mới</sys:String>
+    <sys:String x:Key="PioSopChipDevelop">PT</sys:String>
+    <sys:String x:Key="PioSopChipMass">SL</sys:String>
+    <sys:String x:Key="PioFilterSopAll">Tất cả</sys:String>
+    <sys:String x:Key="PioFilterSopNew">SP mới</sys:String>
+    <sys:String x:Key="PioFilterSopDevelop">Phát triển</sys:String>
+    <sys:String x:Key="PioFilterSopMass">SL hàng loạt</sys:String>
     <!--#endregion-->
 
     <!--#region Quản lý lịch sản xuất (Schedule) -->

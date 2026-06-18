@@ -18,6 +18,7 @@ namespace FProductionDashBoard.Repositories
             return await ctx.Schedules
                 .Include(s => s.Product).ThenInclude(p => p!.Part)
                 .Include(s => s.Product).ThenInclude(p => p!.Model)
+                .Include(s => s.Product).ThenInclude(p => p!.SopChecklists)
                 .Include(s => s.Process)
                 .Include(s => s.ReceivedByEmployee)
                 .Include(s => s.ScheduledByEmployee)

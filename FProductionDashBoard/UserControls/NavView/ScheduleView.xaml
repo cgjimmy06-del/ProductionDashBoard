@@ -446,6 +446,12 @@
                                             <DataTrigger Binding="{Binding DerivedBadgeKey}" Value="CancelNotice">
                                                 <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
                                             </DataTrigger>
+                                            <DataTrigger Binding="{Binding DerivedBadgeKey}" Value="Develop">
+                                                <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding DerivedBadgeKey}" Value="NewProduct">
+                                                <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                            </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </TextBlock.Style>

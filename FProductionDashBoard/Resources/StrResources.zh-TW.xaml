@@ -414,6 +414,13 @@
     <sys:String x:Key="PioDialogDescription">備註</sys:String>
     <sys:String x:Key="PioDialogActualQty">實際數量</sys:String>
     <sys:String x:Key="PioDialogRemainingQty">剩餘數量</sys:String>
+    <sys:String x:Key="PioSopChipNew">新</sys:String>
+    <sys:String x:Key="PioSopChipDevelop">開</sys:String>
+    <sys:String x:Key="PioSopChipMass">量</sys:String>
+    <sys:String x:Key="PioFilterSopAll">全部</sys:String>
+    <sys:String x:Key="PioFilterSopNew">新產品</sys:String>
+    <sys:String x:Key="PioFilterSopDevelop">開發</sys:String>
+    <sys:String x:Key="PioFilterSopMass">量產</sys:String>
     <!--#endregion-->
 
     <!--#region 排單管理（Schedule） -->

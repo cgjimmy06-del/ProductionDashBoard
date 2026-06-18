@@ -743,6 +743,18 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("SchDerivedBadgeCancelNotice", resourceCulture);
             }
         }
+
+        internal static string SchDerivedBadgeDevelop {
+            get {
+                return ResourceManager.GetString("SchDerivedBadgeDevelop", resourceCulture);
+            }
+        }
+
+        internal static string SchDerivedBadgeNewProduct {
+            get {
+                return ResourceManager.GetString("SchDerivedBadgeNewProduct", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   查詢類似 ✓ Production Done 的當地語系化字串。
