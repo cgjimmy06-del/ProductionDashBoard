@@ -483,6 +483,8 @@
     <sys:String x:Key="SchOrderEnd">✓ Done</sys:String>
     <sys:String x:Key="SchOrderCancel">✕ Cancel</sys:String>
     <sys:String x:Key="SchDetailBack">← Back</sys:String>
+    <sys:String x:Key="SchDetailArrangeTuning">Schedule Tuning</sys:String>
+    <sys:String x:Key="SchDetailTuningInProgress">Tuning...</sys:String>
     <sys:String x:Key="SchDetailPending">Pending:</sys:String>
     <sys:String x:Key="SchDetailInProduction">In Production:</sys:String>
     <sys:String x:Key="SchDetailPrograms">Programs:</sys:String>

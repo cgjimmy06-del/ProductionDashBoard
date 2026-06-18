@@ -595,6 +595,75 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
+        // ─── 安排調試 ─────────────────────────────────────────────────────────────
+
+        [RelayCommand(CanExecute = nameof(CanArrangeTuning))]
+        private async Task ArrangeTuningAsync()
+        {
+            var card = SelectedEquipmentCard;
+            if (card == null) return;
+
+            if (card.ActiveTuning != null) return;
+
+            List<EquipmentProduct> rawList;
+            try
+            {
+                rawList = await _core.Data.GetEquipmentProductsByEquipmentAsync(card.EquipmentId);
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog($"[{card.Name}] 調試品項載入失敗，請檢查連線", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ArrangeTuningAsync] {ex.Message}");
+                return;
+            }
+
+            var currentUser = _core.Authorization.CurrentUser!;
+            var items = rawList
+                .OrderBy(ep => ep.SeqNo)
+                .Select(ep => new EquipmentProductItem
+                {
+                    EquipmentProductId = ep.EquipmentProductId,
+                    SopId              = ep.SopId,
+                    SeqNo              = ep.SeqNo,
+                    DisplayLabel       = BuildTuningProductLabel(ep),
+                    ProductionStatus   = ep.ProductionStatus
+                })
+                .ToList();
+
+            var vm = new TuningDialogViewModel(
+                $"{Properties.Resources.ComStrDevice}: {card.Name}",
+                $"{Properties.Resources.ComStrUser}: {currentUser.Name}",
+                items);
+            _dialog.ShowDialog(vm);
+
+            if (!vm.IsConfirmed || vm.Result == null) return;
+
+            var result = vm.Result;
+            try
+            {
+                await _core.Data.StartProgramTuningAsync(
+                    card.EquipmentId, result.EquipmentProductId, result.TuningType, currentUser.Id, DateTime.Now);
+                _core.Log.AddLog($"[{card.Name}] 調試已安排", LogLevel.Info);
+                await LoadAllAsync();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog($"[{card.Name}] 調試啟動失敗，請檢查連線", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ArrangeTuningAsync] {ex.Message}");
+            }
+        }
+
+        private bool CanArrangeTuning() => _core.Authorization.HasPermission(PermissionId.OperateTuning);
+
+        private static string BuildTuningProductLabel(EquipmentProduct? ep)
+        {
+            if (ep?.Sop?.Product == null) return string.Empty;
+            var product = ep.Sop.Product;
+            var productName = $"{product.Part?.PartNo}_{product.Model?.Name}";
+            var processName = ep.Sop.Process?.Name ?? string.Empty;
+            return $"#{ep.SeqNo}  {productName} · {processName}";
+        }
+
         // ─── 重新整理 ─────────────────────────────────────────────────────────────
 
         [RelayCommand]

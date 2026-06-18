@@ -483,6 +483,8 @@
     <sys:String x:Key="SchOrderEnd">✓ 完成</sys:String>
     <sys:String x:Key="SchOrderCancel">✕ 取消</sys:String>
     <sys:String x:Key="SchDetailBack">← 返回</sys:String>
+    <sys:String x:Key="SchDetailArrangeTuning">安排調試</sys:String>
+    <sys:String x:Key="SchDetailTuningInProgress">調試中</sys:String>
     <sys:String x:Key="SchDetailPending">待生產：</sys:String>
     <sys:String x:Key="SchDetailInProduction">生產中：</sys:String>
     <sys:String x:Key="SchDetailPrograms">可生產程式：</sys:String>
