@@ -595,6 +595,108 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
+        // ─── 安排調試 ─────────────────────────────────────────────────────────────
+
+        [RelayCommand(CanExecute = nameof(CanArrangeTuning))]
+        private async Task ArrangeTuningAsync()
+        {
+            var card = SelectedEquipmentCard;
+            if (card == null) return;
+
+            if (card.ActiveTuning != null)
+                await EndTuningAsync(card);
+            else
+                await StartTuningAsync(card);
+        }
+
+        private async Task StartTuningAsync(ScheduleEquipmentCardViewModel card)
+        {
+            List<EquipmentProduct> rawList;
+            try
+            {
+                rawList = await _core.Data.GetEquipmentProductsByEquipmentAsync(card.EquipmentId);
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog($"[{card.Name}] 調試品項載入失敗，請檢查連線", LogLevel.Error);
+                _core.Log.AddErrorLog($"[StartTuningAsync] {ex.Message}");
+                return;
+            }
+
+            var currentUser = _core.Authorization.CurrentUser!;
+            var items = rawList
+                .OrderBy(ep => ep.SeqNo)
+                .Select(ep => new EquipmentProductItem
+                {
+                    EquipmentProductId = ep.EquipmentProductId,
+                    SopId              = ep.SopId,
+                    SeqNo              = ep.SeqNo,
+                    DisplayLabel       = BuildTuningProductLabel(ep),
+                    ProductionStatus   = ep.ProductionStatus
+                })
+                .ToList();
+
+            var vm = new TuningDialogViewModel(
+                $"{Properties.Resources.ComStrDevice}: {card.Name}",
+                $"{Properties.Resources.ComStrUser}: {currentUser.Name}",
+                items);
+            _dialog.ShowDialog(vm);
+
+            if (!vm.IsConfirmed || vm.Result == null) return;
+
+            var result = vm.Result;
+            try
+            {
+                await _core.Data.StartProgramTuningAsync(
+                    card.EquipmentId, result.EquipmentProductId, result.TuningType, currentUser.Id, DateTime.Now);
+                _core.Log.AddLog($"[{card.Name}] 調試已安排", LogLevel.Info);
+                await LoadAllAsync();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog($"[{card.Name}] 調試啟動失敗，請檢查連線", LogLevel.Error);
+                _core.Log.AddErrorLog($"[StartTuningAsync] {ex.Message}");
+            }
+        }
+
+        private async Task EndTuningAsync(ScheduleEquipmentCardViewModel card)
+        {
+            var tuning = card.ActiveTuning!;
+            var typeLabel = tuning.TuningType == TuningType.Teaching
+                ? Properties.Resources.TuningInProgressTeaching
+                : Properties.Resources.TuningInProgressOffset;
+            var message = $"{Properties.Resources.SchEndTuningConfirmMessage}\n" +
+                          $"{Properties.Resources.ComStrDevice}: {card.Name}  {typeLabel}\n" +
+                          $"{Properties.Resources.SchEndTuningStarted}: {tuning.StartedAt:MM/dd HH:mm}";
+
+            var confirmVm = new DialogBaseViewModel<bool>(message);
+            _dialog.ShowDialog(confirmVm);
+            if (!confirmVm.IsConfirmed) return;
+
+            try
+            {
+                await _core.Data.EndProgramTuningAsync(tuning.ProgramTuningId, DateTime.Now);
+                _core.Log.AddLog($"[{card.Name}] 調試已結束", LogLevel.Success);
+                await LoadAllAsync();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog($"[{card.Name}] 調試結束失敗，狀態保留可重試，請檢查連線", LogLevel.Error);
+                _core.Log.AddErrorLog($"[EndTuningAsync] {ex.Message}");
+            }
+        }
+
+        private bool CanArrangeTuning() => _core.Authorization.HasPermission(PermissionId.OperateTuning);
+
+        private static string BuildTuningProductLabel(EquipmentProduct? ep)
+        {
+            if (ep?.Sop?.Product == null) return string.Empty;
+            var product = ep.Sop.Product;
+            var productName = $"{product.Part?.PartNo}_{product.Model?.Name}";
+            var processName = ep.Sop.Process?.Name ?? string.Empty;
+            return $"#{ep.SeqNo}  {productName} · {processName}";
+        }
+
         // ─── 重新整理 ─────────────────────────────────────────────────────────────
 
         [RelayCommand]

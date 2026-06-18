@@ -483,6 +483,8 @@
     <sys:String x:Key="SchOrderEnd">✓ Hoàn thành</sys:String>
     <sys:String x:Key="SchOrderCancel">✕ Hủy</sys:String>
     <sys:String x:Key="SchDetailBack">← Quay lại</sys:String>
+    <sys:String x:Key="SchDetailArrangeTuning">Lên lịch đ.chỉnh</sys:String>
+    <sys:String x:Key="SchDetailTuningInProgress">Đang đ.chỉnh</sys:String>
     <sys:String x:Key="SchDetailPending">Chờ SX:</sys:String>
     <sys:String x:Key="SchDetailInProduction">Đang SX:</sys:String>
     <sys:String x:Key="SchDetailPrograms">CT khả dụng:</sys:String>
