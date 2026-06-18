@@ -43,7 +43,10 @@ namespace FProductionDashBoard.UserControls
             _subscribedSession = session;
 
             if (session != null)
+            {
                 session.Messages.CollectionChanged += OnMessagesChanged;
+                Dispatcher.InvokeAsync(MessageScrollViewer.ScrollToBottom);
+            }
         }
 
         private void OnMessagesChanged(object? sender, NotifyCollectionChangedEventArgs e)

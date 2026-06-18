@@ -1,4 +1,5 @@
 ﻿using FProductionDashBoard.Models;
+using FProductionDashBoard.Services.AiTools;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections;
@@ -318,10 +319,10 @@ namespace FProductionDashBoard
             var resources = Application.Current.Resources;
             var resKey = (value as string) switch
             {
-                "All"      => "AiModeAll",
-                "Chat"     => "AiModeChat",
-                "Schedule" => "AiModeSchedule",
-                _          => null,
+                AiAgentMode.All      => "AiModeAll",
+                AiAgentMode.Chat     => "AiModeChat",
+                AiAgentMode.Schedule => "AiModeSchedule",
+                _                    => null,
             };
             return resKey != null && resources[resKey] is string label ? label : value?.ToString() ?? string.Empty;
         }

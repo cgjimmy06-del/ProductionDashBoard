@@ -33,12 +33,12 @@ namespace FProductionDashBoard.ViewModels
         #region -- 歷史與分類 --
         [ObservableProperty] private bool isHistoryVisible = false;
         [ObservableProperty] private string searchText = "";
-        [ObservableProperty] private string selectedMode = "Chat";
-        [ObservableProperty] private string selectedHistoryFilter = "All";
+        [ObservableProperty] private string selectedMode = AiAgentMode.Chat;
+        [ObservableProperty] private string selectedHistoryFilter = AiAgentMode.All;
 
         public ObservableCollection<ChatSession> AllSessions { get; } = new();
-        public List<string> AvailableModes    { get; } = ["Chat", "Schedule"];
-        public List<string> HistoryFilterOptions { get; } = ["All", "Chat", "Schedule"];
+        public List<string> AvailableModes    { get; } = [AiAgentMode.Chat, AiAgentMode.Schedule];
+        public List<string> HistoryFilterOptions { get; } = [AiAgentMode.All, AiAgentMode.Chat, AiAgentMode.Schedule];
         public ICollectionView FilteredSessions { get; }
         #endregion
 
@@ -128,6 +128,8 @@ namespace FProductionDashBoard.ViewModels
         {
             var text = InputText.Trim();
             if (string.IsNullOrEmpty(text)) return;
+
+            if (_aiChatService.IsConfigured) ConfigWarning = null;
 
             CurrentSession.Messages.Add(new ChatMessage
             {
