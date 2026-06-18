@@ -32,6 +32,8 @@ namespace FProductionDashBoard.ViewModels
         public const string Complete     = "Complete";
         public const string Partial      = "Partial";
         public const string CancelNotice = "CancelNotice";
+        public const string Develop      = "Develop";
+        public const string NewProduct   = "NewProduct";
     }
 
     public partial class ScheduleViewModel : ObservableObject
@@ -234,7 +236,7 @@ namespace FProductionDashBoard.ViewModels
             var today = DateTime.Today;
             foreach (var s in _allSchedules)
             {
-                (s.DerivedBadge, s.DerivedBadgeKey) = GetDerivedBadge(s.ScheduleId);
+                (s.DerivedBadge, s.DerivedBadgeKey) = GetDerivedBadge(s);
 
                 if (s.Status == ScheduleStatus.Pending && s.ReceivedAt.HasValue)
                 {
@@ -253,37 +255,38 @@ namespace FProductionDashBoard.ViewModels
 
                 var activeOrders = _allOrders.Where(o =>
                     o.ScheduleId == s.ScheduleId &&
-                    (o.Status == OrderProductionStatus.Pending || o.Status == OrderProductionStatus.InProduction)).ToList();
+                    (o.Status != OrderProductionStatus.Cancelled)).ToList();
                 s.ActiveOrderCount     = activeOrders.Count;
                 s.ActiveEquipmentCount = activeOrders.Select(o => o.EquipmentId).Distinct().Count();
             }
         }
 
-        private (string? badge, string? key) GetDerivedBadge(int scheduleId)
+        private (string? badge, string? key) GetDerivedBadge(ScheduleUiModel schedule)
         {
-            var orders = _allOrders.Where(o => o.ScheduleId == scheduleId).ToList();
-            if (!orders.Any()) return (null, null);
+            var orders = _allOrders.Where(o => o.ScheduleId == schedule.ScheduleId).ToList();
 
             if (orders.Any(o => o.Status == OrderProductionStatus.InProduction))
                 return (Properties.Resources.SchDerivedBadgeInProduction, DerivedBadgeKeys.InProduction);
 
             var nonCancelled = orders.Where(o => o.Status != OrderProductionStatus.Cancelled).ToList();
-            if (!nonCancelled.Any())
+            if (orders.Any() && !nonCancelled.Any())
                 return (Properties.Resources.SchDerivedBadgeCancelNotice, DerivedBadgeKeys.CancelNotice);
 
-            if (nonCancelled.All(o => o.Status == OrderProductionStatus.Completed))
+            if (nonCancelled.Any() && nonCancelled.All(o => o.Status == OrderProductionStatus.Completed))
             {
-                var schedule = _allSchedules.FirstOrDefault(s => s.ScheduleId == scheduleId);
-                if (schedule != null)
-                {
-                    var actualQty = nonCancelled.Sum(o => o.Quantity ?? 0);
-                    return actualQty >= schedule.Quantity
-                        ? (Properties.Resources.SchDerivedBadgeComplete, DerivedBadgeKeys.Complete)
-                        : (Properties.Resources.SchDerivedBadgePartial, DerivedBadgeKeys.Partial);
-                }
+                var actualQty = nonCancelled.Sum(o => o.Quantity ?? 0);
+                return actualQty >= schedule.Quantity
+                    ? (Properties.Resources.SchDerivedBadgeComplete, DerivedBadgeKeys.Complete)
+                    : (Properties.Resources.SchDerivedBadgePartial, DerivedBadgeKeys.Partial);
             }
 
-            return (null, null);
+            // 生產 Badge 為空時，根據 SopType 顯示 SOP badge
+            return schedule.SopType switch
+            {
+                null                 => (Properties.Resources.SchDerivedBadgeNewProduct, DerivedBadgeKeys.NewProduct),
+                Models.SopType.Develop => (Properties.Resources.SchDerivedBadgeDevelop,   DerivedBadgeKeys.Develop),
+                _                    => (null, null)
+            };
         }
 
         private bool IsWithinDateRange(ScheduleUiModel s)
@@ -426,7 +429,9 @@ namespace FProductionDashBoard.ViewModels
                 .Where(o => o.EquipmentId == SelectedEquipmentCard.EquipmentId)
                 .OrderBy(o => o.Status).ThenBy(o => o.OrderId)
                 .ToList();
-            SelectedEquipmentOrders      = orders;
+
+            SelectedEquipmentOrders      = [.. orders.Where(
+                o => o.Status == OrderProductionStatus.Pending || o.Status == OrderProductionStatus.InProduction)];
             EquipDetailPendingCount      = orders.Count(o => o.Status == OrderProductionStatus.Pending);
             EquipDetailInProductionCount = orders.Count(o => o.Status == OrderProductionStatus.InProduction);
             EquipDetailPendingQty        = orders.Where(o => o.Status == OrderProductionStatus.Pending).Sum(o => o.Quantity ?? 0);

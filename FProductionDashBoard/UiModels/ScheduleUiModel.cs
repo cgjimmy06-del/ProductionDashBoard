@@ -36,6 +36,9 @@ namespace FProductionDashBoard.UiModels
         public string? Description { get; set; }
         public int? ParentId { get; set; }
 
+        // SOP 狀態：null=無 SOP（新產品）、Develop=開發、其他=量產
+        public SopType? SopType { get; init; }
+
         // UI 衍生欄位，由 ScheduleViewModel 在載入後計算並設定
         public string? DerivedBadge { get; set; }
         public string? DerivedBadgeKey { get; set; }  // stable key for DataTrigger/logic: InProduction / Complete / Partial / CancelNotice
@@ -75,7 +78,9 @@ namespace FProductionDashBoard.UiModels
                 ReleasedByName  = s.ReleasedByEmployee?.Name,
                 ReleasedAt      = s.ReleasedAt,
                 Description     = s.Description,
-                ParentId        = s.ParentId
+                ParentId        = s.ParentId,
+                SopType         = s.Product?.SopChecklists
+                    ?.FirstOrDefault(sc => sc.ProcessId == s.ProcessId)?.SopType
             };
         }
     }
