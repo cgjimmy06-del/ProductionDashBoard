@@ -390,6 +390,12 @@
   <data name="SchCancelOrderDescLabel" xml:space="preserve">
     <value>Lý do (tuỳ chọn)</value>
   </data>
+  <data name="SchEndTuningConfirmMessage" xml:space="preserve">
+    <value>Kết thúc đ.chỉnh thiết bị sau?</value>
+  </data>
+  <data name="SchEndTuningStarted" xml:space="preserve">
+    <value>Bắt đầu lúc</value>
+  </data>
   <data name="SchOrderStatusPending" xml:space="preserve">
     <value>Chờ SX</value>
   </data>

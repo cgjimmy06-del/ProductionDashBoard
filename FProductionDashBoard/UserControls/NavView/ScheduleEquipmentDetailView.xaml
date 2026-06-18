@@ -44,7 +44,7 @@
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
                         <Setter Property="Content"    Value="{DynamicResource SchDetailTuningInProgress}"/>
-                        <Setter Property="Background" Value="{DynamicResource WarningBrush}"/>
+                        <Setter Property="Background" Value="{DynamicResource ButtonWarningBrush}"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding SelectedEquipmentCard.ActiveTuning}" Value="{x:Null}">
                                 <Setter Property="Content"    Value="{DynamicResource SchDetailArrangeTuning}"/>
