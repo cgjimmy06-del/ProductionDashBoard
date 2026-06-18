@@ -27,6 +27,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private int statTotalQty;
         [ObservableProperty] private int statPending;
         [ObservableProperty] private int statPendingQty;
+        [ObservableProperty] private int statPendingDevelopCount;
+        [ObservableProperty] private int statPendingDevelopQty;
         [ObservableProperty] private int statScheduled;
         [ObservableProperty] private int statScheduledQty;
         [ObservableProperty] private int statCompleted;
@@ -36,6 +38,7 @@ namespace FProductionDashBoard.ViewModels
 
         // 篩選
         [ObservableProperty] private ScheduleStatus? statusFilter;
+        [ObservableProperty] private string sopFilter = "All";
         [ObservableProperty] private string searchText = string.Empty;
         [ObservableProperty] private string processFilter = string.Empty;
 
@@ -69,8 +72,10 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private WorkProcess? selectedProcess;
 
         public IReadOnlyList<ScheduleStatusFilterOption> StatusFilterOptions { get; }
+        public IReadOnlyList<PioSopFilterOption> SopFilterOptions { get; }
 
         partial void OnStatusFilterChanged(ScheduleStatus? value) => ApplyFilter();
+        partial void OnSopFilterChanged(string value) => ApplyFilter();
         partial void OnSearchTextChanged(string value) => ApplyFilter();
         partial void OnProcessFilterChanged(string value) => ApplyFilter();
         partial void OnFormPartFilterChanged(string value) => RebuildFilteredProducts();
@@ -98,6 +103,7 @@ namespace FProductionDashBoard.ViewModels
             StatusFilterOptions = new ScheduleStatusFilterOption[] { new(null) }
                 .Concat(Enum.GetValues<ScheduleStatus>().Select(s => new ScheduleStatusFilterOption(s)))
                 .ToArray();
+            SopFilterOptions = new PioSopFilterOption[] { new("All"), new("New"), new("Develop"), new("Mass") };
 
             SchedulesView = CollectionViewSource.GetDefaultView(_all);
             SchedulesView.Filter = FilterSchedule;
@@ -160,6 +166,9 @@ namespace FProductionDashBoard.ViewModels
             StatTotalQty     = src.Where(s => s.Status != ScheduleStatus.Cancelled).Sum(s => s.Quantity);
             StatPending      = src.Count(s => s.Status == ScheduleStatus.Pending);
             StatPendingQty   = src.Where(s => s.Status == ScheduleStatus.Pending).Sum(s => s.Quantity);
+            var pendingDevelop = src.Where(s => s.Status == ScheduleStatus.Pending && s.SopType == SopType.Develop).ToList();
+            StatPendingDevelopCount = pendingDevelop.Count;
+            StatPendingDevelopQty   = pendingDevelop.Sum(s => s.Quantity);
             StatScheduled    = src.Count(s => s.Status == ScheduleStatus.Scheduled);
             StatScheduledQty = src.Where(s => s.Status == ScheduleStatus.Scheduled).Sum(s => s.ActualQuantity ?? 0);
             StatCompleted    = src.Count(s => s.Status == ScheduleStatus.Completed);
@@ -176,6 +185,15 @@ namespace FProductionDashBoard.ViewModels
 
             if (StatusFilter.HasValue && s.Status != StatusFilter.Value)
                 return false;
+
+            bool sopMatch = SopFilter switch
+            {
+                "New"     => s.SopType == null,
+                "Develop" => s.SopType == SopType.Develop,
+                "Mass"    => s.SopType != null && s.SopType != SopType.Develop,
+                _         => true
+            };
+            if (!sopMatch) return false;
 
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
@@ -478,4 +496,5 @@ namespace FProductionDashBoard.ViewModels
     }
 
     public sealed record ScheduleStatusFilterOption(ScheduleStatus? Value);
+    public sealed record PioSopFilterOption(string Value);
 }

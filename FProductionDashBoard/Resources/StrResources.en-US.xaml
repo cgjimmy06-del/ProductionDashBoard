@@ -414,6 +414,13 @@
     <sys:String x:Key="PioDialogDescription">Remarks</sys:String>
     <sys:String x:Key="PioDialogActualQty">Actual Qty</sys:String>
     <sys:String x:Key="PioDialogRemainingQty">Remaining Qty</sys:String>
+    <sys:String x:Key="PioSopChipNew">New</sys:String>
+    <sys:String x:Key="PioSopChipDevelop">Dev</sys:String>
+    <sys:String x:Key="PioSopChipMass">Mass</sys:String>
+    <sys:String x:Key="PioFilterSopAll">All</sys:String>
+    <sys:String x:Key="PioFilterSopNew">New</sys:String>
+    <sys:String x:Key="PioFilterSopDevelop">Dev</sys:String>
+    <sys:String x:Key="PioFilterSopMass">Mass</sys:String>
     <!--#endregion-->
 
     <!--#region Schedule Management -->

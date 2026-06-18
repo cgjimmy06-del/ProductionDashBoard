@@ -483,6 +483,14 @@
         </Setter>
     </Style>
 
+    <!-- SOP 狀態 Chip（ProductInOutView DataGrid） -->
+    <Style x:Key="PioSopChipStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="4,2"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
     <!-- 程式庫管理統計小卡 -->
     <Style x:Key="StatCardBorderStyle" TargetType="Border">
         <Setter Property="CornerRadius" Value="8"/>
