@@ -15,24 +15,46 @@
             <RowDefinition Height="*"/>     <!-- order DataGrid -->
         </Grid.RowDefinitions>
 
-        <!-- Header：返回按鈕 + 設備名稱 -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,4,0,8">
-            <Button Content="{DynamicResource SchDetailBack}"
-                    Style="{DynamicResource FunctionButtonStyle}"
-                    Background="{DynamicResource SecondaryBrush}"
-                    Padding="8,2" Height="Auto" Margin="0,0,10,0"
-                    Command="{Binding DeselectEquipmentCardCommand}"/>
-            <TextBlock Text="{Binding SelectedEquipmentCard.Name}"
-                       FontSize="16" FontWeight="SemiBold"
-                       Foreground="{DynamicResource TextPrimaryBrush}"
-                       VerticalAlignment="Center"/>
-            <TextBlock FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
-                       VerticalAlignment="Center" Margin="4,0,0,0">
-                <Run Text="("/>
-                <Run Text="{Binding SelectedEquipmentCard.Code, Mode=OneWay}"/>
-                <Run Text=")"/>
-            </TextBlock>
-        </StackPanel>
+        <!-- Header：返回按鈕 + 設備名稱 + 安排調試 -->
+        <Grid Grid.Row="0" Margin="0,4,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="{DynamicResource SchDetailBack}"
+                        Style="{DynamicResource FunctionButtonStyle}"
+                        Background="{DynamicResource SecondaryBrush}"
+                        Padding="8,2" Height="Auto" Margin="0,0,10,0"
+                        Command="{Binding DeselectEquipmentCardCommand}"/>
+                <TextBlock Text="{Binding SelectedEquipmentCard.Name}"
+                           FontSize="16" FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
+                           VerticalAlignment="Center"/>
+                <TextBlock FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                           VerticalAlignment="Center" Margin="4,0,0,0">
+                    <Run Text="("/>
+                    <Run Text="{Binding SelectedEquipmentCard.Code, Mode=OneWay}"/>
+                    <Run Text=")"/>
+                </TextBlock>
+            </StackPanel>
+            <Button Grid.Column="1"
+                    Padding="8,2" Height="Auto"
+                    Command="{Binding ArrangeTuningCommand}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                        <Setter Property="Content"    Value="{DynamicResource SchDetailTuningInProgress}"/>
+                        <Setter Property="Background" Value="{DynamicResource ButtonWarningBrush}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedEquipmentCard.ActiveTuning}" Value="{x:Null}">
+                                <Setter Property="Content"    Value="{DynamicResource SchDetailArrangeTuning}"/>
+                                <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
 
         <!-- Stats bar -->
         <Border Grid.Row="1" Style="{StaticResource StatCardBorderStyle}" Margin="0,0,0,8">

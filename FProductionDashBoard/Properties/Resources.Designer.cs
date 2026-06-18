@@ -725,6 +725,12 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("SchCancelOrderDescLabel", resourceCulture);
             }
         }
+        internal static string SchEndTuningConfirmMessage {
+            get { return ResourceManager.GetString("SchEndTuningConfirmMessage", resourceCulture); }
+        }
+        internal static string SchEndTuningStarted {
+            get { return ResourceManager.GetString("SchEndTuningStarted", resourceCulture); }
+        }
         
         /// <summary>
         ///   查詢類似 Cancel Order 的當地語系化字串。
