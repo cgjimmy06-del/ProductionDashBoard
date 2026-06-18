@@ -21,13 +21,13 @@ public class AiAgentToolService
 
     public IReadOnlyList<AiToolDefinition> GetToolsForMode(string mode) => mode switch
     {
-        "Schedule" => _scheduleTools,
+        AiAgentMode.Schedule => _scheduleTools,
         _ => []
     };
 
     public string GetSystemPromptForMode(string mode) => mode switch
     {
-        "Schedule" =>
+        AiAgentMode.Schedule =>
             "你是工廠現場生產管理系統的 AI 助理，專門協助排單分析。" +
             "回答前請先使用 query_schedules 工具取得最新資料，再以白話整理分析結果。" +
             "不可憑空猜測數字或排單狀態。" +
@@ -63,7 +63,13 @@ public class AiAgentToolService
         DateOnly? dateTo   = TryParseDate(args["dateTo"]?.GetValue<string>());
         string?   status   = args["status"]?.GetValue<string>();
         string?   keyword  = args["productKeyword"]?.GetValue<string>();
-        int       limit    = Math.Min(args["limit"]?.GetValue<int>() ?? 50, 100);
+        int limit = 50;
+        if (args["limit"] is JsonValue lv)
+        {
+            if (!lv.TryGetValue<int>(out limit))
+                int.TryParse(lv.ToString(), out limit);
+        }
+        limit = Math.Min(limit, 100);
 
         var filtered = all.AsEnumerable();
 
@@ -85,7 +91,8 @@ public class AiAgentToolService
                 (s.Product?.Part?.PartNo?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
                 (s.Product?.Model?.Name?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false));
 
-        var results = filtered.Take(limit).Select(s => new
+        var filteredList = filtered.ToList();
+        var results = filteredList.Take(limit).Select(s => new
         {
             id          = s.ScheduleId,
             part        = s.Product?.Part?.PartNo,
@@ -100,7 +107,7 @@ public class AiAgentToolService
             createAt    = s.CreateAt?.ToString("yyyy-MM-dd")
         }).ToList();
 
-        return JsonSerializer.Serialize(new { total = filtered.Count(), results });
+        return JsonSerializer.Serialize(new { total = filteredList.Count, results });
     }
 
     private static DateOnly? TryParseDate(string? value) =>

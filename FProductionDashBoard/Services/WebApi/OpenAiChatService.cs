@@ -28,9 +28,10 @@ namespace FProductionDashBoard.Services.WebApi
 
         public bool IsConfigured =>
             !string.IsNullOrEmpty(_options.BaseUrl) &&
-            !string.IsNullOrEmpty(_systemConfig.Current.AiApiKey);
+            !string.IsNullOrEmpty(_systemConfig.Current.AiApiKey) &&
+            _options.AvailableModels.Length > 0;
 
-        public string[] AvailableModels => ["gpt-5.4-mini", "gpt-5.4"];
+        public string[] AvailableModels => _options.AvailableModels;
 
         public async Task<string> SendAsync(
             string model,
@@ -103,8 +104,8 @@ namespace FProductionDashBoard.Services.WebApi
                 var funcCallNode = output.FirstOrDefault(n => n?["type"]?.GetValue<string>() == "function_call");
                 if (funcCallNode == null)
                 {
-                    // 一般文字回應，結束迴圈
-                    return output[0]!["content"]![0]!["text"]?.GetValue<string>() ?? "";
+                    var msgNode = output.FirstOrDefault(n => n?["type"]?.GetValue<string>() == "message");
+                    return msgNode?["content"]?[0]?["text"]?.GetValue<string>() ?? "";
                 }
 
                 // 執行工具
@@ -116,7 +117,10 @@ namespace FProductionDashBoard.Services.WebApi
                 var tool = tools?.FirstOrDefault(t => t.Name == funcName);
                 string toolResult;
                 if (tool != null)
-                    toolResult = await tool.Handler(argsNode);
+                {
+                    try   { toolResult = await tool.Handler(argsNode); }
+                    catch { toolResult = """{"error":"tool_failed"}"""; }
+                }
                 else
                     toolResult = """{"error":"unknown_tool"}""";
 
