@@ -127,7 +127,7 @@ builder.Property(e => e.IsCrossDay).HasColumnType("bit");
 1. 切回主分支 `develop` 並 `git pull` 至最新（不執行任何 merge 動作）
 2. 與遠端同步分支狀態：檢查原功能分支的遠端是否已被刪除——遠端仍存在則保留本地分支，遠端已刪除則清理對應本地分支
 3. 更新計畫與 memory（`project_*.md` 與 MEMORY.md 索引）
-4. 列出更新摘要
+4. 列出更新摘要：摘要本次 pull 後主分支新增的功能或變更內容（即本次 PR 帶入了什麼），而非列出操作步驟本身
 
 ### 建立新視窗或元件
 
