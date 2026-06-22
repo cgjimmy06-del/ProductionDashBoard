@@ -315,6 +315,7 @@
     <!--#region 接單服務-->
     <sys:String x:Key="DeviceInProduction">In Production</sys:String>
     <sys:String x:Key="AbbAutoModeChip">Auto</sys:String>
+    <sys:String x:Key="DeviceCardSopSectionTitle">SOP Guide</sys:String>
     <sys:String x:Key="QuickOrderButton">+ Quick Order</sys:String>
     <sys:String x:Key="StartProductionButton">Start Production</sys:String>
     <sys:String x:Key="EndProductionButton">End Production</sys:String>
