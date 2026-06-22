@@ -27,8 +27,12 @@ FProductionDashBoard/       # 視窗元件
 └── UiModels/               # 適用於 UI ViewModel 顯示的模型（對應 Entity）
 DeviceDrivers.Abb/          # 適用於 ABB 的 SDK，用於串接機械手設備
 DeviceDrivers.Abb.Tests/    # DeviceDrivers.Abb 的測試專案
+DeviceDrivers.Modbus/       # 適用於 Modbus 的 SDK，用於串接 Modbus 設備
+DeviceDrivers.Modbus.Tests/ # DeviceDrivers.Modbus 的測試專案
 FProductionDashBoard.Tests/ # FProductionDashBoard 的測試專案
 LogUploadApi/               # IIS 系統相關 Web API
+Database/                   # 資料庫 Schema / Seed / applied 版本腳本
+Docs/                       # 文件與操作手冊生成腳本（generate_report.py / generate_user_manual.py / index.html）
 ```
 
 ## 常用指令
@@ -111,11 +115,19 @@ builder.Property(e => e.IsCrossDay).HasColumnType("bit");
 
 ### Git 工作流程
 
-規則詳見 memory `feedback_per_pr_new_branch.md`。
+開分支與 commit 切分的通用規則見全域 CLAUDE.md，以下為本專案特定補充。
 
-- 每個 PR 開工前必須先用 `feature-branch` skill 從 `develop` 建立**該 PR 專屬**的新分支
-- 即使與前一個 PR 強相關，也不可在既有分支上接著開發
+**分支規範**（詳見 memory `feedback_per_pr_new_branch.md`）：
+
+- 每個 PR 開工前必須先用 `feature-branch` skill 從 `develop` 建立**該 PR 專屬**的新分支；即使與前一個 PR 強相關，也不可在既有分支上接著開發
 - 分支名格式：`feature/<功能簡稱>`（例：`feature/order-reception-service`）
+
+**驗證完成收尾流程**（使用者說「驗證完成」時觸發；此時遠端已 merge，本機不做任何 merge）：
+
+1. 切回主分支 `develop` 並 `git pull` 至最新（不執行任何 merge 動作）
+2. 與遠端同步分支狀態：檢查原功能分支的遠端是否已被刪除——遠端仍存在則保留本地分支，遠端已刪除則清理對應本地分支
+3. 更新計畫與 memory（`project_*.md` 與 MEMORY.md 索引）
+4. 列出更新摘要
 
 ### 建立新視窗或元件
 
@@ -149,4 +161,4 @@ builder.Property(e => e.IsCrossDay).HasColumnType("bit");
 
 遇到「需要在斷線時暫存寫入操作」等需求時，調用 memory `feedback_offline_service_sop.md` 的 6 步 SOP。
 
-必改的 6 個地方：`PendingOperation.cs`（enum）→ `XxxPayload.cs`（DTO）→ `XxxSyncHandler.cs`（Handler）→ `DataServiceV1.cs`（離線路徑）→ `App.xaml.cs`（AddTransient 註冊）→ ViewModel catch `OfflineOperationQueuedException`
+必改的 6 個地方：`PendingOperation.cs`（enum）→ `XxxPayload.cs`（DTO）→ `XxxSyncHandler.cs`（Handler）→ `DataService.cs`（離線路徑）→ `App.xaml.cs`（AddTransient 註冊）→ ViewModel catch `OfflineOperationQueuedException`
