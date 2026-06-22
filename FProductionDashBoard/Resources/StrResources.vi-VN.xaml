@@ -315,6 +315,7 @@
     <!--#region 接單服務-->
     <sys:String x:Key="DeviceInProduction">Đang sản xuất</sys:String>
     <sys:String x:Key="AbbAutoModeChip">Tự động</sys:String>
+    <sys:String x:Key="DeviceCardSopSectionTitle">Hướng dẫn SOP</sys:String>
     <sys:String x:Key="QuickOrderButton">+ Đặt hàng nhanh</sys:String>
     <sys:String x:Key="StartProductionButton">Bắt đầu sản xuất</sys:String>
     <sys:String x:Key="EndProductionButton">Kết thúc sản xuất</sys:String>

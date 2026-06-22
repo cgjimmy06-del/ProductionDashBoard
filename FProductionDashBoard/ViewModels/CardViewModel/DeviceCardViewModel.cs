@@ -69,6 +69,13 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty]
         private int currentAction = (int)UserAction.Producing; // 調試狀態
 
+        // SOP 資訊區
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasSopChecklist))]
+        private IReadOnlyList<string> _sopChecklistDisplayItems = [];
+        [ObservableProperty] private SopType? _currentSopType;
+        public bool HasSopChecklist => SopChecklistDisplayItems.Count > 0;
+
         // 調試計時
         [ObservableProperty] private bool isTuning = false;
         [ObservableProperty] private string tuningStatusText = string.Empty;
@@ -283,14 +290,50 @@ namespace FProductionDashBoard.ViewModels
                 if (CurrentProduct == null) CurrentProduct = new ProductInfo();
                 CurrentProduct.ProductId = order.SopProductId;
                 CurrentProduct.ProductName = CurrentProductDisplayName;
+                _ = LoadSopChecklistDisplayAsync(order.SopId);
             }
             else
             {
                 IsProducing = false;
                 CurrentProductDisplayName = Resources.NoCurrentProduct;
                 if (CurrentProduct != null) CurrentProduct = null;
+                SopChecklistDisplayItems = [];
+                CurrentSopType = null;
             }
         }
+
+        private async Task LoadSopChecklistDisplayAsync(int sopId)
+        {
+            try
+            {
+                var checklist = await _core.Data.GetSopChecklistWithItemsAsync(sopId);
+                if (checklist == null)
+                {
+                    SopChecklistDisplayItems = [];
+                    CurrentSopType = null;
+                    return;
+                }
+                CurrentSopType = checklist.SopType;
+                SopChecklistDisplayItems = checklist.Items
+                    .OrderBy(i => i.Seq)
+                    .Select(BuildSopItemDisplayText)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddErrorLog($"[LoadSopChecklistDisplayAsync] {ex.Message}");
+            }
+        }
+
+        private static string BuildSopItemDisplayText(SopChecklistItem item) => item.CheckType switch
+        {
+            CheckType.Station  => $"[{item.WorkstationNo}] {item.Material?.Name}",
+            CheckType.Fixture  => $"夾具：{item.Material?.Name}",
+            CheckType.Quantity => $"數量 {item.Quantity} 件",
+            CheckType.ManHour  => $"工時 {item.Quantity} 秒",
+            CheckType.Other    => item.Content ?? string.Empty,
+            _                  => string.Empty
+        };
 
         private void RefreshCurrentTimeSlotLabel()
         {
