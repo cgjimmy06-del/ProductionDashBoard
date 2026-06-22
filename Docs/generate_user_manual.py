@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import date
 
 OUTPUT_DIR = Path(__file__).parent
-VERSION_TAG = "v3.0.0"
+VERSION_TAG = "v3.2.0"
 DOCX_PATH  = OUTPUT_DIR / f"UserManual_PDB_{VERSION_TAG}.docx"
 PDF_PATH   = OUTPUT_DIR / f"UserManual_PDB_{VERSION_TAG}.pdf"
 REVIEW_DATE = date.today().strftime("%Y-%m-%d")
@@ -233,7 +233,7 @@ def generate_manual():
 
     doc.add_paragraph()
     for label, value in [
-        ("文件版本", f"{VERSION_TAG}（含排單管理 / 出入料管理 / 硬體設定 / ABB機械手 / Modbus TCP 設備支援）"),
+        ("文件版本", f"{VERSION_TAG}（含排單管理 / AI Agent / 出入料管理 / 硬體設定 / ABB機械手 / Modbus TCP 設備支援）"),
         ("適用對象", "現場操作人員、設備管理員、系統管理員"),
         ("語言版本", "繁體中文"),
         ("文件日期", REVIEW_DATE),
@@ -260,7 +260,8 @@ def generate_manual():
             ["v2.5", "2026-06-03", "AI-assisted",        "新增 6.8 硬體設定（PR#62）；補 ABB 機械手說明；離線優化說明"],
             ["v2.6", "2026-06-04", "AI-assisted",        "新增 7.3 Modbus TCP 設備（PR#64-65）；補設備卡片 Modbus 狀態說明；補 FAQ"],
             ["v2.7.2", "2026-06-09", "AI-assisted",    "新增第 6 章出入料管理（PR#73-74）；補日期篩選與效能強化說明（PR#75）；章節重新編號"],
-            [VERSION_TAG, REVIEW_DATE, "AI-assisted", "新增第 7 章排單管理（PR#81~84）；更新 5.1 設備卡片主次按鈕說明；補 Help 選單與 ABB 傳送開關說明（PR#85）；章節重新編號"],
+            ["v3.0.0", "2026-06-12", "AI-assisted",    "新增第 7 章排單管理（PR#81~84）；更新 5.1 設備卡片主次按鈕說明；補 Help 選單與 ABB 傳送開關說明（PR#85）；章節重新編號"],
+            [VERSION_TAG, REVIEW_DATE, "AI-assisted",   "新增 AI Agent 操作面板說明（PR#87~91）；補設備卡片 SOP 作業指引說明（PR#101）"],
         ],
         [2.0, 2.5, 3.5, 8.0]
     )
