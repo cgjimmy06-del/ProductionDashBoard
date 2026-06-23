@@ -34,6 +34,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly IDialogService _dialog;
         private readonly CardReaderHandler _cardReaderHandler;
         private readonly IConfigService<SystemConfigDto> _systemConfig;
+        private readonly ILicenseService _licenseService;
         #endregion
 
         [ObservableProperty] public string? systemUser;
@@ -77,7 +78,8 @@ namespace FProductionDashBoard.ViewModels
             IServiceProvider sp,
             IDialogService dialogService,
             ListsFromSql commonLists,
-            IConfigService<SystemConfigDto> systemConfig)
+            IConfigService<SystemConfigDto> systemConfig,
+            ILicenseService licenseService)
         {
             _core = core;
             _syncService = syncService;
@@ -86,6 +88,7 @@ namespace FProductionDashBoard.ViewModels
             _dialog = dialogService;
             CommonLists = commonLists;
             _systemConfig = systemConfig;
+            _licenseService = licenseService;
 
             _cardReaderHandler = new CardReaderHandler(
                 _core, sp.GetRequiredService<Services.WebApi.IErpApiService>(), _dialog, CommonLists);
