@@ -113,7 +113,7 @@ namespace FProductionDashBoard.ViewModels
             _onUserChanged = () => OnUserChanged();
             _core.Authorization.UserChanged += _onUserChanged;
 
-            // 關於 - 版本 / ABB SDK / AI API Key
+            // 關於 - 版本 / ABB SDK / AI API Key / 授權狀態
             ShowAboutCommand = new RelayCommand(() =>
             {
                 var title    = Application.Current.TryFindResource("SsAboutHeader") as string ?? "About";
@@ -125,9 +125,12 @@ namespace FProductionDashBoard.ViewModels
                 var aiStatus = !string.IsNullOrEmpty(_systemConfig.Current.AiApiKey)
                     ? Properties.Resources.AboutApiKeyConfigured
                     : Properties.Resources.AboutApiKeyNotConfigured;
+                var licenseStatus = Properties.Resources.ResourceManager
+                    .GetString($"LicenseStatus{_licenseService.Status}")
+                    ?? _licenseService.Status.ToString();
 
                 MessageBox.Show(
-                    $"{verLabel}: {AppVersion}\n\nABB PC SDK: {abbStatus}\nAI API Key: {aiStatus}",
+                    $"{verLabel}: {AppVersion}\n\nABB PC SDK: {abbStatus}\nAI API Key: {aiStatus}\nLicense: {licenseStatus}",
                     title, MessageBoxButton.OK, MessageBoxImage.Information);
             });
 

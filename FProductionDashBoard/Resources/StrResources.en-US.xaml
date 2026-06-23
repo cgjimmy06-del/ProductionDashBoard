@@ -495,6 +495,19 @@
     <sys:String x:Key="SchCancelOrderDescLabel">Reason (optional)</sys:String>
     <sys:String x:Key="SsAiApiKeyHeader">AI Settings</sys:String>
     <sys:String x:Key="SsAiApiKeyLabel">API Key</sys:String>
+    <sys:String x:Key="SsKeyAndLicense">Keys &amp; License</sys:String>
+    <sys:String x:Key="LicenseStatusValid">License Valid</sys:String>
+    <sys:String x:Key="LicenseStatusExpiringSoon">Expiring Soon</sys:String>
+    <sys:String x:Key="LicenseStatusExpired">License Expired</sys:String>
+    <sys:String x:Key="LicenseStatusInvalid">Invalid License</sys:String>
+    <sys:String x:Key="LicenseStatusTrial">Trial</sys:String>
+    <sys:String x:Key="LicenseStatusDevelopment">Development Mode</sys:String>
+    <sys:String x:Key="LicenseImportButton">Import License</sys:String>
+    <sys:String x:Key="LicenseDaysLeft">Days Remaining</sys:String>
+    <sys:String x:Key="LicenseFeatureCharts">Charts</sys:String>
+    <sys:String x:Key="LicenseFeatureScheduling">Scheduling</sys:String>
+    <sys:String x:Key="LicenseFeatureProgramLib">Program Library</sys:String>
+    <sys:String x:Key="LicenseFeatureMaterial">Material Mgmt</sys:String>
     <!--#endregion-->
     <!--#region AI Agent 面板 -->
     <sys:String x:Key="AiAgentTitle">AI Agent</sys:String>

@@ -24,6 +24,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly ILogUploadService _logUpload;
         private readonly IConfigService<SystemConfigDto> _systemConfig;
         private readonly IConfigService<HardwareConfigDto> _hardwareConfig;
+        private readonly ILicenseService _licenseService;
 
         private readonly PaletteHelper _paletteHelper = new PaletteHelper();
         private readonly Theme _lightTheme = Theme.Create(BaseTheme.Light,
@@ -117,18 +118,51 @@ namespace FProductionDashBoard.ViewModels
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
             ?.InformationalVersion ?? "unknown";
 
+        // 授權資訊
+        public string LicenseStatusText
+        {
+            get
+            {
+                var key = _licenseService.Status switch
+                {
+                    LicenseStatus.Valid             => "LicenseStatusValid",
+                    LicenseStatus.ValidExpiringSoon => "LicenseStatusExpiringSoon",
+                    LicenseStatus.Expired           => "LicenseStatusExpired",
+                    LicenseStatus.InvalidSignature  => "LicenseStatusInvalid",
+                    LicenseStatus.Trial             => "LicenseStatusTrial",
+                    LicenseStatus.TrialExpiringSoon => "LicenseStatusExpiringSoon",
+                    LicenseStatus.TrialExpired      => "LicenseStatusExpired",
+                    LicenseStatus.Development       => "LicenseStatusDevelopment",
+                    _                               => "LicenseStatusDevelopment",
+                };
+                return Application.Current.TryFindResource(key) as string ?? key;
+            }
+        }
+        public string LicenseCustomerName    => _licenseService.CustomerName;
+        public bool   HasLicenseCustomerName => !string.IsNullOrEmpty(_licenseService.CustomerName)
+                                                && _licenseService.Status != LicenseStatus.Development;
+        public string LicenseDaysRemainingText => _licenseService.DaysRemaining.ToString();
+        public bool   HasLicenseDaysRemaining  => _licenseService.ExpiryDate.HasValue;
+        public bool   IsChartsEnabled          => _licenseService.IsFeatureEnabled(LicensedFeature.Charts);
+        public bool   IsSchedulingEnabled      => _licenseService.IsFeatureEnabled(LicensedFeature.Scheduling);
+        public bool   IsProgramLibEnabled      => _licenseService.IsFeatureEnabled(LicensedFeature.ProgramLibrary);
+        public bool   IsMaterialEnabled        => _licenseService.IsFeatureEnabled(LicensedFeature.MaterialManagement);
+
         public ICommand ApplyCommand { get; }
         public IRelayCommand AddAttachmentCommand { get; }
         public IRelayCommand<string> RemoveAttachmentCommand { get; }
         public IAsyncRelayCommand UploadLogCommand { get; }
+        public ICommand ImportLicenseCommand { get; }
 
         public SystemSettingsViewModel(DashboardCoreServices core, ILogUploadService logUploadService,
-            IConfigService<SystemConfigDto> systemConfig, IConfigService<HardwareConfigDto> hardwareConfig)
+            IConfigService<SystemConfigDto> systemConfig, IConfigService<HardwareConfigDto> hardwareConfig,
+            ILicenseService licenseService)
         {
             _core = core;
             _logUpload = logUploadService;
             _systemConfig = systemConfig;
             _hardwareConfig = hardwareConfig;
+            _licenseService = licenseService;
             LoadFromSettings();
 
             AttachmentPaths.CollectionChanged += (_, _) => HasAttachments = AttachmentPaths.Count > 0;
@@ -153,6 +187,7 @@ namespace FProductionDashBoard.ViewModels
             AddAttachmentCommand = new RelayCommand(AddAttachment);
             RemoveAttachmentCommand = new RelayCommand<string>(path => AttachmentPaths.Remove(path!));
             UploadLogCommand = new AsyncRelayCommand(UploadLogAsync, () => !IsUploading && SelectedLogFile != null);
+            ImportLicenseCommand = new RelayCommand(() => { }, () => false);
 
             _core.Log.RefreshAvailableLogFiles();
         }
