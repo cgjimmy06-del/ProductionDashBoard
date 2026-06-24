@@ -41,7 +41,38 @@ namespace FProductionDashBoard.ViewModels
             SetLayoutCommand = new RelayCommand<LayoutMode>(SetLayout);
             foreach (var ipanel in _panels)
                 SwitchPanelContent(ipanel, NavMode.Home);
+            _licenseService.LicenseUpdated += OnLicenseUpdated;
         }
+
+        private void OnLicenseUpdated(object? sender, EventArgs e)
+        {
+            OnPropertyChanged(nameof(IsViewLocked));
+            OnPropertyChanged(nameof(IsScheduleLocked));
+            OnPropertyChanged(nameof(IsProgramLibLocked));
+            OnPropertyChanged(nameof(IsProductInOutLocked));
+        }
+
+        private static LicensedFeature? GetRequiredFeature(NavMode mode) => mode switch
+        {
+            // 需授權
+            NavMode.View           => LicensedFeature.Charts,
+            NavMode.Schedule       => LicensedFeature.Scheduling,
+            NavMode.ProgramLibrary => LicensedFeature.ProgramLibrary,
+            NavMode.ProductInOut   => LicensedFeature.MaterialManagement,
+            // 永久免費
+            NavMode.Home           => null,
+            NavMode.Operation      => null,
+            NavMode.List           => null,
+            NavMode.Equipment      => null,
+            NavMode.SystemSettings => null,
+            // 未分類 → 立即報錯，強制開發者主動分類
+            _ => throw new NotImplementedException($"NavMode {mode} 尚未分類授權需求")
+        };
+
+        public bool IsViewLocked         => !_licenseService.IsFeatureEnabled(LicensedFeature.Charts);
+        public bool IsScheduleLocked     => !_licenseService.IsFeatureEnabled(LicensedFeature.Scheduling);
+        public bool IsProgramLibLocked   => !_licenseService.IsFeatureEnabled(LicensedFeature.ProgramLibrary);
+        public bool IsProductInOutLocked => !_licenseService.IsFeatureEnabled(LicensedFeature.MaterialManagement);
 
         public void SwitchMode(NavMode mode)
         {
@@ -52,6 +83,13 @@ namespace FProductionDashBoard.ViewModels
 
         private bool SwitchPanelContent(PanelViewModel panel, NavMode mode)
         {
+            var requiredFeature = GetRequiredFeature(mode);
+            if (requiredFeature.HasValue && !_licenseService.IsFeatureEnabled(requiredFeature.Value))
+            {
+                _core.Log.AddLog("[SwitchPanelContent] 此功能需要有效授權", LogLevel.Error);
+                return false;
+            }
+
             object? content = null;
             switch (mode)
             {

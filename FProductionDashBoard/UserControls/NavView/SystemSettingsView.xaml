@@ -467,15 +467,16 @@
                     </StackPanel>
                 </Border>
 
-                <!-- AI 設定 -->
+                <!-- 金鑰與授權 -->
                 <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                     CornerRadius="4" Padding="16" Margin="0,0,0,16"
                     Background="{DynamicResource BackgroundBrush}">
                     <StackPanel>
-                        <TextBlock Text="{DynamicResource SsAiApiKeyHeader}"
+                        <TextBlock Text="{DynamicResource SsKeyAndLicense}"
                                FontSize="14" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                Margin="0,0,0,12"/>
+                        <!-- AI API 金鑰 -->
                         <Grid Margin="0,0,0,4">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="130"/>
@@ -486,6 +487,102 @@
                             <TextBox Grid.Column="1" MaxWidth="200"
                                  Text="{Binding AiApiKey, UpdateSourceTrigger=PropertyChanged}"/>
                         </Grid>
+
+                        <Separator Margin="0,12,0,12"/>
+
+                        <!-- 授權狀態 -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Border Background="{DynamicResource SecondaryBrush}"
+                                    CornerRadius="4" Padding="8,3">
+                                <TextBlock Text="{Binding LicenseStatusText}"
+                                           Foreground="{DynamicResource TextLightBrush}"
+                                           FontSize="12" FontWeight="SemiBold"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- 客戶名稱（有值才顯示） -->
+                        <TextBlock Text="{Binding LicenseCustomerName}"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                   FontSize="12" Margin="0,0,0,4"
+                                   Visibility="{Binding HasLicenseCustomerName,
+                                       Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <!-- 剩餘天數（有授權期限才顯示） -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8"
+                                    Visibility="{Binding HasLicenseDaysRemaining,
+                                        Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock Text="{DynamicResource LicenseDaysLeft}"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
+                            <TextBlock Text="{Binding LicenseDaysRemainingText}"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"
+                                       Margin="8,0,0,0" FontWeight="SemiBold"/>
+                        </StackPanel>
+
+                        <!-- 功能授權清單 -->
+                        <StackPanel Margin="0,4,0,12">
+                            <StackPanel Orientation="Horizontal" Margin="0,2">
+                                <materialDesign:PackIcon Kind="CheckCircle" Width="16" Height="16"
+                                    Foreground="{DynamicResource SuccessBrush}"
+                                    Visibility="{Binding IsChartsEnabled,
+                                        Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <materialDesign:PackIcon Kind="CloseCircle" Width="16" Height="16"
+                                    Foreground="{DynamicResource ErrorBrush}"
+                                    Visibility="{Binding IsChartsEnabled,
+                                        Converter={StaticResource BooleanToVisibilityConverter},
+                                        ConverterParameter='Invert'}"/>
+                                <TextBlock Text="{DynamicResource LicenseFeatureCharts}"
+                                           Margin="6,0,0,0" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,2">
+                                <materialDesign:PackIcon Kind="CheckCircle" Width="16" Height="16"
+                                    Foreground="{DynamicResource SuccessBrush}"
+                                    Visibility="{Binding IsSchedulingEnabled,
+                                        Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <materialDesign:PackIcon Kind="CloseCircle" Width="16" Height="16"
+                                    Foreground="{DynamicResource ErrorBrush}"
+                                    Visibility="{Binding IsSchedulingEnabled,
+                                        Converter={StaticResource BooleanToVisibilityConverter},
+                                        ConverterParameter='Invert'}"/>
+                                <TextBlock Text="{DynamicResource LicenseFeatureScheduling}"
+                                           Margin="6,0,0,0" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,2">
+                                <materialDesign:PackIcon Kind="CheckCircle" Width="16" Height="16"
+                                    Foreground="{DynamicResource SuccessBrush}"
+                                    Visibility="{Binding IsProgramLibEnabled,
+                                        Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <materialDesign:PackIcon Kind="CloseCircle" Width="16" Height="16"
+                                    Foreground="{DynamicResource ErrorBrush}"
+                                    Visibility="{Binding IsProgramLibEnabled,
+                                        Converter={StaticResource BooleanToVisibilityConverter},
+                                        ConverterParameter='Invert'}"/>
+                                <TextBlock Text="{DynamicResource LicenseFeatureProgramLib}"
+                                           Margin="6,0,0,0" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,2">
+                                <materialDesign:PackIcon Kind="CheckCircle" Width="16" Height="16"
+                                    Foreground="{DynamicResource SuccessBrush}"
+                                    Visibility="{Binding IsMaterialEnabled,
+                                        Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <materialDesign:PackIcon Kind="CloseCircle" Width="16" Height="16"
+                                    Foreground="{DynamicResource ErrorBrush}"
+                                    Visibility="{Binding IsMaterialEnabled,
+                                        Converter={StaticResource BooleanToVisibilityConverter},
+                                        ConverterParameter='Invert'}"/>
+                                <TextBlock Text="{DynamicResource LicenseFeatureMaterial}"
+                                           Margin="6,0,0,0" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- 匯入授權按鈕（PR1 disabled） -->
+                        <Button Content="{DynamicResource LicenseImportButton}"
+                                Command="{Binding ImportLicenseCommand}"
+                                Style="{StaticResource FunctionButtonStyle}"
+                                HorizontalAlignment="Left"/>
                     </StackPanel>
                 </Border>
 
