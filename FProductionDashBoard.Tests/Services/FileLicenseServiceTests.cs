@@ -120,31 +120,31 @@ namespace FProductionDashBoard.Tests.Services
             Assert.Equal(LicenseStatus.Trial, svc.Status);
             Assert.NotNull(saved);
             Assert.Equal(DateTime.Today, saved!.TrialStartDate);
-            Assert.Equal(30, svc.DaysRemaining);
+            Assert.Equal(14, svc.DaysRemaining);
         }
 
         [Fact]
         public void NoLicenseFile_TrialMidway_ReturnsTrial()
         {
-            var startDate = DateTime.Today.AddDays(-10);
+            var startDate = DateTime.Today.AddDays(-3);
             var svc = BuildService(trialInfo: new TrialInfoDto { TrialStartDate = startDate });
             Assert.Equal(LicenseStatus.Trial, svc.Status);
-            Assert.Equal(20, svc.DaysRemaining);
+            Assert.Equal(11, svc.DaysRemaining);
         }
 
         [Fact]
         public void NoLicenseFile_TrialExpiringSoon_ReturnsTrialExpiringSoon()
         {
-            var startDate = DateTime.Today.AddDays(-25);
+            var startDate = DateTime.Today.AddDays(-10);
             var svc = BuildService(trialInfo: new TrialInfoDto { TrialStartDate = startDate });
             Assert.Equal(LicenseStatus.TrialExpiringSoon, svc.Status);
-            Assert.Equal(5, svc.DaysRemaining);
+            Assert.Equal(4, svc.DaysRemaining);
         }
 
         [Fact]
         public void NoLicenseFile_TrialExpired_ReturnsTrialExpiredAndLocksAll()
         {
-            var startDate = DateTime.Today.AddDays(-31);
+            var startDate = DateTime.Today.AddDays(-15);
             var svc = BuildService(trialInfo: new TrialInfoDto { TrialStartDate = startDate });
             Assert.Equal(LicenseStatus.TrialExpired, svc.Status);
             Assert.Equal(0, svc.DaysRemaining);
