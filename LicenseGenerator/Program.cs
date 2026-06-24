@@ -6,22 +6,53 @@ using LicenseGenerator;
 string? customer = null, expiry = null, output = null;
 var features = new List<string>();
 
-for (int i = 0; i < args.Length; i++)
+if (args.Length == 0)
 {
-    switch (args[i])
+    // 互動模式（雙擊 exe 啟動）
+    var known = string.Join(", ", LicenseConstants.KnownFeatures);
+    Console.WriteLine("=== LicenseGenerator 授權檔產生工具 ===\n");
+
+    Console.Write("客戶/廠商名稱（必填）：");
+    customer = Console.ReadLine()?.Trim();
+
+    Console.WriteLine($"可用功能：{known}");
+    Console.Write("開放功能（逗號分隔，輸入 all 全開，直接 Enter 則全功能鎖定）：");
+    var featInput = Console.ReadLine()?.Trim();
+    if (!string.IsNullOrEmpty(featInput))
+        features = featInput.Split(',').Select(f => f.Trim()).ToList();
+
+    Console.Write("到期日（格式 yyyy-MM-dd，直接 Enter 則永久有效）：");
+    expiry = Console.ReadLine()?.Trim();
+    if (string.IsNullOrEmpty(expiry)) expiry = null;
+
+    var defaultOutput = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "license.lic");
+    Console.Write("輸出路徑（直接 Enter 輸出至桌面 license.lic）：");
+    output = Console.ReadLine()?.Trim();
+    if (string.IsNullOrEmpty(output)) output = defaultOutput;
+
+    Console.WriteLine();
+}
+else
+{
+    for (int i = 0; i < args.Length; i++)
     {
-        case "--customer" when i + 1 < args.Length: customer = args[++i]; break;
-        case "--features" when i + 1 < args.Length: features = args[++i].Split(',').ToList(); break;
-        case "--expiry"   when i + 1 < args.Length: expiry   = args[++i]; break;
-        case "--output"   when i + 1 < args.Length: output   = args[++i]; break;
-        case "-h":
-        case "--help": PrintHelp(); return 0;
+        switch (args[i])
+        {
+            case "--customer" when i + 1 < args.Length: customer = args[++i]; break;
+            case "--features" when i + 1 < args.Length: features = args[++i].Split(',').ToList(); break;
+            case "--expiry"   when i + 1 < args.Length: expiry   = args[++i]; break;
+            case "--output"   when i + 1 < args.Length: output   = args[++i]; break;
+            case "-h":
+            case "--help": PrintHelp(); return 0;
+        }
     }
 }
 
-if (customer is null)
+if (string.IsNullOrWhiteSpace(customer))
 {
-    Console.Error.WriteLine("缺少必要參數 --customer，請使用 --help 查看用法。");
+    Console.Error.WriteLine("錯誤：客戶名稱不可為空。");
+    if (args.Length == 0) { Console.WriteLine("按任意鍵關閉..."); Console.ReadKey(); }
     return 1;
 }
 
@@ -50,6 +81,8 @@ dto = dto with { Signature = Convert.ToBase64String(hmac.ComputeHash(Encoding.UT
 var json = JsonSerializer.Serialize(dto, new JsonSerializerOptions { WriteIndented = true });
 await File.WriteAllTextAsync(output, json);
 Console.WriteLine($"✓ 授權檔已產生 → {Path.GetFullPath(output)}");
+
+if (args.Length == 0) { Console.WriteLine("\n按任意鍵關閉..."); Console.ReadKey(); }
 return 0;
 
 static void PrintHelp()
