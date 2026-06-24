@@ -504,4 +504,7 @@
   <data name="AboutApiKeyNotConfigured" xml:space="preserve">
     <value>✗ Not Configured</value>
   </data>
+  <data name="LicenseStatusDevelopment" xml:space="preserve">
+    <value>Development Mode</value>
+  </data>
 </root>

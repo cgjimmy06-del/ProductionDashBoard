@@ -495,6 +495,19 @@
     <sys:String x:Key="SchCancelOrderDescLabel">Lý do (tuỳ chọn)</sys:String>
     <sys:String x:Key="SsAiApiKeyHeader">Cài đặt AI</sys:String>
     <sys:String x:Key="SsAiApiKeyLabel">Khóa API</sys:String>
+    <sys:String x:Key="SsKeyAndLicense">Khóa &amp; Giấy phép</sys:String>
+    <sys:String x:Key="LicenseStatusValid">Giấy phép hợp lệ</sys:String>
+    <sys:String x:Key="LicenseStatusExpiringSoon">Sắp hết hạn</sys:String>
+    <sys:String x:Key="LicenseStatusExpired">Đã hết hạn</sys:String>
+    <sys:String x:Key="LicenseStatusInvalid">Giấy phép không hợp lệ</sys:String>
+    <sys:String x:Key="LicenseStatusTrial">Dùng thử</sys:String>
+    <sys:String x:Key="LicenseStatusDevelopment">Chế độ phát triển</sys:String>
+    <sys:String x:Key="LicenseImportButton">Nhập giấy phép</sys:String>
+    <sys:String x:Key="LicenseDaysLeft">Ngày còn lại</sys:String>
+    <sys:String x:Key="LicenseFeatureCharts">Biểu đồ</sys:String>
+    <sys:String x:Key="LicenseFeatureScheduling">Lập lịch</sys:String>
+    <sys:String x:Key="LicenseFeatureProgramLib">Thư viện CT</sys:String>
+    <sys:String x:Key="LicenseFeatureMaterial">Quản lý vật liệu</sys:String>
     <!--#endregion-->
     <!--#region AI Agent 面板 -->
     <sys:String x:Key="AiAgentTitle">Trợ lý AI</sys:String>

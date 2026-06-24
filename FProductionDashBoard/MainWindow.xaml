@@ -411,6 +411,10 @@
                                                          Width="30" Height="30"/>
                                 <TextBlock Text="{DynamicResource ViewNavButton}"
                                            VerticalAlignment="Center"/>
+                                <materialDesign:PackIcon Kind="Lock" Width="14" Height="14"
+                                                         VerticalAlignment="Center" Margin="6,0,0,0"
+                                                         Visibility="{Binding IsViewLocked,
+                                                             Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             </StackPanel>
                         </RadioButton>
                         <RadioButton GroupName="NavGroup"
@@ -455,6 +459,10 @@
                                                          Width="30" Height="30"/>
                                 <TextBlock Text="{DynamicResource ProgramLibraryNavButton}"
                                            VerticalAlignment="Center"/>
+                                <materialDesign:PackIcon Kind="Lock" Width="14" Height="14"
+                                                         VerticalAlignment="Center" Margin="6,0,0,0"
+                                                         Visibility="{Binding IsProgramLibLocked,
+                                                             Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             </StackPanel>
                         </RadioButton>
                         <RadioButton GroupName="NavGroup"
@@ -466,6 +474,10 @@
                                                          Width="30" Height="30"/>
                                 <TextBlock Text="{DynamicResource ProductInOutNavButton}"
                                            VerticalAlignment="Center"/>
+                                <materialDesign:PackIcon Kind="Lock" Width="14" Height="14"
+                                                         VerticalAlignment="Center" Margin="6,0,0,0"
+                                                         Visibility="{Binding IsProductInOutLocked,
+                                                             Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             </StackPanel>
                         </RadioButton>
                         <RadioButton GroupName="NavGroup"
@@ -477,6 +489,10 @@
                                                          Width="30" Height="30"/>
                                 <TextBlock Text="{DynamicResource OrderManagementNavButton}"
                                            VerticalAlignment="Center"/>
+                                <materialDesign:PackIcon Kind="Lock" Width="14" Height="14"
+                                                         VerticalAlignment="Center" Margin="6,0,0,0"
+                                                         Visibility="{Binding IsScheduleLocked,
+                                                             Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             </StackPanel>
                         </RadioButton>
                     </StackPanel>

@@ -95,7 +95,11 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("AboutSdkNotInstalled", resourceCulture);
             }
         }
-        
+
+        internal static string LicenseStatusDevelopment {
+            get { return ResourceManager.GetString("LicenseStatusDevelopment", resourceCulture); }
+        }
+
         /// <summary>
         ///   查詢類似 Please loaded at least one device! 的當地語系化字串。
         /// </summary>

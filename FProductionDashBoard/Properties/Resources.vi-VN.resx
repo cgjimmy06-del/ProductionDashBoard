@@ -459,4 +459,7 @@
   <data name="AboutApiKeyNotConfigured" xml:space="preserve">
     <value>✗ Chưa cấu hình</value>
   </data>
+  <data name="LicenseStatusDevelopment" xml:space="preserve">
+    <value>Chế độ phát triển</value>
+  </data>
 </root>

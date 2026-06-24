@@ -495,6 +495,19 @@
     <sys:String x:Key="SchCancelOrderDescLabel">取消原因（選填）</sys:String>
     <sys:String x:Key="SsAiApiKeyHeader">AI 設定</sys:String>
     <sys:String x:Key="SsAiApiKeyLabel">API 金鑰</sys:String>
+    <sys:String x:Key="SsKeyAndLicense">金鑰與授權</sys:String>
+    <sys:String x:Key="LicenseStatusValid">授權有效</sys:String>
+    <sys:String x:Key="LicenseStatusExpiringSoon">授權即將到期</sys:String>
+    <sys:String x:Key="LicenseStatusExpired">授權已過期</sys:String>
+    <sys:String x:Key="LicenseStatusInvalid">授權簽章無效</sys:String>
+    <sys:String x:Key="LicenseStatusTrial">試用中</sys:String>
+    <sys:String x:Key="LicenseStatusDevelopment">開發模式</sys:String>
+    <sys:String x:Key="LicenseImportButton">匯入授權</sys:String>
+    <sys:String x:Key="LicenseDaysLeft">剩餘天數</sys:String>
+    <sys:String x:Key="LicenseFeatureCharts">圖表</sys:String>
+    <sys:String x:Key="LicenseFeatureScheduling">排單管理</sys:String>
+    <sys:String x:Key="LicenseFeatureProgramLib">程式庫</sys:String>
+    <sys:String x:Key="LicenseFeatureMaterial">進出料</sys:String>
     <!--#endregion-->
     <!--#region AI Agent 面板 -->
     <sys:String x:Key="AiAgentTitle">AI 助理</sys:String>
