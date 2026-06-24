@@ -462,4 +462,25 @@
   <data name="LicenseStatusDevelopment" xml:space="preserve">
     <value>開發模式</value>
   </data>
+  <data name="LicenseStatusValid" xml:space="preserve">
+    <value>有效</value>
+  </data>
+  <data name="LicenseStatusValidExpiringSoon" xml:space="preserve">
+    <value>即將到期</value>
+  </data>
+  <data name="LicenseStatusExpired" xml:space="preserve">
+    <value>已到期</value>
+  </data>
+  <data name="LicenseStatusInvalidSignature" xml:space="preserve">
+    <value>授權無效</value>
+  </data>
+  <data name="LicenseStatusTrial" xml:space="preserve">
+    <value>試用中</value>
+  </data>
+  <data name="LicenseStatusTrialExpiringSoon" xml:space="preserve">
+    <value>試用即將到期</value>
+  </data>
+  <data name="LicenseStatusTrialExpired" xml:space="preserve">
+    <value>試用已到期</value>
+  </data>
 </root>

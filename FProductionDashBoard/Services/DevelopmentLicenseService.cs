@@ -10,7 +10,7 @@ namespace FProductionDashBoard.Services
         public string        CustomerName  => "Development";
         public event EventHandler? LicenseUpdated;
 
-        public bool IsFeatureEnabled(LicensedFeature feature)
-            => feature != LicensedFeature.Charts;
+        public bool IsFeatureEnabled(LicensedFeature feature) => true;
+        public void Reload() { }
     }
 }
