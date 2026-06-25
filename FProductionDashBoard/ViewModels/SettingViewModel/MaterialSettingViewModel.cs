@@ -94,7 +94,7 @@ namespace FProductionDashBoard.ViewModels
         protected override async Task SaveAsync()
         {
             if (string.IsNullOrWhiteSpace(FormMaterialCode) || string.IsNullOrWhiteSpace(FormName))
-            { FormErrorString = "MaterialCode、Name 為必填"; return; }
+            { FormErrorString = Properties.Resources.SettingValidationMaterialCodeNameRequired; return; }
 
             try
             {
@@ -116,7 +116,7 @@ namespace FProductionDashBoard.ViewModels
                 else
                     await _core.Data.UpdateMaterialAsync(dto);
 
-                FormSuccessString = EditingId == null ? "新增成功" : "更新成功";
+                FormSuccessString = EditingId == null ? Properties.Resources.SettingSuccessAdd : Properties.Resources.SettingSuccessUpdate;
                 FormErrorString = null;
                 CloseForm();
                 await LoadAsync();

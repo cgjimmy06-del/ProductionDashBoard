@@ -377,7 +377,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 var detail = await _core.Data.GetSopChecklistWithItemsAsync(sop.SopId);
                 if (detail == null)
-                { FormErrorString = $"找不到 SOP ID={sop.SopId}"; return; }
+                { FormErrorString = string.Format(Properties.Resources.SopValidationNotFound, sop.SopId); return; }
 
                 EditingSopId = detail.SopId;
                 FormPartId = sop.Product?.PartId;

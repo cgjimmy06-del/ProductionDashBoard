@@ -483,4 +483,100 @@
   <data name="LicenseStatusTrialExpired" xml:space="preserve">
     <value>Dùng thử đã hết hạn</value>
   </data>
+  <data name="SettingSuccessAdd" xml:space="preserve">
+    <value>Thêm thành công</value>
+  </data>
+  <data name="SettingSuccessUpdate" xml:space="preserve">
+    <value>Cập nhật thành công</value>
+  </data>
+  <data name="SettingValidationUserIdNameRequired" xml:space="preserve">
+    <value>UserId và Tên là bắt buộc</value>
+  </data>
+  <data name="SettingValidationRoleRequired" xml:space="preserve">
+    <value>Vui lòng thiết lập vai trò nhân viên</value>
+  </data>
+  <data name="SettingValidationPasswordRequired" xml:space="preserve">
+    <value>Mật khẩu bắt buộc khi thêm nhân viên mới</value>
+  </data>
+  <data name="SettingValidationMaterialCodeNameRequired" xml:space="preserve">
+    <value>MaterialCode và Tên là bắt buộc</value>
+  </data>
+  <data name="SettingValidationErrorCodeRequired" xml:space="preserve">
+    <value>ErrorCode là bắt buộc</value>
+  </data>
+  <data name="SettingValidationEquipmentCodeNameIpRequired" xml:space="preserve">
+    <value>Code, Tên và IP là bắt buộc</value>
+  </data>
+  <data name="SettingValidationPortRange" xml:space="preserve">
+    <value>Port phải từ 0 đến 65535</value>
+  </data>
+  <data name="SettingValidationRoleNameRequired" xml:space="preserve">
+    <value>Tên vai trò là bắt buộc</value>
+  </data>
+  <data name="SettingValidationTimeSlotEndTime" xml:space="preserve">
+    <value>Khi không chọn qua ngày, thời gian kết thúc phải sau thời gian bắt đầu</value>
+  </data>
+  <data name="SopValidationNotFound" xml:space="preserve">
+    <value>Không tìm thấy SOP ID={0}</value>
+  </data>
+  <data name="HwValidationTrueFalse" xml:space="preserve">
+    <value>Nhập true hoặc false</value>
+  </data>
+  <data name="HwValidationIntRange" xml:space="preserve">
+    <value>Nhập số nguyên từ 0 đến 65535</value>
+  </data>
+  <data name="HwSelectComPort" xml:space="preserve">
+    <value>Vui lòng chọn cổng COM</value>
+  </data>
+  <data name="HwConnected" xml:space="preserve">
+    <value>Đã kết nối ({0}, {1})</value>
+  </data>
+  <data name="HwConnectionFailed" xml:space="preserve">
+    <value>Kết nối thất bại, vui lòng kiểm tra cài đặt</value>
+  </data>
+  <data name="HwSelectControllerOrIp" xml:space="preserve">
+    <value>Chọn bộ điều khiển hoặc nhập IP hợp lệ</value>
+  </data>
+  <data name="HwDisconnected" xml:space="preserve">
+    <value>Đã ngắt kết nối</value>
+  </data>
+  <data name="HwAutoModeWriteDisabled" xml:space="preserve">
+    <value>Không thể ghi biến trong chế độ Auto</value>
+  </data>
+  <data name="HwWriteSuccess" xml:space="preserve">
+    <value>Ghi thành công</value>
+  </data>
+  <data name="HwValidationNumericRequired" xml:space="preserve">
+    <value>Nhập số</value>
+  </data>
+  <data name="HwControllersFound" xml:space="preserve">
+    <value>Tìm thấy {0} bộ điều khiển</value>
+  </data>
+  <data name="HwConfirmModbusWrite" xml:space="preserve">
+    <value>Xác nhận ghi "{1}" vào địa chỉ 0x{0}?</value>
+  </data>
+  <data name="HwConfirmAbbWrite" xml:space="preserve">
+    <value>Xác nhận thay đổi giá trị {0} thành "{1}"?</value>
+  </data>
+  <data name="HwConfirmWriteTitle" xml:space="preserve">
+    <value>Xác nhận ghi</value>
+  </data>
+  <data name="SsUploadSuccess" xml:space="preserve">
+    <value>Đã tải lên: {0}</value>
+  </data>
+  <data name="SopDisplayStation" xml:space="preserve">
+    <value>Trạm #{0} - {1}</value>
+  </data>
+  <data name="SopDisplayFixture" xml:space="preserve">
+    <value>Kẹp - {0}</value>
+  </data>
+  <data name="SopDisplayQuantity" xml:space="preserve">
+    <value>Số lượng {0} cái</value>
+  </data>
+  <data name="SopDisplayManHour" xml:space="preserve">
+    <value>Giờ công {0} giây</value>
+  </data>
+  <data name="ComStrNone" xml:space="preserve">
+    <value>(Không có)</value>
+  </data>
 </root>

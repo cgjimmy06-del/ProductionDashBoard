@@ -1099,5 +1099,133 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("WaitedDaysForSchedule", resourceCulture);
             }
         }
+
+        internal static string SettingSuccessAdd {
+            get { return ResourceManager.GetString("SettingSuccessAdd", resourceCulture); }
+        }
+
+        internal static string SettingSuccessUpdate {
+            get { return ResourceManager.GetString("SettingSuccessUpdate", resourceCulture); }
+        }
+
+        internal static string SettingValidationUserIdNameRequired {
+            get { return ResourceManager.GetString("SettingValidationUserIdNameRequired", resourceCulture); }
+        }
+
+        internal static string SettingValidationRoleRequired {
+            get { return ResourceManager.GetString("SettingValidationRoleRequired", resourceCulture); }
+        }
+
+        internal static string SettingValidationPasswordRequired {
+            get { return ResourceManager.GetString("SettingValidationPasswordRequired", resourceCulture); }
+        }
+
+        internal static string SettingValidationMaterialCodeNameRequired {
+            get { return ResourceManager.GetString("SettingValidationMaterialCodeNameRequired", resourceCulture); }
+        }
+
+        internal static string SettingValidationErrorCodeRequired {
+            get { return ResourceManager.GetString("SettingValidationErrorCodeRequired", resourceCulture); }
+        }
+
+        internal static string SettingValidationEquipmentCodeNameIpRequired {
+            get { return ResourceManager.GetString("SettingValidationEquipmentCodeNameIpRequired", resourceCulture); }
+        }
+
+        internal static string SettingValidationPortRange {
+            get { return ResourceManager.GetString("SettingValidationPortRange", resourceCulture); }
+        }
+
+        internal static string SettingValidationRoleNameRequired {
+            get { return ResourceManager.GetString("SettingValidationRoleNameRequired", resourceCulture); }
+        }
+
+        internal static string SettingValidationTimeSlotEndTime {
+            get { return ResourceManager.GetString("SettingValidationTimeSlotEndTime", resourceCulture); }
+        }
+
+        internal static string SopValidationNotFound {
+            get { return ResourceManager.GetString("SopValidationNotFound", resourceCulture); }
+        }
+
+        internal static string HwValidationTrueFalse {
+            get { return ResourceManager.GetString("HwValidationTrueFalse", resourceCulture); }
+        }
+
+        internal static string HwValidationIntRange {
+            get { return ResourceManager.GetString("HwValidationIntRange", resourceCulture); }
+        }
+
+        internal static string HwSelectComPort {
+            get { return ResourceManager.GetString("HwSelectComPort", resourceCulture); }
+        }
+
+        internal static string HwConnected {
+            get { return ResourceManager.GetString("HwConnected", resourceCulture); }
+        }
+
+        internal static string HwConnectionFailed {
+            get { return ResourceManager.GetString("HwConnectionFailed", resourceCulture); }
+        }
+
+        internal static string HwSelectControllerOrIp {
+            get { return ResourceManager.GetString("HwSelectControllerOrIp", resourceCulture); }
+        }
+
+        internal static string HwDisconnected {
+            get { return ResourceManager.GetString("HwDisconnected", resourceCulture); }
+        }
+
+        internal static string HwAutoModeWriteDisabled {
+            get { return ResourceManager.GetString("HwAutoModeWriteDisabled", resourceCulture); }
+        }
+
+        internal static string HwWriteSuccess {
+            get { return ResourceManager.GetString("HwWriteSuccess", resourceCulture); }
+        }
+
+        internal static string HwValidationNumericRequired {
+            get { return ResourceManager.GetString("HwValidationNumericRequired", resourceCulture); }
+        }
+
+        internal static string HwControllersFound {
+            get { return ResourceManager.GetString("HwControllersFound", resourceCulture); }
+        }
+
+        internal static string HwConfirmModbusWrite {
+            get { return ResourceManager.GetString("HwConfirmModbusWrite", resourceCulture); }
+        }
+
+        internal static string HwConfirmAbbWrite {
+            get { return ResourceManager.GetString("HwConfirmAbbWrite", resourceCulture); }
+        }
+
+        internal static string HwConfirmWriteTitle {
+            get { return ResourceManager.GetString("HwConfirmWriteTitle", resourceCulture); }
+        }
+
+        internal static string SsUploadSuccess {
+            get { return ResourceManager.GetString("SsUploadSuccess", resourceCulture); }
+        }
+
+        internal static string SopDisplayStation {
+            get { return ResourceManager.GetString("SopDisplayStation", resourceCulture); }
+        }
+
+        internal static string SopDisplayFixture {
+            get { return ResourceManager.GetString("SopDisplayFixture", resourceCulture); }
+        }
+
+        internal static string SopDisplayQuantity {
+            get { return ResourceManager.GetString("SopDisplayQuantity", resourceCulture); }
+        }
+
+        internal static string SopDisplayManHour {
+            get { return ResourceManager.GetString("SopDisplayManHour", resourceCulture); }
+        }
+
+        internal static string ComStrNone {
+            get { return ResourceManager.GetString("ComStrNone", resourceCulture); }
+        }
     }
 }

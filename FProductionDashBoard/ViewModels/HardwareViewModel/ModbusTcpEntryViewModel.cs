@@ -157,8 +157,8 @@ namespace FProductionDashBoard.ViewModels
             if (!CanWrite) return;
 
             var confirm = MessageBox.Show(
-                $"確定要對位址 0x{WriteAddress:X4} 寫入「{WriteRawValue}」？",
-                "確認寫入", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+                string.Format(Properties.Resources.HwConfirmModbusWrite, WriteAddress.ToString("X4"), WriteRawValue),
+                Properties.Resources.HwConfirmWriteTitle, MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (confirm != MessageBoxResult.OK) return;
 
             StatusMessage = "";
@@ -167,13 +167,13 @@ namespace FProductionDashBoard.ViewModels
                 if (SelectedRegisterType == ModbusRegisterType.Coil)
                 {
                     if (!bool.TryParse(WriteRawValue, out bool bv))
-                    { StatusMessage = "請輸入 true 或 false"; return; }
+                    { StatusMessage = Properties.Resources.HwValidationTrueFalse; return; }
                     await Task.Run(() => _client!.WriteSingleCoil(WriteAddress, bv)).ConfigureAwait(true);
                 }
                 else
                 {
                     if (!ushort.TryParse(WriteRawValue, out ushort uv))
-                    { StatusMessage = "請輸入 0–65535 的整數"; return; }
+                    { StatusMessage = Properties.Resources.HwValidationIntRange; return; }
                     await Task.Run(() => _client!.WriteSingleRegister(WriteAddress, uv)).ConfigureAwait(true);
                 }
             }
