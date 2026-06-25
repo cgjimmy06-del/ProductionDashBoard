@@ -54,7 +54,7 @@ namespace FProductionDashBoard.ViewModels
                 var found = await Task.Run(() => _scanner.DiscoverControllers(hints)).ConfigureAwait(true);
                 DiscoveredControllers.Clear();
                 foreach (var c in found) DiscoveredControllers.Add(c);
-                ScanMessage = $"找到 {found.Count} 台控制器";
+                ScanMessage = string.Format(Properties.Resources.HwControllersFound, found.Count);
             }
             catch (AbbRobotException ex)
             {

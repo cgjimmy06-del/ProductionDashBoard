@@ -131,7 +131,7 @@ namespace FProductionDashBoard.ViewModels
                 var ip = IpFilterText?.Trim();
                 if (string.IsNullOrEmpty(ip) || !IPAddress.TryParse(ip, out _))
                 {
-                    StatusMessage = "請選擇控制器或輸入有效 IP";
+                    StatusMessage = Properties.Resources.HwSelectControllerOrIp;
                     return;
                 }
                 await _discoverWithHint(ip).ConfigureAwait(true);
@@ -175,7 +175,7 @@ namespace FProductionDashBoard.ViewModels
             ControllerState = AbbControllerState.Unknown;
             OperatingMode = AbbOperatingMode.Unknown;
             ExecutionStatus = AbbExecutionStatus.Unknown;
-            StatusMessage = "已斷線";
+            StatusMessage = Properties.Resources.HwDisconnected;
         }
 
         // ── Task → Module 連動 ──────────────────────────────────────────────
@@ -273,13 +273,13 @@ namespace FProductionDashBoard.ViewModels
         private async Task WriteValueAsync()
         {
             if (SelectedRapidSymbol is null || SelectedTask is null || SelectedModule is null) return;
-            if (OperatingMode == AbbOperatingMode.Auto) { StatusMessage = "Auto 模式下無法寫入變數"; return; }
+            if (OperatingMode == AbbOperatingMode.Auto) { StatusMessage = Properties.Resources.HwAutoModeWriteDisabled; return; }
 
             var addr = new RapidVariableAddress(SelectedTask.Name, SelectedModule, SelectedRapidSymbol.Name);
 
             var confirm = MessageBox.Show(
-                $"確定要將 {SelectedRapidSymbol.Name} 的值改為「{NewValueText}」？",
-                "確認寫入", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+                string.Format(Properties.Resources.HwConfirmAbbWrite, SelectedRapidSymbol.Name, NewValueText),
+                Properties.Resources.HwConfirmWriteTitle, MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (confirm != MessageBoxResult.OK) return;
 
             try
@@ -287,7 +287,7 @@ namespace FProductionDashBoard.ViewModels
                 if (SelectedRapidSymbol.IsArray)
                 {
                     await Task.Run(() => _client.WriteArray(addr, NewValueText ?? string.Empty));
-                    StatusMessage = "寫入成功";
+                    StatusMessage = Properties.Resources.HwWriteSuccess;
                     await ReadValueAsync();
                     return;
                 }
@@ -296,14 +296,14 @@ namespace FProductionDashBoard.ViewModels
                 {
                     case "bool":
                         if (!bool.TryParse(NewValueText, out var bv))
-                        { StatusMessage = "請輸入 true 或 false"; return; }
+                        { StatusMessage = Properties.Resources.HwValidationTrueFalse; return; }
                         await Task.Run(() => _client.WriteBool(addr, bv));
                         break;
                     case "num":
                         if (!double.TryParse(NewValueText,
                                 System.Globalization.NumberStyles.Any,
                                 System.Globalization.CultureInfo.InvariantCulture, out var nv))
-                        { StatusMessage = "請輸入數字"; return; }
+                        { StatusMessage = Properties.Resources.HwValidationNumericRequired; return; }
                         await Task.Run(() => _client.WriteNum(addr, nv));
                         break;
                     case "string":
@@ -311,7 +311,7 @@ namespace FProductionDashBoard.ViewModels
                         break;
                     default: return;
                 }
-                StatusMessage = "寫入成功";
+                StatusMessage = Properties.Resources.HwWriteSuccess;
                 await ReadValueAsync();
             }
             catch (AbbRobotException ex) { StatusMessage = $"寫入失敗：{ex.Message}"; }

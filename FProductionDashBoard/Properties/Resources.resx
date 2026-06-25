@@ -528,4 +528,100 @@
   <data name="LicenseStatusTrialExpired" xml:space="preserve">
     <value>Trial Expired</value>
   </data>
+  <data name="SettingSuccessAdd" xml:space="preserve">
+    <value>Added successfully</value>
+  </data>
+  <data name="SettingSuccessUpdate" xml:space="preserve">
+    <value>Updated successfully</value>
+  </data>
+  <data name="SettingValidationUserIdNameRequired" xml:space="preserve">
+    <value>UserId and Name are required</value>
+  </data>
+  <data name="SettingValidationRoleRequired" xml:space="preserve">
+    <value>Please set the employee role</value>
+  </data>
+  <data name="SettingValidationPasswordRequired" xml:space="preserve">
+    <value>Password is required for new employees</value>
+  </data>
+  <data name="SettingValidationMaterialCodeNameRequired" xml:space="preserve">
+    <value>MaterialCode and Name are required</value>
+  </data>
+  <data name="SettingValidationErrorCodeRequired" xml:space="preserve">
+    <value>ErrorCode is required</value>
+  </data>
+  <data name="SettingValidationEquipmentCodeNameIpRequired" xml:space="preserve">
+    <value>Code, Name and IP are required</value>
+  </data>
+  <data name="SettingValidationPortRange" xml:space="preserve">
+    <value>Port must be between 0 and 65535</value>
+  </data>
+  <data name="SettingValidationRoleNameRequired" xml:space="preserve">
+    <value>Role name is required</value>
+  </data>
+  <data name="SettingValidationTimeSlotEndTime" xml:space="preserve">
+    <value>End time must be after start time when cross-day is not checked</value>
+  </data>
+  <data name="SopValidationNotFound" xml:space="preserve">
+    <value>SOP not found: ID={0}</value>
+  </data>
+  <data name="HwValidationTrueFalse" xml:space="preserve">
+    <value>Enter true or false</value>
+  </data>
+  <data name="HwValidationIntRange" xml:space="preserve">
+    <value>Enter an integer between 0 and 65535</value>
+  </data>
+  <data name="HwSelectComPort" xml:space="preserve">
+    <value>Please select a COM port</value>
+  </data>
+  <data name="HwConnected" xml:space="preserve">
+    <value>Connected ({0}, {1})</value>
+  </data>
+  <data name="HwConnectionFailed" xml:space="preserve">
+    <value>Connection failed, check settings</value>
+  </data>
+  <data name="HwSelectControllerOrIp" xml:space="preserve">
+    <value>Select a controller or enter a valid IP</value>
+  </data>
+  <data name="HwDisconnected" xml:space="preserve">
+    <value>Disconnected</value>
+  </data>
+  <data name="HwAutoModeWriteDisabled" xml:space="preserve">
+    <value>Cannot write variables in Auto mode</value>
+  </data>
+  <data name="HwWriteSuccess" xml:space="preserve">
+    <value>Write successful</value>
+  </data>
+  <data name="HwValidationNumericRequired" xml:space="preserve">
+    <value>Enter a numeric value</value>
+  </data>
+  <data name="HwControllersFound" xml:space="preserve">
+    <value>Found {0} controllers</value>
+  </data>
+  <data name="HwConfirmModbusWrite" xml:space="preserve">
+    <value>Confirm writing "{1}" to address 0x{0}?</value>
+  </data>
+  <data name="HwConfirmAbbWrite" xml:space="preserve">
+    <value>Confirm changing {0}'s value to "{1}"?</value>
+  </data>
+  <data name="HwConfirmWriteTitle" xml:space="preserve">
+    <value>Confirm Write</value>
+  </data>
+  <data name="SsUploadSuccess" xml:space="preserve">
+    <value>Uploaded: {0}</value>
+  </data>
+  <data name="SopDisplayStation" xml:space="preserve">
+    <value>Station #{0} - {1}</value>
+  </data>
+  <data name="SopDisplayFixture" xml:space="preserve">
+    <value>Fixture - {0}</value>
+  </data>
+  <data name="SopDisplayQuantity" xml:space="preserve">
+    <value>Qty: {0} pcs</value>
+  </data>
+  <data name="SopDisplayManHour" xml:space="preserve">
+    <value>Man-hour: {0} s</value>
+  </data>
+  <data name="ComStrNone" xml:space="preserve">
+    <value>(None)</value>
+  </data>
 </root>

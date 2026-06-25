@@ -103,7 +103,7 @@ namespace FProductionDashBoard.ViewModels
 
             if (!FormIsCrossDay && endTs <= startTs)
             {
-                FormErrorString = "未勾選跨日時，結束時間必須大於開始時間";
+                FormErrorString = Properties.Resources.SettingValidationTimeSlotEndTime;
                 return;
             }
 
@@ -123,7 +123,7 @@ namespace FProductionDashBoard.ViewModels
                 else
                     await _core.Data.UpdateTimeSlotAsync(dto);
 
-                FormSuccessString = EditingId == null ? "新增成功" : "更新成功";
+                FormSuccessString = EditingId == null ? Properties.Resources.SettingSuccessAdd : Properties.Resources.SettingSuccessUpdate;
                 FormErrorString = null;
                 CloseForm();
                 await LoadAsync();

@@ -483,4 +483,100 @@
   <data name="LicenseStatusTrialExpired" xml:space="preserve">
     <value>試用已到期</value>
   </data>
+  <data name="SettingSuccessAdd" xml:space="preserve">
+    <value>新增成功</value>
+  </data>
+  <data name="SettingSuccessUpdate" xml:space="preserve">
+    <value>更新成功</value>
+  </data>
+  <data name="SettingValidationUserIdNameRequired" xml:space="preserve">
+    <value>UserId、姓名為必填</value>
+  </data>
+  <data name="SettingValidationRoleRequired" xml:space="preserve">
+    <value>請確實設定員工角色</value>
+  </data>
+  <data name="SettingValidationPasswordRequired" xml:space="preserve">
+    <value>新增員工時密碼為必填</value>
+  </data>
+  <data name="SettingValidationMaterialCodeNameRequired" xml:space="preserve">
+    <value>MaterialCode、Name 為必填</value>
+  </data>
+  <data name="SettingValidationErrorCodeRequired" xml:space="preserve">
+    <value>ErrorCode 為必填</value>
+  </data>
+  <data name="SettingValidationEquipmentCodeNameIpRequired" xml:space="preserve">
+    <value>Code、Name、IP 為必填</value>
+  </data>
+  <data name="SettingValidationPortRange" xml:space="preserve">
+    <value>Port 需為 0–65535</value>
+  </data>
+  <data name="SettingValidationRoleNameRequired" xml:space="preserve">
+    <value>角色名稱為必填</value>
+  </data>
+  <data name="SettingValidationTimeSlotEndTime" xml:space="preserve">
+    <value>未勾選跨日時，結束時間必須大於開始時間</value>
+  </data>
+  <data name="SopValidationNotFound" xml:space="preserve">
+    <value>找不到 SOP ID={0}</value>
+  </data>
+  <data name="HwValidationTrueFalse" xml:space="preserve">
+    <value>請輸入 true 或 false</value>
+  </data>
+  <data name="HwValidationIntRange" xml:space="preserve">
+    <value>請輸入 0–65535 的整數</value>
+  </data>
+  <data name="HwSelectComPort" xml:space="preserve">
+    <value>請選擇 COM port</value>
+  </data>
+  <data name="HwConnected" xml:space="preserve">
+    <value>已連線 ({0}, {1})</value>
+  </data>
+  <data name="HwConnectionFailed" xml:space="preserve">
+    <value>連線失敗，請確認設定</value>
+  </data>
+  <data name="HwSelectControllerOrIp" xml:space="preserve">
+    <value>請選擇控制器或輸入有效 IP</value>
+  </data>
+  <data name="HwDisconnected" xml:space="preserve">
+    <value>已斷線</value>
+  </data>
+  <data name="HwAutoModeWriteDisabled" xml:space="preserve">
+    <value>Auto 模式下無法寫入變數</value>
+  </data>
+  <data name="HwWriteSuccess" xml:space="preserve">
+    <value>寫入成功</value>
+  </data>
+  <data name="HwValidationNumericRequired" xml:space="preserve">
+    <value>請輸入數字</value>
+  </data>
+  <data name="HwControllersFound" xml:space="preserve">
+    <value>找到 {0} 台控制器</value>
+  </data>
+  <data name="HwConfirmModbusWrite" xml:space="preserve">
+    <value>確定要對位址 0x{0} 寫入「{1}」？</value>
+  </data>
+  <data name="HwConfirmAbbWrite" xml:space="preserve">
+    <value>確定要將 {0} 的值改為「{1}」？</value>
+  </data>
+  <data name="HwConfirmWriteTitle" xml:space="preserve">
+    <value>確認寫入</value>
+  </data>
+  <data name="SsUploadSuccess" xml:space="preserve">
+    <value>已上傳：{0}</value>
+  </data>
+  <data name="SopDisplayStation" xml:space="preserve">
+    <value>工位 #{0} - {1}</value>
+  </data>
+  <data name="SopDisplayFixture" xml:space="preserve">
+    <value>治夾具 - {0}</value>
+  </data>
+  <data name="SopDisplayQuantity" xml:space="preserve">
+    <value>數量 {0} 件</value>
+  </data>
+  <data name="SopDisplayManHour" xml:space="preserve">
+    <value>工時 {0} 秒</value>
+  </data>
+  <data name="ComStrNone" xml:space="preserve">
+    <value>(無)</value>
+  </data>
 </root>
