@@ -321,7 +321,7 @@ namespace FProductionDashBoard
             {
                 AiAgentMode.All      => "AiModeAll",
                 AiAgentMode.Chat     => "AiModeChat",
-                AiAgentMode.Schedule => "AiModeSchedule",
+                AiAgentMode.Schedule => "AiModeFieldStatus",
                 _                    => null,
             };
             return resKey != null && resources[resKey] is string label ? label : value?.ToString() ?? string.Empty;
