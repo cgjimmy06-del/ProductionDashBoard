@@ -90,7 +90,7 @@ namespace FProductionDashBoard.ViewModels
         protected override async Task SaveAsync()
         {
             if (string.IsNullOrWhiteSpace(FormName))
-            { FormErrorString = "角色名稱為必填"; return; }
+            { FormErrorString = Properties.Resources.SettingValidationRoleNameRequired; return; }
 
             try
             {
@@ -111,7 +111,7 @@ namespace FProductionDashBoard.ViewModels
                 else
                     await _core.Data.UpdateRoleAsync(dto);
 
-                FormSuccessString = EditingId == null ? "新增成功" : "更新成功";
+                FormSuccessString = EditingId == null ? Properties.Resources.SettingSuccessAdd : Properties.Resources.SettingSuccessUpdate;
                 FormErrorString = null;
                 CloseForm();
                 await LoadAsync();

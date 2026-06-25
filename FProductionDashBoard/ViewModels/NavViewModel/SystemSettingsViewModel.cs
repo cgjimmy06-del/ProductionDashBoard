@@ -330,7 +330,7 @@ namespace FProductionDashBoard.ViewModels
                 ms.Position = 0;
 
                 var fileName = await _logUpload.UploadLogStreamAsync(ms, "report.zip");
-                UploadStatus = $"已上傳：{fileName}";
+                UploadStatus = string.Format(Properties.Resources.SsUploadSuccess, fileName);
                 IsUploadSuccess = true;
                 SelectedLogFile = null;
                 AttachmentPaths.Clear();

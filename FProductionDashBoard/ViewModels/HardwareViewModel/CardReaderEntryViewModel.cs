@@ -39,18 +39,18 @@ namespace FProductionDashBoard.ViewModels
 
         private void Connect()
         {
-            if (string.IsNullOrEmpty(SelectedPort)) { StatusMessage = "請選擇 COM port"; return; }
+            if (string.IsNullOrEmpty(SelectedPort)) { StatusMessage = Properties.Resources.HwSelectComPort; return; }
             _reader.Restart(SelectedPort, SelectedBaudRate);
             IsConnected = _reader.IsConnected;
             StatusMessage = IsConnected
-                ? $"已連線 ({SelectedPort}, {SelectedBaudRate})"
-                : "連線失敗，請確認設定";
+                ? string.Format(Properties.Resources.HwConnected, SelectedPort, SelectedBaudRate)
+                : Properties.Resources.HwConnectionFailed;
 
         }
 
         private void Test()
         {
-            if (string.IsNullOrEmpty(SelectedPort)) { StatusMessage = "請選擇 COM port"; return; }
+            if (string.IsNullOrEmpty(SelectedPort)) { StatusMessage = Properties.Resources.HwSelectComPort; return; }
             try
             {
                 using var p = new SerialPort(SelectedPort, SelectedBaudRate) { ReadTimeout = 500 };

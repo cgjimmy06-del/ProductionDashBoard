@@ -97,11 +97,11 @@ namespace FProductionDashBoard.ViewModels
         protected override async Task SaveAsync()
         {
             if (string.IsNullOrWhiteSpace(FormUserId) || string.IsNullOrWhiteSpace(FormName))
-            { FormErrorString = "UserId、姓名為必填"; return; }
+            { FormErrorString = Properties.Resources.SettingValidationUserIdNameRequired; return; }
             if (FormRoleId == null)
-            { FormErrorString = "請確實設定員工角色"; return; }
+            { FormErrorString = Properties.Resources.SettingValidationRoleRequired; return; }
             if (EditingId == null && string.IsNullOrWhiteSpace(FormPassword))
-            { FormErrorString = "新增員工時密碼為必填"; return; }
+            { FormErrorString = Properties.Resources.SettingValidationPasswordRequired; return; }
 
             try
             {
@@ -122,7 +122,7 @@ namespace FProductionDashBoard.ViewModels
                 else
                     await _core.Data.UpdateEmployeeAsync(dto);
 
-                FormSuccessString = EditingId == null ? "新增成功" : "更新成功";
+                FormSuccessString = EditingId == null ? Properties.Resources.SettingSuccessAdd : Properties.Resources.SettingSuccessUpdate;
                 FormErrorString = null;
                 CloseForm();
                 await LoadAsync();

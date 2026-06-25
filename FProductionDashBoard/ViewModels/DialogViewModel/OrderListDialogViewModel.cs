@@ -427,11 +427,11 @@ namespace FProductionDashBoard.ViewModels
         private static string BuildChecklistDisplayText(SopChecklistItem item) =>
             item.CheckType switch
             {
-                CheckType.Station  => $"工位 #{item.WorkstationNo} - {item.Material?.Name ?? "(無)"}",
-                CheckType.Fixture  => $"治夾具 - {item.Material?.Name ?? "(無)"}",
-                CheckType.Quantity => $"數量 {item.Quantity} 件",
-                CheckType.ManHour  => $"工時 {item.Quantity} 秒",
-                _                  => item.Content ?? item.Remark ?? "(無說明)"
+                CheckType.Station  => string.Format(Properties.Resources.SopDisplayStation, item.WorkstationNo, item.Material?.Name ?? Properties.Resources.ComStrNone),
+                CheckType.Fixture  => string.Format(Properties.Resources.SopDisplayFixture, item.Material?.Name ?? Properties.Resources.ComStrNone),
+                CheckType.Quantity => string.Format(Properties.Resources.SopDisplayQuantity, item.Quantity),
+                CheckType.ManHour  => string.Format(Properties.Resources.SopDisplayManHour, item.Quantity),
+                _                  => item.Content ?? item.Remark ?? Properties.Resources.ComStrNone
             };
     }
 }
