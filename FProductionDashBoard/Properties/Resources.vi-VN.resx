@@ -462,4 +462,25 @@
   <data name="LicenseStatusDevelopment" xml:space="preserve">
     <value>Chế độ phát triển</value>
   </data>
+  <data name="LicenseStatusValid" xml:space="preserve">
+    <value>Còn hiệu lực</value>
+  </data>
+  <data name="LicenseStatusValidExpiringSoon" xml:space="preserve">
+    <value>Sắp hết hạn</value>
+  </data>
+  <data name="LicenseStatusExpired" xml:space="preserve">
+    <value>Đã hết hạn</value>
+  </data>
+  <data name="LicenseStatusInvalidSignature" xml:space="preserve">
+    <value>Giấy phép không hợp lệ</value>
+  </data>
+  <data name="LicenseStatusTrial" xml:space="preserve">
+    <value>Dùng thử</value>
+  </data>
+  <data name="LicenseStatusTrialExpiringSoon" xml:space="preserve">
+    <value>Dùng thử sắp hết</value>
+  </data>
+  <data name="LicenseStatusTrialExpired" xml:space="preserve">
+    <value>Dùng thử đã hết hạn</value>
+  </data>
 </root>

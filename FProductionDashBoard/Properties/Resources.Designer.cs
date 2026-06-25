@@ -100,6 +100,34 @@ namespace FProductionDashBoard.Properties {
             get { return ResourceManager.GetString("LicenseStatusDevelopment", resourceCulture); }
         }
 
+        internal static string LicenseStatusValid {
+            get { return ResourceManager.GetString("LicenseStatusValid", resourceCulture); }
+        }
+
+        internal static string LicenseStatusValidExpiringSoon {
+            get { return ResourceManager.GetString("LicenseStatusValidExpiringSoon", resourceCulture); }
+        }
+
+        internal static string LicenseStatusExpired {
+            get { return ResourceManager.GetString("LicenseStatusExpired", resourceCulture); }
+        }
+
+        internal static string LicenseStatusInvalidSignature {
+            get { return ResourceManager.GetString("LicenseStatusInvalidSignature", resourceCulture); }
+        }
+
+        internal static string LicenseStatusTrial {
+            get { return ResourceManager.GetString("LicenseStatusTrial", resourceCulture); }
+        }
+
+        internal static string LicenseStatusTrialExpiringSoon {
+            get { return ResourceManager.GetString("LicenseStatusTrialExpiringSoon", resourceCulture); }
+        }
+
+        internal static string LicenseStatusTrialExpired {
+            get { return ResourceManager.GetString("LicenseStatusTrialExpired", resourceCulture); }
+        }
+
         /// <summary>
         ///   查詢類似 Please loaded at least one device! 的當地語系化字串。
         /// </summary>
