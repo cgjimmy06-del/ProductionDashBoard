@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text.Json;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
@@ -187,7 +188,7 @@ namespace FProductionDashBoard.ViewModels
             AddAttachmentCommand = new RelayCommand(AddAttachment);
             RemoveAttachmentCommand = new RelayCommand<string>(path => AttachmentPaths.Remove(path!));
             UploadLogCommand = new AsyncRelayCommand(UploadLogAsync, () => !IsUploading && SelectedLogFile != null);
-            ImportLicenseCommand = new RelayCommand(() => { }, () => false);
+            ImportLicenseCommand = new AsyncRelayCommand(ImportLicenseAsync);
 
             _core.Log.RefreshAvailableLogFiles();
         }
@@ -268,6 +269,40 @@ namespace FProductionDashBoard.ViewModels
             foreach (var path in dialog.FileNames)
                 if (!AttachmentPaths.Contains(path))
                     AttachmentPaths.Add(path);
+        }
+
+        private async Task ImportLicenseAsync()
+        {
+            var dialog = new OpenFileDialog { Filter = "授權檔 (*.lic)|*.lic" };
+            if (dialog.ShowDialog() != true) return;
+
+            try
+            {
+                var json = await File.ReadAllTextAsync(dialog.FileName);
+                var dto = JsonSerializer.Deserialize<Dtos.LicenseFileDto>(json,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (dto == null) throw new InvalidOperationException("授權檔格式無效");
+
+                JsonDataService.Save(dto, LicenseConstants.LicenseFileName);
+                _licenseService.Reload();
+
+                OnPropertyChanged(nameof(LicenseStatusText));
+                OnPropertyChanged(nameof(LicenseCustomerName));
+                OnPropertyChanged(nameof(HasLicenseCustomerName));
+                OnPropertyChanged(nameof(LicenseDaysRemainingText));
+                OnPropertyChanged(nameof(HasLicenseDaysRemaining));
+                OnPropertyChanged(nameof(IsChartsEnabled));
+                OnPropertyChanged(nameof(IsSchedulingEnabled));
+                OnPropertyChanged(nameof(IsProgramLibEnabled));
+                OnPropertyChanged(nameof(IsMaterialEnabled));
+
+                _core.Log.AddLog("[SystemSettings] 授權已匯入，功能已更新", LogLevel.Success);
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[SystemSettings] 授權匯入失敗，請確認檔案格式", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ImportLicenseAsync] {ex.Message}");
+            }
         }
 
         private async Task UploadLogAsync()

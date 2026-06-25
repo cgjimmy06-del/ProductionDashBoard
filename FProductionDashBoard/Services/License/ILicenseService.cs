@@ -20,5 +20,6 @@ namespace FProductionDashBoard.Services
         int DaysRemaining             { get; }
         string CustomerName           { get; }
         event EventHandler? LicenseUpdated;
+        void Reload();
     }
 }

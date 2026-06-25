@@ -123,8 +123,12 @@ namespace FProductionDashBoard
                 services.AddSingleton<Services.IConfigService<Dtos.HardwareConfigDto>>(
                     _ => new Services.ConfigService<Dtos.HardwareConfigDto>("hardware_config.json"));
 
-                // 授權服務
+                // 授權服務（#if DEBUG 保留 Stub 供開發測試）
+#if DEBUG
                 services.AddSingleton<Services.ILicenseService, Services.DevelopmentLicenseService>();
+#else
+                services.AddSingleton<Services.ILicenseService, Services.FileLicenseService>();
+#endif
 
                 // 註冊 ABB 機器人用戶端工廠（每台設備卡片各自持有獨立實例，由 ViewModel 負責釋放）
                 services.AddSingleton<Func<DeviceDrivers.Abb.IAbbRobotClient>>(

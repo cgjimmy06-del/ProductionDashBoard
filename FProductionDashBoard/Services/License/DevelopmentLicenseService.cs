@@ -8,9 +8,9 @@ namespace FProductionDashBoard.Services
         public DateTime?     ExpiryDate   => null;
         public int           DaysRemaining => 0;
         public string        CustomerName  => "Development";
-        public event EventHandler? LicenseUpdated;
+        public event EventHandler? LicenseUpdated { add { } remove { } }
 
-        public bool IsFeatureEnabled(LicensedFeature feature)
-            => feature != LicensedFeature.Charts;
+        public bool IsFeatureEnabled(LicensedFeature feature) => true;
+        public void Reload() { }
     }
 }

@@ -83,7 +83,13 @@ namespace FProductionDashBoard.ViewModels
 
         private bool SwitchPanelContent(PanelViewModel panel, NavMode mode)
         {
-            var requiredFeature = GetRequiredFeature(mode);
+            LicensedFeature? requiredFeature;
+            try { requiredFeature = GetRequiredFeature(mode); }
+            catch (NotImplementedException)
+            {
+                _core.Log.AddErrorLog($"[SwitchPanelContent] NavMode {mode} 未設定授權映射，拒絕存取");
+                return false;
+            }
             if (requiredFeature.HasValue && !_licenseService.IsFeatureEnabled(requiredFeature.Value))
             {
                 _core.Log.AddLog("[SwitchPanelContent] 此功能需要有效授權", LogLevel.Error);
