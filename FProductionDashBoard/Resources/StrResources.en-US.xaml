@@ -521,7 +521,7 @@
     <sys:String x:Key="AiThinking">▌ Thinking...</sys:String>
     <sys:String x:Key="AiModeAll">All</sys:String>
     <sys:String x:Key="AiModeChat">Chat</sys:String>
-    <sys:String x:Key="AiModeSchedule">Schedule</sys:String>
+    <sys:String x:Key="AiModeFieldStatus">Field Status</sys:String>
     <sys:String x:Key="AiCancelTooltip">Cancel</sys:String>
     <sys:String x:Key="FilterPanelToggleTooltip">Expand/Collapse Filter</sys:String>
     <!--#endregion-->
