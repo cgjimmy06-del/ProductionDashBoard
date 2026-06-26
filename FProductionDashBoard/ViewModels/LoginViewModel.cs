@@ -38,9 +38,14 @@ namespace FProductionDashBoard.ViewModels
         private readonly Theme _darkTheme;
 
         public ObservableCollection<string> Servers { get; } =
-        new ObservableCollection<string> { "TT" }; // { "FS", "GS", "VS" }; { "TT" };
+#if DEBUG
+        new ObservableCollection<string> { "TT" };
+#else
+        new ObservableCollection<string> { "FS", "GS", "VS" };
+#endif
+
         public ObservableCollection<LanguageOption> Languages { get; } =
-        new ObservableCollection<LanguageOption> { 
+        new ObservableCollection<LanguageOption> {
             new LanguageOption { DisplayName = "中文", CultureCode = "zh-TW" },
             new LanguageOption { DisplayName = "English", CultureCode = "en-US" },
             new LanguageOption { DisplayName = "Tiếng Việt", CultureCode = "vi-VN" }};
@@ -141,14 +146,16 @@ namespace FProductionDashBoard.ViewModels
         public void loadDefault() // 載入預設
         {
             RememberMe = Properties.Settings.Default.RememberMe;
-            SelectedServer = Properties.Settings.Default.Server;
             UserId = Properties.Settings.Default.Account;
             Password = Properties.Settings.Default.Password;
+
+            var savedServer = Properties.Settings.Default.Server;
+            SelectedServer = Servers.FirstOrDefault(s => s == savedServer) ?? Servers[0];
 
             if (IsDarkMode != Properties.Settings.Default.IsDarkMode)
             { IsDarkMode = Properties.Settings.Default.IsDarkMode; themeChange(); }
 
-            if (SelectedLanguage != Properties.Settings.Default.CultureCode && 
+            if (SelectedLanguage != Properties.Settings.Default.CultureCode &&
                 Properties.Settings.Default.CultureCode != string.Empty)
             { SelectedLanguage = Properties.Settings.Default.CultureCode; languageChange(); }
         }
@@ -165,7 +172,8 @@ namespace FProductionDashBoard.ViewModels
             {
                 int index = Application.Current.Resources.MergedDictionaries.IndexOf(oldDict);
                 Application.Current.Resources.MergedDictionaries[index] = dict;
-            } else Application.Current.Resources.MergedDictionaries.Add(dict);
+            }
+            else Application.Current.Resources.MergedDictionaries.Add(dict);
 
             // 切換 .resx (後端訊息)
             var currentCulture = new CultureInfo(SelectedLanguage);
@@ -188,7 +196,8 @@ namespace FProductionDashBoard.ViewModels
             {
                 int index = Application.Current.Resources.MergedDictionaries.IndexOf(oldDictTheme);
                 Application.Current.Resources.MergedDictionaries[index] = dictTheme;
-            } else Application.Current.Resources.MergedDictionaries.Add(dictTheme);
+            }
+            else Application.Current.Resources.MergedDictionaries.Add(dictTheme);
 
             //// 切換 Material Design 主題
             if (IsDarkMode) _paletteHelper.SetTheme(_darkTheme);
