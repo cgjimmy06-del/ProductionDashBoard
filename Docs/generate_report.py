@@ -10,7 +10,7 @@ from datetime import date
 from pathlib import Path
 
 OUTPUT_DIR = Path(__file__).parent
-VERSION_TAG = "v3.2.0"
+VERSION_TAG = "v3.3.0"
 XLSX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.xlsx"
 DOCX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.docx"
 PDF_PATH  = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.pdf"
@@ -627,7 +627,8 @@ def generate_word():
         ["v2.6", "2026-06-04", "AI-assisted Review", "V2.6.0 發佈版本更新；PR #64-66 Modbus TCP 支援 + ABB/Modbus code review 修正（High-1 資源釋放 + Low-1~5）", "已歸檔"],
         ["v2.7.2", "2026-06-09", "AI-assisted Review", "V2.7.2 發佈版本更新；新增出入料管理（PR#73-74）+ ICollectionView 效能強化與日期篩選（PR#75）+ code review 修復（PR#76-77）", "已歸檔"],
         ["v3.0.0", "2026-06-12", "AI-assisted Review", "V3.0.0 發佈版本更新；排單管理（PR#81~84：排單清單、設備卡片牆、接單指派、焦點模式、取消訂單）+ DeviceCard UX 主次按鈕 + ABB 傳送開關 + Help menu（PR#85）", "已歸檔"],
-        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V3.2.0 發佈版本更新；AI Agent 操作面板（PR#87~91）+ 設備卡片 SOP 作業指引區（PR#101）", "更新版"],
+        ["v3.2.0", "2026-06-22", "AI-assisted Review", "V3.2.0 發佈版本更新；AI Agent 操作面板（PR#87~91）+ 設備卡片 SOP 作業指引區（PR#101）", "已歸檔"],
+        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V3.3.0 正式版發佈；授權系統（PR#104~105）+ AI Agent 現場狀況工具（PR#107）+ 首次正式版（移除 Beta 標籤）", "更新版"],
     ]
     rev_tbl = doc.add_table(rows=len(rev_history)+1, cols=5)
     rev_tbl.style = "Table Grid"
