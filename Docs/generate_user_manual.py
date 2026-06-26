@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import date
 
 OUTPUT_DIR = Path(__file__).parent
-VERSION_TAG = "v3.2.0"
+VERSION_TAG = "v3.3.0"
 DOCX_PATH  = OUTPUT_DIR / f"UserManual_PDB_{VERSION_TAG}.docx"
 PDF_PATH   = OUTPUT_DIR / f"UserManual_PDB_{VERSION_TAG}.pdf"
 REVIEW_DATE = date.today().strftime("%Y-%m-%d")
@@ -233,7 +233,7 @@ def generate_manual():
 
     doc.add_paragraph()
     for label, value in [
-        ("文件版本", f"{VERSION_TAG}（含排單管理 / AI Agent / 出入料管理 / 硬體設定 / ABB機械手 / Modbus TCP 設備支援）"),
+        ("文件版本", f"{VERSION_TAG}（含排單管理 / AI Agent / 出入料管理 / 授權管理 / 硬體設定 / ABB機械手 / Modbus TCP 設備支援）"),
         ("適用對象", "現場操作人員、設備管理員、系統管理員"),
         ("語言版本", "繁體中文"),
         ("文件日期", REVIEW_DATE),
@@ -261,7 +261,8 @@ def generate_manual():
             ["v2.6", "2026-06-04", "AI-assisted",        "新增 7.3 Modbus TCP 設備（PR#64-65）；補設備卡片 Modbus 狀態說明；補 FAQ"],
             ["v2.7.2", "2026-06-09", "AI-assisted",    "新增第 6 章出入料管理（PR#73-74）；補日期篩選與效能強化說明（PR#75）；章節重新編號"],
             ["v3.0.0", "2026-06-12", "AI-assisted",    "新增第 7 章排單管理（PR#81~84）；更新 5.1 設備卡片主次按鈕說明；補 Help 選單與 ABB 傳送開關說明（PR#85）；章節重新編號"],
-            [VERSION_TAG, REVIEW_DATE, "AI-assisted",   "新增 AI Agent 操作面板說明（PR#87~91）；補設備卡片 SOP 作業指引說明（PR#101）"],
+            ["v3.2.0", "2026-06-22", "AI-assisted",   "新增 AI Agent 操作面板說明（PR#87~91）；補設備卡片 SOP 作業指引說明（PR#101）"],
+            [VERSION_TAG, REVIEW_DATE, "AI-assisted",   "新增第 12 章授權管理（PR#104~105）；新增第 13 章 AI Agent 現場狀況查詢工具（PR#107）；首次正式版"],
         ],
         [2.0, 2.5, 3.5, 8.0]
     )
@@ -323,7 +324,16 @@ def generate_manual():
         ("  9.3.3","移除 Modbus TCP 設備", ""),
         ("10.", "離線模式說明", ""),
         ("11.", "登出與閒置保護", ""),
-        ("12.", "常見問題（FAQ）", ""),
+        ("12.", "授權管理", ""),
+        ("  12.1", "授權狀態查看", ""),
+        ("  12.2", "匯入授權檔", ""),
+        ("  12.3", "Trial 模式說明", ""),
+        ("  12.4", "授權到期處理", ""),
+        ("13.", "AI Agent 操作指南", ""),
+        ("  13.1", "開啟 AI Agent 面板", ""),
+        ("  13.2", "API 金鑰設定", ""),
+        ("  13.3", "現場狀況模式與查詢工具", ""),
+        ("14.", "常見問題（FAQ）", ""),
     ]
     for num, title, page in toc_items:
         p = doc.add_paragraph()
@@ -964,9 +974,94 @@ def generate_manual():
     doc.add_page_break()
 
     # ══════════════════════════════════════
-    # 12. 常見問題 FAQ
+    # 12. 授權管理
     # ══════════════════════════════════════
-    heading1("12. 常見問題（FAQ）")
+    heading1("12. 授權管理")
+    body("FProductionDashBoard 採用授權檔機制管理各模組的使用權限。"
+         "系統管理員可透過「系統設定 → 金鑰與授權」頁籤查看目前授權狀態，並在需要時匯入新授權檔。")
+
+    heading2("12.1 授權狀態查看")
+    body("進入「工具 → 系統設定」（或快捷鍵 Ctrl+,），切換至「金鑰與授權」頁籤，即可查看以下資訊：")
+    simple_table(
+        ["欄位", "說明"],
+        [
+            ["授權狀態", "顯示目前授權有效性（有效 / Trial / 已過期 / 簽章錯誤）"],
+            ["到期日期", "授權檔設定的有效期限"],
+            ["剩餘天數", "距到期日的剩餘天數（Trial 模式顯示試用剩餘天數）"],
+            ["已授權功能", "列出目前授權開放的功能模組"],
+        ],
+        [3.5, 10.5]
+    )
+    doc.add_paragraph()
+
+    heading2("12.2 匯入授權檔")
+    body("當取得新授權檔（.lic 格式）後，請依下列步驟匯入：")
+    step(1, "開啟「系統設定 → 金鑰與授權」頁籤")
+    step(2, "點擊「匯入授權檔」按鈕")
+    step(3, "在檔案選擇對話框中選取 .lic 授權檔")
+    step(4, "系統驗證簽章後顯示匯入結果；授權狀態即時更新")
+    note("授權檔以 HMAC-SHA256 簽章保護，若檔案遭竄改，系統將顯示「簽章錯誤」並拒絕使用。", kind="warn")
+    doc.add_paragraph()
+
+    heading2("12.3 Trial 模式說明")
+    body("首次執行且尚未匯入授權檔時，系統自動進入 Trial 模式，提供 14 天完整功能試用。")
+    simple_table(
+        ["狀態", "說明"],
+        [
+            ["Trial（試用中）", "14 天內所有功能均可使用，導覽按鈕顯示剩餘天數提示"],
+            ["Trial Expired（試用到期）", "試用期滿後，需授權功能（圖表 / 排單 / 程式庫 / 出入料）進入鎖定狀態"],
+        ],
+        [4.5, 9.5]
+    )
+    doc.add_paragraph()
+
+    heading2("12.4 授權到期處理")
+    body("授權到期後，未授權的功能模組導覽按鈕將顯示鎖定圖示，點擊後系統會提示「功能未授權」。"
+         "基本操作（首頁 / 現場操作面板 / 系統設定）不受授權限制，系統仍可正常運行。")
+    note("如需續授權，請聯繫系統管理員取得新授權檔，並依 12.2 步驟重新匯入。", kind="tip")
+    doc.add_page_break()
+
+    # ══════════════════════════════════════
+    # 13. AI Agent 操作指南
+    # ══════════════════════════════════════
+    heading1("13. AI Agent 操作指南")
+    body("AI Agent 是內建於系統的智慧查詢助理，可透過自然語言查詢現場資料（訂單、設備狀態、調試進度等），"
+         "並由系統後端以安全的 Function Calling 機制執行查詢，AI 模型本身無法直接存取資料庫。")
+
+    heading2("13.1 開啟 AI Agent 面板")
+    step(1, "點擊上方工具列的「Robot」圖示按鈕（ToggleButton）")
+    step(2, "畫面右側滑出 AI Agent 面板，與主畫面並排顯示")
+    step(3, "再次點擊同一按鈕可收合面板")
+    note("AI Agent 面板需先完成 API 金鑰設定（13.2）才能正常送出查詢。", kind="info")
+    doc.add_paragraph()
+
+    heading2("13.2 API 金鑰設定")
+    body("AI Agent 使用 Azure OpenAI 服務，需由系統管理員提供 API 金鑰後設定：")
+    step(1, "開啟「工具 → 系統設定 → 金鑰與授權」頁籤")
+    step(2, "在「AI API 金鑰」欄位輸入金鑰")
+    step(3, "點擊「套用」儲存（金鑰存放於 %LOCALAPPDATA%，不進入程式碼或版控）")
+    body("設定完成後，AI Agent 面板頂部的「AI 功能尚未啟用」提示條將自動消失。")
+    doc.add_paragraph()
+
+    heading2("13.3 現場狀況模式與查詢工具")
+    body("AI Agent 目前提供「現場狀況」模式，可執行以下四類查詢：")
+    simple_table(
+        ["工具名稱", "查詢內容", "範例問法"],
+        [
+            ["query_orders",              "訂單清單（依狀態 / 設備篩選）", "「目前有哪些待生產訂單？」"],
+            ["query_equipment_status",    "設備當前生產狀態",             "「哪些設備正在生產中？」"],
+            ["query_tuning_status",       "進行中的調試記錄",             "「現在有幾台設備在調試？」"],
+            ["query_equipment_capabilities", "機台可生產品項",            "「設備 A 可以生產哪些產品？」"],
+        ],
+        [4.0, 4.5, 5.5]
+    )
+    note("AI 查詢結果僅供參考，最終操作（接單、取消等）仍須透過正式 UI 流程執行。", kind="warn")
+    doc.add_page_break()
+
+    # ══════════════════════════════════════
+    # 14. 常見問題 FAQ
+    # ══════════════════════════════════════
+    heading1("14. 常見問題（FAQ）")
 
     faq_items = [
         ("Q: 登入時顯示「帳號或密碼錯誤」",
