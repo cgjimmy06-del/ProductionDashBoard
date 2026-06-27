@@ -526,4 +526,18 @@
     <sys:String x:Key="FilterPanelToggleTooltip">Expand/Collapse Filter</sys:String>
     <!--#endregion-->
 
+    <!--#region MES Device Sync-->
+    <sys:String x:Key="EquipmentSetting_SyncWithMes">MES Sync</sys:String>
+    <sys:String x:Key="MesSyncDialog_OnlyUnsynced">Show Unsynced Only</sys:String>
+    <sys:String x:Key="MesSyncDialog_AllGroups">All Types</sys:String>
+    <sys:String x:Key="MesSyncDialog_GroupHint">Device Type</sys:String>
+    <sys:String x:Key="MesSyncDialog_SelectAll">Select All</sys:String>
+    <sys:String x:Key="MesSyncDialog_ClearAll">Clear All</sys:String>
+    <sys:String x:Key="MesSyncDialog_StatusHeader">Status</sys:String>
+    <sys:String x:Key="MesSyncState_Synced">Synced</sys:String>
+    <sys:String x:Key="MesSyncState_MesOnly">MES Only</sys:String>
+    <sys:String x:Key="MesSyncState_LocalOnly">Local Only</sys:String>
+    <sys:String x:Key="MesSyncState_DataMismatch">Data Mismatch</sys:String>
+    <!--#endregion-->
+
 </ResourceDictionary>

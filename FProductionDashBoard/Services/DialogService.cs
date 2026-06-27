@@ -20,6 +20,7 @@ namespace FProductionDashBoard.Services
             [typeof(ScheduleOperationDialogViewModel)]      = vm => new ScheduleOperationDialog { DataContext = vm },
             [typeof(OrderAssignmentDialogViewModel)]              = vm => new OrderAssignmentDialog { DataContext = vm },
             [typeof(CancelOrderConfirmationDialogViewModel)]      = vm => new CancelOrderConfirmationDialog { DataContext = vm },
+            [typeof(MesSyncDialogViewModel)]    = vm => new MesSyncDialog { DataContext = vm },
         };
 
         public bool ShowConfirm(string message)

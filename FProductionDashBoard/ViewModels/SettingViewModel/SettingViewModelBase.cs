@@ -51,5 +51,6 @@ namespace FProductionDashBoard.ViewModels
             await SaveAsync();
         }
         protected bool ShowConfirm(string message) => _dialog.ShowConfirm(message);
+        protected TResult? ShowDialog<TResult>(DialogBaseViewModel<TResult> vm) => _dialog.ShowDialog(vm);
     }
 }

@@ -1077,6 +1077,34 @@ namespace FProductionDashBoard.Services
             await _infoRep.UpdateMesDeviceAsync(entity).ConfigureAwait(false);
         }
 
+        public async Task<IReadOnlyList<string>> SyncMesEquipmentsAsync(IEnumerable<UiModels.MesSyncItemUiModel> selectedItems)
+        {
+            var errors = new List<string>();
+            foreach (var item in selectedItems)
+            {
+                try
+                {
+                    switch (item.SyncState)
+                    {
+                        case UiModels.MesSyncState.MesOnly:
+                            await _equipmentRep.AddAsync(MesEquipmentMapper.ToEquipment(item.MesDevice!)).ConfigureAwait(false);
+                            break;
+                        case UiModels.MesSyncState.LocalOnly:
+                            await _infoRep.AddMesDeviceAsync(MesEquipmentMapper.ToMesDevice(item.LocalEquipment!)).ConfigureAwait(false);
+                            break;
+                        case UiModels.MesSyncState.DataMismatch:
+                            await _infoRep.UpdateMesDeviceAsync(MesEquipmentMapper.ToMesDevice(item.LocalEquipment!)).ConfigureAwait(false);
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    errors.Add($"[SyncMesEquipmentsAsync] {item.DeviceId}: {ex.Message}");
+                }
+            }
+            return errors;
+        }
+
         #endregion
 
         #region 出入料管理：排程服務
