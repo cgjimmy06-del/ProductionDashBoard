@@ -579,4 +579,19 @@
   <data name="ComStrNone" xml:space="preserve">
     <value>(無)</value>
   </data>
+  <data name="MesSyncDialog_Title" xml:space="preserve">
+    <value>MES 設備同步</value>
+  </data>
+  <data name="MesSyncState_Synced" xml:space="preserve">
+    <value>已同步</value>
+  </data>
+  <data name="MesSyncState_MesOnly" xml:space="preserve">
+    <value>僅在 MES</value>
+  </data>
+  <data name="MesSyncState_LocalOnly" xml:space="preserve">
+    <value>僅在本系統</value>
+  </data>
+  <data name="MesSyncState_DataMismatch" xml:space="preserve">
+    <value>資料不一致</value>
+  </data>
 </root>

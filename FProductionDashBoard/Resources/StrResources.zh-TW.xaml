@@ -526,4 +526,18 @@
     <sys:String x:Key="FilterPanelToggleTooltip">展開/折疊篩選</sys:String>
     <!--#endregion-->
 
+    <!--#region MES 設備同步-->
+    <sys:String x:Key="EquipmentSetting_SyncWithMes">MES 同步</sys:String>
+    <sys:String x:Key="MesSyncDialog_OnlyUnsynced">只顯示未同步</sys:String>
+    <sys:String x:Key="MesSyncDialog_AllGroups">全部類型</sys:String>
+    <sys:String x:Key="MesSyncDialog_GroupHint">設備類型</sys:String>
+    <sys:String x:Key="MesSyncDialog_SelectAll">全選</sys:String>
+    <sys:String x:Key="MesSyncDialog_ClearAll">取消全選</sys:String>
+    <sys:String x:Key="MesSyncDialog_StatusHeader">狀態</sys:String>
+    <sys:String x:Key="MesSyncState_Synced">已同步</sys:String>
+    <sys:String x:Key="MesSyncState_MesOnly">僅在 MES</sys:String>
+    <sys:String x:Key="MesSyncState_LocalOnly">僅在本系統</sys:String>
+    <sys:String x:Key="MesSyncState_DataMismatch">資料不一致</sys:String>
+    <!--#endregion-->
+
 </ResourceDictionary>
