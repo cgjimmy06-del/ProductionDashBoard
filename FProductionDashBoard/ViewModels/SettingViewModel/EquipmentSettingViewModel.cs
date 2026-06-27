@@ -6,6 +6,7 @@ using FProductionDashBoard.Services;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FProductionDashBoard.ViewModels
@@ -152,6 +153,33 @@ namespace FProductionDashBoard.ViewModels
             FormFloor = null;
             FormDepartmentId = null;
             FormDescription = null;
+        }
+
+        [RelayCommand]
+        private async Task SyncWithMes()
+        {
+            var vm = new MesSyncDialogViewModel(_core.Data);
+            var selectedItems = ShowDialog(vm);
+            if (selectedItems == null || !selectedItems.Any()) return;
+
+            try
+            {
+                var errors = await _core.Data.SyncMesEquipmentsAsync(selectedItems);
+                foreach (var err in errors)
+                    _core.Log.AddErrorLog(err);
+
+                if (!errors.Any())
+                    _core.Log.AddLog("MES 設備同步完成", LogLevel.Info);
+                else
+                    _core.Log.AddLog($"MES 設備同步完成（部分失敗，共 {errors.Count} 筆）", LogLevel.Error);
+
+                await LoadAsync();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("MES 設備同步失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[SyncWithMes] {ex.Message}");
+            }
         }
     }
 }

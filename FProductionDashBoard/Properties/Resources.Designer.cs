@@ -1227,5 +1227,25 @@ namespace FProductionDashBoard.Properties {
         internal static string ComStrNone {
             get { return ResourceManager.GetString("ComStrNone", resourceCulture); }
         }
+
+        internal static string MesSyncDialog_Title {
+            get { return ResourceManager.GetString("MesSyncDialog_Title", resourceCulture); }
+        }
+
+        internal static string MesSyncState_Synced {
+            get { return ResourceManager.GetString("MesSyncState_Synced", resourceCulture); }
+        }
+
+        internal static string MesSyncState_MesOnly {
+            get { return ResourceManager.GetString("MesSyncState_MesOnly", resourceCulture); }
+        }
+
+        internal static string MesSyncState_LocalOnly {
+            get { return ResourceManager.GetString("MesSyncState_LocalOnly", resourceCulture); }
+        }
+
+        internal static string MesSyncState_DataMismatch {
+            get { return ResourceManager.GetString("MesSyncState_DataMismatch", resourceCulture); }
+        }
     }
 }
