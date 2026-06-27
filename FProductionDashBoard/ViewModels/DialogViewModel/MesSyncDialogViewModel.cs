@@ -22,7 +22,7 @@ namespace FProductionDashBoard.ViewModels
         public ICollectionView FilteredItems { get; }
 
         [ObservableProperty] private bool onlyUnsynced;
-        [ObservableProperty] private string? groupFilter;
+        [ObservableProperty] private string? groupFilter = string.Empty;
 
         public IReadOnlyList<string> GroupOptions { get; }
 
