@@ -1204,6 +1204,34 @@ namespace FProductionDashBoard.Properties {
             get { return ResourceManager.GetString("HwConfirmWriteTitle", resourceCulture); }
         }
 
+        internal static string HwAbbConnected {
+            get { return ResourceManager.GetString("HwAbbConnected", resourceCulture); }
+        }
+
+        internal static string HwControllerNotFound {
+            get { return ResourceManager.GetString("HwControllerNotFound", resourceCulture); }
+        }
+
+        internal static string HwAbbConnectionFailed {
+            get { return ResourceManager.GetString("HwAbbConnectionFailed", resourceCulture); }
+        }
+
+        internal static string HwReadVariableFailed {
+            get { return ResourceManager.GetString("HwReadVariableFailed", resourceCulture); }
+        }
+
+        internal static string HwRapidValueReadFailed {
+            get { return ResourceManager.GetString("HwRapidValueReadFailed", resourceCulture); }
+        }
+
+        internal static string HwReadFailed {
+            get { return ResourceManager.GetString("HwReadFailed", resourceCulture); }
+        }
+
+        internal static string HwWriteFailed {
+            get { return ResourceManager.GetString("HwWriteFailed", resourceCulture); }
+        }
+
         internal static string SsUploadSuccess {
             get { return ResourceManager.GetString("SsUploadSuccess", resourceCulture); }
         }

@@ -1,6 +1,8 @@
 using FProductionDashBoard.Models.Extra;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FProductionDashBoard.Repositories.ExtraDb
@@ -12,6 +14,29 @@ namespace FProductionDashBoard.Repositories.ExtraDb
         public InfoDbRepository(IDbContextFactory<InfoDbContext> factory)
         {
             _factory = factory;
+        }
+
+        private const int ConnectionTimeoutMs = 2000;
+
+        public async Task<bool> CheckConnectionAsync()
+        {
+            using var cts = new CancellationTokenSource(ConnectionTimeoutMs);
+            await using var ctx = _factory.CreateDbContext();
+            var connStr = ctx.Database.GetConnectionString()!;
+            try
+            {
+                var result = await ctx.Database.CanConnectAsync(cts.Token).ConfigureAwait(false);
+                if (!result)
+                    using (var c = new SqlConnection(connStr))
+                        SqlConnection.ClearPool(c);
+                return result;
+            }
+            catch
+            {
+                using (var c = new SqlConnection(connStr))
+                    SqlConnection.ClearPool(c);
+                return false;
+            }
         }
 
         public async Task<string?> GetCustomerByMediumAsync(string mediumCode)

@@ -1064,16 +1064,22 @@ namespace FProductionDashBoard.Services
 
         public async Task<IEnumerable<MesDevice>> GetAllMesDevicesAsync()
         {
+            if (!await _infoRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetAllMesDevicesAsync] MES Repository 連線失敗");
             return await _infoRep.GetAllMesDevicesAsync().ConfigureAwait(false);
         }
 
         public async Task AddMesDeviceAsync(MesDevice entity)
         {
+            if (!await _infoRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[AddMesDeviceAsync] MES Repository 連線失敗");
             await _infoRep.AddMesDeviceAsync(entity).ConfigureAwait(false);
         }
 
         public async Task UpdateMesDeviceAsync(MesDevice entity)
         {
+            if (!await _infoRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[UpdateMesDeviceAsync] MES Repository 連線失敗");
             await _infoRep.UpdateMesDeviceAsync(entity).ConfigureAwait(false);
         }
 
