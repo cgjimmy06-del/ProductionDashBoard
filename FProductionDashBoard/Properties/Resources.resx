@@ -606,6 +606,27 @@
   <data name="HwConfirmWriteTitle" xml:space="preserve">
     <value>Confirm Write</value>
   </data>
+  <data name="HwAbbConnected" xml:space="preserve">
+    <value>Connected {0}</value>
+  </data>
+  <data name="HwControllerNotFound" xml:space="preserve">
+    <value>Controller not found: {0}</value>
+  </data>
+  <data name="HwAbbConnectionFailed" xml:space="preserve">
+    <value>Connection failed</value>
+  </data>
+  <data name="HwReadVariableFailed" xml:space="preserve">
+    <value>Failed to read variable</value>
+  </data>
+  <data name="HwRapidValueReadFailed" xml:space="preserve">
+    <value>(Read failed)</value>
+  </data>
+  <data name="HwReadFailed" xml:space="preserve">
+    <value>Read failed</value>
+  </data>
+  <data name="HwWriteFailed" xml:space="preserve">
+    <value>Write failed</value>
+  </data>
   <data name="SsUploadSuccess" xml:space="preserve">
     <value>Uploaded: {0}</value>
   </data>

@@ -47,7 +47,7 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _core.Log.AddLog($"員工設定 - 載入員工清單失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog("[員工] 載入員工清單失敗", LogLevel.Error);
                 _core.Log.AddErrorLog($"[LoadAsync] {ex.Message}");
             }
         }
@@ -90,7 +90,8 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _core.Log.AddLog($"刪除員工失敗 (檢查是否有關聯紀錄): {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog("[員工] 刪除失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[Delete] {ex.Message}");
             }
         }
 
@@ -131,7 +132,8 @@ namespace FProductionDashBoard.ViewModels
             {
                 FormErrorString = ex.Message;
                 FormSuccessString = null;
-                _core.Log.AddLog($"儲存員工失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog("[員工] 儲存失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[SaveAsync] {ex.Message}");
             }
         }
 

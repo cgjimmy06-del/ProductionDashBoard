@@ -268,6 +268,7 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 DialogErrorString = ex.Message;
+                _core.Log.AddLog("[訂單] 新增失敗", LogLevel.Error);
                 _core.Log.AddErrorLog($"[AddOrderAsync] {ex.Message}");
             }
         }
@@ -305,6 +306,7 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 DialogErrorString = ex.Message;
+                _core.Log.AddLog("[訂單] 載入 SOP 清單失敗", LogLevel.Error);
                 _core.Log.AddErrorLog($"[LoadChecklistAsync] {ex.Message}");
             }
         }
@@ -337,6 +339,7 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 DialogErrorString = ex.Message;
+                _core.Log.AddLog("[訂單] 取消失敗", LogLevel.Error);
                 _core.Log.AddErrorLog($"[CancelPendingOrderAsync] {ex.Message}");
             }
         }
@@ -399,6 +402,7 @@ namespace FProductionDashBoard.ViewModels
             }
             catch (Exception ex)
             {
+                _core.Log.AddLog("[訂單] 載入失敗", LogLevel.Error);
                 _core.Log.AddErrorLog($"[OrderListDialog.LoadOrdersAsync] {ex.Message}");
             }
         }

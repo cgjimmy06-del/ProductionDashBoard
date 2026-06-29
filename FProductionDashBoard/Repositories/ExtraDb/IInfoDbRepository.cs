@@ -6,6 +6,7 @@ namespace FProductionDashBoard.Repositories.ExtraDb
 {
     public interface IInfoDbRepository
     {
+        Task<bool> CheckConnectionAsync();
         Task<string?> GetCustomerByMediumAsync(string mediumCode);
         Task<IEnumerable<MesDevice>> GetAllMesDevicesAsync();
         Task AddMesDeviceAsync(MesDevice entity);

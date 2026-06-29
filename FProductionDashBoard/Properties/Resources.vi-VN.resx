@@ -561,6 +561,27 @@
   <data name="HwConfirmWriteTitle" xml:space="preserve">
     <value>Xác nhận ghi</value>
   </data>
+  <data name="HwAbbConnected" xml:space="preserve">
+    <value>Đã kết nối {0}</value>
+  </data>
+  <data name="HwControllerNotFound" xml:space="preserve">
+    <value>Không tìm thấy bộ điều khiển {0}</value>
+  </data>
+  <data name="HwAbbConnectionFailed" xml:space="preserve">
+    <value>Kết nối thất bại</value>
+  </data>
+  <data name="HwReadVariableFailed" xml:space="preserve">
+    <value>Đọc biến thất bại</value>
+  </data>
+  <data name="HwRapidValueReadFailed" xml:space="preserve">
+    <value>(Đọc thất bại)</value>
+  </data>
+  <data name="HwReadFailed" xml:space="preserve">
+    <value>Đọc thất bại</value>
+  </data>
+  <data name="HwWriteFailed" xml:space="preserve">
+    <value>Ghi thất bại</value>
+  </data>
   <data name="SsUploadSuccess" xml:space="preserve">
     <value>Đã tải lên: {0}</value>
   </data>

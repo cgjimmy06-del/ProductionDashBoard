@@ -138,7 +138,7 @@ namespace FProductionDashBoard.ViewModels
                 target = _discovered.FirstOrDefault(c => c.IpAddress == ip);
                 if (target is null)
                 {
-                    StatusMessage = $"找不到控制器 {ip}";
+                    StatusMessage = string.Format(Properties.Resources.HwControllerNotFound, ip);
                     return;
                 }
                 SelectedController = target;
@@ -148,7 +148,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 var ctrl = target;
                 await Task.Run(() => _client.Connect(ctrl)).ConfigureAwait(true);
-                StatusMessage = $"已連線 {ctrl.IpAddress}";
+                StatusMessage = string.Format(Properties.Resources.HwAbbConnected, ctrl.IpAddress);
 
                 // 連線成功後載入 Task 清單，預設選第一個（觸發 Module / RAPID 連動）
                 var tasks = await Task.Run(() => _client.GetTasks()).ConfigureAwait(true);
@@ -158,7 +158,7 @@ namespace FProductionDashBoard.ViewModels
             }
             catch (AbbRobotException ex)
             {
-                StatusMessage = $"連線失敗：{ex.Message}";
+                StatusMessage = $"{Properties.Resources.HwAbbConnectionFailed}：{ex.Message}";
             }
         }
 
@@ -222,7 +222,7 @@ namespace FProductionDashBoard.ViewModels
             }
             catch (AbbRobotException ex)
             {
-                StatusMessage = $"讀取變數失敗：{ex.Message}";
+                StatusMessage = $"{Properties.Resources.HwReadVariableFailed}：{ex.Message}";
             }
         }
 
@@ -265,8 +265,8 @@ namespace FProductionDashBoard.ViewModels
             }
             catch (AbbRobotException ex)
             {
-                RapidValue = "（讀取失敗）";
-                StatusMessage = $"讀取失敗：{ex.Message}";
+                RapidValue = Properties.Resources.HwRapidValueReadFailed;
+                StatusMessage = $"{Properties.Resources.HwReadFailed}：{ex.Message}";
             }
         }
 
@@ -314,7 +314,7 @@ namespace FProductionDashBoard.ViewModels
                 StatusMessage = Properties.Resources.HwWriteSuccess;
                 await ReadValueAsync();
             }
-            catch (AbbRobotException ex) { StatusMessage = $"寫入失敗：{ex.Message}"; }
+            catch (AbbRobotException ex) { StatusMessage = $"{Properties.Resources.HwWriteFailed}：{ex.Message}"; }
         }
 
         // ── 狀態事件（ABB SDK 內部執行緒觸發，需 dispatch 至 UI 執行緒）──────────
