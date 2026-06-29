@@ -9,15 +9,59 @@ from pathlib import Path
 from datetime import date
 
 OUTPUT_DIR = Path(__file__).parent
-VERSION_TAG = "v3.3.0"
+VERSION_TAG = "v3.3.1"
 DOCX_PATH  = OUTPUT_DIR / f"UserManual_PDB_{VERSION_TAG}.docx"
 PDF_PATH   = OUTPUT_DIR / f"UserManual_PDB_{VERSION_TAG}.pdf"
 REVIEW_DATE = date.today().strftime("%Y-%m-%d")
+
+ALL_FIGURES = [
+    ("F3-1",  "登入畫面總覽（含語言選擇、帳號欄位、登入 / 訪客按鈕）"),
+    ("F3-2",  "刷卡登入流程示意（讀卡機圖示 → 自動登入提示）"),
+    ("F3-3",  "語言切換下拉選單位置（登入畫面右上角）"),
+    ("F4-1",  "主介面整體佈局（導覽列 + 內容區 + 狀態列）"),
+    ("F4-2",  "狀態列各區域說明（箭頭標示各元件）"),
+    ("F4-3",  "版型切換按鈕（工具列四個版型圖示）"),
+    ("F4-4",  "功能表展開示意（工具 → 語言 / 佈景主題子選單）"),
+    ("F5-1",  "現場操作面板總覽（多張設備卡片排列）"),
+    ("F5-2",  "設備卡片各區域說明（含時段狀態燈、操作按鈕標示）"),
+    ("F5-3",  "操作面板工具列各按鈕說明（箭頭標示）"),
+    ("F5-4",  "物料更換對話框（材料選單 + 員工選擇）"),
+    ("F5-5",  "首件檢查對話框（結果選擇 + 異常錯誤碼清單）"),
+    ("F5-6",  "例行巡檢對話框（時段顯示 + 結果選擇）"),
+    ("F5-7",  "調試進行中的設備卡片（計時器 + 結束調試按鈕）"),
+    ("F5-8",  "結束調試確認畫面（刷卡或點擊確認）"),
+    ("F6-1",  "出入料管理主畫面（統計列 / 篩選列 / 排單清單 / 右側詳細資訊面板）"),
+    ("F6-2",  "建立排單對話框（件號 / 型號 / 工序 / 數量 / 備註欄位）"),
+    ("F6-3",  "排單狀態色彩示意（DataGrid 各狀態列）"),
+    ("F6-4",  "詳細資訊面板操作按鈕（依狀態顯示可用操作）"),
+    ("F7-1",  "排單管理主畫面（統計卡片 / 日期篩選 / 排單清單 / 設備卡片牆）"),
+    ("F7-2",  "接單指派對話框（設備選擇 / SOP / 數量）"),
+    ("F7-3",  "設備卡片牆（各設備負載 Chip 與指派統計）"),
+    ("F7-4",  "設備焦點模式（待生產 / 生產中兩欄清單）"),
+    ("F8-1",  "系統設定畫面（六個頁籤概覽）"),
+    ("F8-2",  "設備管理頁籤（清單 + 新增/編輯表單）"),
+    ("F8-3",  "員工管理頁籤（員工清單 + 新增員工表單）"),
+    ("F8-4",  "材料管理頁籤（材料清單）"),
+    ("F8-5",  "錯誤清單管理頁籤（含翻譯預覽欄）"),
+    ("F8-6",  "巡檢時段設定頁籤（時段清單 + 新增表單）"),
+    ("F8-7",  "角色權限管理頁籤（角色清單 + 權限勾選）"),
+    ("F8-8",  "系統設定頁面（業務時間 + 同步 + 補檢 + 閒置四區塊）"),
+    ("F8-9",  "日誌管理區塊（設定 + 上傳 + 附件清單 + 進度條）"),
+    ("F9-1",  "讀卡機設定頁面（讀卡機清單 + 新增按鈕）"),
+    ("F9-2",  "新增讀卡機對話框（COM Port 選擇 + 測試按鈕）"),
+    ("F9-3",  "Modbus TCP 新增設備對話框（IP / Port / Unit ID 欄位）"),
+    ("F9-4",  "Modbus TCP 讀寫測試平台（位址 / 格式 / 讀寫按鈕 / 結果顯示）"),
+    ("F10-1", "離線模式提示（狀態列顯示「離線」 + 橙色指示燈）"),
+    ("F11-1", "登出確認畫面（倒計時 + 確認/取消按鈕）"),
+    ("F11-2", "閒置倒計時提示畫面（延長登入 / 確認登出按鈕）"),
+]
 
 # ─────────────────────────────────────────
 # WORD GENERATION
 # ─────────────────────────────────────────
 def generate_manual():
+    _fig_registry = []   # (fig_id, caption, is_embedded)
+
     from docx import Document
     from docx.shared import Pt, Cm, RGBColor, Inches
     from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -157,29 +201,43 @@ def generate_manual():
         run(p, text, size=10)
         doc.add_paragraph().paragraph_format.space_after = Pt(2)
 
-    def img_placeholder(caption, width_cm=14, height_cm=7):
-        """留下圖片佔位框，供後續補上截圖"""
-        tbl = doc.add_table(rows=1, cols=1)
-        tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
-        set_cell_bg(tbl.rows[0].cells[0], "F0F4F8")
-        set_table_border(tbl, color="AAAAAA", size="6")
-        cell = tbl.rows[0].cells[0]
-        # 設定高度
-        tc = cell._tc
-        trPr = tc.getparent().get_or_add_trPr()
-        trHeight = OxmlElement("w:trHeight")
-        trHeight.set(qn("w:val"), str(int(height_cm * 567)))
-        trHeight.set(qn("w:hRule"), "exact")
-        trPr.append(trHeight)
-        # 設定寬度
-        tbl.columns[0].width = Cm(width_cm)
-        p = cell.paragraphs[0]
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run(p, f"\n\n📷 圖片位置：{caption}\n\n", size=11, color=C_GRAY, italic=True)
+    def img_placeholder(fig_id, caption, width_cm=14, height_cm=7):
+        """圖號存在時嵌入圖片，否則顯示佔位框（圖號格式：Fxx-x）"""
+        img_path = None
+        for ext in ['.png', '.jpg', '.jpeg']:
+            candidate = OUTPUT_DIR / 'images' / f'{fig_id}{ext}'
+            if candidate.exists():
+                img_path = candidate
+                break
+
+        _fig_registry.append((fig_id, caption, img_path is not None))
+
+        if img_path:
+            para = doc.add_paragraph()
+            para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            r = para.add_run()
+            r.add_picture(str(img_path), width=Cm(width_cm))
+        else:
+            tbl = doc.add_table(rows=1, cols=1)
+            tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
+            set_cell_bg(tbl.rows[0].cells[0], "F0F4F8")
+            set_table_border(tbl, color="AAAAAA", size="6")
+            cell = tbl.rows[0].cells[0]
+            tc = cell._tc
+            trPr = tc.getparent().get_or_add_trPr()
+            trHeight = OxmlElement("w:trHeight")
+            trHeight.set(qn("w:val"), str(int(height_cm * 567)))
+            trHeight.set(qn("w:hRule"), "exact")
+            trPr.append(trHeight)
+            tbl.columns[0].width = Cm(width_cm)
+            p = cell.paragraphs[0]
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run(p, f"\n\n📷 [{fig_id}] {caption}\n\n", size=11, color=C_GRAY, italic=True)
+
         cap = doc.add_paragraph()
         cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
         cap.paragraph_format.space_after = Pt(8)
-        run(cap, f"▲ {caption}", size=9.5, italic=True, color=C_GRAY)
+        run(cap, f"▲ [{fig_id}] {caption}", size=9.5, italic=True, color=C_GRAY)
 
     def simple_table(headers, rows_data, col_widths_cm=None):
         tbl = doc.add_table(rows=len(rows_data)+1, cols=len(headers))
@@ -262,7 +320,8 @@ def generate_manual():
             ["v2.7.2", "2026-06-09", "AI-assisted",    "新增第 6 章出入料管理（PR#73-74）；補日期篩選與效能強化說明（PR#75）；章節重新編號"],
             ["v3.0.0", "2026-06-12", "AI-assisted",    "新增第 7 章排單管理（PR#81~84）；更新 5.1 設備卡片主次按鈕說明；補 Help 選單與 ABB 傳送開關說明（PR#85）；章節重新編號"],
             ["v3.2.0", "2026-06-22", "AI-assisted",   "新增 AI Agent 操作面板說明（PR#87~91）；補設備卡片 SOP 作業指引說明（PR#101）"],
-            [VERSION_TAG, REVIEW_DATE, "AI-assisted",   "新增第 12 章授權管理（PR#104~105）；新增第 13 章 AI Agent 現場狀況查詢工具（PR#107）；首次正式版"],
+            ["v3.3.0", "2026-06-29", "AI-assisted",   "新增第 12 章授權管理（PR#104~105）；新增第 13 章 AI Agent 現場狀況查詢工具（PR#107）；首次正式版"],
+            [VERSION_TAG, REVIEW_DATE, "AI-assisted",   "V3.3.1 維護版本；Code Review 修復（PR#110）+ 操作手冊圖號嵌入機制（F3-1 ～ F11-2）"],
         ],
         [2.0, 2.5, 3.5, 8.0]
     )
@@ -393,7 +452,7 @@ def generate_manual():
     # ══════════════════════════════════════
     heading1("3. 啟動與登入")
     body("雙擊桌面捷徑或從開始選單啟動系統，系統載入完成後會顯示登入畫面。")
-    img_placeholder("登入畫面總覽（含語言選擇、帳號欄位、登入 / 訪客按鈕）")
+    img_placeholder("F3-1", "登入畫面總覽（含語言選擇、帳號欄位、登入 / 訪客按鈕）")
 
     heading2("3.1 密碼登入")
     step(1, "在「職號」欄位輸入員工職號")
@@ -407,7 +466,7 @@ def generate_manual():
     step(2, "將員工識別卡靠近讀卡機感應區")
     step(3, "系統自動識別卡號並登入，無需手動輸入")
     step(4, "若卡號未在系統中登記，系統會提示查詢 ERP 資料並確認是否新增")
-    img_placeholder("刷卡登入流程示意（讀卡機圖示 → 自動登入提示）")
+    img_placeholder("F3-2", "刷卡登入流程示意（讀卡機圖示 → 自動登入提示）")
     note("讀卡機連線狀態可在主介面右下角確認，紅色代表未連線", kind="warn")
 
     heading2("3.3 訪客登入")
@@ -423,14 +482,14 @@ def generate_manual():
         [4, 12]
     )
     body("選擇語言後介面文字立即切換，設定會記憶至下次啟動。")
-    img_placeholder("語言切換下拉選單位置（登入畫面右上角）")
+    img_placeholder("F3-3", "語言切換下拉選單位置（登入畫面右上角）")
     doc.add_page_break()
 
     # ══════════════════════════════════════
     # 4. 主介面說明
     # ══════════════════════════════════════
     heading1("4. 主介面說明")
-    img_placeholder("主介面整體佈局（導覽列 + 內容區 + 狀態列）", height_cm=9)
+    img_placeholder("F4-1", "主介面整體佈局（導覽列 + 內容區 + 狀態列）", height_cm=9)
 
     heading2("4.1 導覽列")
     body("畫面左側為導覽列，點擊各按鈕切換功能模組。點擊最上方的折疊箭頭可收合 / 展開導覽列。")
@@ -460,7 +519,7 @@ def generate_manual():
         ],
         [4.5, 11.5]
     )
-    img_placeholder("狀態列各區域說明（箭頭標示各元件）")
+    img_placeholder("F4-2", "狀態列各區域說明（箭頭標示各元件）")
 
     heading2("4.3 主畫面版面配置")
     body("透過畫面上方工具列的版型按鈕，可切換主畫面為四種版面配置，"
@@ -476,7 +535,7 @@ def generate_manual():
         [3, 13]
     )
     note("各面板獨立切換內容後，切換版型不會清除已選內容", kind="tip")
-    img_placeholder("版型切換按鈕（工具列四個版型圖示）")
+    img_placeholder("F4-3", "版型切換按鈕（工具列四個版型圖示）")
 
     heading2("4.4 功能表（Menu Bar）")
     body("畫面最上方功能表提供快速設定入口：")
@@ -491,7 +550,7 @@ def generate_manual():
         ],
         [2.5, 3.5, 10]
     )
-    img_placeholder("功能表展開示意（工具 → 語言 / 佈景主題子選單）")
+    img_placeholder("F4-4", "功能表展開示意（工具 → 語言 / 佈景主題子選單）")
     doc.add_page_break()
 
     # ══════════════════════════════════════
@@ -499,7 +558,7 @@ def generate_manual():
     # ══════════════════════════════════════
     heading1("5. 現場操作面板")
     body("點擊左側導覽「現場操作面板」進入設備卡片看板，此為日常操作的核心畫面。")
-    img_placeholder("現場操作面板總覽（多張設備卡片排列）", height_cm=9)
+    img_placeholder("F5-1", "現場操作面板總覽（多張設備卡片排列）", height_cm=9)
 
     heading2("5.1 設備卡片說明")
     body("每張設備卡片代表一台設備，顯示以下資訊：")
@@ -517,7 +576,7 @@ def generate_manual():
         ],
         [4, 12]
     )
-    img_placeholder("設備卡片各區域說明（含時段狀態燈、操作按鈕標示）")
+    img_placeholder("F5-2", "設備卡片各區域說明（含時段狀態燈、操作按鈕標示）")
 
     heading2("5.2 新增 / 管理設備卡片")
     body("操作面板右上角工具列提供設備卡片管理功能：")
@@ -534,7 +593,7 @@ def generate_manual():
         ],
         [4, 12]
     )
-    img_placeholder("操作面板工具列各按鈕說明（箭頭標示）")
+    img_placeholder("F5-3", "操作面板工具列各按鈕說明（箭頭標示）")
     note("快速上載前請先確認已執行過「快速儲存」，否則會載入上次儲存的清單", kind="warn")
 
     heading2("5.3 物料更換")
@@ -542,7 +601,7 @@ def generate_manual():
     step(2, "在彈出對話框中選擇更換的材料品項")
     step(3, "選擇換手員工（若有換手）")
     step(4, "點擊「確認」完成記錄，系統自動上傳至資料庫")
-    img_placeholder("物料更換對話框（材料選單 + 員工選擇）")
+    img_placeholder("F5-4", "物料更換對話框（材料選單 + 員工選擇）")
     note("離線時操作會先暫存至本機，連線後自動補傳", kind="info")
 
     heading2("5.4 首件檢查")
@@ -550,7 +609,7 @@ def generate_manual():
     step(2, "在彈出對話框中選擇檢查結果：「正常」或「異常回報」")
     step(3, "若有異常，從錯誤清單選擇對應的錯誤代碼")
     step(4, "點擊「確認」送出，卡片上首件狀態自動更新為 ✅")
-    img_placeholder("首件檢查對話框（結果選擇 + 異常錯誤碼清單）")
+    img_placeholder("F5-5", "首件檢查對話框（結果選擇 + 異常錯誤碼清單）")
     note("每個生產班次開始時需完成首件，首件狀態燈亮起才可繼續後續巡檢", kind="warn")
 
     heading2("5.5 例行巡檢")
@@ -558,7 +617,7 @@ def generate_manual():
     step(2, "在彈出對話框中選擇巡檢結果：「正常」或「異常回報」")
     step(3, "若有異常，從錯誤清單選擇對應的錯誤代碼")
     step(4, "點擊「確認」送出，對應時段狀態指示燈更新為 🟢")
-    img_placeholder("例行巡檢對話框（時段顯示 + 結果選擇）")
+    img_placeholder("F5-6", "例行巡檢對話框（時段顯示 + 結果選擇）")
     body("系統會依巡檢時段設定自動判斷目前應巡哪個時段，逾時未巡檢的時段會標示為 🔴。")
     note("若系統偵測到逾時未巡檢，將自動補填異常紀錄，管理人員可在後台查詢", kind="info")
 
@@ -569,8 +628,8 @@ def generate_manual():
     step(3, "點擊選擇後系統開始計時，卡片進入調試模式並顯示計時器")
     step(4, "調試完成後，點擊卡片上的「結束調試」按鈕")
     step(5, "系統出現刷卡或確認提示，確認後記錄上傳")
-    img_placeholder("調試進行中的設備卡片（計時器 + 結束調試按鈕）")
-    img_placeholder("結束調試確認畫面（刷卡或點擊確認）")
+    img_placeholder("F5-7", "調試進行中的設備卡片（計時器 + 結束調試按鈕）")
+    img_placeholder("F5-8", "結束調試確認畫面（刷卡或點擊確認）")
     note("調試過程中可切換至其他設備進行操作，計時器持續在背景運行", kind="tip")
     doc.add_page_break()
 
@@ -579,7 +638,7 @@ def generate_manual():
     # ══════════════════════════════════════
     heading1("6. 出入料管理")
     body("出入料管理用於建立與追蹤物料進出排單，協助現場人員管理生產物料的接收、排程、確認與釋放流程。")
-    img_placeholder("出入料管理主畫面（統計列 / 篩選列 / 排單清單 / 右側詳細資訊面板）")
+    img_placeholder("F6-1", "出入料管理主畫面（統計列 / 篩選列 / 排單清單 / 右側詳細資訊面板）")
 
     heading2("6.1 頁面總覽")
     simple_table(
@@ -613,7 +672,7 @@ def generate_manual():
     step(2, "選擇件號、型號（依件號自動過濾選項）、工序")
     step(3, "填入數量（必填）與備註（選填）")
     step(4, "點擊「確認」送出，排單以「待處理」狀態建立")
-    img_placeholder("建立排單對話框（件號 / 型號 / 工序 / 數量 / 備註欄位）")
+    img_placeholder("F6-2", "建立排單對話框（件號 / 型號 / 工序 / 數量 / 備註欄位）")
     note("僅具備對應權限的使用者可建立排單", kind="info")
 
     heading2("6.4 排單狀態說明")
@@ -629,7 +688,7 @@ def generate_manual():
         ],
         [5, 11]
     )
-    img_placeholder("排單狀態色彩示意（DataGrid 各狀態列）")
+    img_placeholder("F6-3", "排單狀態色彩示意（DataGrid 各狀態列）")
 
     heading2("6.5 排單操作")
     body("選取排單後，在右側詳細資訊面板可執行以下操作（依當前狀態顯示可用按鈕）：")
@@ -645,7 +704,7 @@ def generate_manual():
         [3, 3.5, 9.5]
     )
     note("拆單需輸入本次實際完成數量，系統自動計算剩餘（原始數量 − 本次數量）並建立子單", kind="info")
-    img_placeholder("詳細資訊面板操作按鈕（依狀態顯示可用操作）")
+    img_placeholder("F6-4", "詳細資訊面板操作按鈕（依狀態顯示可用操作）")
     doc.add_page_break()
 
     # ══════════════════════════════════════
@@ -653,7 +712,7 @@ def generate_manual():
     # ══════════════════════════════════════
     heading1("7. 排單管理")
     body("排單管理用於追蹤生產派工流程，支援接單、設備指派、進度監控與訂單生命週期管理。")
-    img_placeholder("排單管理主畫面（統計卡片 / 日期篩選 / 排單清單 / 設備卡片牆）")
+    img_placeholder("F7-1", "排單管理主畫面（統計卡片 / 日期篩選 / 排單清單 / 設備卡片牆）")
 
     heading2("7.1 頁面總覽")
     simple_table(
@@ -687,7 +746,7 @@ def generate_manual():
     step(4, "選擇加工 SOP（限該設備支援的 SOP）")
     step(5, "輸入本次指派數量")
     step(6, "點擊「確認」完成指派，設備卡片牆即時更新")
-    img_placeholder("接單指派對話框（設備選擇 / SOP / 數量）")
+    img_placeholder("F7-2", "接單指派對話框（設備選擇 / SOP / 數量）")
     note("一筆排單可分多次指派至不同設備，每次指派各自追蹤進度", kind="info")
 
     heading2("7.4 設備卡片牆")
@@ -701,7 +760,7 @@ def generate_manual():
         ],
         [4, 12]
     )
-    img_placeholder("設備卡片牆（各設備負載 Chip 與指派統計）")
+    img_placeholder("F7-3", "設備卡片牆（各設備負載 Chip 與指派統計）")
 
     heading2("7.5 設備焦點模式")
     body("在設備卡片牆點擊任一設備卡片，可進入該設備的焦點模式，查看詳細 OrderProduction 清單。")
@@ -714,7 +773,7 @@ def generate_manual():
         ],
         [4, 12]
     )
-    img_placeholder("設備焦點模式（待生產 / 生產中兩欄清單）")
+    img_placeholder("F7-4", "設備焦點模式（待生產 / 生產中兩欄清單）")
     note("焦點模式與排單 Layer 2 互斥，進入焦點模式前請先關閉排單詳細資訊面板", kind="info")
 
     heading2("7.6 取消訂單")
@@ -730,7 +789,7 @@ def generate_manual():
     # ══════════════════════════════════════
     heading1("8. 系統設定")
     body("點擊左側導覽「清單管理」進入系統設定，包含六個設定頁籤。需具備對應權限才可存取。")
-    img_placeholder("系統設定畫面（六個頁籤概覽）")
+    img_placeholder("F8-1", "系統設定畫面（六個頁籤概覽）")
 
     heading2("8.1 設備管理")
     body("管理生產設備清單，包含設備 ID、名稱、廠區、棟別、樓層等資訊。")
@@ -743,7 +802,7 @@ def generate_manual():
         ],
         [3, 13]
     )
-    img_placeholder("設備管理頁籤（清單 + 新增/編輯表單）")
+    img_placeholder("F8-2", "設備管理頁籤（清單 + 新增/編輯表單）")
 
     heading2("8.2 員工管理")
     body("管理員工帳號，包含職號、姓名、卡號、角色等資訊。")
@@ -758,12 +817,12 @@ def generate_manual():
         ],
         [4, 12]
     )
-    img_placeholder("員工管理頁籤（員工清單 + 新增員工表單）")
+    img_placeholder("F8-3", "員工管理頁籤（員工清單 + 新增員工表單）")
     note("新增員工後，需指定角色才能賦予相應操作權限", kind="warn")
 
     heading2("8.3 材料管理")
     body("管理物料清單，包含材料名稱、廠牌、庫存資訊。")
-    img_placeholder("材料管理頁籤（材料清單）")
+    img_placeholder("F8-4", "材料管理頁籤（材料清單）")
 
     heading2("8.4 錯誤清單管理")
     body("管理異常回報時可選取的錯誤代碼與描述，支援多語翻譯預覽。")
@@ -777,7 +836,7 @@ def generate_manual():
         ],
         [4, 12]
     )
-    img_placeholder("錯誤清單管理頁籤（含翻譯預覽欄）")
+    img_placeholder("F8-5", "錯誤清單管理頁籤（含翻譯預覽欄）")
 
     heading2("8.5 巡檢時段設定")
     body("設定每日的巡檢時段，系統依此判斷每個時段是否已完成巡檢。")
@@ -792,7 +851,7 @@ def generate_manual():
         [4, 12]
     )
     note("修改巡檢時段設定後，需重新啟動系統或手動重新載入才會生效", kind="warn")
-    img_placeholder("巡檢時段設定頁籤（時段清單 + 新增表單）")
+    img_placeholder("F8-6", "巡檢時段設定頁籤（時段清單 + 新增表單）")
 
     heading2("8.6 角色與權限管理")
     body("設定不同角色所擁有的系統操作權限。")
@@ -805,7 +864,7 @@ def generate_manual():
         ],
         [4, 12]
     )
-    img_placeholder("角色權限管理頁籤（角色清單 + 權限勾選）")
+    img_placeholder("F8-7", "角色權限管理頁籤（角色清單 + 權限勾選）")
     note("修改角色權限後，相關使用者需重新登入才會套用新權限", kind="info")
 
     heading2("8.7 系統參數設定")
@@ -822,7 +881,7 @@ def generate_manual():
         [3.5, 4.5, 8]
     )
     note("修改設定後請按「套用」儲存；未儲存的變更會在頂部顯示警告橫條提示", kind="warn")
-    img_placeholder("系統設定頁面（業務時間 + 同步 + 補檢 + 閒置四區塊）")
+    img_placeholder("F8-8", "系統設定頁面（業務時間 + 同步 + 補檢 + 閒置四區塊）")
 
     heading2("8.8 硬體設定（系統設定中的進階參數）")
     body("「系統設定」視窗中提供硬體設定區塊，可設定讀卡機連線參數與 ABB 機械手 RAPID 變數位址。"
@@ -872,7 +931,7 @@ def generate_manual():
     step(4, "上傳成功後顯示「已上傳：report_YYYYMMDD_HHmmss.zip」並清空附件清單")
     note("上傳期間進度條會顯示處理中狀態；若上傳失敗會顯示錯誤訊息，可重試", kind="info")
     note("附件可重複新增多個，同一檔案不會重複加入；點擊清單右側 ✕ 可移除個別附件", kind="tip")
-    img_placeholder("日誌管理區塊（設定 + 上傳 + 附件清單 + 進度條）")
+    img_placeholder("F8-9", "日誌管理區塊（設定 + 上傳 + 附件清單 + 進度條）")
     doc.add_page_break()
 
     # ══════════════════════════════════════
@@ -880,7 +939,7 @@ def generate_manual():
     # ══════════════════════════════════════
     heading1("9. 硬體設定（讀卡機 / Modbus TCP 設備）")
     body("點擊左側導覽「設備管理」進入硬體設定，可新增 / 移除讀卡機與 Modbus TCP 設備。")
-    img_placeholder("讀卡機設定頁面（讀卡機清單 + 新增按鈕）")
+    img_placeholder("F9-1", "讀卡機設定頁面（讀卡機清單 + 新增按鈕）")
 
     heading2("9.1 新增讀卡機")
     step(1, "點擊「新增」按鈕")
@@ -888,7 +947,7 @@ def generate_manual():
     step(3, "確認 Baud Rate（預設 115200，依讀卡機型號設定）")
     step(4, "點擊「測試連線」確認讀卡機可正常通訊")
     step(5, "確認無誤後點擊「套用」儲存設定")
-    img_placeholder("新增讀卡機對話框（COM Port 選擇 + 測試按鈕）")
+    img_placeholder("F9-2", "新增讀卡機對話框（COM Port 選擇 + 測試按鈕）")
     note("若測試連線失敗，請確認讀卡機 USB 線是否插穩，或確認 COM Port 號碼是否正確", kind="warn")
 
     heading2("9.2 移除讀卡機")
@@ -904,7 +963,7 @@ def generate_manual():
     step(3, "確認 TCP Port（預設 502，通常無需修改）")
     step(4, "輸入 Unit ID（Modbus 從站地址，範圍 0–255）")
     step(5, "點擊「套用」儲存，設備卡片將自動嘗試建立連線（燈號轉綠代表成功）")
-    img_placeholder("Modbus TCP 新增設備對話框（IP / Port / Unit ID 欄位）")
+    img_placeholder("F9-3", "Modbus TCP 新增設備對話框（IP / Port / Unit ID 欄位）")
     note("Unit ID 對應 Modbus 從站地址（Slave Address），需與 PLC 或設備的設定一致", kind="info")
 
     heading3("9.3.2 讀寫測試平台")
@@ -924,7 +983,7 @@ def generate_manual():
     step(2, "點擊「讀取」取得當前值，或填入寫入值後點擊「寫入」")
     step(3, "結果顯示於下方結果欄位")
     note("讀寫測試平台僅供工程師調試使用，請確認暫存器位址正確後再執行寫入操作", kind="warn")
-    img_placeholder("Modbus TCP 讀寫測試平台（位址 / 格式 / 讀寫按鈕 / 結果顯示）")
+    img_placeholder("F9-4", "Modbus TCP 讀寫測試平台（位址 / 格式 / 讀寫按鈕 / 結果顯示）")
 
     heading3("9.3.3 移除 Modbus TCP 設備")
     step(1, "在 Modbus TCP 清單中選取要移除的設備")
@@ -936,7 +995,7 @@ def generate_manual():
     # ══════════════════════════════════════
     heading1("10. 離線模式說明")
     body("當系統偵測到與資料庫的連線中斷時，自動切換至離線模式。")
-    img_placeholder("離線模式提示（狀態列顯示「離線」 + 橙色指示燈）")
+    img_placeholder("F10-1", "離線模式提示（狀態列顯示「離線」 + 橙色指示燈）")
 
     heading2("9.1 離線模式下可執行的操作")
     for op in ["物料更換","首件檢查","例行巡檢","調試操作（帶點 / 調品質）"]:
@@ -961,7 +1020,7 @@ def generate_manual():
     step(1, "點擊右下角狀態列的「登出」按鈕（或右側使用者圖示）")
     step(2, "系統顯示登出倒計時確認畫面")
     step(3, "確認後系統回到登入畫面")
-    img_placeholder("登出確認畫面（倒計時 + 確認/取消按鈕）")
+    img_placeholder("F11-1", "登出確認畫面（倒計時 + 確認/取消按鈕）")
 
     heading2("10.2 閒置自動登出")
     body("系統自動偵測使用者的滑鼠與鍵盤輸入，當「真實的閒置時間」"
@@ -969,7 +1028,7 @@ def generate_manual():
          "使用者只要在倒數結束前進行任何操作或點擊「延長登入」即可繼續保持登入狀態。")
     note("系統使用 Windows GetLastInputInfo API 偵測 OS 級別輸入，"
          "因此切換到其他視窗工作也算「未閒置」，不會誤觸發登出。", kind="info")
-    img_placeholder("閒置倒計時提示畫面（延長登入 / 確認登出按鈕）")
+    img_placeholder("F11-2", "閒置倒計時提示畫面（延長登入 / 確認登出按鈕）")
     note("刷員工卡也可直接進行換手操作，不需先登出再登入", kind="tip")
     doc.add_page_break()
 
@@ -1142,6 +1201,16 @@ def generate_manual():
     doc.save(DOCX_PATH)
     print(f"✓ Word 操作手冊已生成：{DOCX_PATH}")
 
+    embedded = sum(1 for _, _, ok in _fig_registry if ok)
+    missing = [(fid, cap) for fid, cap, ok in _fig_registry if not ok]
+    print(f"\n📷 圖片統計：{embedded}/{len(_fig_registry)} 已嵌入")
+    if missing:
+        print("⚠ 缺少以下圖片（請將對應檔案放入 Docs/images/）：")
+        for fid, cap in missing:
+            print(f"  {fid}.png  ←  {cap}")
+    else:
+        print("✓ 所有圖片已嵌入")
+
 
 # ─────────────────────────────────────────
 # PDF
@@ -1162,6 +1231,22 @@ def generate_pdf():
 
 
 if __name__ == "__main__":
+    if "--list" in sys.argv:
+        missing = [
+            (fid, cap) for fid, cap in ALL_FIGURES
+            if not any((OUTPUT_DIR / "images" / f"{fid}{ext}").exists()
+                       for ext in [".png", ".jpg", ".jpeg"])
+        ]
+        ready = len(ALL_FIGURES) - len(missing)
+        print(f"📷 圖片統計：{ready}/{len(ALL_FIGURES)} 已備妥")
+        if missing:
+            print("⚠ 尚未備妥（請將對應截圖放入 Docs/images/）：")
+            for fid, cap in missing:
+                print(f"  {fid}.png  ←  {cap}")
+        else:
+            print("✓ 所有圖片皆已備妥，可直接執行腳本生成手冊")
+        sys.exit(0)
+
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     print("生成使用者操作手冊…")
     generate_manual()
