@@ -62,10 +62,23 @@ output ??= Path.Combine(
 if (features.Count == 1 && features[0].Equals("all", StringComparison.OrdinalIgnoreCase))
     features = LicenseConstants.KnownFeatures.ToList();
 
+DateTime? expiryDate = null;
+if (expiry is not null)
+{
+    if (!DateTime.TryParseExact(expiry, "yyyy-MM-dd", null,
+        System.Globalization.DateTimeStyles.None, out var parsedDate))
+    {
+        Console.WriteLine($"[錯誤] 日期格式無效：{expiry}，請使用 yyyy-MM-dd");
+        if (args.Length == 0) { Console.WriteLine("按任意鍵關閉..."); Console.ReadKey(); }
+        return 1;
+    }
+    expiryDate = parsedDate;
+}
+
 var dto = new LicenseFileDto
 {
     CustomerName    = customer,
-    ExpiryDate      = expiry is not null ? DateTime.Parse(expiry) : (DateTime?)null,
+    ExpiryDate      = expiryDate,
     EnabledFeatures = features,
     IssuedAt        = DateTime.Today,
     Signature       = ""

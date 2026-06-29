@@ -136,14 +136,14 @@ namespace FProductionDashBoard.Services
             }
         }
 
-        public static string BuildPayloadString(LicenseFileDto dto)
+        internal static string BuildPayloadString(LicenseFileDto dto)
         {
             var features = string.Join(",", (dto.EnabledFeatures ?? new List<string>()).OrderBy(f => f));
             var expiry = dto.ExpiryDate?.ToString("yyyy-MM-dd") ?? "null";
             return $"{dto.CustomerName}|{expiry}|{dto.IssuedAt:yyyy-MM-dd}|{features}";
         }
 
-        public static string ComputeSignature(LicenseFileDto dto)
+        internal static string ComputeSignature(LicenseFileDto dto)
         {
             var key = Convert.FromBase64String(LicenseConstants.HmacKey);
             var payload = BuildPayloadString(dto);

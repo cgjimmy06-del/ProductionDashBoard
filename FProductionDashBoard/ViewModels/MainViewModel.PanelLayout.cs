@@ -66,7 +66,7 @@ namespace FProductionDashBoard.ViewModels
             NavMode.Equipment      => null,
             NavMode.SystemSettings => null,
             // 未分類 → 立即報錯，強制開發者主動分類
-            _ => throw new NotImplementedException($"NavMode {mode} 尚未分類授權需求")
+            _ => throw new InvalidOperationException($"NavMode {mode} 尚未分類授權需求")
         };
 
         public bool IsViewLocked         => !_licenseService.IsFeatureEnabled(LicensedFeature.Charts);

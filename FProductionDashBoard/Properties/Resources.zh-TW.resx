@@ -561,6 +561,27 @@
   <data name="HwConfirmWriteTitle" xml:space="preserve">
     <value>確認寫入</value>
   </data>
+  <data name="HwAbbConnected" xml:space="preserve">
+    <value>已連線 {0}</value>
+  </data>
+  <data name="HwControllerNotFound" xml:space="preserve">
+    <value>找不到控制器 {0}</value>
+  </data>
+  <data name="HwAbbConnectionFailed" xml:space="preserve">
+    <value>連線失敗</value>
+  </data>
+  <data name="HwReadVariableFailed" xml:space="preserve">
+    <value>讀取變數失敗</value>
+  </data>
+  <data name="HwRapidValueReadFailed" xml:space="preserve">
+    <value>（讀取失敗）</value>
+  </data>
+  <data name="HwReadFailed" xml:space="preserve">
+    <value>讀取失敗</value>
+  </data>
+  <data name="HwWriteFailed" xml:space="preserve">
+    <value>寫入失敗</value>
+  </data>
   <data name="SsUploadSuccess" xml:space="preserve">
     <value>已上傳：{0}</value>
   </data>

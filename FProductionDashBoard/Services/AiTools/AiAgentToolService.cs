@@ -78,60 +78,68 @@ public class AiAgentToolService
 
     private static async Task<string> QuerySchedulesAsync(DashboardCoreServices core, JsonObject args)
     {
-        if (!core.Authorization.HasPermission(PermissionId.Schedule))
-            return """{"error":"no_permission"}""";
-
-        var all = await core.Data.GetAllSchedulesAsync();
-
-        DateOnly? dateFrom = TryParseDate(args["dateFrom"]?.GetValue<string>());
-        DateOnly? dateTo   = TryParseDate(args["dateTo"]?.GetValue<string>());
-        string?   status   = args["status"]?.GetValue<string>();
-        string?   keyword  = args["productKeyword"]?.GetValue<string>();
-        int limit = 50;
-        if (args["limit"] is JsonValue lv)
+        try
         {
-            if (!lv.TryGetValue<int>(out limit))
-                int.TryParse(lv.ToString(), out limit);
+            if (!core.Authorization.HasPermission(PermissionId.Schedule))
+                return """{"error":"no_permission"}""";
+
+            var all = await core.Data.GetAllSchedulesAsync();
+
+            DateOnly? dateFrom = TryParseDate(args["dateFrom"]?.GetValue<string>());
+            DateOnly? dateTo   = TryParseDate(args["dateTo"]?.GetValue<string>());
+            string?   status   = args["status"]?.GetValue<string>();
+            string?   keyword  = args["productKeyword"]?.GetValue<string>();
+            int limit = 50;
+            if (args["limit"] is JsonValue lv)
+            {
+                if (!lv.TryGetValue<int>(out limit))
+                    int.TryParse(lv.ToString(), out limit);
+            }
+            limit = Math.Min(limit, 100);
+
+            var filtered = all.AsEnumerable();
+
+            if (dateFrom.HasValue)
+                filtered = filtered.Where(s => s.CreateAt.HasValue &&
+                    DateOnly.FromDateTime(s.CreateAt.Value) >= dateFrom.Value);
+
+            if (dateTo.HasValue)
+                filtered = filtered.Where(s => s.CreateAt.HasValue &&
+                    DateOnly.FromDateTime(s.CreateAt.Value) <= dateTo.Value);
+
+            if (!string.IsNullOrEmpty(status) &&
+                Enum.TryParse<Models.ScheduleStatus>(status, out var statusEnum))
+                filtered = filtered.Where(s => s.Status == statusEnum);
+
+            if (!string.IsNullOrEmpty(keyword))
+                filtered = filtered.Where(s =>
+                    (s.Product?.Part?.Name?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (s.Product?.Part?.PartNo?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (s.Product?.Model?.Name?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false));
+
+            var filteredList = filtered.ToList();
+            var results = filteredList.Take(limit).Select(s => new
+            {
+                id          = s.ScheduleId,
+                part        = s.Product?.Part?.PartNo,
+                partName    = s.Product?.Part?.Name,
+                model       = s.Product?.Model?.Name,
+                process     = s.Process?.Name,
+                status      = s.Status.ToString(),
+                quantity    = s.Quantity,
+                actualQty   = s.ActualQuantity,
+                lotNo       = s.LotNo,
+                scheduledAt = s.ScheduledAt?.ToString("yyyy-MM-dd"),
+                createAt    = s.CreateAt?.ToString("yyyy-MM-dd")
+            }).ToList();
+
+            return JsonSerializer.Serialize(new { total = filteredList.Count, results });
         }
-        limit = Math.Min(limit, 100);
-
-        var filtered = all.AsEnumerable();
-
-        if (dateFrom.HasValue)
-            filtered = filtered.Where(s => s.CreateAt.HasValue &&
-                DateOnly.FromDateTime(s.CreateAt.Value) >= dateFrom.Value);
-
-        if (dateTo.HasValue)
-            filtered = filtered.Where(s => s.CreateAt.HasValue &&
-                DateOnly.FromDateTime(s.CreateAt.Value) <= dateTo.Value);
-
-        if (!string.IsNullOrEmpty(status) &&
-            Enum.TryParse<Models.ScheduleStatus>(status, out var statusEnum))
-            filtered = filtered.Where(s => s.Status == statusEnum);
-
-        if (!string.IsNullOrEmpty(keyword))
-            filtered = filtered.Where(s =>
-                (s.Product?.Part?.Name?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                (s.Product?.Part?.PartNo?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                (s.Product?.Model?.Name?.Contains(keyword, StringComparison.OrdinalIgnoreCase) ?? false));
-
-        var filteredList = filtered.ToList();
-        var results = filteredList.Take(limit).Select(s => new
+        catch (Exception ex)
         {
-            id          = s.ScheduleId,
-            part        = s.Product?.Part?.PartNo,
-            partName    = s.Product?.Part?.Name,
-            model       = s.Product?.Model?.Name,
-            process     = s.Process?.Name,
-            status      = s.Status.ToString(),
-            quantity    = s.Quantity,
-            actualQty   = s.ActualQuantity,
-            lotNo       = s.LotNo,
-            scheduledAt = s.ScheduledAt?.ToString("yyyy-MM-dd"),
-            createAt    = s.CreateAt?.ToString("yyyy-MM-dd")
-        }).ToList();
-
-        return JsonSerializer.Serialize(new { total = filteredList.Count, results });
+            core.Log.AddErrorLog($"[QuerySchedulesAsync] {ex.Message}");
+            return """{"error":"tool_failed"}""";
+        }
     }
 
     // ── query_orders ──────────────────────────────────────────────────────────
@@ -195,7 +203,7 @@ public class AiAgentToolService
 
             return JsonSerializer.Serialize(new { total = filteredList.Count, results });
         }
-        catch { return """{"error":"tool_failed"}"""; }
+        catch (Exception ex) { core.Log.AddErrorLog($"[QueryOrdersAsync] {ex.Message}"); return """{"error":"tool_failed"}"""; }
     }
 
     // ── query_equipment_status ────────────────────────────────────────────────
@@ -236,7 +244,7 @@ public class AiAgentToolService
 
             return JsonSerializer.Serialize(new { total = results.Count, results });
         }
-        catch { return """{"error":"tool_failed"}"""; }
+        catch (Exception ex) { core.Log.AddErrorLog($"[QueryEquipmentStatusAsync] {ex.Message}"); return """{"error":"tool_failed"}"""; }
     }
 
     // ── query_tuning_status ───────────────────────────────────────────────────
@@ -260,7 +268,7 @@ public class AiAgentToolService
 
             return JsonSerializer.Serialize(new { total = results.Count, results });
         }
-        catch { return """{"error":"tool_failed"}"""; }
+        catch (Exception ex) { core.Log.AddErrorLog($"[QueryTuningStatusAsync] {ex.Message}"); return """{"error":"tool_failed"}"""; }
     }
 
     // ── query_equipment_capabilities ──────────────────────────────────────────
@@ -311,7 +319,7 @@ public class AiAgentToolService
 
             return JsonSerializer.Serialize(new { total = results.Count, results });
         }
-        catch { return """{"error":"tool_failed"}"""; }
+        catch (Exception ex) { core.Log.AddErrorLog($"[QueryEquipmentCapabilitiesAsync] {ex.Message}"); return """{"error":"tool_failed"}"""; }
     }
 
     // ── 共用輔助方法 ──────────────────────────────────────────────────────────
