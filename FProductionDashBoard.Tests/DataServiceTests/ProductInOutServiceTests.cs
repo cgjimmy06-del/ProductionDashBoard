@@ -1,7 +1,6 @@
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
 using FProductionDashBoard.Repositories.ExtraDb;
-using FProductionDashBoard.Services.Offline;
 using FProductionDashBoard.Services;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -20,7 +19,6 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         private readonly Mock<IMaterialReplacementRepository> _materialReplacementRep = new();
         private readonly Mock<IInspectionRecordRepository> _inspectionRecordRep = new();
         private readonly Mock<ITimeSlotLookupRepository> _timeSlotLookupRep = new();
-        private readonly Mock<IOfflineCacheService> _offlineCache = new();
         private readonly Mock<IRolePermissionRepository> _rolePermissionRep = new();
         private readonly Mock<IProductPartRepository> _productPartRep = new();
         private readonly Mock<IProductRepository> _productRep = new();
@@ -55,7 +53,6 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 _materialReplacementRep.Object,
                 _inspectionRecordRep.Object,
                 _timeSlotLookupRep.Object,
-                _offlineCache.Object,
                 _rolePermissionRep.Object,
                 _productPartRep.Object,
                 _productRep.Object,

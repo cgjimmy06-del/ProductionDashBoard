@@ -389,11 +389,6 @@ namespace FProductionDashBoard.ViewModels
                         $"Category: {result.Selections.Count} -> " +
                         $"Sum: {result.Selections.Sum(d => d.SelectedCount)}", LogLevel.Success);
                 }
-                catch (OfflineOperationQueuedException)
-                {
-                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
-                        "物料更換已暫存，待連線恢復後自動上傳", LogLevel.Warning);
-                }
                 catch (Exception ex)
                 {
                     _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - 物料更換紀錄上傳失敗", LogLevel.Error);
@@ -421,11 +416,6 @@ namespace FProductionDashBoard.ViewModels
 
                     _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
                         $"首件紀錄上傳完成");
-                }
-                catch (OfflineOperationQueuedException)
-                {
-                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
-                        $"首件紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
                 }
                 catch (BusinessRuleException ex)
                 {
@@ -466,11 +456,6 @@ namespace FProductionDashBoard.ViewModels
                     await UpdateTimeSlotsStatusAsync();
                     _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
                         $"巡檢紀錄上傳完成");
-                }
-                catch (OfflineOperationQueuedException)
-                {
-                    _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - " +
-                        $"巡檢紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
                 }
                 catch (BusinessRuleException ex)
                 {

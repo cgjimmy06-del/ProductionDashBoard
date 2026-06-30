@@ -4,8 +4,6 @@ using FProductionDashBoard.Models.Extra;
 using FProductionDashBoard.Repositories;
 using FProductionDashBoard.Repositories.ExtraDb;
 using FProductionDashBoard.Services.Exceptions;
-using FProductionDashBoard.Services.Offline;
-using FProductionDashBoard.Services.Offline.Payloads;
 using FProductionDashBoard.UiModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +12,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace FProductionDashBoard.Services
@@ -41,12 +38,10 @@ namespace FProductionDashBoard.Services
         private readonly IInfoDbRepository _infoRep;
         private readonly IDataDbRepository _dataRep;
 
-        private readonly IOfflineCacheService _offlineCache;
-
         public DataService(IEquipmentRepository equipmentrep, IEmployeeRepository workerrep, IMaterialRepository materialrep,
             IErrorListRepository errorListRep, IMaterialReplacementRepository materialReplacementRep,
             IInspectionRecordRepository inspectionRecordRep, ITimeSlotLookupRepository timeSlotLookupRep,
-            IOfflineCacheService offlineCache, IRolePermissionRepository rolePermissionRep,
+            IRolePermissionRepository rolePermissionRep,
             IProductPartRepository productPartRep, IProductRepository productRep, ISopChecklistRepository sopChecklistRep,
             IEquipmentProductRepository equipmentProductRep, IOrderProductionRepository orderProductionRep,
             IProgramTuningRecordRepository programTuningRep, IScheduleRepository scheduleRep,
@@ -59,7 +54,6 @@ namespace FProductionDashBoard.Services
             _materialReplacementRep = materialReplacementRep;
             _inspectionRecordRep = inspectionRecordRep;
             _timeSlotLookupRep = timeSlotLookupRep;
-            _offlineCache = offlineCache;
             _rolePermissionRep = rolePermissionRep;
             _productPartRep = productPartRep;
             _productRep = productRep;
@@ -153,34 +147,18 @@ namespace FProductionDashBoard.Services
         public async Task<int> AddReplacementRecordAsync(int equipmentId, int employeeId,
             List<(int materialId, int quantity)> materialDetails)
         {
-            if (await _materialReplacementRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _materialReplacementRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[AddReplacementRecordAsync] 連線失敗，請確認網路狀態");
+            try
             {
-                try
-                {
-                    return await _materialReplacementRep.AddReplacementRecordAsync(
-                        equipmentId, employeeId, "MTRP0001", materialDetails);
-                }
-                catch (SqlException ex)
-                {
-                    throw new DatabaseConnectionException("[AddReplacementRecordAsync] 新增物料更換紀錄失敗：資料庫錯誤", ex);
-                }
-                catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddReplacementRecordAsync] 新增物料更換紀錄失敗：連線逾時", tex); }
+                return await _materialReplacementRep.AddReplacementRecordAsync(
+                    equipmentId, employeeId, "MTRP0001", materialDetails);
             }
-
-            var payload = new ReplacementPayload
+            catch (SqlException ex)
             {
-                EquipmentId = equipmentId,
-                EmployeeId = employeeId,
-                Materials = materialDetails.Select(m => new MaterialItem { MaterialId = m.materialId, Quantity = m.quantity }).ToList(),
-                OperatedAt = DateTime.Now
-            };
-            var op = new PendingOperation
-            {
-                OperationType = PendingOperationType.AddReplacement,
-                PayloadJson = JsonSerializer.Serialize(payload)
-            };
-            await _offlineCache.EnqueueAsync(op).ConfigureAwait(false);
-            throw new OfflineOperationQueuedException(op.Id);
+                throw new DatabaseConnectionException("[AddReplacementRecordAsync] 新增物料更換紀錄失敗：資料庫錯誤", ex);
+            }
+            catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddReplacementRecordAsync] 新增物料更換紀錄失敗：連線逾時", tex); }
         }
 
         public async Task<int?> GetCurrentTimeSlotIdAsync()
@@ -194,93 +172,42 @@ namespace FProductionDashBoard.Services
         public async Task<int> AddFirstInspectionAsync(int equipmentId, int employeeId, bool result,
             int? productId, string? errorCode = null, string? description = null)
         {
-            if (await _inspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false))
+            if (!await _inspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[AddFirstInspectionAsync] 連線失敗，請確認網路狀態");
+            try
             {
-                try
-                {
-                    return await _inspectionRecordRep.AddInspectionRecordAsync(
-                        InspectionType.First, equipmentId, employeeId, result,
-                        null, productId, errorCode, description);
-                }
-                catch (SqlException ex)
-                {
-                    throw new DatabaseConnectionException("[AddFirstInspectionAsync] 新增首件紀錄失敗：資料庫錯誤", ex);
-                }
-                catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddFirstInspectionAsync] 新增首件紀錄失敗：連線逾時", tex); }
+                return await _inspectionRecordRep.AddInspectionRecordAsync(
+                    InspectionType.First, equipmentId, employeeId, result,
+                    null, productId, errorCode, description);
             }
-
-            var payload = new FirstInspectionPayload
+            catch (SqlException ex)
             {
-                EquipmentId = equipmentId,
-                EmployeeId = employeeId,
-                Result = result,
-                ProductId = productId,
-                ErrorCode = errorCode,
-                Description = description,
-                OperatedAt = DateTime.Now
-            };
-            var op = new PendingOperation
-            {
-                OperationType = PendingOperationType.AddFirstInspection,
-                PayloadJson = JsonSerializer.Serialize(payload)
-            };
-            await _offlineCache.EnqueueAsync(op).ConfigureAwait(false);
-            throw new OfflineOperationQueuedException(op.Id);
+                throw new DatabaseConnectionException("[AddFirstInspectionAsync] 新增首件紀錄失敗：資料庫錯誤", ex);
+            }
+            catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddFirstInspectionAsync] 新增首件紀錄失敗：連線逾時", tex); }
         }
 
         public async Task<int> AddRoutineInspectionAsync(int equipmentId, int employeeId, bool result,
             int timeSlotId, int? productId, string? errorCode = null, string? description = null)
         {
-            if (await _inspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false))
-            {
-                bool exists = await _inspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, timeSlotId, BusinessDay).ConfigureAwait(false);
-                if (exists)
-                    throw new BusinessRuleException("[AddRoutineInspectionAsync] 同一設備同一時段已有紀錄，不能重複新增");
+            if (!await _inspectionRecordRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[AddRoutineInspectionAsync] 連線失敗，請確認網路狀態");
 
-                try
-                {
-                    return await _inspectionRecordRep.AddInspectionRecordAsync(
-                        InspectionType.Routine, equipmentId, employeeId, result,
-                        timeSlotId, productId, errorCode, description);
-                }
-                catch (SqlException ex)
-                {
-                    throw new DatabaseConnectionException("[AddRoutineInspectionAsync] 新增巡檢紀錄失敗：資料庫錯誤", ex);
-                }
-                catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddRoutineInspectionAsync] 新增巡檢紀錄失敗：連線逾時", tex); }
+            bool exists = await _inspectionRecordRep.ExistsInspectionInSlotAsync(equipmentId, timeSlotId, BusinessDay).ConfigureAwait(false);
+            if (exists)
+                throw new BusinessRuleException("[AddRoutineInspectionAsync] 同一設備同一時段已有紀錄，不能重複新增");
+
+            try
+            {
+                return await _inspectionRecordRep.AddInspectionRecordAsync(
+                    InspectionType.Routine, equipmentId, employeeId, result,
+                    timeSlotId, productId, errorCode, description);
             }
-
-            /// 進入離線DB前，確認local DB是否有相同紀錄 *** 只在同一個工作日有效 *** 同步確認 RoutineInspectionSyncHandler
-            //var pending = await _offlineCache.GetPendingAsync().ConfigureAwait(false);
-            //bool existsInQueue = pending
-            //    .Where(p => p.OperationType == PendingOperationType.AddRoutineInspection)
-            //    .Any(p =>
-            //    {
-            //        var pl = JsonSerializer.Deserialize<RoutineInspectionPayload>(p.PayloadJson);
-            //        return pl?.EquipmentId == equipmentId && pl?.TimeSlotId == timeSlotId;
-            //    });
-            //if (existsInQueue)
-            //    throw new BusinessRuleException("同一設備同一時段已有紀錄，不能重複新增。");
-            /// 進入離線DB前，確認local DB是否有相同紀錄 *** 只在同一個工作日有效 ***
-            
-            var payload = new RoutineInspectionPayload
+            catch (SqlException ex)
             {
-                EquipmentId = equipmentId,
-                EmployeeId = employeeId,
-                Result = result,
-                TimeSlotId = timeSlotId,
-                ProductId = productId,
-                ErrorCode = errorCode,
-                Description = description,
-                OperatedAt = DateTime.Now
-            };
-            var op = new PendingOperation
-            {
-                OperationType = PendingOperationType.AddRoutineInspection,
-                PayloadJson = JsonSerializer.Serialize(payload)
-            };
-            await _offlineCache.EnqueueAsync(op).ConfigureAwait(false);
-            throw new OfflineOperationQueuedException(op.Id);
+                throw new DatabaseConnectionException("[AddRoutineInspectionAsync] 新增巡檢紀錄失敗：資料庫錯誤", ex);
+            }
+            catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddRoutineInspectionAsync] 新增巡檢紀錄失敗：連線逾時", tex); }
         }
         public async Task<List<int>> GetAllSlotsStatusAsync(List<TimeSlotLookup> timeSlotLookups, int equipmentId)
         {

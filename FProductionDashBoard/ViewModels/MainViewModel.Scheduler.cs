@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -22,7 +21,6 @@ namespace FProductionDashBoard.ViewModels
 
         private int _syncTickCounter = 0;
         private int _missedCheckCounter = 0;
-        private int _isSyncing = 0;
 
         [DllImport("user32.dll")] private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
         [StructLayout(LayoutKind.Sequential)] private struct LASTINPUTINFO { public uint cbSize; public uint dwTime; }
@@ -66,15 +64,7 @@ namespace FProductionDashBoard.ViewModels
             if (s.SyncEnabled && _syncTickCounter >= s.SyncIntervalSec)
             {
                 _syncTickCounter = 0;
-                _ = Task.Run(async () =>
-                {
-                    try { await SyncAndLogAsync(); }
-                    catch (Exception ex)
-                    {
-                        _core.Log.AddLog("[SyncAndLogAsync] 同步背景任務發生例外", LogLevel.Error);
-                        _core.Log.AddErrorLog($"[SyncAndLogAsync] {ex.Message}");
-                    }
-                });
+                // 通知系統觸發點（待實作）
             }
 
             _missedCheckCounter++;
@@ -99,29 +89,6 @@ namespace FProductionDashBoard.ViewModels
 
             if (s.IdleLogoutEnabled && IsLoggedIn && GetIdleSeconds() >= s.IdleLogoutIntervalSec)
                 await CheckLogOutForLongIdle();
-        }
-
-        private async Task SyncAndLogAsync()
-        {
-            if (Interlocked.CompareExchange(ref _isSyncing, 1, 0) != 0) return;
-            try
-            {
-                var result = await _syncService.SyncPendingAsync();
-                if (result?.SyncedCount > 0)
-                    _core.Log.AddLog($"已重新連線: 上傳{result.SyncedCount}筆暫存資料");
-                if (result?.FailedCount > 0)
-                    _core.Log.AddLog($"連線失敗: {result.FailedCount}筆資料等待上傳", LogLevel.Warning);
-                if (result?.Errors?.Count > 0)
-                    foreach (var err in result.Errors)
-                        _core.Log.AddErrorLog(err);
-            }
-            catch (Exception ex)
-            {
-                _core.Log.AddLog("同步暫存資料失敗", LogLevel.Error);
-                _core.Log.AddErrorLog($"[SyncAndLogAsync] {ex.Message}");
-            }
-            finally
-            { Interlocked.Exchange(ref _isSyncing, 0); }
         }
 
         private async Task CheckMissedInspectionsAsync(IReadOnlyList<OperationViewModel> containers)
