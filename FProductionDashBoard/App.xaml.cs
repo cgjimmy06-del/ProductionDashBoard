@@ -1,6 +1,4 @@
-﻿using FProductionDashBoard.Services.Offline;
-using FProductionDashBoard.Services.Offline.Handlers;
-using FProductionDashBoard.Services.WebApi;
+﻿using FProductionDashBoard.Services.WebApi;
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
 using Microsoft.EntityFrameworkCore;
@@ -95,18 +93,6 @@ namespace FProductionDashBoard
                 services.AddScoped<Repositories.IScheduleRepository, Repositories.ScheduleRepository>();
                 services.AddScoped<Repositories.ExtraDb.IInfoDbRepository, Repositories.ExtraDb.InfoDbRepository>();
                 services.AddScoped<Repositories.ExtraDb.IDataDbRepository, Repositories.ExtraDb.DataDbRepository>();
-
-                // 離線暫存服務
-                services.AddDbContextFactory<Repositories.LocalDbContext>(opt =>
-                    opt.UseSqlite($"Data Source={Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "FProductionDashBoard", "local_cache.db")}"),
-                    ServiceLifetime.Singleton);
-                services.AddSingleton<IOfflineCacheService, OfflineCacheService>();
-                services.AddSingleton<IOfflineSyncService, OfflineSyncService>();
-                services.AddTransient<IPendingOperationHandler, ReplacementSyncHandler>();
-                services.AddTransient<IPendingOperationHandler, FirstInspectionSyncHandler>();
-                services.AddTransient<IPendingOperationHandler, RoutineInspectionSyncHandler>();
 
                 // 註冊 Service
                 services.AddScoped<Services.IDataService, Services.DataService>();

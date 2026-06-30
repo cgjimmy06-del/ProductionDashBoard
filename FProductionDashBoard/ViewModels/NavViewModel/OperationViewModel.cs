@@ -96,11 +96,6 @@ namespace FProductionDashBoard.ViewModels
                         _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
                         $"首件紀錄上傳完成");
                     }
-                    catch (OfflineOperationQueuedException)
-                    {
-                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
-                            $"首件紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
-                    }
                     catch (BusinessRuleException ex)
                     {
                         _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - 首件業務規則異常", LogLevel.Error);
@@ -146,11 +141,6 @@ namespace FProductionDashBoard.ViewModels
 
                         _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
                         $"巡檢紀錄上傳完成");
-                    }
-                    catch (OfflineOperationQueuedException)
-                    {
-                        _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{idevice.Info.Name} - " +
-                            $"巡檢紀錄已暫存，待連線恢復後自動上傳", LogLevel.Warning);
                     }
                     catch (BusinessRuleException ex)
                     {
