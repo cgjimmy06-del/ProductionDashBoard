@@ -3,7 +3,6 @@ using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
 using FProductionDashBoard.Repositories.ExtraDb;
 using FProductionDashBoard.Services.Exceptions;
-using FProductionDashBoard.Services.Offline;
 using FProductionDashBoard.Services;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -20,7 +19,6 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         private readonly Mock<IMaterialReplacementRepository> _materialReplacementRep = new();
         private readonly Mock<IInspectionRecordRepository> _inspectionRecordRep = new();
         private readonly Mock<ITimeSlotLookupRepository> _timeSlotLookupRep = new();
-        private readonly Mock<IOfflineCacheService> _offlineCache = new();
         private readonly Mock<IRolePermissionRepository> _rolePermissionRep = new();
         private readonly Mock<IProductPartRepository> _productPartRep = new();
         private readonly Mock<IProductRepository> _productRep = new();
@@ -43,7 +41,6 @@ namespace FProductionDashBoard.Tests.DataServiceTests
             _productPartRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
             _productRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
             _sopChecklistRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
-            _offlineCache.Setup(c => c.EnqueueAsync(It.IsAny<PendingOperation>())).Returns(Task.CompletedTask);
         }
 
         private DataService CreateService(DateTime? businessDay = null)
@@ -56,7 +53,6 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 _materialReplacementRep.Object,
                 _inspectionRecordRep.Object,
                 _timeSlotLookupRep.Object,
-                _offlineCache.Object,
                 _rolePermissionRep.Object,
                 _productPartRep.Object,
                 _productRep.Object,
@@ -301,17 +297,12 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         }
 
         [Fact]
-        public async Task AddRoutineInspectionAsync_WhenConnectionFails_EnqueuesAndThrowsOfflineException()
+        public async Task AddRoutineInspectionAsync_WhenConnectionFails_ThrowsInvalidOperationException()
         {
             _inspectionRecordRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
 
-            var ex = await Assert.ThrowsAsync<OfflineOperationQueuedException>(
+            await Assert.ThrowsAsync<InvalidOperationException>(
                 () => CreateService(DateTime.Today).AddRoutineInspectionAsync(1, 10, true, 2, null));
-
-            _offlineCache.Verify(c => c.EnqueueAsync(
-                It.Is<PendingOperation>(op => op.OperationType == PendingOperationType.AddRoutineInspection)),
-                Times.Once);
-            Assert.NotEqual(Guid.Empty, ex.PendingOperationId);
         }
 
         // ─── AddFirstInspectionAsync ───────────────────────────────────────────
@@ -361,17 +352,12 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         }
 
         [Fact]
-        public async Task AddFirstInspectionAsync_WhenConnectionFails_EnqueuesAndThrowsOfflineException()
+        public async Task AddFirstInspectionAsync_WhenConnectionFails_ThrowsInvalidOperationException()
         {
             _inspectionRecordRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
 
-            var ex = await Assert.ThrowsAsync<OfflineOperationQueuedException>(
+            await Assert.ThrowsAsync<InvalidOperationException>(
                 () => CreateService(DateTime.Today).AddFirstInspectionAsync(1, 10, true, null));
-
-            _offlineCache.Verify(c => c.EnqueueAsync(
-                It.Is<PendingOperation>(op => op.OperationType == PendingOperationType.AddFirstInspection)),
-                Times.Once);
-            Assert.NotEqual(Guid.Empty, ex.PendingOperationId);
         }
 
         // ─── AddReplacementRecordAsync ─────────────────────────────────────────
@@ -404,18 +390,13 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         }
 
         [Fact]
-        public async Task AddReplacementRecordAsync_WhenConnectionFails_EnqueuesAndThrowsOfflineException()
+        public async Task AddReplacementRecordAsync_WhenConnectionFails_ThrowsInvalidOperationException()
         {
             _materialReplacementRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
             var details = new List<(int materialId, int quantity)> { (1, 2) };
 
-            var ex = await Assert.ThrowsAsync<OfflineOperationQueuedException>(
+            await Assert.ThrowsAsync<InvalidOperationException>(
                 () => CreateService(DateTime.Today).AddReplacementRecordAsync(1, 10, details));
-
-            _offlineCache.Verify(c => c.EnqueueAsync(
-                It.Is<PendingOperation>(op => op.OperationType == PendingOperationType.AddReplacement)),
-                Times.Once);
-            Assert.NotEqual(Guid.Empty, ex.PendingOperationId);
         }
 
         // ─── CheckAndInsertMissedInspectionAsync ───────────────────────────────

@@ -4,7 +4,6 @@ using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.Services.Exceptions;
-using FProductionDashBoard.Services.Offline;
 using FProductionDashBoard.UiModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +27,6 @@ namespace FProductionDashBoard.ViewModels
 
         #region -- DI注入資源 --
         private readonly DashboardCoreServices _core;
-        private readonly IOfflineSyncService _syncService;
         private readonly MultiCardReaderService _multiCardReaderService;
         private readonly IServiceProvider _serviceProvider;
         private readonly IDialogService _dialog;
@@ -73,7 +71,7 @@ namespace FProductionDashBoard.ViewModels
         partial void InitializePanelLayout();
         partial void DisposeScheduler();
 
-        public MainViewModel(DashboardCoreServices core, IOfflineSyncService syncService,
+        public MainViewModel(DashboardCoreServices core,
             MultiCardReaderService multiCardReaderService,
             IServiceProvider sp,
             IDialogService dialogService,
@@ -82,7 +80,6 @@ namespace FProductionDashBoard.ViewModels
             ILicenseService licenseService)
         {
             _core = core;
-            _syncService = syncService;
             _multiCardReaderService = multiCardReaderService;
             _serviceProvider = sp;
             _dialog = dialogService;
