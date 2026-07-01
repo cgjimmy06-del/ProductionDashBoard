@@ -157,8 +157,7 @@ builder.Property(e => e.IsCrossDay).HasColumnType("bit");
 
 必改的 5 個地方：`NavModePolicy.cs`（enum + Policy）→ `MainViewModel.SwitchPanelContent`（權限 + ViewModel）→ `MainWindow.xaml` RadioButton → `MainWindow.xaml` DataTemplate → 三個語言資源檔
 
-### 新增離線寫入操作
+### 新增離線寫入操作（⚠ 已暫停使用）
 
-遇到「需要在斷線時暫存寫入操作」等需求時，調用 memory `feedback_offline_service_sop.md` 的 6 步 SOP。
-
-必改的 6 個地方：`PendingOperation.cs`（enum）→ `XxxPayload.cs`（DTO）→ `XxxSyncHandler.cs`（Handler）→ `DataService.cs`（離線路徑）→ `App.xaml.cs`（AddTransient 註冊）→ ViewModel catch `OfflineOperationQueuedException`
+> PR #112（2026-06-30）已移除 DataService 的離線寫入路徑與 ViewModel 的 offline catch。
+> `Services/Offline/` 資料夾保留，未來若重新啟用再依 memory `feedback_offline_service_sop.md` 的 6 步 SOP 恢復。
