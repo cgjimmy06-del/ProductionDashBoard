@@ -271,7 +271,7 @@
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                Margin="0,0,0,12"/>
 
-                        <!-- 同步上傳 -->
+                        <!-- 卡片狀態刷新 -->
                         <Grid Margin="0,4">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="130"/>
@@ -280,17 +280,17 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{DynamicResource SsSyncLabel}" VerticalAlignment="Center"
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsCardRefreshLabel}" VerticalAlignment="Center"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <ToggleButton Grid.Column="1"
-                                      IsChecked="{Binding SyncEnabled}"
+                                      IsChecked="{Binding CardRefreshEnabled}"
                                       Style="{StaticResource MaterialDesignSwitchToggleButton}"
                                       Margin="8,0"/>
                             <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}" VerticalAlignment="Center" Margin="16,0,8,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <TextBox Grid.Column="3" Width="60"
-                                 Text="{Binding SyncIntervalSec, UpdateSourceTrigger=PropertyChanged}"
-                                 IsEnabled="{Binding SyncEnabled}"/>
+                                 Text="{Binding CardRefreshIntervalSec, UpdateSourceTrigger=PropertyChanged}"
+                                 IsEnabled="{Binding CardRefreshEnabled}"/>
                             <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </Grid>

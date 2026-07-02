@@ -257,7 +257,7 @@
     <sys:String x:Key="SsLogAddAttachment">+ Thêm tệp đính kèm</sys:String>
     <sys:String x:Key="SsLogUploadButton">Tải lên</sys:String>
     <sys:String x:Key="SsBackgroundTasksHeader">Tác vụ nền</sys:String>
-    <sys:String x:Key="SsSyncLabel">Đồng bộ tải lên</sys:String>
+    <sys:String x:Key="SsCardRefreshLabel">Làm mới trạng thái thẻ</sys:String>
     <sys:String x:Key="SsMissedCheckLabel">Kiểm tra bỏ lỡ</sys:String>
     <sys:String x:Key="SsIdleLogoutLabel">Đăng xuất nhàn rỗi</sys:String>
     <sys:String x:Key="SsSkipLoginLabel">Bỏ qua màn hình đăng nhập</sys:String>

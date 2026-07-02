@@ -257,7 +257,7 @@
     <sys:String x:Key="SsLogAddAttachment">＋ 新增附件</sys:String>
     <sys:String x:Key="SsLogUploadButton">上傳</sys:String>
     <sys:String x:Key="SsBackgroundTasksHeader">背景任務</sys:String>
-    <sys:String x:Key="SsSyncLabel">同步上傳</sys:String>
+    <sys:String x:Key="SsCardRefreshLabel">卡片狀態刷新</sys:String>
     <sys:String x:Key="SsMissedCheckLabel">未巡檢偵測</sys:String>
     <sys:String x:Key="SsIdleLogoutLabel">閒置登出</sys:String>
     <sys:String x:Key="SsSkipLoginLabel">跳過登入畫面</sys:String>

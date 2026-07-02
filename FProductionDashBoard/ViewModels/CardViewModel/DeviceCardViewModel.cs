@@ -31,6 +31,8 @@ namespace FProductionDashBoard.ViewModels
         Maintaining = 2
     }
 
+    public enum TuningRefreshAction { Reset, Skip, Activate }
+
     public partial class DeviceCardViewModel : ObservableObject, IDisposable
     {
         private bool _disposed;
@@ -142,7 +144,12 @@ namespace FProductionDashBoard.ViewModels
             _disposed = true;
             DisposeAbb();
             DisposeModbus();
-            _tuningTimer?.Stop();
+            StopTuningTimer();
+        }
+
+        public async Task RefreshCardStateAsync()
+        {
+            await Task.WhenAll(LoadOrdersAsync(), LoadProgramTuningStateAsync());
         }
 
         public async Task UpdateTimeSlotsStatusAsync()
@@ -282,24 +289,27 @@ namespace FProductionDashBoard.ViewModels
 
         private void ApplyProductionState(OrderProductionInfo? order)
         {
-            _activeOrder = order;
-            if (order != null)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                IsProducing = true;
-                CurrentProductDisplayName = $"{order.ProductName} · {order.ProcessName}";
-                if (CurrentProduct == null) CurrentProduct = new ProductInfo();
-                CurrentProduct.ProductId = order.SopProductId;
-                CurrentProduct.ProductName = CurrentProductDisplayName;
-                _ = LoadSopChecklistDisplayAsync(order.SopId);
-            }
-            else
-            {
-                IsProducing = false;
-                CurrentProductDisplayName = Resources.NoCurrentProduct;
-                if (CurrentProduct != null) CurrentProduct = null;
-                SopChecklistDisplayItems = [];
-                CurrentSopType = null;
-            }
+                _activeOrder = order;
+                if (order != null)
+                {
+                    IsProducing = true;
+                    CurrentProductDisplayName = $"{order.ProductName} · {order.ProcessName}";
+                    if (CurrentProduct == null) CurrentProduct = new ProductInfo();
+                    CurrentProduct.ProductId = order.SopProductId;
+                    CurrentProduct.ProductName = CurrentProductDisplayName;
+                    _ = LoadSopChecklistDisplayAsync(order.SopId);
+                }
+                else
+                {
+                    IsProducing = false;
+                    CurrentProductDisplayName = Resources.NoCurrentProduct;
+                    if (CurrentProduct != null) CurrentProduct = null;
+                    SopChecklistDisplayItems = [];
+                    CurrentSopType = null;
+                }
+            });
         }
 
         private async Task LoadSopChecklistDisplayAsync(int sopId)
@@ -309,15 +319,22 @@ namespace FProductionDashBoard.ViewModels
                 var checklist = await _core.Data.GetSopChecklistWithItemsAsync(sopId);
                 if (checklist == null)
                 {
-                    SopChecklistDisplayItems = [];
-                    CurrentSopType = null;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SopChecklistDisplayItems = [];
+                        CurrentSopType = null;
+                    });
                     return;
                 }
-                CurrentSopType = checklist.SopType;
-                SopChecklistDisplayItems = checklist.Items
+                var items = checklist.Items
                     .OrderBy(i => i.Seq)
                     .Select(BuildSopItemDisplayText)
                     .ToList();
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    CurrentSopType = checklist.SopType;
+                    SopChecklistDisplayItems = items;
+                });
             }
             catch (Exception ex)
             {
@@ -528,14 +545,8 @@ namespace FProductionDashBoard.ViewModels
             IsTuning = true;
             UpdateTuningText();
 
-            if (_tuningTimer != null)
-            {
-                _tuningTimer.Stop();
-                _tuningTimer.Tick -= OnTuningTimerTick;
-            }
-            _tuningTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            _tuningTimer.Tick += OnTuningTimerTick;
-            _tuningTimer.Start();
+            StopTuningTimer();
+            StartTuningTimer();
         }
 
         // 調試視窗與結束事件
@@ -610,12 +621,7 @@ namespace FProductionDashBoard.ViewModels
                     await _core.Data.EndProgramTuningAsync(_activeProgramTuningId.Value, DateTime.Now, description);
 
                 // DB 成功才清除狀態
-                if (_tuningTimer != null)
-                {
-                    _tuningTimer.Stop();
-                    _tuningTimer.Tick -= OnTuningTimerTick;
-                    _tuningTimer = null;
-                }
+                StopTuningTimer();
                 IsTuning = false;
                 _activeProgramTuningId = null;
                 _activeTuningStartedByEmployee = null;
@@ -634,29 +640,83 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
+        public static TuningRefreshAction DecideTuningRefreshAction(
+            bool isTuningLocally, int? localProgramTuningId, int? remoteProgramTuningId)
+        {
+            if (remoteProgramTuningId is null)
+                return isTuningLocally ? TuningRefreshAction.Reset : TuningRefreshAction.Skip;
+            if (isTuningLocally && localProgramTuningId == remoteProgramTuningId)
+                return TuningRefreshAction.Skip;
+            return TuningRefreshAction.Activate;
+        }
+
         private async Task LoadProgramTuningStateAsync()
         {
             try
             {
                 var record = await _core.Data.GetInProgressProgramTuningAsync(Info.Id);
-                if (record == null) return;
+                var action = DecideTuningRefreshAction(IsTuning, _activeProgramTuningId, record?.ProgramTuningId);
 
-                _activeProgramTuningId = record.ProgramTuningId;
-                _activeTuningType = record.TuningType;
-                _activeTuningStartedByEmployee = _commonLists.UsersList.FirstOrDefault(u => u.Id == record.StartedBy);
-                _tuningElapsedSeconds = (int)(DateTime.Now - record.StartedAt).TotalSeconds;
-                TuningUserName = record.StartedByEmployee?.Name ?? string.Empty;
-                TuningProductLabel = BuildTuningProductLabel(record.EquipmentProduct);
-                IsTuning = true;
-                UpdateTuningText();
-                _tuningTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-                _tuningTimer.Tick += OnTuningTimerTick;
-                _tuningTimer.Start();
+                switch (action)
+                {
+                    case TuningRefreshAction.Skip:
+                        return;
+
+                    case TuningRefreshAction.Reset:
+                        StopTuningTimer();
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            IsTuning = false;
+                            TuningUserName = string.Empty;
+                            TuningProductLabel = string.Empty;
+                        });
+                        _activeProgramTuningId = null;
+                        _activeTuningStartedByEmployee = null;
+                        return;
+
+                    case TuningRefreshAction.Activate:
+                        _activeProgramTuningId = record!.ProgramTuningId;
+                        _activeTuningType = record.TuningType;
+                        _activeTuningStartedByEmployee = _commonLists.UsersList.FirstOrDefault(u => u.Id == record.StartedBy);
+                        _tuningElapsedSeconds = (int)(DateTime.Now - record.StartedAt).TotalSeconds;
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            TuningUserName = record.StartedByEmployee?.Name ?? string.Empty;
+                            TuningProductLabel = BuildTuningProductLabel(record.EquipmentProduct);
+                            IsTuning = true;
+                        });
+                        UpdateTuningText();
+                        StartTuningTimer();
+                        return;
+                }
             }
             catch (Exception ex)
             {
                 _core.Log.AddErrorLog($"[LoadProgramTuningStateAsync] {ex.Message}");
             }
+        }
+
+        private void StartTuningTimer()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                _tuningTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+                _tuningTimer.Tick += OnTuningTimerTick;
+                _tuningTimer.Start();
+            });
+        }
+
+        private void StopTuningTimer()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (_tuningTimer != null)
+                {
+                    _tuningTimer.Stop();
+                    _tuningTimer.Tick -= OnTuningTimerTick;
+                    _tuningTimer = null;
+                }
+            });
         }
 
         private static string BuildTuningProductLabel(EquipmentProduct? ep)
@@ -680,7 +740,10 @@ namespace FProductionDashBoard.ViewModels
                 ? Properties.Resources.TuningInProgressTeaching
                 : Properties.Resources.TuningInProgressOffset;
             var ts = TimeSpan.FromSeconds(_tuningElapsedSeconds);
-            TuningStatusText = $"{label} {ts:hh\\:mm\\:ss}";
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                TuningStatusText = $"{label} {ts:hh\\:mm\\:ss}";
+            });
         }
     }
 }
