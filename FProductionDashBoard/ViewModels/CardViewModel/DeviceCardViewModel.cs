@@ -317,23 +317,16 @@ namespace FProductionDashBoard.ViewModels
             try
             {
                 var checklist = await _core.Data.GetSopChecklistWithItemsAsync(sopId);
-                if (checklist == null)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SopChecklistDisplayItems = [];
-                        CurrentSopType = null;
-                    });
-                    return;
-                }
-                var items = checklist.Items
+                var items = checklist?.Items
                     .OrderBy(i => i.Seq)
                     .Select(BuildSopItemDisplayText)
-                    .ToList();
+                    .ToList() ?? [];
+                var sopType = checklist?.SopType;
+
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    CurrentSopType = checklist.SopType;
                     SopChecklistDisplayItems = items;
+                    CurrentSopType = sopType;
                 });
             }
             catch (Exception ex)
