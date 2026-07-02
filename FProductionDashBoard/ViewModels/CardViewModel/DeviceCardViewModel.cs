@@ -679,6 +679,7 @@ namespace FProductionDashBoard.ViewModels
                             IsTuning = true;
                         });
                         UpdateTuningText();
+                        StopTuningTimer();
                         StartTuningTimer();
                         return;
                 }

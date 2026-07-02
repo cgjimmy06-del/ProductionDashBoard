@@ -20,6 +20,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string currentTime = "";
 
         private int _cardRefreshTickCounter = 0;
+        private bool _isCardRefreshRunning = false;
         private int _missedCheckCounter = 0;
 
         [DllImport("user32.dll")] private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
@@ -61,9 +62,10 @@ namespace FProductionDashBoard.ViewModels
             var s = _systemConfig.Current;
 
             _cardRefreshTickCounter++;
-            if (s.CardRefreshEnabled && _cardRefreshTickCounter >= s.CardRefreshIntervalSec)
+            if (s.CardRefreshEnabled && _cardRefreshTickCounter >= s.CardRefreshIntervalSec && !_isCardRefreshRunning)
             {
                 _cardRefreshTickCounter = 0;
+                _isCardRefreshRunning = true;
                 var containerSnapshot = BuildActiveContainerSnapshot();
                 _ = Task.Run(async () =>
                 {
@@ -73,6 +75,8 @@ namespace FProductionDashBoard.ViewModels
                         _core.Log.AddLog("[RefreshActiveCardsAsync] 卡片狀態刷新背景任務發生例外", LogLevel.Error);
                         _core.Log.AddErrorLog($"[RefreshActiveCardsAsync] {ex.Message}");
                     }
+                    finally
+                    { _isCardRefreshRunning = false; }
                 });
             }
 
