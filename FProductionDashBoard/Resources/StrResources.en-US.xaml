@@ -257,7 +257,7 @@
     <sys:String x:Key="SsLogAddAttachment">+ Add Attachment</sys:String>
     <sys:String x:Key="SsLogUploadButton">Upload</sys:String>
     <sys:String x:Key="SsBackgroundTasksHeader">Background Tasks</sys:String>
-    <sys:String x:Key="SsSyncLabel">Sync Upload</sys:String>
+    <sys:String x:Key="SsCardRefreshLabel">Card Status Refresh</sys:String>
     <sys:String x:Key="SsMissedCheckLabel">Missed Check</sys:String>
     <sys:String x:Key="SsIdleLogoutLabel">Idle Logout</sys:String>
     <sys:String x:Key="SsSkipLoginLabel">Skip Login Screen</sys:String>
