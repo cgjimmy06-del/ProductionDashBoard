@@ -112,6 +112,7 @@
     <sys:String x:Key="SopEnsureProductButton">Kiểm tra SP</sys:String>
     <sys:String x:Key="SopModelFilter">Lọc Model</sys:String>
     <sys:String x:Key="SopModelFilterHint">Nhập 3 ký tự để tạo mới</sys:String>
+    <sys:String x:Key="SopApplyTemplateTooltip">Áp dụng SOP đã chọn làm mẫu</sys:String>
     <sys:String x:Key="SopFilterHint">Part / Tên / Quá trình / Ghi chú</sys:String>
     <sys:String x:Key="SopHeaderSection">Đầu</sys:String>
     <sys:String x:Key="SopItemsSection">Chi tiết</sys:String>

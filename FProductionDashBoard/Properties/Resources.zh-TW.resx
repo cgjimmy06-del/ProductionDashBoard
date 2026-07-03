@@ -189,6 +189,12 @@
   <data name="SopValidationMinItems" xml:space="preserve">
     <value>至少需新增 1 筆明細</value>
   </data>
+  <data name="SopValidationDuplicate" xml:space="preserve">
+    <value>此件號、型號、工序與 SOP 類型組合已有對應的 SOP，請確認或編輯既有項目</value>
+  </data>
+  <data name="SopTemplateOverwriteConfirm" xml:space="preserve">
+    <value>已填寫的明細將被範本覆蓋，確定套用嗎？</value>
+  </data>
   <data name="SopSuccessAdd" xml:space="preserve">
     <value>新增成功</value>
   </data>

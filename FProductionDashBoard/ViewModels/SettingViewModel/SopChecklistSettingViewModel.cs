@@ -39,6 +39,11 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string sopFilter = "";
         [ObservableProperty] private SopType? sopTypeFilter;
 
+        // ── 範本套用（左欄清單反白選取） ───────────────────────────
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(ApplyTemplateCommand))]
+        private SopChecklist? selectedSop;
+
         // ── 表頭欄位 ────────────────────────────────────────────────
         [ObservableProperty] private int? editingSopId;
         partial void OnEditingSopIdChanged(int? value) => OnPropertyChanged(nameof(FormTitle));
@@ -370,48 +375,85 @@ namespace FProductionDashBoard.ViewModels
         private void CancelItem() => IsItemFormVisible = false;
 
         // ── SOP 編輯/刪除 ────────────────────────────────────────────
+        // Part/Model 從 source.Product 取，不可用 detail.Product：
+        // GetSopChecklistWithItemsAsync 只 Include Items.Material，未 Include Product，detail.Product 恆為 null
+        private async Task<bool> LoadIntoFormAsync(SopChecklist source, bool isEditingExisting)
+        {
+            var detail = await _core.Data.GetSopChecklistWithItemsAsync(source.SopId);
+            if (detail == null)
+            { FormErrorString = string.Format(Properties.Resources.SopValidationNotFound, source.SopId); return false; }
+
+            // 先清 filter 再設 Part/Model：清 filter 會觸發 RecomputeFilteredPartList/ModelList，
+            // 其中含「自動把 FormPartId 設為第一筆」邏輯，順序顛倒會被覆寫
+            PartFilter = "";
+            ModelFilter = "";
+            IsCreatingPart = false;
+            IsCreatingModel = false;
+
+            EditingSopId = isEditingExisting ? detail.SopId : null;
+            FormPartId = source.Product?.PartId;
+            FormModelId = source.Product?.ModelId;
+            FormProcessId = detail.ProcessId;
+            FormSopType = detail.SopType;
+            FormRemark = detail.Remark;
+            FormItems.Clear();
+            foreach (var i in detail.Items.OrderBy(x => x.Seq))
+            {
+                var mat = FindMaterialById(i.MaterialId);
+                FormItems.Add(new SopChecklistItemFormDto
+                {
+                    Id = isEditingExisting ? i.ItemId : null,
+                    Seq = i.Seq,
+                    CheckType = i.CheckType,
+                    WorkstationNo = i.WorkstationNo,
+                    MaterialId = i.MaterialId,
+                    MaterialName = mat?.Name,
+                    Quantity = i.Quantity,
+                    Content = i.Content,
+                    Remark = i.Remark
+                });
+            }
+            FormErrorString = null;
+            FormSuccessString = null;
+            IsItemFormVisible = false;
+            return true;
+        }
+
         [RelayCommand]
         private async Task EditAsync(SopChecklist sop)
         {
             try
             {
-                var detail = await _core.Data.GetSopChecklistWithItemsAsync(sop.SopId);
-                if (detail == null)
-                { FormErrorString = string.Format(Properties.Resources.SopValidationNotFound, sop.SopId); return; }
-
-                EditingSopId = detail.SopId;
-                FormPartId = sop.Product?.PartId;
-                FormModelId = sop.Product?.ModelId;
-                FormProcessId = detail.ProcessId;
-                FormSopType = detail.SopType;
-                FormRemark = detail.Remark;
-                FormItems.Clear();
-                foreach (var i in detail.Items.OrderBy(x => x.Seq))
-                {
-                    var mat = FindMaterialById(i.MaterialId);
-                    FormItems.Add(new SopChecklistItemFormDto
-                    {
-                        Id = i.ItemId,
-                        Seq = i.Seq,
-                        CheckType = i.CheckType,
-                        WorkstationNo = i.WorkstationNo,
-                        MaterialId = i.MaterialId,
-                        MaterialName = mat?.Name,
-                        Quantity = i.Quantity,
-                        Content = i.Content,
-                        Remark = i.Remark
-                    });
-                }
-                FormErrorString = null;
-                FormSuccessString = null;
-                IsItemFormVisible = false;
-                IsFormVisible = true;
+                if (await LoadIntoFormAsync(sop, isEditingExisting: true))
+                    IsFormVisible = true;
             }
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
                 _core.Log.AddLog($"SOP 管理 - 載入 SOP 失敗: {ex.Message}", LogLevel.Error);
                 _core.Log.AddErrorLog($"[EditAsync] {ex.Message}");
+            }
+        }
+
+        private bool CanApplyTemplate() => SelectedSop != null;
+
+        [RelayCommand(CanExecute = nameof(CanApplyTemplate))]
+        private async Task ApplyTemplateAsync()
+        {
+            if (SelectedSop == null) return;
+            if (FormItems.Any() && !ShowConfirm(Properties.Resources.SopTemplateOverwriteConfirm))
+                return;
+
+            try
+            {
+                if (await LoadIntoFormAsync(SelectedSop, isEditingExisting: false))
+                    IsFormVisible = true;
+            }
+            catch (Exception ex)
+            {
+                FormErrorString = ex.Message;
+                _core.Log.AddLog($"SOP 管理 - 套用範本失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ApplyTemplateAsync] {ex.Message}");
             }
         }
 
@@ -514,6 +556,15 @@ namespace FProductionDashBoard.ViewModels
             { FormErrorString = Properties.Resources.SopValidationRequiredFields; return; }
             if (!FormItems.Any())
             { FormErrorString = Properties.Resources.SopValidationMinItems; return; }
+
+            bool duplicateExists = SopList.Any(s =>
+                s.Product?.PartId == FormPartId &&
+                s.Product?.ModelId == FormModelId &&
+                s.ProcessId == FormProcessId &&
+                s.SopType == FormSopType &&
+                s.SopId != (EditingSopId ?? -1));
+            if (duplicateExists)
+            { FormErrorString = Properties.Resources.SopValidationDuplicate; return; }
 
             try
             {

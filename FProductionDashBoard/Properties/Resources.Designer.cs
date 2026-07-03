@@ -1009,7 +1009,15 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("SopValidationMinItems", resourceCulture);
             }
         }
-        
+
+        internal static string SopValidationDuplicate {
+            get { return ResourceManager.GetString("SopValidationDuplicate", resourceCulture); }
+        }
+
+        internal static string SopTemplateOverwriteConfirm {
+            get { return ResourceManager.GetString("SopTemplateOverwriteConfirm", resourceCulture); }
+        }
+
         /// <summary>
         ///   查詢類似 Other: Content is required 的當地語系化字串。
         /// </summary>
