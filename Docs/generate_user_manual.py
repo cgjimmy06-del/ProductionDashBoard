@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import date
 
 OUTPUT_DIR = Path(__file__).parent
-VERSION_TAG = "v3.3.1"
+VERSION_TAG = "v3.3.2"
 DOCX_PATH  = OUTPUT_DIR / f"UserManual_PDB_{VERSION_TAG}.docx"
 PDF_PATH   = OUTPUT_DIR / f"UserManual_PDB_{VERSION_TAG}.pdf"
 REVIEW_DATE = date.today().strftime("%Y-%m-%d")
@@ -321,7 +321,8 @@ def generate_manual():
             ["v3.0.0", "2026-06-12", "AI-assisted",    "新增第 7 章排單管理（PR#81~84）；更新 5.1 設備卡片主次按鈕說明；補 Help 選單與 ABB 傳送開關說明（PR#85）；章節重新編號"],
             ["v3.2.0", "2026-06-22", "AI-assisted",   "新增 AI Agent 操作面板說明（PR#87~91）；補設備卡片 SOP 作業指引說明（PR#101）"],
             ["v3.3.0", "2026-06-29", "AI-assisted",   "新增第 12 章授權管理（PR#104~105）；新增第 13 章 AI Agent 現場狀況查詢工具（PR#107）；首次正式版"],
-            [VERSION_TAG, REVIEW_DATE, "AI-assisted",   "V3.3.1 維護版本；Code Review 修復（PR#110）+ 操作手冊圖號嵌入機制（F3-1 ～ F11-2）"],
+            ["v3.3.1", "2026-06-29", "AI-assisted",   "V3.3.1 維護版本；Code Review 修復（PR#110）+ 操作手冊圖號嵌入機制（F3-1 ～ F11-2）"],
+            [VERSION_TAG, REVIEW_DATE, "AI-assisted",   "V3.3.2 版本號同步；本次未新增操作手冊章節（SOP 管理頁籤含套用範本功能，待後續統一補充完整說明）"],
         ],
         [2.0, 2.5, 3.5, 8.0]
     )
