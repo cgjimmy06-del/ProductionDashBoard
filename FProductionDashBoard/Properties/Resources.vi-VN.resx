@@ -189,6 +189,12 @@
   <data name="SopValidationMinItems" xml:space="preserve">
     <value>Cần ít nhất 1 mục chi tiết</value>
   </data>
+  <data name="SopValidationDuplicate" xml:space="preserve">
+    <value>Tổ hợp Part/Model/Quy trình/Loại SOP này đã có SOP tương ứng, vui lòng kiểm tra hoặc chỉnh sửa mục hiện có</value>
+  </data>
+  <data name="SopTemplateOverwriteConfirm" xml:space="preserve">
+    <value>Các mục đã nhập sẽ bị mẫu ghi đè, bạn có chắc muốn áp dụng?</value>
+  </data>
   <data name="SopSuccessAdd" xml:space="preserve">
     <value>Thêm thành công</value>
   </data>

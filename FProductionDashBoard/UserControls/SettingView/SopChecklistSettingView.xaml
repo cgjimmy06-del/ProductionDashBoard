@@ -28,15 +28,24 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- 新增 SOP -->
-            <Button Grid.Row="0" HorizontalAlignment="Right" Margin="0,0,0,4"
-                    Command="{Binding NewCommand}"
-                    ToolTip="{DynamicResource NewButtonTooltip}"
-                    Style="{StaticResource FunctionButtonStyle}">
-                <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
-                                         VerticalAlignment="Center"
-                                         HorizontalAlignment="Center"/>
-            </Button>
+            <!-- 套用範本 + 新增 SOP -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,4">
+                <Button Margin="0,0,4,0"
+                        Command="{Binding ApplyTemplateCommand}"
+                        ToolTip="{DynamicResource SopApplyTemplateTooltip}"
+                        Style="{StaticResource FunctionButtonStyle}">
+                    <materialDesign:PackIcon Kind="ContentCopy" Width="30" Height="30"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"/>
+                </Button>
+                <Button Command="{Binding NewCommand}"
+                        ToolTip="{DynamicResource NewButtonTooltip}"
+                        Style="{StaticResource FunctionButtonStyle}">
+                    <materialDesign:PackIcon Kind="Plus" Margin="0" Width="40" Height="40"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"/>
+                </Button>
+            </StackPanel>
 
             <!-- 篩選列 -->
             <Grid Grid.Row="1" Margin="0,0,0,4">
@@ -74,6 +83,7 @@
             <!-- SOP 主清單 -->
             <DataGrid Grid.Row="2"
                       ItemsSource="{Binding FilteredSopList}"
+                      SelectedItem="{Binding SelectedSop}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
                       CanUserAddRows="False"

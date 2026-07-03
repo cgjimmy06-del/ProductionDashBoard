@@ -208,6 +208,12 @@
   <data name="SopValidationMinItems" xml:space="preserve">
     <value>At least 1 item is required</value>
   </data>
+  <data name="SopValidationDuplicate" xml:space="preserve">
+    <value>This Part/Model/Process/SOP Type combination already has an existing SOP. Please check or edit the existing entry.</value>
+  </data>
+  <data name="SopTemplateOverwriteConfirm" xml:space="preserve">
+    <value>The items you've entered will be overwritten by the template. Continue?</value>
+  </data>
   <data name="SopSuccessAdd" xml:space="preserve">
     <value>Added successfully</value>
   </data>
