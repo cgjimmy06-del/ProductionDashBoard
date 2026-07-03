@@ -411,6 +411,84 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Single(vm.FormItems);
         }
 
+        // ─── EditAsync / ApplyTemplateAsync（LoadIntoFormAsync 共用邏輯） ─────
+
+        [Fact]
+        public async Task EditAsync_PartModelComeFromListObject_NotFromDetailProduct()
+        {
+            // GetSopChecklistWithItemsAsync 對應的 repository 未 Include Product，detail.Product 恆為 null；
+            // Part/Model 必須來自傳入的清單物件 sop.Product，而非 detail.Product
+            var sop = BuildSop(3, "ABC11111", "100A", "加工", SopType.Open);
+            var detail = new SopChecklist
+            {
+                SopId = 3,
+                ProcessId = 1,
+                SopType = SopType.Open,
+                Product = null,
+                Items = new List<SopChecklistItem>
+                {
+                    new SopChecklistItem { ItemId = 11, SopId = 3, Seq = 1, CheckType = CheckType.Quantity, Quantity = 5 }
+                }
+            };
+            _data.Setup(d => d.GetSopChecklistWithItemsAsync(3)).ReturnsAsync(detail);
+
+            var vm = CreateVm();
+            await vm.EditCommand.ExecuteAsync(sop);
+
+            Assert.Equal(30, vm.FormPartId);
+            Assert.Equal(100, vm.FormModelId);
+            Assert.Equal(3, vm.EditingSopId);
+            Assert.True(vm.IsFormVisible);
+            Assert.Single(vm.FormItems);
+            Assert.Equal(11, vm.FormItems[0].Id); // 編輯模式保留原 ItemId
+        }
+
+        [Fact]
+        public void CanApplyTemplate_RequiresSelectedSop()
+        {
+            var vm = CreateVm();
+            Assert.False(vm.ApplyTemplateCommand.CanExecute(null));
+
+            vm.SelectedSop = BuildSop(1, "ABC11111", "100A", "加工", SopType.Open);
+            Assert.True(vm.ApplyTemplateCommand.CanExecute(null));
+        }
+
+        [Fact]
+        public async Task ApplyTemplateAsync_LoadsFromSelectedSopAndResetsIds()
+        {
+            var selected = BuildSop(5, "ABC11111", "100A", "加工", SopType.Open);
+            var detail = new SopChecklist
+            {
+                SopId = 5,
+                ProcessId = 1,
+                SopType = SopType.Open,
+                Remark = "template-remark",
+                Product = null, // 驗證 Part/Model 不依賴 detail.Product
+                Items = new List<SopChecklistItem>
+                {
+                    new SopChecklistItem { ItemId = 101, SopId = 5, Seq = 1, CheckType = CheckType.Quantity, Quantity = 10 },
+                    new SopChecklistItem { ItemId = 102, SopId = 5, Seq = 2, CheckType = CheckType.Quantity, Quantity = 20 }
+                }
+            };
+            _data.Setup(d => d.GetSopChecklistWithItemsAsync(5)).ReturnsAsync(detail);
+
+            var vm = CreateVm();
+            vm.EditingSopIdReflectionHelper(999); // 模擬編輯中途按套用範本
+            vm.SelectedSop = selected;
+
+            await vm.ApplyTemplateCommand.ExecuteAsync(null);
+
+            Assert.Null(vm.EditingSopId);
+            Assert.Equal(50, vm.FormPartId);
+            Assert.Equal(100, vm.FormModelId);
+            Assert.Equal(1, vm.FormProcessId);
+            Assert.Equal(SopType.Open, vm.FormSopType);
+            Assert.Equal("template-remark", vm.FormRemark);
+            Assert.Equal(2, vm.FormItems.Count);
+            Assert.All(vm.FormItems, i => Assert.Null(i.Id));
+            Assert.True(vm.IsFormVisible);
+        }
+
         // ─── SaveAsync 驗證 ──────────────────────────────────────────────────
 
         [Fact]
@@ -498,6 +576,62 @@ namespace FProductionDashBoard.Tests.ViewModels
 
             _data.Verify(d => d.UpdateSopChecklistAsync(It.Is<SopChecklistFormDto>(dto => dto.Id == 7)), Times.Once);
             _data.Verify(d => d.AddSopChecklistAsync(It.IsAny<SopChecklistFormDto>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task SaveAsync_DuplicateCombination_SetsErrorAndDoesNotCallData()
+        {
+            _dialog.Setup(d => d.ShowConfirm(It.IsAny<string>())).Returns(true);
+            var vm = CreateVm();
+            vm.SopList.Add(new SopChecklist
+            {
+                SopId = 1,
+                Product = new Product { PartId = 1, ModelId = 100 },
+                ProcessId = 1,
+                SopType = SopType.Develop
+            });
+
+            vm.FormPartId = 1;
+            vm.FormModelId = 100;
+            vm.FormProcessId = 1;
+            vm.FormSopType = SopType.Develop;
+            vm.FormItems.Add(new SopChecklistItemFormDto { Seq = 1, CheckType = CheckType.Quantity, Quantity = 1 });
+
+            await ((CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)vm.SaveCommand).ExecuteAsync(null);
+
+            Assert.False(string.IsNullOrEmpty(vm.FormErrorString));
+            _data.Verify(d => d.AddSopChecklistAsync(It.IsAny<SopChecklistFormDto>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task SaveAsync_EditingSelf_NotFlaggedAsDuplicate()
+        {
+            _dialog.Setup(d => d.ShowConfirm(It.IsAny<string>())).Returns(true);
+            _data.Setup(d => d.GetAllProductPartsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetProductModelsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetWorkProcessesAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetMaterialsByTypeAsync(It.IsAny<int>())).ReturnsAsync([]);
+            _data.Setup(d => d.GetAllSopChecklistsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.UpdateSopChecklistAsync(It.IsAny<SopChecklistFormDto>())).Returns(Task.CompletedTask);
+            var vm = CreateVm();
+            vm.SopList.Add(new SopChecklist
+            {
+                SopId = 1,
+                Product = new Product { PartId = 1, ModelId = 100 },
+                ProcessId = 1,
+                SopType = SopType.Develop
+            });
+
+            vm.EditingSopIdReflectionHelper(1); // 編輯自己這一筆
+            vm.FormPartId = 1;
+            vm.FormModelId = 100;
+            vm.FormProcessId = 1;
+            vm.FormSopType = SopType.Develop;
+            vm.FormItems.Add(new SopChecklistItemFormDto { Seq = 1, CheckType = CheckType.Quantity, Quantity = 1 });
+
+            await ((CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)vm.SaveCommand).ExecuteAsync(null);
+
+            _data.Verify(d => d.UpdateSopChecklistAsync(It.IsAny<SopChecklistFormDto>()), Times.Once);
         }
     }
 

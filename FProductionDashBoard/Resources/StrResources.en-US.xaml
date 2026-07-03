@@ -112,6 +112,7 @@
     <sys:String x:Key="SopEnsureProductButton">Check Product</sys:String>
     <sys:String x:Key="SopModelFilter">Model filter</sys:String>
     <sys:String x:Key="SopModelFilterHint">Enter 3 chars to enable creation</sys:String>
+    <sys:String x:Key="SopApplyTemplateTooltip">Apply selected SOP as template</sys:String>
     <sys:String x:Key="SopFilterHint">Part / Name / Process / Remark</sys:String>
     <sys:String x:Key="SopHeaderSection">Header</sys:String>
     <sys:String x:Key="SopItemsSection">Items</sys:String>
@@ -257,7 +258,7 @@
     <sys:String x:Key="SsLogAddAttachment">+ Add Attachment</sys:String>
     <sys:String x:Key="SsLogUploadButton">Upload</sys:String>
     <sys:String x:Key="SsBackgroundTasksHeader">Background Tasks</sys:String>
-    <sys:String x:Key="SsSyncLabel">Sync Upload</sys:String>
+    <sys:String x:Key="SsCardRefreshLabel">Card Status Refresh</sys:String>
     <sys:String x:Key="SsMissedCheckLabel">Missed Check</sys:String>
     <sys:String x:Key="SsIdleLogoutLabel">Idle Logout</sys:String>
     <sys:String x:Key="SsSkipLoginLabel">Skip Login Screen</sys:String>

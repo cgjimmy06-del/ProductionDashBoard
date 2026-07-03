@@ -4,8 +4,8 @@ namespace FProductionDashBoard.Dtos
     {
         public int  BusinessHour           { get; set; } = 8;
         public int  BusinessMinute         { get; set; } = 0;
-        public bool SyncEnabled            { get; set; } = true;
-        public int  SyncIntervalSec        { get; set; } = 60;
+        public bool CardRefreshEnabled     { get; set; } = true;
+        public int  CardRefreshIntervalSec { get; set; } = 30;
         public bool MissedCheckEnabled     { get; set; } = true;
         public int  MissedCheckIntervalSec { get; set; } = 300;
         public bool IdleLogoutEnabled      { get; set; } = true;

@@ -112,6 +112,7 @@
     <sys:String x:Key="SopEnsureProductButton">檢查產品</sys:String>
     <sys:String x:Key="SopModelFilter">型號篩選</sys:String>
     <sys:String x:Key="SopModelFilterHint">輸入 3 碼可新建</sys:String>
+    <sys:String x:Key="SopApplyTemplateTooltip">套用選取的 SOP 為範本</sys:String>
     <sys:String x:Key="SopFilterHint">件號 / 品名 / 工序 / 備註</sys:String>
     <sys:String x:Key="SopHeaderSection">表頭</sys:String>
     <sys:String x:Key="SopItemsSection">明細</sys:String>
@@ -257,7 +258,7 @@
     <sys:String x:Key="SsLogAddAttachment">＋ 新增附件</sys:String>
     <sys:String x:Key="SsLogUploadButton">上傳</sys:String>
     <sys:String x:Key="SsBackgroundTasksHeader">背景任務</sys:String>
-    <sys:String x:Key="SsSyncLabel">同步上傳</sys:String>
+    <sys:String x:Key="SsCardRefreshLabel">卡片狀態刷新</sys:String>
     <sys:String x:Key="SsMissedCheckLabel">未巡檢偵測</sys:String>
     <sys:String x:Key="SsIdleLogoutLabel">閒置登出</sys:String>
     <sys:String x:Key="SsSkipLoginLabel">跳過登入畫面</sys:String>

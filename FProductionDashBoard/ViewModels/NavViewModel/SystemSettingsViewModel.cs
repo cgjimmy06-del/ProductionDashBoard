@@ -45,8 +45,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private bool hasUnsavedChanges     = false;
         [ObservableProperty] private int  businessHour           = 8;
         [ObservableProperty] private int  businessMinute         = 0;
-        [ObservableProperty] private bool syncEnabled            = true;
-        [ObservableProperty] private int  syncIntervalSec        = 60;
+        [ObservableProperty] private bool cardRefreshEnabled     = true;
+        [ObservableProperty] private int  cardRefreshIntervalSec = 30;
         [ObservableProperty] private bool missedCheckEnabled     = true;
         [ObservableProperty] private int  missedCheckIntervalSec = 300;
         [ObservableProperty] private bool idleLogoutEnabled      = true;
@@ -55,8 +55,8 @@ namespace FProductionDashBoard.ViewModels
 
         partial void OnBusinessHourChanged(int value)           => HasUnsavedChanges = true;
         partial void OnBusinessMinuteChanged(int value)         => HasUnsavedChanges = true;
-        partial void OnSyncEnabledChanged(bool value)           => HasUnsavedChanges = true;
-        partial void OnSyncIntervalSecChanged(int value)        => HasUnsavedChanges = true;
+        partial void OnCardRefreshEnabledChanged(bool value)    => HasUnsavedChanges = true;
+        partial void OnCardRefreshIntervalSecChanged(int value) => HasUnsavedChanges = true;
         partial void OnMissedCheckEnabledChanged(bool value)    => HasUnsavedChanges = true;
         partial void OnMissedCheckIntervalSecChanged(int value) => HasUnsavedChanges = true;
         partial void OnIdleLogoutEnabledChanged(bool value)     => HasUnsavedChanges = true;
@@ -198,8 +198,8 @@ namespace FProductionDashBoard.ViewModels
             var sys = _systemConfig.Current;
             BusinessHour           = sys.BusinessHour;
             BusinessMinute         = sys.BusinessMinute;
-            SyncEnabled            = sys.SyncEnabled;
-            SyncIntervalSec        = sys.SyncIntervalSec;
+            CardRefreshEnabled     = sys.CardRefreshEnabled;
+            CardRefreshIntervalSec = sys.CardRefreshIntervalSec;
             MissedCheckEnabled     = sys.MissedCheckEnabled;
             MissedCheckIntervalSec = sys.MissedCheckIntervalSec;
             IdleLogoutEnabled      = sys.IdleLogoutEnabled;
@@ -230,8 +230,8 @@ namespace FProductionDashBoard.ViewModels
             {
                 BusinessHour           = BusinessHour,
                 BusinessMinute         = BusinessMinute,
-                SyncEnabled            = SyncEnabled,
-                SyncIntervalSec        = SyncIntervalSec,
+                CardRefreshEnabled     = CardRefreshEnabled,
+                CardRefreshIntervalSec = CardRefreshIntervalSec,
                 MissedCheckEnabled     = MissedCheckEnabled,
                 MissedCheckIntervalSec = MissedCheckIntervalSec,
                 IdleLogoutEnabled      = IdleLogoutEnabled,

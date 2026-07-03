@@ -19,7 +19,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private int businessMinute = 0;
         [ObservableProperty] private string currentTime = "";
 
-        private int _syncTickCounter = 0;
+        private int _cardRefreshTickCounter = 0;
+        private bool _isCardRefreshRunning = false;
         private int _missedCheckCounter = 0;
 
         [DllImport("user32.dll")] private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
@@ -60,22 +61,30 @@ namespace FProductionDashBoard.ViewModels
 
             var s = _systemConfig.Current;
 
-            _syncTickCounter++;
-            if (s.SyncEnabled && _syncTickCounter >= s.SyncIntervalSec)
+            _cardRefreshTickCounter++;
+            if (s.CardRefreshEnabled && _cardRefreshTickCounter >= s.CardRefreshIntervalSec && !_isCardRefreshRunning)
             {
-                _syncTickCounter = 0;
-                // 通知系統觸發點（待實作）
+                _cardRefreshTickCounter = 0;
+                _isCardRefreshRunning = true;
+                var containerSnapshot = BuildActiveContainerSnapshot();
+                _ = Task.Run(async () =>
+                {
+                    try { await RefreshActiveCardsAsync(containerSnapshot); }
+                    catch (Exception ex)
+                    {
+                        _core.Log.AddLog("[RefreshActiveCardsAsync] 卡片狀態刷新背景任務發生例外", LogLevel.Error);
+                        _core.Log.AddErrorLog($"[RefreshActiveCardsAsync] {ex.Message}");
+                    }
+                    finally
+                    { _isCardRefreshRunning = false; }
+                });
             }
 
             _missedCheckCounter++;
             if (s.MissedCheckEnabled && _missedCheckCounter >= s.MissedCheckIntervalSec)
             {
                 _missedCheckCounter = 0;
-                var containerSnapshot = new[] { _deviceContainer }
-                    .Concat(_panelContainers.Values)
-                    .Where(c => c != null)
-                    .Cast<OperationViewModel>()
-                    .ToList();
+                var containerSnapshot = BuildActiveContainerSnapshot();
                 _ = Task.Run(async () =>
                 {
                     try { await CheckMissedInspectionsAsync(containerSnapshot); }
@@ -89,6 +98,36 @@ namespace FProductionDashBoard.ViewModels
 
             if (s.IdleLogoutEnabled && IsLoggedIn && GetIdleSeconds() >= s.IdleLogoutIntervalSec)
                 await CheckLogOutForLongIdle();
+        }
+
+        private IReadOnlyList<OperationViewModel> BuildActiveContainerSnapshot()
+        {
+            return new[] { _deviceContainer }
+                .Concat(_panelContainers.Values)
+                .Where(c => c != null)
+                .Cast<OperationViewModel>()
+                .ToList();
+        }
+
+        private async Task RefreshActiveCardsAsync(IReadOnlyList<OperationViewModel> containers)
+        {
+            var activeDevices = containers.SelectMany(c => c.Devices).Distinct().ToList();
+            if (!activeDevices.Any()) return;
+
+            foreach (var card in activeDevices)
+            {
+                try { await card.RefreshCardStateAsync(); }
+                catch (InvalidOperationException)
+                {
+                    _core.Log.AddLog("卡片狀態刷新略過：資料庫連線失敗", LogLevel.Warning);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _core.Log.AddLog($"卡片狀態刷新失敗 [{card.Info.Name}]", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[RefreshActiveCardsAsync] [{card.Info.Name}] {ex.Message}");
+                }
+            }
         }
 
         private async Task CheckMissedInspectionsAsync(IReadOnlyList<OperationViewModel> containers)
