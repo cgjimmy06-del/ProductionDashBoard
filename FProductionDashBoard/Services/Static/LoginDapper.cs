@@ -91,15 +91,15 @@ namespace FProductionDashBoard.Services
             }
             catch (SqlException sqlex)
             {
-                Debug.WriteLine($"[checkConnection] SQL: {sqlex.Message}"); return null;
+                Debug.WriteLine($"[ValidateUser] SQL: {sqlex.Message}"); return null;
             }
             catch (TaskCanceledException)
             {
-                Debug.WriteLine("[checkConnection] Task cancelled"); return null;
+                Debug.WriteLine("[ValidateUser] Task cancelled"); return null;
             }
             catch (Exception normalex)
             {
-                Debug.WriteLine($"[checkConnection] {normalex.Message}"); return null;
+                Debug.WriteLine($"[ValidateUser] {normalex.Message}"); return null;
             }
         }
     }

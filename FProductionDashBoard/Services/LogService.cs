@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MaterialDesignThemes.Wpf;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -42,6 +43,7 @@ namespace FProductionDashBoard.Services
         public int DaysToKeep { get; set; } = 7;
 
         private readonly SemaphoreSlim _fileWriteLock = new(1, 1);
+        private DateTime _lastCleanupDate = DateTime.MinValue;
         private const string _archiveSubDir = "archive";
         private readonly string _logDirectory = Path.Combine(AppContext.BaseDirectory, "Logs");
         private readonly string _logFileName = "logs";
@@ -78,7 +80,7 @@ namespace FProductionDashBoard.Services
             if (SaveToFile)
             {
                 _ = AppendLogToFileAsync(entry, _logFileName);
-                _ = Task.Run(() => CleanupOldLogs(_logFileName));
+                TryRunDailyCleanup();
             }
 
             if (Application.Current != null)
@@ -116,7 +118,6 @@ namespace FProductionDashBoard.Services
             if (SaveToFile)
             {
                 _ = AppendLogToFileAsync(entry, _errorLogFileName, false);
-                _ = Task.Run(() => CleanupOldLogs(_errorLogFileName));
             }
 
             if (Application.Current != null)
@@ -151,10 +152,26 @@ namespace FProductionDashBoard.Services
             {
                 await File.AppendAllTextAsync(GetLogFilePathWithDate(filetitle), line + Environment.NewLine);
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[AppendLogToFileAsync] {ex.Message}");
+            }
             finally
             {
                 _fileWriteLock.Release();
             }
+        }
+
+        private void TryRunDailyCleanup()
+        {
+            var today = DateTime.Today;
+            if (_lastCleanupDate == today) return;
+            _lastCleanupDate = today;
+            _ = Task.Run(() =>
+            {
+                CleanupOldLogs(_logFileName);
+                CleanupOldLogs(_errorLogFileName);
+            });
         }
 
         private void CleanupOldLogs(string filetitle)

@@ -127,9 +127,11 @@ namespace FProductionDashBoard
                 // 註冊 WebApi 服務
                 var factoryArea = config[$"EriApi:{selectedServer}"] ?? selectedServer;
                 services.Configure<ErpApiOptions>(opt => opt.FactoryArea = factoryArea);
+                var erpBaseUrl = config["ErpApi:BaseUrl"] ?? "";
                 services.AddHttpClient<Services.WebApi.IErpApiService, Services.WebApi.ErpApiService>(client =>
                 {
-                    client.BaseAddress = new Uri("http://ssty-erpapp01.sporting.fusheng.com/Fusheng.WHD.ERP.Common/");
+                    if (Uri.TryCreate(erpBaseUrl, UriKind.Absolute, out var erpUri))
+                        client.BaseAddress = erpUri;
                     client.Timeout = TimeSpan.FromSeconds(5);
                 });
 
