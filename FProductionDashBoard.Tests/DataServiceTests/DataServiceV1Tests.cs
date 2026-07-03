@@ -224,6 +224,23 @@ namespace FProductionDashBoard.Tests.DataServiceTests
         }
 
         [Fact]
+        public async Task GetAllSlotsStatusAsync_CountMismatch_ThrowsInvalidOperationException()
+        {
+            var slots = new List<TimeSlotLookup>
+            {
+                new() { TimeSlotId = 1, StartAt = TimeSpan.Zero, EndAt = TimeSpan.FromHours(1), IsCrossDay = false },
+                new() { TimeSlotId = 2, StartAt = TimeSpan.FromHours(1), EndAt = TimeSpan.FromHours(2), IsCrossDay = false },
+            };
+
+            _inspectionRecordRep
+                .Setup(r => r.GetStatusForAllSlotsAsync(1, It.IsAny<DateTime>()))
+                .ReturnsAsync([(false, false)]); // 只回 1 筆，slots 傳 2 筆，數量不符
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => CreateService(DateTime.Today).GetAllSlotsStatusAsync(slots, 1));
+        }
+
+        [Fact]
         public async Task GetAllSlotsStatusAsync_CrossDayBothShifted_ReturnsGray()
         {
             var slot = new TimeSlotLookup

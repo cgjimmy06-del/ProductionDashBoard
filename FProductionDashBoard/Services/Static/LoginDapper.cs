@@ -23,7 +23,7 @@ namespace FProductionDashBoard.Services
         {
             if (_cachedConfig != null) return _cachedConfig;
             _cachedConfig = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
             return _cachedConfig;
@@ -91,15 +91,15 @@ namespace FProductionDashBoard.Services
             }
             catch (SqlException sqlex)
             {
-                Debug.WriteLine($"[checkConnection] SQL: {sqlex.Message}"); return null;
+                Debug.WriteLine($"[ValidateUser] SQL: {sqlex.Message}"); return null;
             }
             catch (TaskCanceledException)
             {
-                Debug.WriteLine("[checkConnection] Task cancelled"); return null;
+                Debug.WriteLine("[ValidateUser] Task cancelled"); return null;
             }
             catch (Exception normalex)
             {
-                Debug.WriteLine($"[checkConnection] {normalex.Message}"); return null;
+                Debug.WriteLine($"[ValidateUser] {normalex.Message}"); return null;
             }
         }
     }
