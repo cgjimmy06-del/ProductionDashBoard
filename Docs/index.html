@@ -47,17 +47,30 @@
 		  </ul>
 		  <a href="thirdParty/PCSDK 2024.3.exe">下載 ABB PC SDK (2024.3) 套件</a>
 
-		  <h2>最新版本(建議) [3.3.1] (2026/06/29)</h2>
+		  <h2>最新版本(建議) [3.3.2] (2026/07/03)</h2>
 		  <ul>
-			  <li>修復：Code Review 修復（PR #110）—異常處理補強、MES 連線防護、ABB 多語系狀態訊息、授權可見性修正</li>
-			  <li>改善：操作手冊圖號嵌入機制（F3-1 ～ F11-2，置入截圖後重跑腳本自動嵌入）</li>
+			  <li>新增：SOP 管理新增「套用範本」功能，可挑選既有 SOP 快速複製表頭與明細，修改後另存為新 SOP</li>
+			  <li>改善：SOP 存檔前新增唯一鍵檢查，重複的件號/型號/工序/類型組合會即時提示，不再顯示原始資料庫錯誤</li>
+			  <li>移除：離線寫入功能（因應資料一致性需求暫停使用，相關程式碼保留待未來重新啟用）</li>
+			  <li>改善：DeviceCard 跨用戶端狀態即時刷新，多台電腦同時操作時介面即時同步</li>
+			  <li>修復：LogUploadApi 授權檔（.lic）等檔案下載 404 問題，可下載檔案類型改為可設定</li>
 		  </ul>
 		  <a href="FProductionDashBoard.application">下載最新版本</a>
-		  <a href="userManual/UserManual_PDB_v3.3.1.pdf">下載操作手冊</a>
+		  <a href="userManual/UserManual_PDB_v3.3.2.pdf">下載操作手冊</a>
 	  </div>
 
 	<div class="section">
 		<h2>舊版本 (回溯用，若最新版本有問題，可以選擇安裝舊版本)</h2>
+
+		<h3>
+			<a href="archive/FProductionDashBoard_3_3_1_1.application" style="text-decoration:none;">
+				下載版本 [3.3.1] (2026/06/29)
+			</a>
+		</h3>
+		<ul>
+			<li>修復：Code Review 修復（PR #110）—異常處理補強、MES 連線防護、ABB 多語系狀態訊息、授權可見性修正</li>
+			<li>改善：操作手冊圖號嵌入機制（F3-1 ～ F11-2，置入截圖後重跑腳本自動嵌入）</li>
+		</ul>
 
 		<h3>
 			<a href="archive/FProductionDashBoard_3_3_0_1.application" style="text-decoration:none;">
@@ -69,29 +82,6 @@
 			<li>新增：AI Agent 現場狀況查詢工具（訂單 / 設備 / 調試 / 機台能力）</li>
 			<li>改善：介面字串完整多語系補全（32 個 key）</li>
 			<li>首次正式版（移除 Beta 標籤）</li>
-		</ul>
-
-		<h3>
-			<a href="archive/FProductionDashBoard_3_2_0_1.application" style="text-decoration:none;">
-				下載版本 [3.2.0-Beta.1] (2026/06/22)
-			</a>
-		</h3>
-		<ul>
-			<li>新增：AI Agent 操作面板（支援 System Prompt 設定、取消生成）</li>
-			<li>新增：設備卡片 SOP 作業指引區（顯示工序清單：站位/夾具/數量/工時）</li>
-			<li>改善：AI Agent 穩定性與維護性強化</li>
-		</ul>
-
-		<h3>
-			<a href="archive/FProductionDashBoard_3_0_0_1.application" style="text-decoration:none;">
-				下載版本 [3.0.0-Beta.1] (2026/06/12)
-			</a>
-		</h3>
-		<ul>
-			<li>新增：排單管理（接單指派、設備卡片牆、設備焦點模式、訂單生命週期）</li>
-			<li>改善：設備卡片 UX 重構（主次兩層操作按鈕，接單/調試主要、換料/首檢/巡檢次要）</li>
-			<li>新增：ABB 序號傳送開關（可於系統設定中關閉，跳過 ABB 寫入直接更新 DB）</li>
-			<li>新增：功能表「幫助 → 關於」顯示版本號</li>
 		</ul>
 	</div>
   </div>

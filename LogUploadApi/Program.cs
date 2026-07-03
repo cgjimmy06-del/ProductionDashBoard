@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,16 @@ Directory.CreateDirectory(storagePath);
 
 var fileProvider = new PhysicalFileProvider(storagePath);
 
+// Single source of truth for allowed extensions: drives both the upload whitelist
+// and the download MIME mapping, so adding a new type only needs an appsettings.json edit.
+var downloadableExtensions = builder.Configuration.GetSection("DownloadableExtensions")
+    .GetChildren()
+    .ToDictionary(kv => kv.Key, kv => kv.Value!, StringComparer.OrdinalIgnoreCase);
+
+var contentTypeProvider = new FileExtensionContentTypeProvider();
+foreach (var (ext, mime) in downloadableExtensions)
+    contentTypeProvider.Mappings[ext] = mime;
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -25,7 +36,8 @@ app.UseSwaggerUI();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = fileProvider,
-    RequestPath = "/logs"
+    RequestPath = "/logs",
+    ContentTypeProvider = contentTypeProvider
 });
 app.UseDirectoryBrowser(new DirectoryBrowserOptions
 {
@@ -44,9 +56,8 @@ app.MapPost("/api/logs/upload", async (IFormFile file) =>
     {
         // Path.GetFileName strips directory traversal attempts (e.g. "../../evil.exe")
         var safeName = Path.GetFileName(file.FileName);
-        var allowedExtensions = new[] { ".log", ".txt", ".zip" };
         var ext = Path.GetExtension(safeName).ToLowerInvariant();
-        if (!allowedExtensions.Contains(ext))
+        if (!downloadableExtensions.ContainsKey(ext))
             return Results.BadRequest("不支援的檔案類型");
         // Timestamp prefix avoids name collisions when the same file is uploaded multiple times
         var fileName = $"{DateTime.Now:yyyyMMdd_HHmmss}_{safeName}";
