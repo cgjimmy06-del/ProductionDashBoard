@@ -181,9 +181,17 @@ namespace FProductionDashBoard.ViewModels
                 var result = vm.Result ?? new();
                 foreach (var iselection in result.Selections)
                 {
-                    var abbClient    = iselection.TypeId == AbbEquipmentTypeId   ? _abbClientFactory() : null;
+                    var abbClient = iselection.TypeId == AbbEquipmentTypeId ? _abbClientFactory() : null;
+                    byte modbusUnitId = 0;
+                    if (iselection.TypeId == ModbusEquipmentTypeId)
+                    {
+                        if (iselection.Port is < 0 or > 255)
+                            _core.Log.AddLog($"[{iselection.Name}] Modbus Unit ID 超出範圍(0-255)，已預設為 0", LogLevel.Warning);
+                        else
+                            modbusUnitId = (byte)iselection.Port;
+                    }
                     var modbusClient = iselection.TypeId == ModbusEquipmentTypeId
-                        ? _modbusClientFactory(iselection.IP, 502, (byte)iselection.Port) : null; // Port 範圍 0~255；超出則靜默略過
+                        ? _modbusClientFactory(iselection.IP, 502, modbusUnitId) : null;
 
                     var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, _commonLists, _hardwareConfig, abbClient, modbusClient);
                     await idevice.UpdateTimeSlotsStatusAsync();
@@ -215,9 +223,17 @@ namespace FProductionDashBoard.ViewModels
             }
             foreach (var iselection in result)
             {
-                var abbClient    = iselection.TypeId == AbbEquipmentTypeId   ? _abbClientFactory() : null;
+                var abbClient = iselection.TypeId == AbbEquipmentTypeId ? _abbClientFactory() : null;
+                byte modbusUnitId = 0;
+                if (iselection.TypeId == ModbusEquipmentTypeId)
+                {
+                    if (iselection.Port is < 0 or > 255)
+                        _core.Log.AddLog($"[{iselection.Name}] Modbus Unit ID 超出範圍(0-255)，已預設為 0", LogLevel.Warning);
+                    else
+                        modbusUnitId = (byte)iselection.Port;
+                }
                 var modbusClient = iselection.TypeId == ModbusEquipmentTypeId
-                    ? _modbusClientFactory(iselection.IP, 502, (byte)iselection.Port) : null; // Port 範圍 0~255；超出則靜默略過
+                    ? _modbusClientFactory(iselection.IP, 502, modbusUnitId) : null;
 
                 var idevice = new DeviceCardViewModel(_core, _dialog, iselection, CurrentUser!, _commonLists, _hardwareConfig, abbClient, modbusClient);
                 await idevice.UpdateTimeSlotsStatusAsync();

@@ -85,7 +85,7 @@ namespace FProductionDashBoard.ViewModels
         {
             LicensedFeature? requiredFeature;
             try { requiredFeature = GetRequiredFeature(mode); }
-            catch (NotImplementedException)
+            catch (InvalidOperationException)
             {
                 _core.Log.AddErrorLog($"[SwitchPanelContent] NavMode {mode} 未設定授權映射，拒絕存取");
                 return false;

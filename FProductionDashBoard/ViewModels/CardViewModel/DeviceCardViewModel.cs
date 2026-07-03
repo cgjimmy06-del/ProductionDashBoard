@@ -403,7 +403,6 @@ namespace FProductionDashBoard.ViewModels
                 {
                     _core.Log.AddLog($"{Properties.Resources.ComStrDevice}:{Info.Name} - 物料更換紀錄上傳失敗", LogLevel.Error);
                     _core.Log.AddErrorLog($"[MaterialsChangeAsync] {ex.Message}");
-                    FirstInspectionStatus = false;
                 }
             }
         }
