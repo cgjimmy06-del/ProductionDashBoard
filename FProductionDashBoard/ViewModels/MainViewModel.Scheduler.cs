@@ -22,6 +22,7 @@ namespace FProductionDashBoard.ViewModels
         private int _cardRefreshTickCounter = 0;
         private bool _isCardRefreshRunning = false;
         private int _missedCheckCounter = 0;
+        private bool _isIdleDialogShowing = false;
 
         [DllImport("user32.dll")] private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
         [StructLayout(LayoutKind.Sequential)] private struct LASTINPUTINFO { public uint cbSize; public uint dwTime; }
@@ -96,22 +97,23 @@ namespace FProductionDashBoard.ViewModels
                 });
             }
 
-            if (s.IdleLogoutEnabled && IsLoggedIn && GetIdleSeconds() >= s.IdleLogoutIntervalSec)
+            if (s.IdleLogoutEnabled && IsLoggedIn && !_isIdleDialogShowing && GetIdleSeconds() >= s.IdleLogoutIntervalSec)
                 await CheckLogOutForLongIdle();
         }
 
-        private IReadOnlyList<OperationViewModel> BuildActiveContainerSnapshot()
+        private IReadOnlyList<DeviceCardViewModel> BuildActiveContainerSnapshot()
         {
             return new[] { _deviceContainer }
                 .Concat(_panelContainers.Values)
                 .Where(c => c != null)
                 .Cast<OperationViewModel>()
+                .SelectMany(c => c.Devices)
+                .Distinct()
                 .ToList();
         }
 
-        private async Task RefreshActiveCardsAsync(IReadOnlyList<OperationViewModel> containers)
+        private async Task RefreshActiveCardsAsync(IReadOnlyList<DeviceCardViewModel> activeDevices)
         {
-            var activeDevices = containers.SelectMany(c => c.Devices).Distinct().ToList();
             if (!activeDevices.Any()) return;
 
             foreach (var card in activeDevices)
@@ -130,13 +132,9 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
-        private async Task CheckMissedInspectionsAsync(IReadOnlyList<OperationViewModel> containers)
+        private async Task CheckMissedInspectionsAsync(IReadOnlyList<DeviceCardViewModel> activeDevices)
         {
             if (CommonLists.TimeSlotsList.Count == 0) return;
-            var activeDevices = containers
-                .SelectMany(c => c.Devices)
-                .Distinct()
-                .ToList();
             if (!activeDevices.Any()) return;
 
             foreach (var card in activeDevices)
@@ -161,26 +159,30 @@ namespace FProductionDashBoard.ViewModels
 
         private async Task CheckLogOutForLongIdle()
         {
-            if (!IsLoggedIn) return;
-
-            bool isExtendLogin = false;
-            var vm = new LoadingViewModel
+            if (!IsLoggedIn || _isIdleDialogShowing) return;
+            _isIdleDialogShowing = true;
+            try
             {
-                Mode = LoadingMode.LogoutCountdown,
-                Message = "閒置逾時警告",
-                CountdownSeconds = 10
-            };
-            vm.SessionExtended += (_, _) =>
-            {
-                isExtendLogin = true;
-                _core.Log.AddLog("已延長，歡迎回來", LogLevel.Success);
-            };
-            var win = new LoadingWindow(vm);
-            vm.StartCountdown();
-            win.ShowDialog();
+                bool isExtendLogin = false;
+                var vm = new LoadingViewModel
+                {
+                    Mode = LoadingMode.LogoutCountdown,
+                    Message = "閒置逾時警告",
+                    CountdownSeconds = 10
+                };
+                vm.SessionExtended += (_, _) =>
+                {
+                    isExtendLogin = true;
+                    _core.Log.AddLog("已延長，歡迎回來", LogLevel.Success);
+                };
+                var win = new LoadingWindow(vm);
+                vm.StartCountdown();
+                win.ShowDialog();
 
-            if (!isExtendLogin)
-                await _core.Authorization.LogoutAsync();
+                if (!isExtendLogin)
+                    await _core.Authorization.LogoutAsync();
+            }
+            finally { _isIdleDialogShowing = false; }
         }
     }
 }

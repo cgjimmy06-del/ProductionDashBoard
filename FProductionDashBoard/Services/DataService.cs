@@ -215,13 +215,16 @@ namespace FProductionDashBoard.Services
                 throw new InvalidOperationException("[GetAllSlotsStatusAsync] 時段 Repository 連線失敗");
 
             var slotsResult = await _inspectionRecordRep.GetStatusForAllSlotsAsync(equipmentId, BusinessDay).ConfigureAwait(false);
+            if (slotsResult.Count != timeSlotLookups.Count)
+                throw new InvalidOperationException(
+                    $"[GetAllSlotsStatusAsync] 時段數量不一致（傳入 {timeSlotLookups.Count}，查得 {slotsResult.Count}），請重新載入時段清單");
 
             var now = DateTime.Now;
             var result = new List<int>();
             for (int i = 0; i < timeSlotLookups.Count; i++)
             {
                 var slot = timeSlotLookups[i];
-                var (hasRecord, recordResult) = slotsResult[i]; // AI 提示與timeSlotLookups數量不符警告
+                var (hasRecord, recordResult) = slotsResult[i];
                 var (slotStart, slotEnd) = slot.GetBounds(BusinessDay);
 
                 int status;

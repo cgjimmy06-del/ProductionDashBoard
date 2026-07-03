@@ -43,11 +43,11 @@ namespace FProductionDashBoard.Services
 
         private readonly SemaphoreSlim _fileWriteLock = new(1, 1);
         private const string _archiveSubDir = "archive";
-        private readonly string _logDirectory = "Logs";
+        private readonly string _logDirectory = Path.Combine(AppContext.BaseDirectory, "Logs");
         private readonly string _logFileName = "logs";
         private readonly string _errorLogFileName = "elogs";
 
-        public string LogDirectory => Path.Combine(AppContext.BaseDirectory, _logDirectory);
+        public string LogDirectory => _logDirectory;
 
         public LogService()
         {

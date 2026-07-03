@@ -23,7 +23,7 @@ namespace FProductionDashBoard.Services
         {
             if (_cachedConfig != null) return _cachedConfig;
             _cachedConfig = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
             return _cachedConfig;
