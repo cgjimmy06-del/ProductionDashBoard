@@ -1,0 +1,41 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.ChartView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="1200">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- 圖表操作列 -->
+            <RowDefinition Height="*"/>     <!-- 圖表內容 -->
+        </Grid.RowDefinitions>
+
+        <!-- ========== Row0：圖表操作列骨架 ========== -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+            <Button IsEnabled="False"
+                    ToolTip="{DynamicResource ChartAddTooltip}"
+                    Style="{StaticResource FunctionButtonStyle}">
+                <materialDesign:PackIcon Kind="Plus" Margin="0" Width="30" Height="30"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"/>
+            </Button>
+        </StackPanel>
+
+        <!-- ========== Row1：圖表內容（空殼） ========== -->
+        <Grid Grid.Row="1" Background="{DynamicResource BackgroundBrush}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <materialDesign:PackIcon Kind="ChartBox"
+                                         Width="72" Height="72"
+                                         Foreground="{DynamicResource BorderBrush}"
+                                         HorizontalAlignment="Center"/>
+                <TextBlock Text="{DynamicResource ChartEmptyPlaceholder}"
+                           FontSize="22" FontWeight="Medium"
+                           Foreground="{DynamicResource BorderBrush}"
+                           HorizontalAlignment="Center"
+                           Margin="0,12,0,0"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

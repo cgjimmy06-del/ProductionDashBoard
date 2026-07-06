@@ -15,7 +15,7 @@
     <!--#region Main Window 主視窗 (含導覽列/訊息視窗) -->
     <sys:String x:Key="HomeNavButton">首頁</sys:String>
     <sys:String x:Key="OperationNavButton">現場操作面板</sys:String>
-    <sys:String x:Key="ViewNavButton">圖表</sys:String>
+    <sys:String x:Key="ChartNavButton">圖表</sys:String>
     <sys:String x:Key="ListManagementNavButton">清單管理</sys:String>
     <sys:String x:Key="EquipmentNavButton">設備管理</sys:String>
     <sys:String x:Key="OrderManagementNavButton">排單管理</sys:String>
@@ -539,6 +539,11 @@
     <sys:String x:Key="MesSyncState_MesOnly">僅在 MES</sys:String>
     <sys:String x:Key="MesSyncState_LocalOnly">僅在本系統</sys:String>
     <sys:String x:Key="MesSyncState_DataMismatch">資料不一致</sys:String>
+    <!--#endregion-->
+
+    <!--#region 圖表看板 Chart -->
+    <sys:String x:Key="ChartAddTooltip">新增圖表（開發中）</sys:String>
+    <sys:String x:Key="ChartEmptyPlaceholder">圖表功能開發中</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>
