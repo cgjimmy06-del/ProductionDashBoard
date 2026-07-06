@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace FProductionDashBoard.ViewModels
 {
-    public enum NavMode { Home, Operation, View, List, Equipment, Schedule, ProgramLibrary, ProductInOut, SystemSettings }
+    public enum NavMode { Home, Operation, Chart, List, Equipment, Schedule, ProgramLibrary, ProductInOut, SystemSettings }
     public enum LayoutMode { Single, HorizontalSplit, VerticalSplit, Quad }
 
     public record NavModePolicy(
@@ -16,7 +16,7 @@ namespace FProductionDashBoard.ViewModels
         {
             [NavMode.Home]          = new(IsRepeatable: true,  ClearOnUserChange: false),
             [NavMode.Operation]     = new(IsRepeatable: true,  ClearOnUserChange: false),
-            [NavMode.View]          = new(IsRepeatable: true,  ClearOnUserChange: false),
+            [NavMode.Chart]         = new(IsRepeatable: true,  ClearOnUserChange: false),
             [NavMode.Schedule]      = new(IsRepeatable: false,  ClearOnUserChange: true),
             [NavMode.List]          = new(IsRepeatable: false, ClearOnUserChange: true),
             [NavMode.Equipment]     = new(IsRepeatable: false, ClearOnUserChange: true),

@@ -15,7 +15,7 @@
     <!--#region Main Window 主視窗 (含導覽列/訊息視窗) -->
     <sys:String x:Key="HomeNavButton">Home</sys:String>
     <sys:String x:Key="OperationNavButton">On-Site Operation</sys:String>
-    <sys:String x:Key="ViewNavButton">Chart</sys:String>
+    <sys:String x:Key="ChartNavButton">Chart</sys:String>
     <sys:String x:Key="ListManagementNavButton">List Management</sys:String>
     <sys:String x:Key="EquipmentNavButton">Equipment Setting</sys:String>
     <sys:String x:Key="OrderManagementNavButton">Order Management</sys:String>
@@ -539,6 +539,11 @@
     <sys:String x:Key="MesSyncState_MesOnly">MES Only</sys:String>
     <sys:String x:Key="MesSyncState_LocalOnly">Local Only</sys:String>
     <sys:String x:Key="MesSyncState_DataMismatch">Data Mismatch</sys:String>
+    <!--#endregion-->
+
+    <!--#region Chart Dashboard -->
+    <sys:String x:Key="ChartAddTooltip">Add Chart (Coming soon)</sys:String>
+    <sys:String x:Key="ChartEmptyPlaceholder">Chart feature under development</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>
