@@ -46,7 +46,7 @@ namespace FProductionDashBoard.ViewModels
 
         private void OnLicenseUpdated(object? sender, EventArgs e)
         {
-            OnPropertyChanged(nameof(IsViewLocked));
+            OnPropertyChanged(nameof(IsChartLocked));
             OnPropertyChanged(nameof(IsScheduleLocked));
             OnPropertyChanged(nameof(IsProgramLibLocked));
             OnPropertyChanged(nameof(IsProductInOutLocked));
@@ -55,7 +55,7 @@ namespace FProductionDashBoard.ViewModels
         private static LicensedFeature? GetRequiredFeature(NavMode mode) => mode switch
         {
             // 需授權
-            NavMode.View           => LicensedFeature.Charts,
+            NavMode.Chart          => LicensedFeature.Charts,
             NavMode.Schedule       => LicensedFeature.Scheduling,
             NavMode.ProgramLibrary => LicensedFeature.ProgramLibrary,
             NavMode.ProductInOut   => LicensedFeature.MaterialManagement,
@@ -69,7 +69,7 @@ namespace FProductionDashBoard.ViewModels
             _ => throw new InvalidOperationException($"NavMode {mode} 尚未分類授權需求")
         };
 
-        public bool IsViewLocked         => !_licenseService.IsFeatureEnabled(LicensedFeature.Charts);
+        public bool IsChartLocked        => !_licenseService.IsFeatureEnabled(LicensedFeature.Charts);
         public bool IsScheduleLocked     => !_licenseService.IsFeatureEnabled(LicensedFeature.Scheduling);
         public bool IsProgramLibLocked   => !_licenseService.IsFeatureEnabled(LicensedFeature.ProgramLibrary);
         public bool IsProductInOutLocked => !_licenseService.IsFeatureEnabled(LicensedFeature.MaterialManagement);
@@ -118,6 +118,11 @@ namespace FProductionDashBoard.ViewModels
                 case NavMode.Equipment:
                     if (!_core.Authorization.HasPermission(PermissionId.View)) return false;
                     content = _serviceProvider.GetRequiredService<HardwareViewModel>();
+                    break;
+
+                case NavMode.Chart:
+                    if (!_core.Authorization.HasPermission(PermissionId.View)) return false;
+                    content = _serviceProvider.GetRequiredService<ChartViewModel>();
                     break;
 
                 case NavMode.Schedule:

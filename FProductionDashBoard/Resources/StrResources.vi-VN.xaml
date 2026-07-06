@@ -15,7 +15,7 @@
     <!--#region Main Window 主視窗 (含導覽列/訊息視窗) -->
     <sys:String x:Key="HomeNavButton">Trang chủ</sys:String>
     <sys:String x:Key="OperationNavButton">Bảng vận hành</sys:String>
-    <sys:String x:Key="ViewNavButton">Biểu đồ</sys:String>
+    <sys:String x:Key="ChartNavButton">Biểu đồ</sys:String>
     <sys:String x:Key="ListManagementNavButton">Quản lý danh sách</sys:String>
     <sys:String x:Key="EquipmentNavButton">Quản lý thiết bị</sys:String>
     <sys:String x:Key="OrderManagementNavButton">Quản lý đơn hàng</sys:String>
@@ -539,6 +539,11 @@
     <sys:String x:Key="MesSyncState_MesOnly">Chỉ trong MES</sys:String>
     <sys:String x:Key="MesSyncState_LocalOnly">Chỉ trong hệ thống</sys:String>
     <sys:String x:Key="MesSyncState_DataMismatch">Dữ liệu không khớp</sys:String>
+    <!--#endregion-->
+
+    <!--#region Bảng biểu đồ Chart -->
+    <sys:String x:Key="ChartAddTooltip">Thêm biểu đồ (Sắp ra mắt)</sys:String>
+    <sys:String x:Key="ChartEmptyPlaceholder">Tính năng biểu đồ đang được phát triển</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>
