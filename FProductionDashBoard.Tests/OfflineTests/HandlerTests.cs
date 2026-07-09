@@ -75,7 +75,7 @@ namespace FProductionDashBoard.Tests.OfflineTests
             await handler.HandleAsync(op);
 
             repo.Verify(r => r.AddInspectionRecordAsync(
-                InspectionType.First, 11, 21, true, null, null, null, "",
+                InspectionType.First, 11, 21, true, null, 1, null, "",
                 operatedAt),
                 Times.Once);
         }
