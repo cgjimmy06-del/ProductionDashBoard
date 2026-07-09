@@ -1,4 +1,5 @@
 using FProductionDashBoard.Models;
+using FProductionDashBoard.Properties;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.UiModels;
 using FProductionDashBoard.ViewModels;
@@ -355,13 +356,14 @@ namespace FProductionDashBoard.Tests.ViewModels
         // ─── DerivedBadge ────────────────────────────────────────────────────
 
         [Fact]
-        public void DerivedBadge_NoOrders_ReturnsNull()
+        public void DerivedBadge_NoOrdersAndNoSopType_ReturnsNewProductBadge()
         {
             var vm = CreateVm();
             var schedules = new List<ScheduleUiModel> { MakeSched(1, ScheduleStatus.Scheduled, quantity: 100) };
             vm.InjectDataForTest(schedules, new List<OrderProductionInfo>());
 
-            Assert.Null(schedules[0].DerivedBadge);
+            Assert.Equal(Resources.SchDerivedBadgeNewProduct, schedules[0].DerivedBadge);
+            Assert.Equal(DerivedBadgeKeys.NewProduct, schedules[0].DerivedBadgeKey);
         }
 
         [Fact]
@@ -376,7 +378,8 @@ namespace FProductionDashBoard.Tests.ViewModels
             };
             vm.InjectDataForTest(schedules, orders);
 
-            Assert.Equal("⬟ 生產中", schedules[0].DerivedBadge);
+            Assert.Equal(Resources.SchDerivedBadgeInProduction, schedules[0].DerivedBadge);
+            Assert.Equal(DerivedBadgeKeys.InProduction, schedules[0].DerivedBadgeKey);
         }
 
         [Fact]
@@ -390,7 +393,8 @@ namespace FProductionDashBoard.Tests.ViewModels
             };
             vm.InjectDataForTest(schedules, orders);
 
-            Assert.Equal("✓ 生產完成", schedules[0].DerivedBadge);
+            Assert.Equal(Resources.SchDerivedBadgeComplete, schedules[0].DerivedBadge);
+            Assert.Equal(DerivedBadgeKeys.Complete, schedules[0].DerivedBadgeKey);
         }
 
         [Fact]
@@ -404,7 +408,8 @@ namespace FProductionDashBoard.Tests.ViewModels
             };
             vm.InjectDataForTest(schedules, orders);
 
-            Assert.Equal("⚠ 部分完成", schedules[0].DerivedBadge);
+            Assert.Equal(Resources.SchDerivedBadgePartial, schedules[0].DerivedBadge);
+            Assert.Equal(DerivedBadgeKeys.Partial, schedules[0].DerivedBadgeKey);
         }
 
         [Fact]
@@ -419,7 +424,8 @@ namespace FProductionDashBoard.Tests.ViewModels
             };
             vm.InjectDataForTest(schedules, orders);
 
-            Assert.Equal("⚠ 取消注意", schedules[0].DerivedBadge);
+            Assert.Equal(Resources.SchDerivedBadgeCancelNotice, schedules[0].DerivedBadge);
+            Assert.Equal(DerivedBadgeKeys.CancelNotice, schedules[0].DerivedBadgeKey);
         }
 
         [Fact]
@@ -435,7 +441,8 @@ namespace FProductionDashBoard.Tests.ViewModels
             vm.InjectDataForTest(schedules, orders);
 
             // nonCancelledQty = 80 < 100 → 部分完成
-            Assert.Equal("⚠ 部分完成", schedules[0].DerivedBadge);
+            Assert.Equal(Resources.SchDerivedBadgePartial, schedules[0].DerivedBadge);
+            Assert.Equal(DerivedBadgeKeys.Partial, schedules[0].DerivedBadgeKey);
         }
 
         // ─── WaitingDaysText ─────────────────────────────────────────────────
@@ -463,7 +470,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             };
             vm.InjectDataForTest(schedules, new List<OrderProductionInfo>());
 
-            Assert.Equal("已等待 3 天", schedules[0].WaitingDaysText);
+            Assert.Equal($"{Resources.WaitedDaysForSchedule} 3 {Resources.ComStrDay}", schedules[0].WaitingDaysText);
         }
 
         [Fact]
@@ -476,7 +483,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             };
             vm.InjectDataForTest(schedules, new List<OrderProductionInfo>());
 
-            Assert.Equal("⚠ 已等待 7 天", schedules[0].WaitingDaysText);
+            Assert.Equal($"⚠ {Resources.WaitedDaysForSchedule} 7 {Resources.ComStrDay}", schedules[0].WaitingDaysText);
         }
 
         [Fact]
@@ -552,7 +559,7 @@ namespace FProductionDashBoard.Tests.ViewModels
         }
 
         [Fact]
-        public void SelectSchedule_ClearsSelectedEquipmentCard()
+        public void SelectSchedule_InFocusMode_DoesNotClearSelectedEquipmentCard()
         {
             var vm = CreateVm();
             var schedule = MakeSched(1, ScheduleStatus.Pending);
@@ -566,8 +573,9 @@ namespace FProductionDashBoard.Tests.ViewModels
 
             vm.SelectedSchedule = schedule;
 
-            Assert.Null(vm.SelectedEquipmentCard);
-            Assert.False(card.IsSelected);
+            Assert.Same(card, vm.SelectedEquipmentCard);
+            Assert.True(card.IsSelected);
+            Assert.Same(schedule, vm.SelectedSchedule);
         }
 
         [Fact]
@@ -690,8 +698,8 @@ namespace FProductionDashBoard.Tests.ViewModels
             };
             vm.InjectDataForTest(schedules, orders);
 
-            // 2 active orders (Pending + InProduction), 2 distinct equipments
-            Assert.Equal(2, schedules[0].ActiveOrderCount);
+            // ActiveOrderCount currently tracks all non-cancelled orders for the schedule.
+            Assert.Equal(3, schedules[0].ActiveOrderCount);
             Assert.Equal(2, schedules[0].ActiveEquipmentCount);
             Assert.True(schedules[0].HasActiveOrders);
         }

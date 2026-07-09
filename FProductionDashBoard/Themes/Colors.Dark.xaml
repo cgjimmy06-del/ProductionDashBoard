@@ -18,7 +18,7 @@
     <Color x:Key="TextPrimaryColor">#E0E0E0</Color>
     <Color x:Key="TextSecondaryColor">#9E9E9E</Color>
     <!-- 選取狀態 -->
-    <Color x:Key="SelectedColor">#3E6489</Color>
+    <Color x:Key="SelectedColor">#0277BD</Color>
     <!-- 狀態燈顏色 -->
     <Color x:Key="SuccessColor">#43A047</Color>
     <Color x:Key="WarningColor">#FBC02D</Color>
@@ -50,6 +50,7 @@
 
     <!--#region 合成筆刷 -->
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="NavPrimaryBrush" Color="{StaticResource PrimaryDarkColor}" />
     <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDarkColor}" />
     <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLightColor}" />
     <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{StaticResource PrimaryBackgroundColor}" />

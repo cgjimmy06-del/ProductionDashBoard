@@ -350,7 +350,7 @@
             </Grid.ColumnDefinitions>
             <!-- 導覽列 -->
             <Border Grid.Column="0" Margin="0" d:Width="200"
-                    Background="{DynamicResource PrimaryBrush}"
+                    Background="{DynamicResource NavPrimaryBrush}"
                     Width="{Binding IsCollapsedNav, Converter={StaticResource CollapseWidthConverter}}">
                 <DockPanel LastChildFill="True">
                     <!-- 系統設定 釘底 -->
@@ -373,9 +373,9 @@
                     <!-- 主導覽區 -->
                     <StackPanel Margin="0">
                         <!-- 登入資訊 (待優化) -->
-                        <StackPanel Background="{DynamicResource PrimaryDarkBrush}"
-                                Orientation="Vertical" HorizontalAlignment="Stretch">
-                            <materialDesign:PackIcon Background="{DynamicResource PrimaryDarkBrush}"
+                        <StackPanel Background="Transparent"
+                                    Orientation="Vertical" HorizontalAlignment="Stretch">
+                            <materialDesign:PackIcon Background="Transparent"
                                                      Foreground="{DynamicResource TextLightBrush}"
                                                      HorizontalAlignment="Center"
                                                      Kind="Account" Margin="0"
@@ -385,7 +385,7 @@
                                        FontSize="16" HorizontalAlignment="Center"/>
                         </StackPanel>
                         <!-- 收合按鈕"☰" -->
-                        <RadioButton Style="{StaticResource NavButtonStyle}"
+                        <RadioButton Style="{StaticResource CollapseNavButtonStyle}"
                                 Command="{Binding CollapseNavCommand}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                                 <materialDesign:PackIcon Kind="Menu" Margin="0,0,5,0"

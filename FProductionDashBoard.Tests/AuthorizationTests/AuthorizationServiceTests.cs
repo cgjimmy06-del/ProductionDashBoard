@@ -25,6 +25,7 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
             repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role> { role });
 
             var svc = new AuthorizationService();
+            svc.SetCachedRoles(new List<Role> { role });
             await svc.InitializeAsync(new UserInfo { UserId = "u1", Name = "n1", RoleId = roleId });
             return svc;
         }
@@ -34,6 +35,7 @@ namespace FProductionDashBoard.Tests.AuthorizationTests
             var repo = new Mock<IRolePermissionRepository>();
             repo.Setup(r => r.GetAllRolesAsync()).ReturnsAsync(new List<Role>());
             var svc = new AuthorizationService();
+            svc.SetCachedRoles(new List<Role>());
             await svc.InitializeAsync(new UserInfo { UserId = "u1", Name = "n1", RoleId = 99 });
             return svc;
         }
