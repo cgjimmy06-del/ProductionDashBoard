@@ -522,7 +522,7 @@ namespace FProductionDashBoard.ViewModels
             try
             {
                 _activeProgramTuningId = await _core.Data.StartProgramTuningAsync(
-                    Info.Id, result.EquipmentProductId, result.TuningType, CurrentUser.Id, DateTime.Now);
+                    Info.Id, result.EquipmentProductId, result.TuningType, CurrentUser.Id, CurrentUser.Id, DateTime.Now);
                 _activeTuningStartedByEmployee = CurrentUser;
                 TuningUserName = CurrentUser.Name;
                 TuningProductLabel = items.FirstOrDefault(i => i.EquipmentProductId == result.EquipmentProductId)?.DisplayLabel ?? string.Empty;

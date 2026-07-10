@@ -648,7 +648,7 @@ namespace FProductionDashBoard.ViewModels
             try
             {
                 await _core.Data.StartProgramTuningAsync(
-                    card.EquipmentId, result.EquipmentProductId, result.TuningType, currentUser.Id, DateTime.Now);
+                    card.EquipmentId, result.EquipmentProductId, result.TuningType, currentUser.Id, currentUser.Id, DateTime.Now);
                 _core.Log.AddLog($"[{card.Name}] 調試已安排", LogLevel.Info);
                 await LoadAllAsync();
             }
