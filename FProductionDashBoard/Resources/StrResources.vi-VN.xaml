@@ -581,6 +581,18 @@
     <sys:String x:Key="ChartDesignerValueHint">Giá trị</sys:String>
     <sys:String x:Key="ChartDesignerLabelHint">Nhãn</sys:String>
     <sys:String x:Key="ChartDesignerOptionalLabelHint">Nhãn tùy chỉnh (tùy chọn)</sys:String>
+    <sys:String x:Key="ChartDesignerContainerSection">Bố cục</sys:String>
+    <sys:String x:Key="ChartDesignerTitleFieldLabel">Trường tên chính</sys:String>
+    <sys:String x:Key="ChartDesignerBorderColorLabel">Nguồn màu viền</sys:String>
+    <sys:String x:Key="ChartDesignerChipsLabel">Chip (tối đa 3)</sys:String>
+    <sys:String x:Key="ChartDesignerChipShowWhenHasValue">Chỉ hiển thị khi có giá trị</sys:String>
+    <sys:String x:Key="ChartDesignerSecondaryLabel">Thông tin phụ (tối đa 3)</sys:String>
+    <sys:String x:Key="ChartDesignerProgressNumLabel">Tử số tiến độ</sys:String>
+    <sys:String x:Key="ChartDesignerProgressDenLabel">Mẫu số tiến độ</sys:String>
+    <sys:String x:Key="ChartDesignerTableColumnsLabel">Cột bảng</sys:String>
+    <sys:String x:Key="ChartDesignerIndicatorLabel">Nguồn đèn báo</sys:String>
+    <sys:String x:Key="ChartDesignerMoveUpTooltip">Chuyển lên</sys:String>
+    <sys:String x:Key="ChartDesignerMoveDownTooltip">Chuyển xuống</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

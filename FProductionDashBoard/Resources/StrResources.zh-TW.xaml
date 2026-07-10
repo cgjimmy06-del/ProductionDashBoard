@@ -581,6 +581,18 @@
     <sys:String x:Key="ChartDesignerValueHint">值</sys:String>
     <sys:String x:Key="ChartDesignerLabelHint">標籤</sys:String>
     <sys:String x:Key="ChartDesignerOptionalLabelHint">自訂標籤（選填）</sys:String>
+    <sys:String x:Key="ChartDesignerContainerSection">容器</sys:String>
+    <sys:String x:Key="ChartDesignerTitleFieldLabel">主名稱欄位</sys:String>
+    <sys:String x:Key="ChartDesignerBorderColorLabel">邊框色來源</sys:String>
+    <sys:String x:Key="ChartDesignerChipsLabel">Chip（上限 3）</sys:String>
+    <sys:String x:Key="ChartDesignerChipShowWhenHasValue">有值才顯示</sys:String>
+    <sys:String x:Key="ChartDesignerSecondaryLabel">次要資訊（上限 3）</sys:String>
+    <sys:String x:Key="ChartDesignerProgressNumLabel">進度分子</sys:String>
+    <sys:String x:Key="ChartDesignerProgressDenLabel">進度分母</sys:String>
+    <sys:String x:Key="ChartDesignerTableColumnsLabel">表格欄位</sys:String>
+    <sys:String x:Key="ChartDesignerIndicatorLabel">燈號來源</sys:String>
+    <sys:String x:Key="ChartDesignerMoveUpTooltip">上移</sys:String>
+    <sys:String x:Key="ChartDesignerMoveDownTooltip">下移</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

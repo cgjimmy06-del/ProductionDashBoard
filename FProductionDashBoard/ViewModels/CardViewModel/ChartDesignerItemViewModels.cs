@@ -19,6 +19,9 @@ namespace FProductionDashBoard.ViewModels
     /// <summary>設計器下拉選項：統計聚合方式</summary>
     public record ChartAggregateOption(ChartAggregateType Value, string Label);
 
+    /// <summary>設計器容器類型選項；Map/Graph 為預留（IsEnabled=false 反灰）</summary>
+    public record ChartContainerTypeOption(ChartContainerType Value, string Label, bool IsEnabled);
+
     /// <summary>
     /// 統計項編輯器：聚合／欄位／值過濾（Enum 欄位限定）／標籤，直接寫回持有的 StatItemConfig。
     /// Sum 僅開放 Number 欄位（Enum 值無法加總）；標籤一經編輯即轉純文字（清除 LabelKey）。
@@ -160,6 +163,48 @@ namespace FProductionDashBoard.ViewModels
         partial void OnSelectedFieldChanged(ChartFieldOption? value)
         {
             if (!_initialized) return;
+            _onChanged();
+        }
+    }
+
+    /// <summary>
+    /// 卡片 chip 編輯器：欄位＋「有值才顯示」，直接寫回持有的 ChipConfig。
+    /// </summary>
+    public partial class ChartChipEditorViewModel : ObservableObject
+    {
+        private readonly ChipConfig _config;
+        private readonly Action _onChanged;
+        private bool _initialized;
+
+        public ChartChipEditorViewModel(ChipConfig config,
+            IReadOnlyList<ChartFieldOption> fieldOptions, Action onChanged)
+        {
+            _config = config;
+            _onChanged = onChanged;
+            FieldOptions = fieldOptions;
+            selectedField = fieldOptions.FirstOrDefault(o => o.FieldId == config.FieldId)
+                            ?? fieldOptions.FirstOrDefault();
+            showOnlyWhenHasValue = config.ShowOnlyWhenHasValue;
+            _initialized = true;
+        }
+
+        public ChipConfig Config => _config;
+        public IReadOnlyList<ChartFieldOption> FieldOptions { get; }
+
+        [ObservableProperty] private ChartFieldOption? selectedField;
+        [ObservableProperty] private bool showOnlyWhenHasValue;
+
+        partial void OnSelectedFieldChanged(ChartFieldOption? value)
+        {
+            if (!_initialized) return;
+            _config.FieldId = value?.FieldId ?? "";
+            _onChanged();
+        }
+
+        partial void OnShowOnlyWhenHasValueChanged(bool value)
+        {
+            if (!_initialized) return;
+            _config.ShowOnlyWhenHasValue = value;
             _onChanged();
         }
     }

@@ -798,4 +798,28 @@
   <data name="ChartDefaultSortByTitle" xml:space="preserve">
     <value>（主名稱）</value>
   </data>
+  <data name="ChartContainerCard" xml:space="preserve">
+    <value>卡片牆</value>
+  </data>
+  <data name="ChartContainerTable" xml:space="preserve">
+    <value>表格</value>
+  </data>
+  <data name="ChartContainerMap" xml:space="preserve">
+    <value>地圖（預留）</value>
+  </data>
+  <data name="ChartContainerGraph" xml:space="preserve">
+    <value>統計圖（預留）</value>
+  </data>
+  <data name="ChartValidationNameRequired" xml:space="preserve">
+    <value>圖表名稱為必填</value>
+  </data>
+  <data name="ChartValidationNameDuplicate" xml:space="preserve">
+    <value>圖表名稱已存在，請使用其他名稱</value>
+  </data>
+  <data name="ChartValidationTitleFieldRequired" xml:space="preserve">
+    <value>卡片容器必須選擇主名稱欄位</value>
+  </data>
+  <data name="ChartValidationTableColumnsRequired" xml:space="preserve">
+    <value>表格容器至少需要一個欄位</value>
+  </data>
 </root>

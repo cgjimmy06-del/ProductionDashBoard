@@ -57,11 +57,26 @@
             </StackPanel>
         </DockPanel>
 
-        <!-- ========== Row 1：淨化提示（開啟時剔除失效引用才顯示） ========== -->
-        <TextBlock Grid.Row="1" Text="{Binding SanitizeNotice}"
-                   Foreground="{DynamicResource WarningBrush}" FontSize="13"
-                   Margin="0,0,0,8"
-                   Visibility="{Binding HasSanitizeNotice, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <!-- ========== Row 1：淨化提示＋儲存驗證行內錯誤 ========== -->
+        <StackPanel Grid.Row="1">
+            <TextBlock Text="{Binding SanitizeNotice}"
+                       Foreground="{DynamicResource WarningBrush}" FontSize="13"
+                       Margin="0,0,0,8"
+                       Visibility="{Binding HasSanitizeNotice, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <TextBlock Text="{Binding ValidationError}"
+                       Foreground="{DynamicResource ErrorBrush}" FontSize="13"
+                       Margin="0,0,0,8">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ValidationError}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </StackPanel>
 
         <!-- ========== Row 2：左預覽（5）｜右編輯（4） ========== -->
         <Grid Grid.Row="2">
@@ -444,6 +459,178 @@
                                 <ComboBox ItemsSource="{Binding DefaultSortOptions}" DisplayMemberPath="Label"
                                           SelectedItem="{Binding SelectedDefaultSort}"/>
                             </DockPanel>
+
+                            <!-- ===== 容器 ===== -->
+                            <TextBlock Text="{DynamicResource ChartDesignerContainerSection}"
+                                       FontSize="14" FontWeight="SemiBold" Margin="0,20,0,0"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <ListBox Margin="0,6,0,0"
+                                     Style="{StaticResource ChartTabListBoxStyle}"
+                                     ItemsSource="{Binding ContainerTypeOptions}"
+                                     SelectedItem="{Binding SelectedContainerType}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource ChartTabItemStyle}">
+                                        <Setter Property="IsEnabled" Value="{Binding IsEnabled}"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Label}" FontSize="13"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <!-- 卡片子編輯器 -->
+                            <StackPanel Visibility="{Binding IsPreviewCard, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox Grid.Column="0"
+                                              materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerTitleFieldLabel}"
+                                              ItemsSource="{Binding TitleFieldOptions}" DisplayMemberPath="Label"
+                                              SelectedItem="{Binding SelectedTitleField}"/>
+                                    <ComboBox Grid.Column="2"
+                                              materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerBorderColorLabel}"
+                                              ItemsSource="{Binding BorderColorOptions}" DisplayMemberPath="Label"
+                                              SelectedItem="{Binding SelectedBorderColor}"/>
+                                </Grid>
+
+                                <!-- chips（上限 3：欄位＋有值才顯示） -->
+                                <TextBlock Text="{DynamicResource ChartDesignerChipsLabel}"
+                                           FontSize="12" Margin="0,12,0,0"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <ItemsControl ItemsSource="{Binding ChipEditors}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel Margin="0,4,0,0">
+                                                <Button DockPanel.Dock="Right"
+                                                        Style="{StaticResource ChartIconButtonStyle}"
+                                                        ToolTip="{DynamicResource ChartDesignerRemoveTooltip}"
+                                                        Command="{Binding DataContext.RemoveChipCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}">
+                                                    <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
+                                                </Button>
+                                                <CheckBox DockPanel.Dock="Right" Margin="8,0,0,0"
+                                                          Content="{DynamicResource ChartDesignerChipShowWhenHasValue}"
+                                                          IsChecked="{Binding ShowOnlyWhenHasValue}"/>
+                                                <ComboBox materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerFieldHint}"
+                                                          ItemsSource="{Binding FieldOptions}" DisplayMemberPath="Label"
+                                                          SelectedItem="{Binding SelectedField}"/>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <Button Margin="0,8,0,0" HorizontalAlignment="Left"
+                                        Style="{DynamicResource FunctionButtonStyle}"
+                                        Background="{DynamicResource SecondaryBrush}"
+                                        Padding="8,2" Height="Auto"
+                                        Content="{DynamicResource ChartDesignerAddItem}"
+                                        Command="{Binding AddChipCommand}"/>
+
+                                <!-- 次要資訊（上限 3） -->
+                                <TextBlock Text="{DynamicResource ChartDesignerSecondaryLabel}"
+                                           FontSize="12" Margin="0,12,0,0"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <ItemsControl ItemsSource="{Binding SecondaryEditors}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel Margin="0,4,0,0">
+                                                <Button DockPanel.Dock="Right"
+                                                        Style="{StaticResource ChartIconButtonStyle}"
+                                                        ToolTip="{DynamicResource ChartDesignerRemoveTooltip}"
+                                                        Command="{Binding DataContext.RemoveSecondaryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}">
+                                                    <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
+                                                </Button>
+                                                <ComboBox materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerFieldHint}"
+                                                          ItemsSource="{Binding Options}" DisplayMemberPath="Label"
+                                                          SelectedItem="{Binding SelectedField}"/>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <Button Margin="0,8,0,0" HorizontalAlignment="Left"
+                                        Style="{DynamicResource FunctionButtonStyle}"
+                                        Background="{DynamicResource SecondaryBrush}"
+                                        Padding="8,2" Height="Auto"
+                                        Content="{DynamicResource ChartDesignerAddItem}"
+                                        Command="{Binding AddSecondaryCommand}"/>
+
+                                <!-- 進度分子/分母（可清空＝不顯示進度條） -->
+                                <Grid Margin="0,12,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox Grid.Column="0"
+                                              materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerProgressNumLabel}"
+                                              ItemsSource="{Binding ProgressFieldOptions}" DisplayMemberPath="Label"
+                                              SelectedItem="{Binding SelectedProgressNumerator}"/>
+                                    <ComboBox Grid.Column="2"
+                                              materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerProgressDenLabel}"
+                                              ItemsSource="{Binding ProgressFieldOptions}" DisplayMemberPath="Label"
+                                              SelectedItem="{Binding SelectedProgressDenominator}"/>
+                                </Grid>
+                            </StackPanel>
+
+                            <!-- 表格子編輯器 -->
+                            <StackPanel Visibility="{Binding IsPreviewTable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="{DynamicResource ChartDesignerTableColumnsLabel}"
+                                           FontSize="12" Margin="0,12,0,0"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <ItemsControl ItemsSource="{Binding TableColumnEditors}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel Margin="0,4,0,0">
+                                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                                    <Button Style="{StaticResource ChartIconButtonStyle}"
+                                                            ToolTip="{DynamicResource ChartDesignerMoveUpTooltip}"
+                                                            Command="{Binding DataContext.MoveTableColumnUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}">
+                                                        <materialDesign:PackIcon Kind="ArrowUp" Width="15" Height="15"/>
+                                                    </Button>
+                                                    <Button Style="{StaticResource ChartIconButtonStyle}"
+                                                            ToolTip="{DynamicResource ChartDesignerMoveDownTooltip}"
+                                                            Command="{Binding DataContext.MoveTableColumnDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}">
+                                                        <materialDesign:PackIcon Kind="ArrowDown" Width="15" Height="15"/>
+                                                    </Button>
+                                                    <Button Style="{StaticResource ChartIconButtonStyle}"
+                                                            ToolTip="{DynamicResource ChartDesignerRemoveTooltip}"
+                                                            Command="{Binding DataContext.RemoveTableColumnCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}">
+                                                        <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
+                                                    </Button>
+                                                </StackPanel>
+                                                <ComboBox materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerFieldHint}"
+                                                          ItemsSource="{Binding Options}" DisplayMemberPath="Label"
+                                                          SelectedItem="{Binding SelectedField}"/>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <Button Margin="0,8,0,0" HorizontalAlignment="Left"
+                                        Style="{DynamicResource FunctionButtonStyle}"
+                                        Background="{DynamicResource SecondaryBrush}"
+                                        Padding="8,2" Height="Auto"
+                                        Content="{DynamicResource ChartDesignerAddItem}"
+                                        Command="{Binding AddTableColumnCommand}"/>
+
+                                <!-- 燈號來源（可清空） -->
+                                <ComboBox Margin="0,12,0,8"
+                                          materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerIndicatorLabel}"
+                                          ItemsSource="{Binding IndicatorOptions}" DisplayMemberPath="Label"
+                                          SelectedItem="{Binding SelectedIndicator}"/>
+                            </StackPanel>
 
                         </StackPanel>
                     </ScrollViewer>

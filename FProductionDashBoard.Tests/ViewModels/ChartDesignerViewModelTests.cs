@@ -358,5 +358,184 @@ namespace FProductionDashBoard.Tests.ViewModels
 
             Assert.Equal(ChartSortDirection.Descending, vm.WorkingDefinition.FilterRow.DefaultSortDirection);
         }
+
+        // --- C3：儲存驗證（行內錯誤，不寫 store） ---
+
+        private static ChartDefinition CustomCardDef(string name = "自訂圖表") => new()
+        {
+            Id = "custom-1",
+            Name = name,
+            DataSet = ChartDataSet.Equipment,
+            Container = new ContainerConfig
+            {
+                Type = ChartContainerType.Card,
+                Card = new CardContainerConfig { TitleFieldId = FieldCatalog.EquipmentName },
+            },
+        };
+
+        [Fact]
+        public void Save_EmptyName_SetsValidationError_NotSaved()
+        {
+            var store = new FakeStore();
+            bool? closed = null;
+            var vm = CreateDesigner(CustomCardDef(name: "   "), store, s => closed = s);
+
+            vm.SaveCommand.Execute(null);
+
+            Assert.NotNull(vm.ValidationError);
+            Assert.Null(closed);
+            Assert.Empty(store.SavedCalls);
+        }
+
+        [Fact]
+        public void Save_DuplicateName_SetsValidationError()
+        {
+            var store = new FakeStore();
+            store.Definitions.Add(new ChartDefinition { Id = "other", Name = "戰情室" });
+            var vm = CreateDesigner(CustomCardDef(name: "戰情室"), store);
+
+            vm.SaveCommand.Execute(null);
+
+            Assert.NotNull(vm.ValidationError);
+            Assert.Empty(store.SavedCalls);
+        }
+
+        [Fact]
+        public void Save_CardWithoutTitleField_SetsValidationError()
+        {
+            var def = CustomCardDef();
+            def.Container.Card.TitleFieldId = "";
+            var store = new FakeStore();
+            var vm = CreateDesigner(def, store);
+
+            vm.SaveCommand.Execute(null);
+
+            Assert.NotNull(vm.ValidationError);
+            Assert.Empty(store.SavedCalls);
+        }
+
+        [Fact]
+        public void Save_TableWithoutColumns_SetsValidationError()
+        {
+            var def = CustomCardDef();
+            def.Container.Type = ChartContainerType.Table;
+            var store = new FakeStore();
+            var vm = CreateDesigner(def, store);
+
+            vm.SaveCommand.Execute(null);
+
+            Assert.NotNull(vm.ValidationError);
+            Assert.Empty(store.SavedCalls);
+        }
+
+        [Fact]
+        public void Save_Valid_TrimsName_ClearsErrorAndCloses()
+        {
+            var store = new FakeStore();
+            bool? closed = null;
+            var vm = CreateDesigner(CustomCardDef(name: "  我的圖表  "), store, s => closed = s);
+
+            vm.SaveCommand.Execute(null);
+
+            Assert.Null(vm.ValidationError);
+            Assert.True(closed);
+            Assert.Equal("我的圖表", Assert.Single(store.SavedCalls).Name);
+        }
+
+        // --- C3：容器編輯 ---
+
+        [Fact]
+        public void ContainerTypeSwitch_ToTable_SwitchesPreview_KeepsCardConfig()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+            Assert.True(vm.IsPreviewCard);
+
+            vm.SelectedContainerType = vm.ContainerTypeOptions.First(o => o.Value == ChartContainerType.Table);
+
+            Assert.Equal(ChartContainerType.Table, vm.WorkingDefinition.Container.Type);
+            Assert.True(vm.IsPreviewTable);
+            Assert.False(vm.IsPreviewCard);
+            // 切換不清空卡片設定
+            Assert.Equal(FieldCatalog.EquipmentName, vm.WorkingDefinition.Container.Card.TitleFieldId);
+            Assert.NotEmpty(vm.WorkingDefinition.Container.Card.Chips);
+        }
+
+        [Fact]
+        public void AddChip_UpToLimit_ThenDisabled_WritesThrough()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+            Assert.Equal(2, vm.ChipEditors.Count);   // 種子 2 個 chip
+
+            vm.AddChipCommand.Execute(null);
+
+            Assert.Equal(3, vm.ChipEditors.Count);
+            Assert.Equal(3, vm.WorkingDefinition.Container.Card.Chips.Count);
+            Assert.False(vm.AddChipCommand.CanExecute(null));
+
+            var editor = vm.ChipEditors[^1];
+            editor.ShowOnlyWhenHasValue = false;
+            Assert.False(editor.Config.ShowOnlyWhenHasValue);
+
+            vm.RemoveChipCommand.Execute(editor);
+            Assert.Equal(2, vm.WorkingDefinition.Container.Card.Chips.Count);
+            Assert.True(vm.AddChipCommand.CanExecute(null));
+        }
+
+        [Fact]
+        public void AddSecondary_UpToLimit_SyncsDefinition()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+            Assert.Equal(2, vm.SecondaryEditors.Count);   // 種子 2 項
+
+            vm.AddSecondaryCommand.Execute(null);
+
+            Assert.Equal(3, vm.WorkingDefinition.Container.Card.SecondaryFieldIds.Count);
+            Assert.False(vm.AddSecondaryCommand.CanExecute(null));
+
+            vm.RemoveSecondaryCommand.Execute(vm.SecondaryEditors[0]);
+            Assert.Equal(2, vm.WorkingDefinition.Container.Card.SecondaryFieldIds.Count);
+        }
+
+        [Fact]
+        public void MoveTableColumn_UpAndDown_ReordersDefinition()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateScheduleBoard(), new FakeStore());
+            var original = vm.WorkingDefinition.Container.Table.ColumnFieldIds.ToList();
+            var second = vm.TableColumnEditors[1];
+
+            vm.MoveTableColumnUpCommand.Execute(second);
+            Assert.Equal(original[1], vm.WorkingDefinition.Container.Table.ColumnFieldIds[0]);
+            Assert.Equal(original[0], vm.WorkingDefinition.Container.Table.ColumnFieldIds[1]);
+
+            vm.MoveTableColumnDownCommand.Execute(second);
+            Assert.Equal(original, vm.WorkingDefinition.Container.Table.ColumnFieldIds);
+
+            // 邊界：第一列上移不動作
+            vm.MoveTableColumnUpCommand.Execute(vm.TableColumnEditors[0]);
+            Assert.Equal(original, vm.WorkingDefinition.Container.Table.ColumnFieldIds);
+        }
+
+        [Fact]
+        public void Indicator_SetNone_WritesNull()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateScheduleBoard(), new FakeStore());
+            Assert.Equal(FieldCatalog.ScheduleStatus, vm.WorkingDefinition.Container.Table.IndicatorFieldId);
+
+            vm.SelectedIndicator = vm.IndicatorOptions.First(o => o.FieldId == "");
+
+            Assert.Null(vm.WorkingDefinition.Container.Table.IndicatorFieldId);
+        }
+
+        [Fact]
+        public void ProgressFields_SetNone_WritesNull_HidesPreviewProgress()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+            Assert.True(vm.PreviewRows[0].HasProgress);
+
+            vm.SelectedProgressNumerator = vm.ProgressFieldOptions.First(o => o.FieldId == "");
+
+            Assert.Null(vm.WorkingDefinition.Container.Card.ProgressNumeratorFieldId);
+            Assert.False(vm.PreviewRows[0].HasProgress);   // 分子清空＝不顯示進度條
+        }
     }
 }

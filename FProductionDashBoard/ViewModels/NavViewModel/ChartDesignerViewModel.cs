@@ -198,6 +198,8 @@ namespace FProductionDashBoard.ViewModels
                 RefreshDefaultSortOptions();
                 IsDefaultSortDescending =
                     WorkingDefinition.FilterRow.DefaultSortDirection == ChartSortDirection.Descending;
+
+                InitContainerEditorState();
             }
             finally
             {
@@ -350,10 +352,238 @@ namespace FProductionDashBoard.ViewModels
             OnPropertyChanged(nameof(CanAddFilterField));
             OnPropertyChanged(nameof(CanAddQuickButton));
             OnPropertyChanged(nameof(CanAddSortOption));
+            OnPropertyChanged(nameof(CanAddChip));
+            OnPropertyChanged(nameof(CanAddSecondary));
             AddStatItemCommand.NotifyCanExecuteChanged();
             AddFilterFieldCommand.NotifyCanExecuteChanged();
             AddQuickButtonCommand.NotifyCanExecuteChanged();
             AddSortOptionCommand.NotifyCanExecuteChanged();
+            AddChipCommand.NotifyCanExecuteChanged();
+            AddSecondaryCommand.NotifyCanExecuteChanged();
+        }
+
+        // ----- 容器編輯（C3：類型切換＋卡片/表格子編輯器） -----
+
+        public IReadOnlyList<ChartContainerTypeOption> ContainerTypeOptions { get; }
+
+        [ObservableProperty] private ChartContainerTypeOption? selectedContainerType;
+        [ObservableProperty] private IReadOnlyList<ChartFieldOption> borderColorOptions = Array.Empty<ChartFieldOption>();
+        [ObservableProperty] private ChartFieldOption? selectedBorderColor;
+        [ObservableProperty] private IReadOnlyList<ChartFieldOption> titleFieldOptions = Array.Empty<ChartFieldOption>();
+        [ObservableProperty] private ChartFieldOption? selectedTitleField;
+        [ObservableProperty] private IReadOnlyList<ChartFieldOption> progressFieldOptions = Array.Empty<ChartFieldOption>();
+        [ObservableProperty] private ChartFieldOption? selectedProgressNumerator;
+        [ObservableProperty] private ChartFieldOption? selectedProgressDenominator;
+        [ObservableProperty] private IReadOnlyList<ChartFieldOption> indicatorOptions = Array.Empty<ChartFieldOption>();
+        [ObservableProperty] private ChartFieldOption? selectedIndicator;
+
+        public ObservableCollection<ChartChipEditorViewModel> ChipEditors { get; } = new();
+        public ObservableCollection<ChartFieldPickEditorViewModel> SecondaryEditors { get; } = new();
+        public ObservableCollection<ChartFieldPickEditorViewModel> TableColumnEditors { get; } = new();
+
+        public bool CanAddChip      => ChipEditors.Count < ChartConstants.MaxChips;
+        public bool CanAddSecondary => SecondaryEditors.Count < ChartConstants.MaxSecondaryInfos;
+
+        partial void OnSelectedContainerTypeChanged(ChartContainerTypeOption? value)
+        {
+            if (_suppressEditorSync || value == null) return;
+            // 卡片/表格設定並存於 ContainerConfig，切換類型不清空另一側設定
+            WorkingDefinition.Container.Type = value.Value;
+            RebuildPreview();
+        }
+
+        partial void OnSelectedBorderColorChanged(ChartFieldOption? value)
+        {
+            if (_suppressEditorSync) return;
+            WorkingDefinition.Container.Card.BorderColorFieldId = value?.FieldId ?? "";
+            RebuildPreview();
+        }
+
+        partial void OnSelectedTitleFieldChanged(ChartFieldOption? value)
+        {
+            if (_suppressEditorSync) return;
+            WorkingDefinition.Container.Card.TitleFieldId = value?.FieldId ?? "";
+            RebuildPreview();
+        }
+
+        partial void OnSelectedProgressNumeratorChanged(ChartFieldOption? value)
+        {
+            if (_suppressEditorSync) return;
+            WorkingDefinition.Container.Card.ProgressNumeratorFieldId =
+                string.IsNullOrEmpty(value?.FieldId) ? null : value!.FieldId;
+            RebuildPreview();
+        }
+
+        partial void OnSelectedProgressDenominatorChanged(ChartFieldOption? value)
+        {
+            if (_suppressEditorSync) return;
+            WorkingDefinition.Container.Card.ProgressDenominatorFieldId =
+                string.IsNullOrEmpty(value?.FieldId) ? null : value!.FieldId;
+            RebuildPreview();
+        }
+
+        partial void OnSelectedIndicatorChanged(ChartFieldOption? value)
+        {
+            if (_suppressEditorSync) return;
+            WorkingDefinition.Container.Table.IndicatorFieldId =
+                string.IsNullOrEmpty(value?.FieldId) ? null : value!.FieldId;
+            RebuildPreview();
+        }
+
+        [RelayCommand(CanExecute = nameof(CanAddChip))]
+        private void AddChip()
+        {
+            var options = AllFieldOptions();
+            if (options.Count == 0) return;
+            var config = new ChipConfig { FieldId = options[0].FieldId };
+            WorkingDefinition.Container.Card.Chips.Add(config);
+            ChipEditors.Add(new ChartChipEditorViewModel(config, options, RebuildPreview));
+            NotifyListLimits();
+            RebuildPreview();
+        }
+
+        [RelayCommand]
+        private void RemoveChip(ChartChipEditorViewModel item)
+        {
+            WorkingDefinition.Container.Card.Chips.Remove(item.Config);
+            ChipEditors.Remove(item);
+            NotifyListLimits();
+            RebuildPreview();
+        }
+
+        [RelayCommand(CanExecute = nameof(CanAddSecondary))]
+        private void AddSecondary()
+        {
+            var options = AllFieldOptions();
+            if (options.Count == 0) return;
+            var used = SecondaryEditors.Select(e => e.SelectedField?.FieldId).ToHashSet();
+            var first = options.FirstOrDefault(o => !used.Contains(o.FieldId)) ?? options[0];
+            SecondaryEditors.Add(new ChartFieldPickEditorViewModel(first.FieldId, options, OnSecondaryEdited));
+            NotifyListLimits();
+            OnSecondaryEdited();
+        }
+
+        [RelayCommand]
+        private void RemoveSecondary(ChartFieldPickEditorViewModel item)
+        {
+            SecondaryEditors.Remove(item);
+            NotifyListLimits();
+            OnSecondaryEdited();
+        }
+
+        [RelayCommand]
+        private void AddTableColumn()
+        {
+            var options = AllFieldOptions();
+            if (options.Count == 0) return;
+            var used = TableColumnEditors.Select(e => e.SelectedField?.FieldId).ToHashSet();
+            var first = options.FirstOrDefault(o => !used.Contains(o.FieldId)) ?? options[0];
+            TableColumnEditors.Add(new ChartFieldPickEditorViewModel(first.FieldId, options, OnTableColumnsEdited));
+            OnTableColumnsEdited();
+        }
+
+        [RelayCommand]
+        private void RemoveTableColumn(ChartFieldPickEditorViewModel item)
+        {
+            TableColumnEditors.Remove(item);
+            OnTableColumnsEdited();
+        }
+
+        [RelayCommand]
+        private void MoveTableColumnUp(ChartFieldPickEditorViewModel item)
+        {
+            var index = TableColumnEditors.IndexOf(item);
+            if (index <= 0) return;
+            TableColumnEditors.Move(index, index - 1);
+            OnTableColumnsEdited();
+        }
+
+        [RelayCommand]
+        private void MoveTableColumnDown(ChartFieldPickEditorViewModel item)
+        {
+            var index = TableColumnEditors.IndexOf(item);
+            if (index < 0 || index >= TableColumnEditors.Count - 1) return;
+            TableColumnEditors.Move(index, index + 1);
+            OnTableColumnsEdited();
+        }
+
+        private void OnSecondaryEdited()
+        {
+            var card = WorkingDefinition.Container.Card;
+            card.SecondaryFieldIds.Clear();
+            card.SecondaryFieldIds.AddRange(
+                SecondaryEditors.Where(e => e.SelectedField != null).Select(e => e.SelectedField!.FieldId));
+            RebuildPreview();
+        }
+
+        private void OnTableColumnsEdited()
+        {
+            var table = WorkingDefinition.Container.Table;
+            table.ColumnFieldIds.Clear();
+            table.ColumnFieldIds.AddRange(
+                TableColumnEditors.Where(e => e.SelectedField != null).Select(e => e.SelectedField!.FieldId));
+            RebuildPreview();
+        }
+
+        private IReadOnlyList<ChartFieldOption> AllFieldOptions()
+            => FieldCatalog.For(WorkingDefinition.DataSet)
+                .Select(f => new ChartFieldOption(
+                    f.FieldId, ChartRowBuilder.ResolveFieldLabel(WorkingDefinition.DataSet, f.FieldId)))
+                .ToList();
+
+        /// <summary>Enum 欄位＋首項「（無）」（FieldId 空字串）</summary>
+        private IReadOnlyList<ChartFieldOption> EnumFieldOptionsWithNone()
+            => new[] { new ChartFieldOption("", Properties.Resources.ChartFilterValueNone) }
+                .Concat(FieldCatalog.For(WorkingDefinition.DataSet)
+                    .Where(f => f.Type == ChartFieldType.Enum)
+                    .Select(f => new ChartFieldOption(
+                        f.FieldId, ChartRowBuilder.ResolveFieldLabel(WorkingDefinition.DataSet, f.FieldId))))
+                .ToList();
+
+        /// <summary>Number 欄位＋首項「（無）」（進度分子/分母可清空）</summary>
+        private IReadOnlyList<ChartFieldOption> NumberFieldOptionsWithNone()
+            => new[] { new ChartFieldOption("", Properties.Resources.ChartFilterValueNone) }
+                .Concat(FieldCatalog.For(WorkingDefinition.DataSet)
+                    .Where(f => f.Type == ChartFieldType.Number)
+                    .Select(f => new ChartFieldOption(
+                        f.FieldId, ChartRowBuilder.ResolveFieldLabel(WorkingDefinition.DataSet, f.FieldId))))
+                .ToList();
+
+        /// <summary>依 WorkingDefinition 重建容器編輯區（InitEditorState 內呼叫）</summary>
+        private void InitContainerEditorState()
+        {
+            var def = WorkingDefinition;
+            var allOptions = AllFieldOptions();
+
+            SelectedContainerType = ContainerTypeOptions.First(o => o.Value == def.Container.Type);
+
+            BorderColorOptions = EnumFieldOptionsWithNone();
+            SelectedBorderColor = BorderColorOptions.FirstOrDefault(o => o.FieldId == def.Container.Card.BorderColorFieldId)
+                                  ?? BorderColorOptions[0];
+            TitleFieldOptions = allOptions;
+            SelectedTitleField = allOptions.FirstOrDefault(o => o.FieldId == def.Container.Card.TitleFieldId);
+
+            ProgressFieldOptions = NumberFieldOptionsWithNone();
+            SelectedProgressNumerator = ProgressFieldOptions.FirstOrDefault(
+                o => o.FieldId == (def.Container.Card.ProgressNumeratorFieldId ?? "")) ?? ProgressFieldOptions[0];
+            SelectedProgressDenominator = ProgressFieldOptions.FirstOrDefault(
+                o => o.FieldId == (def.Container.Card.ProgressDenominatorFieldId ?? "")) ?? ProgressFieldOptions[0];
+
+            IndicatorOptions = EnumFieldOptionsWithNone();
+            SelectedIndicator = IndicatorOptions.FirstOrDefault(
+                o => o.FieldId == (def.Container.Table.IndicatorFieldId ?? "")) ?? IndicatorOptions[0];
+
+            ChipEditors.Clear();
+            foreach (var chip in def.Container.Card.Chips)
+                ChipEditors.Add(new ChartChipEditorViewModel(chip, allOptions, RebuildPreview));
+
+            SecondaryEditors.Clear();
+            foreach (var id in def.Container.Card.SecondaryFieldIds)
+                SecondaryEditors.Add(new ChartFieldPickEditorViewModel(id, allOptions, OnSecondaryEdited));
+
+            TableColumnEditors.Clear();
+            foreach (var id in def.Container.Table.ColumnFieldIds)
+                TableColumnEditors.Add(new ChartFieldPickEditorViewModel(id, allOptions, OnTableColumnsEdited));
         }
 
         // ----- 左預覽狀態（RebuildPreview 重建，採 Clear 重填） -----
@@ -391,6 +621,13 @@ namespace FProductionDashBoard.ViewModels
                 new(ChartDataSet.Equipment, Properties.Resources.ChartDataSetEquipment),
                 new(ChartDataSet.Schedule,  Properties.Resources.ChartDataSetSchedule),
             };
+            ContainerTypeOptions = new List<ChartContainerTypeOption>
+            {
+                new(ChartContainerType.Card,  Properties.Resources.ChartContainerCard,  true),
+                new(ChartContainerType.Table, Properties.Resources.ChartContainerTable, true),
+                new(ChartContainerType.Map,   Properties.Resources.ChartContainerMap,   false),
+                new(ChartContainerType.Graph, Properties.Resources.ChartContainerGraph, false),
+            };
             InitEditorState();
             RebuildPreview();
         }
@@ -399,9 +636,15 @@ namespace FProductionDashBoard.ViewModels
         internal static ChartDefinition Clone(ChartDefinition source)
             => JsonSerializer.Deserialize<ChartDefinition>(JsonSerializer.Serialize(source))!;
 
+        /// <summary>儲存驗證失敗的行內錯誤字串（null＝無錯誤）；比照 SopChecklist FormErrorString 模式</summary>
+        [ObservableProperty] private string? validationError;
+
         [RelayCommand]
         private void Save()
         {
+            ValidationError = ValidateBeforeSave();
+            if (ValidationError != null) return;
+
             try
             {
                 _store.Save(WorkingDefinition);
@@ -413,6 +656,39 @@ namespace FProductionDashBoard.ViewModels
                 _core.Log.AddErrorLog($"[Save] {ex.Message}");
             }
         }
+
+        /// <summary>名稱必填＋擋重名（排除自身 Id）＋卡片主名稱必選＋表格至少 1 欄</summary>
+        private string? ValidateBeforeSave()
+        {
+            var def = WorkingDefinition;
+
+            if (def.NameKey == null)
+            {
+                def.Name = def.Name.Trim();
+                if (def.Name.Length == 0)
+                    return Properties.Resources.ChartValidationNameRequired;
+            }
+
+            var myName = ResolveDefinitionName(def);
+            if (_store.Load().Any(d => d.Id != def.Id
+                && string.Equals(ResolveDefinitionName(d), myName, StringComparison.OrdinalIgnoreCase)))
+                return Properties.Resources.ChartValidationNameDuplicate;
+
+            if (def.Container.Type == ChartContainerType.Card
+                && string.IsNullOrEmpty(def.Container.Card.TitleFieldId))
+                return Properties.Resources.ChartValidationTitleFieldRequired;
+
+            if (def.Container.Type == ChartContainerType.Table
+                && def.Container.Table.ColumnFieldIds.Count == 0)
+                return Properties.Resources.ChartValidationTableColumnsRequired;
+
+            return null;
+        }
+
+        private static string ResolveDefinitionName(ChartDefinition def)
+            => def.NameKey != null
+                ? Properties.Resources.ResourceManager.GetString(def.NameKey) ?? def.Name
+                : def.Name.Trim();
 
         [RelayCommand]
         private void Cancel() => _onClose(false);

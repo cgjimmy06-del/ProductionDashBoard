@@ -798,4 +798,28 @@
   <data name="ChartDefaultSortByTitle" xml:space="preserve">
     <value>(Tên chính)</value>
   </data>
+  <data name="ChartContainerCard" xml:space="preserve">
+    <value>Tường thẻ</value>
+  </data>
+  <data name="ChartContainerTable" xml:space="preserve">
+    <value>Bảng</value>
+  </data>
+  <data name="ChartContainerMap" xml:space="preserve">
+    <value>Bản đồ (sắp có)</value>
+  </data>
+  <data name="ChartContainerGraph" xml:space="preserve">
+    <value>Biểu đồ thống kê (sắp có)</value>
+  </data>
+  <data name="ChartValidationNameRequired" xml:space="preserve">
+    <value>Tên biểu đồ là bắt buộc</value>
+  </data>
+  <data name="ChartValidationNameDuplicate" xml:space="preserve">
+    <value>Tên biểu đồ đã tồn tại, vui lòng dùng tên khác</value>
+  </data>
+  <data name="ChartValidationTitleFieldRequired" xml:space="preserve">
+    <value>Bố cục thẻ cần chọn trường tên chính</value>
+  </data>
+  <data name="ChartValidationTableColumnsRequired" xml:space="preserve">
+    <value>Bố cục bảng cần ít nhất một cột</value>
+  </data>
 </root>

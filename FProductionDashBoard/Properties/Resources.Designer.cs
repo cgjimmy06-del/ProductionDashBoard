@@ -1519,5 +1519,37 @@ namespace FProductionDashBoard.Properties {
         internal static string ChartDefaultSortByTitle {
             get { return ResourceManager.GetString("ChartDefaultSortByTitle", resourceCulture); }
         }
+
+        internal static string ChartContainerCard {
+            get { return ResourceManager.GetString("ChartContainerCard", resourceCulture); }
+        }
+
+        internal static string ChartContainerTable {
+            get { return ResourceManager.GetString("ChartContainerTable", resourceCulture); }
+        }
+
+        internal static string ChartContainerMap {
+            get { return ResourceManager.GetString("ChartContainerMap", resourceCulture); }
+        }
+
+        internal static string ChartContainerGraph {
+            get { return ResourceManager.GetString("ChartContainerGraph", resourceCulture); }
+        }
+
+        internal static string ChartValidationNameRequired {
+            get { return ResourceManager.GetString("ChartValidationNameRequired", resourceCulture); }
+        }
+
+        internal static string ChartValidationNameDuplicate {
+            get { return ResourceManager.GetString("ChartValidationNameDuplicate", resourceCulture); }
+        }
+
+        internal static string ChartValidationTitleFieldRequired {
+            get { return ResourceManager.GetString("ChartValidationTitleFieldRequired", resourceCulture); }
+        }
+
+        internal static string ChartValidationTableColumnsRequired {
+            get { return ResourceManager.GetString("ChartValidationTableColumnsRequired", resourceCulture); }
+        }
     }
 }
