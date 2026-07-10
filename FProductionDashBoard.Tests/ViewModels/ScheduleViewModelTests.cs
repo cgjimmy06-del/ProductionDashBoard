@@ -31,7 +31,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             var cardReader = new Mock<ICardReaderService>().Object;
             var core = new DashboardCoreServices(log, mock.Object, auth, cardReader);
             var dialog = new Mock<IDialogService>().Object;
-            return new ScheduleViewModel(core, dialog);
+            return new ScheduleViewModel(core, dialog, new ListsFromSql());
         }
 
         private static ScheduleUiModel MakeSched(int id, ScheduleStatus status,
@@ -110,7 +110,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             var cardReader = new Mock<ICardReaderService>().Object;
             var core       = new DashboardCoreServices(log, dataMock.Object, auth, cardReader);
             var dialogMock = new Mock<IDialogService>();
-            var vm         = new ScheduleViewModel(core, dialogMock.Object);
+            var vm         = new ScheduleViewModel(core, dialogMock.Object, new ListsFromSql());
             return (vm, dataMock, dialogMock);
         }
 

@@ -3,15 +3,38 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" Height="Auto" Width="400"
-             d:DesignHeight="340" d:DesignWidth="400" d:Background="White">
+             d:DesignHeight="400" d:DesignWidth="400" d:Background="White">
 
     <StackPanel Margin="20,5">
         <!-- 當前操作資訊 -->
         <TextBlock Margin="0,0,0,10" d:Text="機台"
                    Text="{Binding CurrentDevice}"/>
-        <TextBlock Margin="0,0,0,16" d:Text="操作人員"
+        <TextBlock Margin="0,0,0,10" d:Text="操作人員"
                    Text="{Binding CurrentUser}"/>
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+            <TextBlock Text="{DynamicResource TuningLastTeachedByLabel}"/>
+            <TextBlock Text=" : "/>
+            <TextBlock Text="{Binding TeachedUserName}" FontWeight="SemiBold" d:Text="—"/>
+        </StackPanel>
+
+        <!-- 執行人員 -->
+        <TextBlock Margin="0,0,0,4" Text="{DynamicResource TuningExecutorLabel}"/>
+        <Grid Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox Grid.Column="0"
+                      ItemsSource="{Binding FilteredEmployees}"
+                      SelectedItem="{Binding SelectedEmployee}"
+                      DisplayMemberPath="Name"/>
+            <TextBox Grid.Column="1" Width="130" Margin="8,0,0,0"
+                     VerticalAlignment="Bottom"
+                     materialDesign:HintAssist.Hint="{DynamicResource TuningEmployeeFilterHint}"
+                     Text="{Binding EmployeeFilterText, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
 
         <!-- 選擇按鈕 -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"

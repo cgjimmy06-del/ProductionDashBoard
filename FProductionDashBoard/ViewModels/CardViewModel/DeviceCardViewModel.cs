@@ -87,7 +87,8 @@ namespace FProductionDashBoard.ViewModels
         private int _tuningElapsedSeconds;
         private DispatcherTimer? _tuningTimer;
         private int? _activeProgramTuningId;
-        private UiModels.UserInfo? _activeTuningStartedByEmployee;
+        private UiModels.UserInfo? _activeTuningStartedByEmployee;   // 執行人
+        private UiModels.UserInfo? _activeTuningManagedByEmployee;   // 安排人
 
         // 介面邏輯
         public ICommand OrderCommand { get; }
@@ -484,9 +485,11 @@ namespace FProductionDashBoard.ViewModels
             CurrentUser = _core.Authorization.CurrentUser!;
 
             List<EquipmentProduct> rawList;
+            Dictionary<int, string> lastTeachingMap;
             try
             {
                 rawList = await _core.Data.GetEquipmentProductsByEquipmentAsync(Info.Id);
+                lastTeachingMap = await _core.Data.GetLastCompletedTeachingNamesByEquipmentAsync(Info.Id);
             }
             catch (Exception ex)
             {
@@ -507,10 +510,18 @@ namespace FProductionDashBoard.ViewModels
                 })
                 .ToList();
 
+            var employees = _commonLists.UsersList
+                .Where(u => u.UserId != "admin" && u.UserId != "visitor")
+                .ToList();
+
             var vm = new TuningDialogViewModel(
                 $"{Properties.Resources.ComStrDevice}: {Info.Name}",
                 $"{Properties.Resources.ComStrUser}: {CurrentUser!.Name}",
-                items);
+                items,
+                employees,
+                CurrentUser.Id,
+                lastTeachingMap,
+                _core.Authorization.HasPermission(PermissionId.Setting));
             _dialog.ShowDialog(vm);
 
             if (!vm.IsConfirmed || vm.Result == null) return;
@@ -519,12 +530,17 @@ namespace FProductionDashBoard.ViewModels
             _activeTuningType = result.TuningType;
             _tuningElapsedSeconds = 0;
 
+            // 執行人（下拉選定）；安排人＝當前登入者
+            var executor = _commonLists.UsersList.FirstOrDefault(u => u.Id == result.StartedBy) ?? CurrentUser;
+
             try
             {
                 _activeProgramTuningId = await _core.Data.StartProgramTuningAsync(
-                    Info.Id, result.EquipmentProductId, result.TuningType, CurrentUser.Id, CurrentUser.Id, DateTime.Now);
-                _activeTuningStartedByEmployee = CurrentUser;
-                TuningUserName = CurrentUser.Name;
+                    Info.Id, result.EquipmentProductId, result.TuningType,
+                    result.StartedBy, CurrentUser.Id, DateTime.Now, forceArrange: result.IsForceArrange);
+                _activeTuningStartedByEmployee = executor;
+                _activeTuningManagedByEmployee = CurrentUser;
+                TuningUserName = executor.Name;
                 TuningProductLabel = items.FirstOrDefault(i => i.EquipmentProductId == result.EquipmentProductId)?.DisplayLabel ?? string.Empty;
             }
             catch (Exception ex)
@@ -539,6 +555,12 @@ namespace FProductionDashBoard.ViewModels
 
             StopTuningTimer();
             StartTuningTimer();
+        }
+
+        private bool HasSettingPermission(UiModels.UserInfo user)
+        {
+            var role = _commonLists.RolesList.FirstOrDefault(r => r.RoleId == user.RoleId);
+            return role?.RolePermissions.Any(rp => rp.PermissionId == PermissionId.Setting) == true;
         }
 
         // 調試視窗與結束事件
@@ -559,33 +581,27 @@ namespace FProductionDashBoard.ViewModels
 
             void OnCardConfirm(object? s, CardReadEventArgs e)
             {
-                // 原始啟動者
-                if (e.CardId == _activeTuningStartedByEmployee?.CardId)
+                // 可結束者：執行人 或 安排人 或 具 Setting 權限者
+                UiModels.UserInfo? matched = null;
+                if (e.CardId != null && e.CardId == _activeTuningStartedByEmployee?.CardId)
+                    matched = _activeTuningStartedByEmployee;
+                else if (e.CardId != null && e.CardId == _activeTuningManagedByEmployee?.CardId)
+                    matched = _activeTuningManagedByEmployee;
+                else
+                {
+                    var swiper = _commonLists.UsersList.FirstOrDefault(u => u.CardId == e.CardId);
+                    if (swiper != null && HasSettingPermission(swiper))
+                        matched = swiper;
+                }
+
+                if (matched != null)
                 {
                     Application.Current.Dispatcher.BeginInvoke(() =>
                     {
                         confirmed = true;
-                        endedBy = _activeTuningStartedByEmployee;
+                        endedBy = matched;
                         loadingWin.Close();
                     });
-                }
-                else
-                {
-                    // 具 Setting 權限者
-                    var userInfo = _commonLists.UsersList.FirstOrDefault(u => u.CardId == e.CardId);
-                    if (userInfo != null)
-                    {
-                        var role = _commonLists.RolesList.FirstOrDefault(r => r.RoleId == userInfo.RoleId);
-                        if (role?.RolePermissions.Any(rp => rp.PermissionId == PermissionId.Setting) == true)
-                        {
-                            Application.Current.Dispatcher.BeginInvoke(() =>
-                            {
-                                confirmed = true;
-                                endedBy = userInfo;
-                                loadingWin.Close();
-                            });
-                        }
-                    }
                 }
             }
 
@@ -617,6 +633,7 @@ namespace FProductionDashBoard.ViewModels
                 IsTuning = false;
                 _activeProgramTuningId = null;
                 _activeTuningStartedByEmployee = null;
+                _activeTuningManagedByEmployee = null;
                 TuningUserName = string.Empty;
                 TuningProductLabel = string.Empty;
 
@@ -664,12 +681,14 @@ namespace FProductionDashBoard.ViewModels
                         });
                         _activeProgramTuningId = null;
                         _activeTuningStartedByEmployee = null;
+                        _activeTuningManagedByEmployee = null;
                         return;
 
                     case TuningRefreshAction.Activate:
                         _activeProgramTuningId = record!.ProgramTuningId;
                         _activeTuningType = record.TuningType;
                         _activeTuningStartedByEmployee = _commonLists.UsersList.FirstOrDefault(u => u.Id == record.StartedBy);
+                        _activeTuningManagedByEmployee = _commonLists.UsersList.FirstOrDefault(u => u.Id == record.ManagedBy);
                         _tuningElapsedSeconds = (int)(DateTime.Now - record.StartedAt).TotalSeconds;
                         Application.Current.Dispatcher.Invoke(() =>
                         {

@@ -1,4 +1,5 @@
 using FProductionDashBoard.Models;
+using FProductionDashBoard.UiModels;
 using FProductionDashBoard.ViewModels;
 using System.Collections.Generic;
 using Xunit;
@@ -7,6 +8,8 @@ namespace FProductionDashBoard.Tests.ViewModels
 {
     public class TuningDialogViewModelTests
     {
+        private const int CurrentUserId = 100;
+
         private static List<EquipmentProductItem> MakeItems() =>
         [
             new() { EquipmentProductId = 1, SeqNo = 1, DisplayLabel = "#1 PartA_M1 · 加工", ProductionStatus = TuningType.Teaching },
@@ -15,8 +18,17 @@ namespace FProductionDashBoard.Tests.ViewModels
             new() { EquipmentProductId = 4, SeqNo = 4, DisplayLabel = "#4 PartB_M2 · 組裝", ProductionStatus = TuningType.Feasible },
         ];
 
-        private static TuningDialogViewModel Create() =>
-            new("機台: Device-01", "人員: John", MakeItems());
+        private static List<UserInfo> MakeEmployees() =>
+        [
+            new() { Id = CurrentUserId, UserId = "u100", Name = "John" },
+            new() { Id = 200, UserId = "u200", Name = "Mary" },
+        ];
+
+        private static TuningDialogViewModel Create(
+            IReadOnlyDictionary<int, string>? lastTeachingMap = null,
+            bool canForceArrange = false) =>
+            new("機台: Device-01", "人員: John", MakeItems(), MakeEmployees(), CurrentUserId,
+                lastTeachingMap ?? new Dictionary<int, string>(), canForceArrange);
 
         // ─── Initial state ────────────────────────────────────────────────────
 
@@ -147,6 +159,92 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.DoesNotContain(vm.FilteredEquipmentProducts, i => i.ProductionStatus == TuningType.Feasible);
             vm.OffsetCommand.Execute(null);
             Assert.DoesNotContain(vm.FilteredEquipmentProducts, i => i.ProductionStatus == TuningType.Feasible);
+        }
+
+        // ─── Executor（執行人員下拉）─────────────────────────────────────────
+
+        [Fact]
+        public void Executor_DefaultsToCurrentUser()
+        {
+            var vm = Create();
+            Assert.NotNull(vm.SelectedEmployee);
+            Assert.Equal(CurrentUserId, vm.SelectedEmployee!.Id);
+            Assert.Equal(2, vm.FilteredEmployees.Count);
+        }
+
+        [Fact]
+        public void ConfirmDisabled_WhenNoEmployeeSelected()
+        {
+            var vm = Create();
+            vm.SelectedEquipmentProduct = vm.FilteredEquipmentProducts[0];
+            vm.SelectedEmployee = null;
+            Assert.False(vm.ConfirmCommand.CanExecute(null));
+        }
+
+        [Fact]
+        public void EmployeeFilter_FiltersByName()
+        {
+            var vm = Create();
+            vm.EmployeeFilterText = "mar";
+            Assert.Single(vm.FilteredEmployees);
+            Assert.Equal("Mary", vm.FilteredEmployees[0].Name);
+        }
+
+        [Fact]
+        public void EmployeeFilter_FiltersByUserId()
+        {
+            var vm = Create();
+            vm.EmployeeFilterText = "u200";
+            Assert.Single(vm.FilteredEmployees);
+            Assert.Equal(200, vm.FilteredEmployees[0].Id);
+        }
+
+        [Fact]
+        public void EmployeeFilter_Cleared_RestoresAll()
+        {
+            var vm = Create();
+            vm.EmployeeFilterText = "mary";
+            vm.EmployeeFilterText = string.Empty;
+            Assert.Equal(2, vm.FilteredEmployees.Count);
+        }
+
+        // ─── TeachedUserName（上次帶點人員）─────────────────────────────────
+
+        [Fact]
+        public void TeachedUserName_WhenSelectedHasHistory_ShowsName()
+        {
+            var vm = Create(new Dictionary<int, string> { [1] = "李阿姨" });
+            vm.SelectedEquipmentProduct = vm.FilteredEquipmentProducts.First(i => i.EquipmentProductId == 1);
+            Assert.Equal("李阿姨", vm.TeachedUserName);
+        }
+
+        [Fact]
+        public void TeachedUserName_WhenNoHistory_ShowsPlaceholder()
+        {
+            var vm = Create(new Dictionary<int, string> { [1] = "李阿姨" });
+            vm.SelectedEquipmentProduct = vm.FilteredEquipmentProducts.First(i => i.EquipmentProductId == 3);
+            Assert.Equal("—", vm.TeachedUserName);
+        }
+
+        // ─── Confirm 輸出 StartedBy ──────────────────────────────────────────
+
+        [Fact]
+        public void Confirm_OutputsSelectedExecutorAsStartedBy()
+        {
+            var vm = Create();
+            vm.SelectedEquipmentProduct = vm.FilteredEquipmentProducts[0];
+            vm.SelectedEmployee = vm.FilteredEmployees.First(e => e.Id == 200);
+            vm.ConfirmCommand.Execute(null);
+            Assert.NotNull(vm.Result);
+            Assert.Equal(200, vm.Result!.StartedBy);
+            Assert.False(vm.Result.IsForceArrange);
+        }
+
+        [Fact]
+        public void CanForceArrange_ReflectsConstructorArg()
+        {
+            Assert.False(Create(canForceArrange: false).CanForceArrange);
+            Assert.True(Create(canForceArrange: true).CanForceArrange);
         }
     }
 }
