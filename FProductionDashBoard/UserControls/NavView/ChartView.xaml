@@ -189,6 +189,8 @@
                       CanUserSortColumns="False" CanUserReorderColumns="False"
                       CanUserAddRows="False" CanUserDeleteRows="False"
                       HeadersVisibility="Column" SelectionMode="Single"
+                      FontSize="14" RowHeight="30"
+                      materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2"
                       Visibility="{Binding IsTableContainer, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
             <!-- 空狀態（無任何圖表定義時） -->
