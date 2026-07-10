@@ -47,7 +47,6 @@ namespace FProductionDashBoard.ViewModels
 
         public ICommand TeachingCommand { get; }
         public ICommand OffsetCommand { get; }
-        public ICommand ToggleForceArrangeCommand { get; }
 
         public TuningDialogViewModel(
             string device,
@@ -72,7 +71,6 @@ namespace FProductionDashBoard.ViewModels
 
             TeachingCommand = new RelayCommand(SelectTeaching);
             OffsetCommand = new RelayCommand(SelectOffset);
-            ToggleForceArrangeCommand = new RelayCommand(() => IsForceArrange = !IsForceArrange);
             ConfirmCommand = new RelayCommand(() => OnConfirm(),
                 () => SelectedEquipmentProduct != null && SelectedEmployee != null);
 

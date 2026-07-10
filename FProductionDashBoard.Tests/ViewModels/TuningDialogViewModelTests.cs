@@ -280,7 +280,7 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void ForceArrange_On_ShowsAllItems()
         {
             var vm = Create(canForceArrange: true);
-            vm.ToggleForceArrangeCommand.Execute(null);
+            vm.IsForceArrange = true;
             Assert.True(vm.IsForceArrange);
             Assert.Equal(4, vm.FilteredEquipmentProducts.Count);
         }
@@ -289,8 +289,8 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void ForceArrange_Off_RestoresModeFiltering()
         {
             var vm = Create(canForceArrange: true);
-            vm.ToggleForceArrangeCommand.Execute(null);
-            vm.ToggleForceArrangeCommand.Execute(null);
+            vm.IsForceArrange = true;
+            vm.IsForceArrange = false;
             Assert.False(vm.IsForceArrange);
             Assert.Equal(2, vm.FilteredEquipmentProducts.Count);
             Assert.All(vm.FilteredEquipmentProducts, i => Assert.Equal(TuningType.Teaching, i.ProductionStatus));
@@ -304,7 +304,7 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void ForceArrange_KeywordFilter_MatchesAnyField(string keyword, int[] expectedIds)
         {
             var vm = Create(canForceArrange: true);
-            vm.ToggleForceArrangeCommand.Execute(null);
+            vm.IsForceArrange = true;
             vm.KeywordFilter = keyword;
             Assert.Equal(expectedIds, vm.FilteredEquipmentProducts.Select(i => i.EquipmentProductId).ToArray());
         }
@@ -313,7 +313,7 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void ForceArrange_StatusFilter_FiltersByStatus()
         {
             var vm = Create(canForceArrange: true);
-            vm.ToggleForceArrangeCommand.Execute(null);
+            vm.IsForceArrange = true;
             vm.StatusFilter = TuningType.Feasible;
             Assert.Single(vm.FilteredEquipmentProducts);
             Assert.Equal(4, vm.FilteredEquipmentProducts[0].EquipmentProductId);
@@ -323,7 +323,7 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void ForceArrange_KeywordAndStatus_Combined()
         {
             var vm = Create(canForceArrange: true);
-            vm.ToggleForceArrangeCommand.Execute(null);
+            vm.IsForceArrange = true;
             vm.KeywordFilter = "TC";
             vm.StatusFilter = TuningType.Teaching;
             Assert.Single(vm.FilteredEquipmentProducts);
@@ -334,7 +334,7 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void ForceArrange_ModeSwitch_KeepsListAndSelection()
         {
             var vm = Create(canForceArrange: true);
-            vm.ToggleForceArrangeCommand.Execute(null);
+            vm.IsForceArrange = true;
             var item = vm.FilteredEquipmentProducts.First(i => i.EquipmentProductId == 4); // Feasible
             vm.SelectedEquipmentProduct = item;
             vm.OffsetCommand.Execute(null); // 強制模式下切換模式不影響清單與選取
@@ -346,7 +346,7 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void ForceArrange_Confirm_OutputsIsForceArrangeAndMode()
         {
             var vm = Create(canForceArrange: true);
-            vm.ToggleForceArrangeCommand.Execute(null);
+            vm.IsForceArrange = true;
             vm.OffsetCommand.Execute(null);
             vm.SelectedEquipmentProduct = vm.FilteredEquipmentProducts.First(i => i.EquipmentProductId == 4);
             vm.ConfirmCommand.Execute(null);

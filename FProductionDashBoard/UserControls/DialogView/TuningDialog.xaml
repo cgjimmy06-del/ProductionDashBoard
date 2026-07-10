@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             mc:Ignorable="d" Height="Auto" Width="400"
-             d:DesignHeight="400" d:DesignWidth="400" d:Background="White">
+             mc:Ignorable="d" Height="Auto" Width="440"
+             d:DesignHeight="400" d:DesignWidth="440" d:Background="White">
 
     <StackPanel Margin="20,5">
         <!-- 當前操作資訊 -->
@@ -45,12 +45,17 @@
                      Text="{Binding EmployeeFilterText, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
 
-        <!-- 選擇按鈕 -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                    Margin="0,0,0,10" Height="40">
-            <Button Content="{DynamicResource TuningTeachingButton}"
+        <!-- 選擇按鈕（左）＋ 強制安排開關（右） -->
+        <Grid Margin="0,0,0,10" Height="40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="{DynamicResource TuningTeachingButton}"
                     Command="{Binding TeachingCommand}"
-                    Margin="20,0" Width="100">
+                    Margin="0,0,12,0" Width="100">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
                         <Style.Triggers>
@@ -61,9 +66,9 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Content="{DynamicResource TuningOffsetButton}"
+            <Button Grid.Column="1" Content="{DynamicResource TuningOffsetButton}"
                     Command="{Binding OffsetCommand}"
-                    Margin="20,0" Width="100">
+                    Width="100">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
                         <Style.Triggers>
@@ -74,22 +79,15 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <!-- 強制安排（僅 Setting 權限可見；反色＝開啟） -->
-            <Button Content="{DynamicResource TuningForceArrangeToggle}"
-                    Command="{Binding ToggleForceArrangeCommand}"
-                    Visibility="{Binding CanForceArrange, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Margin="20,0" Width="100">
-                <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsForceArrange}" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource ButtonWarningBrush}"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
-        </StackPanel>
+            <!-- 強制安排開關（僅 Setting 權限可見；比照 SystemSettingsView 開關慣例） -->
+            <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center"
+                        Visibility="{Binding CanForceArrange, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Text="{DynamicResource TuningForceArrangeToggle}"
+                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <ToggleButton IsChecked="{Binding IsForceArrange}"
+                              Style="{StaticResource MaterialDesignSwitchToggleButton}"/>
+            </StackPanel>
+        </Grid>
 
         <!-- 強制安排篩選列（僅開啟時顯示） -->
         <Grid Margin="0,0,0,10"
