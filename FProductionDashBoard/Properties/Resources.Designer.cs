@@ -1483,5 +1483,9 @@ namespace FProductionDashBoard.Properties {
         internal static string ChartFilterAll {
             get { return ResourceManager.GetString("ChartFilterAll", resourceCulture); }
         }
+
+        internal static string ChartDesignerSanitizedNotice {
+            get { return ResourceManager.GetString("ChartDesignerSanitizedNotice", resourceCulture); }
+        }
     }
 }

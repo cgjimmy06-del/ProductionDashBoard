@@ -7,6 +7,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FProductionDashBoard.Tests.ViewModels
@@ -17,15 +18,18 @@ namespace FProductionDashBoard.Tests.ViewModels
         // 透過 InjectDataForTest 繞過非同步載入，驗證：
         //   頁籤建構 / 設備與排程列衍生欄位 / 統計計算 / 容器切換 / 預設排序
 
-        private static ChartViewModel CreateVm()
+        private static ChartViewModel CreateVm() => CreateVm(out _);
+
+        private static ChartViewModel CreateVm(out Mock<IDataService> dataMock,
+            List<ChartDefinition>? definitions = null)
         {
-            var mock = new Mock<IDataService>();
+            dataMock = new Mock<IDataService>();
             var log = new LogService();
             var auth = new AuthorizationService();
             var cardReader = new Mock<ICardReaderService>().Object;
-            var core = new DashboardCoreServices(log, mock.Object, auth, cardReader);
+            var core = new DashboardCoreServices(log, dataMock.Object, auth, cardReader);
             var store = new JsonChartDefinitionStore(
-                _ => new List<ChartDefinition>(),
+                _ => definitions ?? new List<ChartDefinition>(),
                 (_, _) => { });
             return new ChartViewModel(core, store);
         }
@@ -393,6 +397,116 @@ namespace FProductionDashBoard.Tests.ViewModels
             vm.ZoomInCommand.Execute(null);
             Assert.Equal(150, vm.ZoomPercent);
             Assert.False(vm.CanZoomIn);
+        }
+
+        // --- 設計器切換（C1：編輯入口 / 關閉回呼 / LoadAsync guard） ---
+
+        [Fact]
+        public void EditChart_NonDefaultTab_OpensDesigner_CancelCloses()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+            vm.SelectedTab = vm.Tabs.First(t => !t.IsDefault);
+
+            Assert.True(vm.EditChartCommand.CanExecute(null));
+            vm.EditChartCommand.Execute(null);
+
+            Assert.True(vm.IsDesignerOpen);
+            Assert.False(vm.IsViewerVisible);
+            Assert.NotNull(vm.Designer);
+
+            vm.Designer!.CancelCommand.Execute(null);
+
+            Assert.False(vm.IsDesignerOpen);
+            Assert.True(vm.IsViewerVisible);
+            Assert.Null(vm.Designer);
+        }
+
+        [Fact]
+        public void EditChart_DefaultTab_CannotExecute()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+
+            vm.SelectedTab = vm.Tabs.First(t => t.IsDefault);
+
+            Assert.False(vm.EditChartCommand.CanExecute(null));
+        }
+
+        [Fact]
+        public void EditChart_Save_ReloadsTabs_WithUpdatedDefinition()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+            vm.SelectedTab = vm.Tabs.First(t => !t.IsDefault);
+
+            vm.EditChartCommand.Execute(null);
+            vm.Designer!.WorkingDefinition.Name = "MyChart";
+            vm.Designer.WorkingDefinition.NameKey = null;
+            vm.Designer.SaveCommand.Execute(null);
+
+            Assert.False(vm.IsDesignerOpen);
+            Assert.Null(vm.Designer);
+            Assert.Equal("MyChart", vm.SelectedTab?.DisplayName);   // 依 previousId 還原選中頁籤
+        }
+
+        [Fact]
+        public async Task LoadCommand_WhileDesignerOpen_SkipsReload()
+        {
+            var vm = CreateVm(out var dataMock);
+            Inject(vm);
+            vm.SelectedTab = vm.Tabs.First(t => !t.IsDefault);
+            vm.EditChartCommand.Execute(null);
+            var tabBefore = vm.SelectedTab;
+
+            await vm.LoadCommand.ExecuteAsync(null);
+
+            dataMock.Verify(d => d.GetAllSchedulesAsync(), Times.Never);
+            Assert.Same(tabBefore, vm.SelectedTab);
+            Assert.True(vm.IsDesignerOpen);
+        }
+
+        // --- 檢視端失效引用防護（唯讀容忍，不改寫檔案） ---
+
+        [Fact]
+        public void SelectTab_UnknownDataSet_NoCrash_ShowsEmpty()
+        {
+            var badDef = new ChartDefinition { Id = "bad", Name = "Bad", DataSet = (ChartDataSet)99 };
+            var vm = CreateVm(out _, new List<ChartDefinition>
+            {
+                DefaultChartDefinitions.CreateEquipmentOverview(),
+                badDef,
+            });
+            // 需有資料列才會進 FinishRow 觸發 FieldCatalog.For 的 throw 路徑
+            Inject(vm, schedules: new() { MakeSchedule(1, ScheduleStatus.Pending) });
+
+            vm.SelectedTab = vm.Tabs.First(t => t.Definition.Id == "bad");
+
+            Assert.Empty(GetRows(vm));
+            Assert.False(vm.IsCardContainer);
+            Assert.False(vm.IsTableContainer);
+            Assert.False(vm.IsStatRowVisible);
+            Assert.False(vm.IsFilterRowVisible);
+        }
+
+        [Fact]
+        public void SelectTab_InvalidTableColumnsAndSort_FilteredWithoutCrash()
+        {
+            var tableDef = DefaultChartDefinitions.CreateScheduleBoard();
+            tableDef.Container.Table.ColumnFieldIds.Add("Ghost");
+            tableDef.FilterRow.SortOptionFieldIds.Clear();          // 無排序選項
+            tableDef.FilterRow.DefaultSortFieldId = "Ghost";        // 預設排序失效 → TieBreak 落回主名稱
+            var vm = CreateVm(out _, new List<ChartDefinition>
+            {
+                DefaultChartDefinitions.CreateEquipmentOverview(),
+                tableDef,
+            });
+            Inject(vm, schedules: new() { MakeSchedule(1, ScheduleStatus.Pending) });
+
+            vm.SelectedTab = vm.Tabs.First(t => t.Definition.Id == DefaultChartDefinitions.ScheduleBoardId);
+
+            Assert.Equal(7, vm.TableColumns.Count);   // Ghost 欄不渲染
+            Assert.Single(GetRows(vm));               // 排序失效不擲例外
         }
     }
 }

@@ -558,6 +558,12 @@
     <sys:String x:Key="ChartZoomTooltip">顯示比例</sys:String>
     <sys:String x:Key="ChartSortHint">排序</sys:String>
     <sys:String x:Key="ChartRestoreDefaultTooltip">恢復預設（篩選、快捷與排序回到初始狀態）</sys:String>
+    <sys:String x:Key="ChartDesignerBack">← 返回</sys:String>
+    <sys:String x:Key="ChartDesignerEditTitle">編輯圖表</sys:String>
+    <sys:String x:Key="ChartDesignerNewTitle">新增圖表</sys:String>
+    <sys:String x:Key="ChartDesignerFrameworkPreview">版面預覽</sys:String>
+    <sys:String x:Key="ChartDesignerSamplePreview">元件樣本</sys:String>
+    <sys:String x:Key="ChartDesignerOptionsTitle">編輯選項</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

@@ -816,4 +816,7 @@
   <data name="ChartFilterAll" xml:space="preserve">
     <value>All</value>
   </data>
+  <data name="ChartDesignerSanitizedNotice" xml:space="preserve">
+    <value>Automatically removed {0} invalid field reference(s)</value>
+  </data>
 </root>

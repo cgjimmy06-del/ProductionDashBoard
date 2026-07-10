@@ -2,8 +2,6 @@ using FProductionDashBoard.ViewModels;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Shapes;
 
 namespace FProductionDashBoard.UserControls
 {
@@ -40,36 +38,8 @@ namespace FProductionDashBoard.UserControls
                 RebuildTableColumns(vm);
         }
 
-        // DataGridColumn 非視覺樹成員無法用 XAML 依定義動態綁定，比照 ScheduleView 由 code-behind 維護
+        // 動態欄位建構抽至 ChartTableColumnBuilder 與設計器預覽共用
         private void RebuildTableColumns(ChartViewModel vm)
-        {
-            ChartTable.Columns.Clear();
-            if (vm.TableColumns.Count == 0) return;
-
-            if (!string.IsNullOrEmpty(vm.IndicatorFieldId))
-            {
-                var ellipse = new FrameworkElementFactory(typeof(Ellipse));
-                ellipse.SetValue(WidthProperty, 10d);
-                ellipse.SetValue(HeightProperty, 10d);
-                ellipse.SetBinding(Shape.FillProperty, new Binding(nameof(ChartRowViewModel.IndicatorBrushKey))
-                {
-                    Converter = (IValueConverter)Application.Current.Resources["BrushKeyToBrushConverter"],
-                });
-                ChartTable.Columns.Add(new DataGridTemplateColumn
-                {
-                    Width = 40,
-                    CanUserResize = false,
-                    CellTemplate = new DataTemplate { VisualTree = ellipse },
-                });
-            }
-
-            foreach (var col in vm.TableColumns)
-                ChartTable.Columns.Add(new DataGridTextColumn
-                {
-                    Header = col.Header,
-                    Binding = new Binding($"Display[{col.FieldId}]"),
-                    Width = new DataGridLength(1, DataGridLengthUnitType.Auto),
-                });
-        }
+            => ChartTableColumnBuilder.Rebuild(ChartTable, vm.TableColumns, vm.IndicatorFieldId);
     }
 }

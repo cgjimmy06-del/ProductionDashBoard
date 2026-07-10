@@ -771,4 +771,7 @@
   <data name="ChartFilterAll" xml:space="preserve">
     <value>Tất cả</value>
   </data>
+  <data name="ChartDesignerSanitizedNotice" xml:space="preserve">
+    <value>Đã tự động xóa {0} tham chiếu trường không hợp lệ</value>
+  </data>
 </root>

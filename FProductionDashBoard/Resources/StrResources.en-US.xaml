@@ -558,6 +558,12 @@
     <sys:String x:Key="ChartZoomTooltip">Zoom</sys:String>
     <sys:String x:Key="ChartSortHint">Sort</sys:String>
     <sys:String x:Key="ChartRestoreDefaultTooltip">Restore defaults (reset filters, quick buttons and sort)</sys:String>
+    <sys:String x:Key="ChartDesignerBack">← Back</sys:String>
+    <sys:String x:Key="ChartDesignerEditTitle">Edit Chart</sys:String>
+    <sys:String x:Key="ChartDesignerNewTitle">New Chart</sys:String>
+    <sys:String x:Key="ChartDesignerFrameworkPreview">Layout Preview</sys:String>
+    <sys:String x:Key="ChartDesignerSamplePreview">Component Sample</sys:String>
+    <sys:String x:Key="ChartDesignerOptionsTitle">Edit Options</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

@@ -771,4 +771,7 @@
   <data name="ChartFilterAll" xml:space="preserve">
     <value>全部</value>
   </data>
+  <data name="ChartDesignerSanitizedNotice" xml:space="preserve">
+    <value>已自動移除 {0} 個失效欄位引用</value>
+  </data>
 </root>

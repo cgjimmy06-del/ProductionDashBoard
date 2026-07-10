@@ -558,6 +558,12 @@
     <sys:String x:Key="ChartZoomTooltip">Tỷ lệ hiển thị</sys:String>
     <sys:String x:Key="ChartSortHint">Sắp xếp</sys:String>
     <sys:String x:Key="ChartRestoreDefaultTooltip">Khôi phục mặc định (đặt lại bộ lọc, nút nhanh và sắp xếp)</sys:String>
+    <sys:String x:Key="ChartDesignerBack">← Quay lại</sys:String>
+    <sys:String x:Key="ChartDesignerEditTitle">Chỉnh sửa biểu đồ</sys:String>
+    <sys:String x:Key="ChartDesignerNewTitle">Thêm biểu đồ</sys:String>
+    <sys:String x:Key="ChartDesignerFrameworkPreview">Xem trước bố cục</sys:String>
+    <sys:String x:Key="ChartDesignerSamplePreview">Mẫu thành phần</sys:String>
+    <sys:String x:Key="ChartDesignerOptionsTitle">Tùy chọn chỉnh sửa</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>
