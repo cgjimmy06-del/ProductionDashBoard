@@ -106,5 +106,17 @@ namespace FProductionDashBoard.Properties {
                 this["SkipLoginScreen"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int ChartZoomPercent {
+            get {
+                return ((int)(this["ChartZoomPercent"]));
+            }
+            set {
+                this["ChartZoomPercent"] = value;
+            }
+        }
     }
 }

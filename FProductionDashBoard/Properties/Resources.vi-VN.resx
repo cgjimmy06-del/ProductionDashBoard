@@ -621,4 +621,154 @@
   <data name="MesSyncState_DataMismatch" xml:space="preserve">
     <value>Dữ liệu không khớp</value>
   </data>
+  <data name="ChartFieldEquipmentName" xml:space="preserve">
+    <value>Tên thiết bị</value>
+  </data>
+  <data name="ChartFieldProductionStatus" xml:space="preserve">
+    <value>Trạng thái sản xuất</value>
+  </data>
+  <data name="ChartFieldLoadLevel" xml:space="preserve">
+    <value>Mức tải</value>
+  </data>
+  <data name="ChartFieldTuningStatus" xml:space="preserve">
+    <value>Trạng thái tinh chỉnh</value>
+  </data>
+  <data name="ChartFieldActiveOrderCount" xml:space="preserve">
+    <value>Số đơn nhận</value>
+  </data>
+  <data name="ChartFieldTotalPendingQty" xml:space="preserve">
+    <value>SL chờ sản xuất</value>
+  </data>
+  <data name="ChartFieldFeasibleProgramCount" xml:space="preserve">
+    <value>Số chương trình khả dụng</value>
+  </data>
+  <data name="ChartFieldTotalProgramCount" xml:space="preserve">
+    <value>Tổng số chương trình</value>
+  </data>
+  <data name="ChartFieldCurrentProduct" xml:space="preserve">
+    <value>Sản phẩm hiện tại</value>
+  </data>
+  <data name="ChartFieldProgressCompleted" xml:space="preserve">
+    <value>SL hoàn thành</value>
+  </data>
+  <data name="ChartFieldProgressTarget" xml:space="preserve">
+    <value>SL mục tiêu</value>
+  </data>
+  <data name="ChartFieldScheduleId" xml:space="preserve">
+    <value>Số phiếu</value>
+  </data>
+  <data name="ChartFieldBrand" xml:space="preserve">
+    <value>Thương hiệu</value>
+  </data>
+  <data name="ChartFieldPartNo" xml:space="preserve">
+    <value>Mã hàng</value>
+  </data>
+  <data name="ChartFieldModel" xml:space="preserve">
+    <value>Kiểu</value>
+  </data>
+  <data name="ChartFieldProcess" xml:space="preserve">
+    <value>Công đoạn</value>
+  </data>
+  <data name="ChartFieldQuantity" xml:space="preserve">
+    <value>Số lượng</value>
+  </data>
+  <data name="ChartFieldActualQuantity" xml:space="preserve">
+    <value>SL thực xếp</value>
+  </data>
+  <data name="ChartFieldStatus" xml:space="preserve">
+    <value>Trạng thái</value>
+  </data>
+  <data name="ChartFieldSopType" xml:space="preserve">
+    <value>Loại SOP</value>
+  </data>
+  <data name="ChartFieldReceivedAt" xml:space="preserve">
+    <value>Ngày nhận đơn</value>
+  </data>
+  <data name="ChartFieldWaitingDays" xml:space="preserve">
+    <value>Số ngày chờ</value>
+  </data>
+  <data name="ChartFieldActiveEquipmentCount" xml:space="preserve">
+    <value>Số thiết bị đang chạy</value>
+  </data>
+  <data name="ChartValInProduction" xml:space="preserve">
+    <value>Đang sản xuất</value>
+  </data>
+  <data name="ChartValPendingProd" xml:space="preserve">
+    <value>Chờ sản xuất</value>
+  </data>
+  <data name="ChartValIdle" xml:space="preserve">
+    <value>Nhàn rỗi</value>
+  </data>
+  <data name="ChartValUnavailable" xml:space="preserve">
+    <value>Không khả dụng</value>
+  </data>
+  <data name="ChartValLoadNone" xml:space="preserve">
+    <value>Không tải</value>
+  </data>
+  <data name="ChartValLoadLow" xml:space="preserve">
+    <value>Thấp</value>
+  </data>
+  <data name="ChartValLoadMid" xml:space="preserve">
+    <value>Trung bình</value>
+  </data>
+  <data name="ChartValLoadHigh" xml:space="preserve">
+    <value>Cao</value>
+  </data>
+  <data name="ChartValTuningNone" xml:space="preserve">
+    <value>Chưa tinh chỉnh</value>
+  </data>
+  <data name="ChartValTuningActive" xml:space="preserve">
+    <value>Đang tinh chỉnh</value>
+  </data>
+  <data name="ChartValSchPending" xml:space="preserve">
+    <value>Chờ xếp lịch</value>
+  </data>
+  <data name="ChartValSchScheduled" xml:space="preserve">
+    <value>Đã xếp lịch</value>
+  </data>
+  <data name="ChartValSchCompleted" xml:space="preserve">
+    <value>Đã hoàn thành</value>
+  </data>
+  <data name="ChartValSchReleased" xml:space="preserve">
+    <value>Đã phát hành</value>
+  </data>
+  <data name="ChartValSchCancelled" xml:space="preserve">
+    <value>Đã hủy</value>
+  </data>
+  <data name="ChartValSopDevelop" xml:space="preserve">
+    <value>Phát triển</value>
+  </data>
+  <data name="ChartValSopOpen" xml:space="preserve">
+    <value>Dạng mở</value>
+  </data>
+  <data name="ChartValSopClose" xml:space="preserve">
+    <value>Dạng kín</value>
+  </data>
+  <data name="ChartValSopACME" xml:space="preserve">
+    <value>ACME</value>
+  </data>
+  <data name="ChartValSopTC" xml:space="preserve">
+    <value>TC</value>
+  </data>
+  <data name="ChartValSopOther" xml:space="preserve">
+    <value>Khác</value>
+  </data>
+  <data name="ChartDefaultEquipmentOverview" xml:space="preserve">
+    <value>Tổng quan thiết bị</value>
+  </data>
+  <data name="ChartDefaultScheduleBoard" xml:space="preserve">
+    <value>Bảng xếp lịch</value>
+  </data>
+  <data name="ChartStatEquipmentTotal" xml:space="preserve">
+    <value>Tổng thiết bị</value>
+  </data>
+  <data name="ChartStatScheduleTotal" xml:space="preserve">
+    <value>Tổng phiếu xếp</value>
+  </data>
+  <data name="ChartBtnHighLoad" xml:space="preserve">
+    <value>Tải cao</value>
+  </data>
+  <data name="ChartFilterAll" xml:space="preserve">
+    <value>Tất cả</value>
+  </data>
 </root>

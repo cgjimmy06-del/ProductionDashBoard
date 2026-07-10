@@ -548,7 +548,16 @@
 
     <!--#region Chart Dashboard -->
     <sys:String x:Key="ChartAddTooltip">Add Chart (Coming soon)</sys:String>
-    <sys:String x:Key="ChartEmptyPlaceholder">Chart feature under development</sys:String>
+    <sys:String x:Key="ChartEmptyPlaceholder">No charts to display</sys:String>
+    <sys:String x:Key="ChartEditTooltip">Edit Chart (Coming soon)</sys:String>
+    <sys:String x:Key="ChartCopyTooltip">Duplicate Chart (Coming soon)</sys:String>
+    <sys:String x:Key="ChartDeleteTooltip">Delete Chart (Coming soon)</sys:String>
+    <sys:String x:Key="ChartExportTooltip">Export Chart (Coming soon)</sys:String>
+    <sys:String x:Key="ChartImportTooltip">Import Chart (Coming soon)</sys:String>
+    <sys:String x:Key="ChartDefaultLockedTooltip">Default chart (locked)</sys:String>
+    <sys:String x:Key="ChartZoomTooltip">Zoom</sys:String>
+    <sys:String x:Key="ChartSortHint">Sort</sys:String>
+    <sys:String x:Key="ChartRestoreDefaultTooltip">Restore defaults (reset filters, quick buttons and sort)</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

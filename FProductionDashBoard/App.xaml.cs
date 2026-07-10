@@ -109,6 +109,9 @@ namespace FProductionDashBoard
                 services.AddSingleton<Services.IConfigService<Dtos.HardwareConfigDto>>(
                     _ => new Services.ConfigService<Dtos.HardwareConfigDto>("hardware_config.json"));
 
+                // 圖表定義儲存（本機 JSON，與上方設定檔同資料夾）
+                services.AddSingleton<Services.IChartDefinitionStore, Services.JsonChartDefinitionStore>();
+
                 // 授權服務（#if DEBUG 保留 Stub 供開發測試）
 #if DEBUG
                 services.AddSingleton<Services.ILicenseService, Services.DevelopmentLicenseService>();
