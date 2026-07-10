@@ -268,6 +268,8 @@
             </DataTrigger>
         </Style.Triggers>
     </Style>
+    <!-- 左右滑動開關（功能啟閉用），統一收斂 MaterialDesign Switch 引用點 -->
+    <Style x:Key="SwitchToggleButtonStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}"/>
     <Style x:Key="FunctionToggleButtonStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignFlatToggleButton}">
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="0"/>
