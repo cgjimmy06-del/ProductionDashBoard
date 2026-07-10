@@ -1487,5 +1487,37 @@ namespace FProductionDashBoard.Properties {
         internal static string ChartDesignerSanitizedNotice {
             get { return ResourceManager.GetString("ChartDesignerSanitizedNotice", resourceCulture); }
         }
+
+        internal static string ChartDataSetEquipment {
+            get { return ResourceManager.GetString("ChartDataSetEquipment", resourceCulture); }
+        }
+
+        internal static string ChartDataSetSchedule {
+            get { return ResourceManager.GetString("ChartDataSetSchedule", resourceCulture); }
+        }
+
+        internal static string ChartDataSetSwitchConfirm {
+            get { return ResourceManager.GetString("ChartDataSetSwitchConfirm", resourceCulture); }
+        }
+
+        internal static string ChartAggregateCount {
+            get { return ResourceManager.GetString("ChartAggregateCount", resourceCulture); }
+        }
+
+        internal static string ChartAggregateSum {
+            get { return ResourceManager.GetString("ChartAggregateSum", resourceCulture); }
+        }
+
+        internal static string ChartStatFieldAllRows {
+            get { return ResourceManager.GetString("ChartStatFieldAllRows", resourceCulture); }
+        }
+
+        internal static string ChartFilterValueNone {
+            get { return ResourceManager.GetString("ChartFilterValueNone", resourceCulture); }
+        }
+
+        internal static string ChartDefaultSortByTitle {
+            get { return ResourceManager.GetString("ChartDefaultSortByTitle", resourceCulture); }
+        }
     }
 }

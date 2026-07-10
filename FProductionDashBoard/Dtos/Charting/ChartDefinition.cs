@@ -26,6 +26,7 @@ namespace FProductionDashBoard.Dtos
     public class StatRowConfig
     {
         public bool Enabled { get; set; } = true;
+        /// <summary>統計項（上限 ChartConstants.MaxStatItems）</summary>
         public List<StatItemConfig> Items { get; set; } = new();
     }
 

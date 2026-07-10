@@ -4,6 +4,7 @@ namespace FProductionDashBoard.Services
     public static class ChartConstants
     {
         public const int MaxCharts = 10;
+        public const int MaxStatItems = 8;
         public const int MaxFilterFields = 3;
         public const int MaxQuickFilterButtons = 5;
         public const int MaxSortOptions = 5;

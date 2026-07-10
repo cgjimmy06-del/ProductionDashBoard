@@ -564,6 +564,23 @@
     <sys:String x:Key="ChartDesignerFrameworkPreview">Xem trước bố cục</sys:String>
     <sys:String x:Key="ChartDesignerSamplePreview">Mẫu thành phần</sys:String>
     <sys:String x:Key="ChartDesignerOptionsTitle">Tùy chọn chỉnh sửa</sys:String>
+    <sys:String x:Key="ChartDesignerBasicSection">Cơ bản</sys:String>
+    <sys:String x:Key="ChartDesignerNameLabel">Tên biểu đồ</sys:String>
+    <sys:String x:Key="ChartDesignerSortOrderLabel">Số thứ tự</sys:String>
+    <sys:String x:Key="ChartDesignerDataSetLabel">Nguồn dữ liệu</sys:String>
+    <sys:String x:Key="ChartDesignerStatSection">Hàng thống kê</sys:String>
+    <sys:String x:Key="ChartDesignerFilterSection">Hàng bộ lọc</sys:String>
+    <sys:String x:Key="ChartDesignerFilterFieldsLabel">Trường lọc (tối đa 3)</sys:String>
+    <sys:String x:Key="ChartDesignerQuickButtonsLabel">Nút nhanh (tối đa 5)</sys:String>
+    <sys:String x:Key="ChartDesignerSortOptionsLabel">Tùy chọn sắp xếp (tối đa 5)</sys:String>
+    <sys:String x:Key="ChartDesignerDefaultSortLabel">Sắp xếp mặc định</sys:String>
+    <sys:String x:Key="ChartDesignerAddItem">+ Thêm</sys:String>
+    <sys:String x:Key="ChartDesignerRemoveTooltip">Xóa</sys:String>
+    <sys:String x:Key="ChartDesignerAggregateHint">Tổng hợp</sys:String>
+    <sys:String x:Key="ChartDesignerFieldHint">Trường</sys:String>
+    <sys:String x:Key="ChartDesignerValueHint">Giá trị</sys:String>
+    <sys:String x:Key="ChartDesignerLabelHint">Nhãn</sys:String>
+    <sys:String x:Key="ChartDesignerOptionalLabelHint">Nhãn tùy chỉnh (tùy chọn)</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

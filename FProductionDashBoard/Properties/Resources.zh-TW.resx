@@ -774,4 +774,28 @@
   <data name="ChartDesignerSanitizedNotice" xml:space="preserve">
     <value>已自動移除 {0} 個失效欄位引用</value>
   </data>
+  <data name="ChartDataSetEquipment" xml:space="preserve">
+    <value>設備視角</value>
+  </data>
+  <data name="ChartDataSetSchedule" xml:space="preserve">
+    <value>排程視角</value>
+  </data>
+  <data name="ChartDataSetSwitchConfirm" xml:space="preserve">
+    <value>切換資料來源將重置已選擇的欄位設定，是否繼續？</value>
+  </data>
+  <data name="ChartAggregateCount" xml:space="preserve">
+    <value>計數</value>
+  </data>
+  <data name="ChartAggregateSum" xml:space="preserve">
+    <value>加總</value>
+  </data>
+  <data name="ChartStatFieldAllRows" xml:space="preserve">
+    <value>全部（列數）</value>
+  </data>
+  <data name="ChartFilterValueNone" xml:space="preserve">
+    <value>（無）</value>
+  </data>
+  <data name="ChartDefaultSortByTitle" xml:space="preserve">
+    <value>（主名稱）</value>
+  </data>
 </root>

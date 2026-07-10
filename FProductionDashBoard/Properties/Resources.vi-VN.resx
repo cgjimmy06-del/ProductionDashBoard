@@ -774,4 +774,28 @@
   <data name="ChartDesignerSanitizedNotice" xml:space="preserve">
     <value>Đã tự động xóa {0} tham chiếu trường không hợp lệ</value>
   </data>
+  <data name="ChartDataSetEquipment" xml:space="preserve">
+    <value>Góc nhìn thiết bị</value>
+  </data>
+  <data name="ChartDataSetSchedule" xml:space="preserve">
+    <value>Góc nhìn lịch trình</value>
+  </data>
+  <data name="ChartDataSetSwitchConfirm" xml:space="preserve">
+    <value>Chuyển nguồn dữ liệu sẽ đặt lại các cài đặt trường đã chọn. Tiếp tục?</value>
+  </data>
+  <data name="ChartAggregateCount" xml:space="preserve">
+    <value>Đếm</value>
+  </data>
+  <data name="ChartAggregateSum" xml:space="preserve">
+    <value>Tổng</value>
+  </data>
+  <data name="ChartStatFieldAllRows" xml:space="preserve">
+    <value>Tất cả (số dòng)</value>
+  </data>
+  <data name="ChartFilterValueNone" xml:space="preserve">
+    <value>(Không có)</value>
+  </data>
+  <data name="ChartDefaultSortByTitle" xml:space="preserve">
+    <value>(Tên chính)</value>
+  </data>
 </root>

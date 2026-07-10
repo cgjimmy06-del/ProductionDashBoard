@@ -34,7 +34,7 @@ namespace FProductionDashBoard.Services
             var items = new List<ChartStatItemViewModel>();
             if (!def.StatRow.Enabled) return items;
 
-            foreach (var item in def.StatRow.Items)
+            foreach (var item in def.StatRow.Items.Take(ChartConstants.MaxStatItems))
             {
                 var value = item.Aggregate switch
                 {
@@ -146,6 +146,16 @@ namespace FProductionDashBoard.Services
                 : !string.IsNullOrEmpty(cfg.Label) ? cfg.Label : ResolveEnumLabel(field, cfg.Value);
 
         internal static double ToDouble(object? raw)
-            => raw == null ? 0 : Convert.ToDouble(raw, CultureInfo.InvariantCulture);
+        {
+            if (raw == null) return 0;
+            try
+            {
+                return Convert.ToDouble(raw, CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                return 0;   // 非數值（如 Sum 誤配 Enum 欄位的舊定義）以 0 容忍，不崩潰
+            }
+        }
     }
 }

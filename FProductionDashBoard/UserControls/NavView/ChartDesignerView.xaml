@@ -232,7 +232,7 @@
                 </Border>
             </Grid>
 
-            <!-- 右：編輯選項（基本／統計列／篩選列／容器，C2、C3 填入） -->
+            <!-- 右：編輯選項（基本／統計列／篩選列；容器編輯 C3 填入） -->
             <Border Grid.Column="1" BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1" CornerRadius="4" Padding="10">
                 <Grid>
@@ -243,6 +243,210 @@
                     <TextBlock Grid.Row="0" Text="{DynamicResource ChartDesignerOptionsTitle}"
                                FontSize="15" FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,8,0,0">
+                        <StackPanel Margin="0,0,6,0">
+
+                            <!-- ===== 基本 ===== -->
+                            <TextBlock Text="{DynamicResource ChartDesignerBasicSection}"
+                                       FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox Margin="0,6,0,0"
+                                     materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerNameLabel}"
+                                     Text="{Binding ChartName, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Grid Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerSortOrderLabel}"
+                                         Text="{Binding SortOrder, UpdateSourceTrigger=PropertyChanged}"/>
+                                <ComboBox Grid.Column="2"
+                                          materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerDataSetLabel}"
+                                          ItemsSource="{Binding DataSetOptions}" DisplayMemberPath="Label"
+                                          SelectedItem="{Binding SelectedDataSet}"/>
+                            </Grid>
+
+                            <!-- ===== 統計列 ===== -->
+                            <DockPanel Margin="0,20,0,0">
+                                <ToggleButton DockPanel.Dock="Right"
+                                              Style="{StaticResource SwitchToggleButtonStyle}"
+                                              IsChecked="{Binding IsStatRowEnabled}"/>
+                                <TextBlock Text="{DynamicResource ChartDesignerStatSection}"
+                                           FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </DockPanel>
+                            <ItemsControl ItemsSource="{Binding StatItemEditors}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,4,0,0">
+                                            <Button DockPanel.Dock="Right"
+                                                    Style="{StaticResource ChartIconButtonStyle}"
+                                                    ToolTip="{DynamicResource ChartDesignerRemoveTooltip}"
+                                                    Command="{Binding DataContext.RemoveStatItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}">
+                                                <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
+                                            </Button>
+                                            <ComboBox Width="82" Margin="0,0,6,0"
+                                                      materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerAggregateHint}"
+                                                      ItemsSource="{Binding AggregateOptions}" DisplayMemberPath="Label"
+                                                      SelectedItem="{Binding SelectedAggregate}"/>
+                                            <ComboBox Width="118" Margin="0,0,6,0"
+                                                      materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerFieldHint}"
+                                                      ItemsSource="{Binding FieldOptions}" DisplayMemberPath="Label"
+                                                      SelectedItem="{Binding SelectedField}"/>
+                                            <ComboBox Width="100" Margin="0,0,6,0"
+                                                      materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerValueHint}"
+                                                      ItemsSource="{Binding ValueOptions}" DisplayMemberPath="Label"
+                                                      SelectedItem="{Binding SelectedFilterValue}"
+                                                      Visibility="{Binding IsEnumField, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                            <TextBox MinWidth="50"
+                                                     materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerLabelHint}"
+                                                     Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button Margin="0,8,0,0" HorizontalAlignment="Left"
+                                    Style="{DynamicResource FunctionButtonStyle}"
+                                    Background="{DynamicResource SecondaryBrush}"
+                                    Padding="8,2" Height="Auto"
+                                    Content="{DynamicResource ChartDesignerAddItem}"
+                                    Command="{Binding AddStatItemCommand}"/>
+
+                            <!-- ===== 篩選列 ===== -->
+                            <DockPanel Margin="0,20,0,0">
+                                <ToggleButton DockPanel.Dock="Right"
+                                              Style="{StaticResource SwitchToggleButtonStyle}"
+                                              IsChecked="{Binding IsFilterRowEnabled}"/>
+                                <TextBlock Text="{DynamicResource ChartDesignerFilterSection}"
+                                           FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </DockPanel>
+
+                            <!-- 篩選欄位（上限 3） -->
+                            <TextBlock Text="{DynamicResource ChartDesignerFilterFieldsLabel}"
+                                       FontSize="12" Margin="0,10,0,0"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <ItemsControl ItemsSource="{Binding FilterFieldEditors}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,4,0,0">
+                                            <Button DockPanel.Dock="Right"
+                                                    Style="{StaticResource ChartIconButtonStyle}"
+                                                    ToolTip="{DynamicResource ChartDesignerRemoveTooltip}"
+                                                    Command="{Binding DataContext.RemoveFilterFieldCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}">
+                                                <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
+                                            </Button>
+                                            <ComboBox materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerFieldHint}"
+                                                      ItemsSource="{Binding Options}" DisplayMemberPath="Label"
+                                                      SelectedItem="{Binding SelectedField}"/>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button Margin="0,8,0,0" HorizontalAlignment="Left"
+                                    Style="{DynamicResource FunctionButtonStyle}"
+                                    Background="{DynamicResource SecondaryBrush}"
+                                    Padding="8,2" Height="Auto"
+                                    Content="{DynamicResource ChartDesignerAddItem}"
+                                    Command="{Binding AddFilterFieldCommand}"/>
+
+                            <!-- 快捷按鈕（上限 5）：選欄位→選值→選填自訂標籤 -->
+                            <TextBlock Text="{DynamicResource ChartDesignerQuickButtonsLabel}"
+                                       FontSize="12" Margin="0,12,0,0"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <ItemsControl ItemsSource="{Binding QuickButtonEditors}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,4,0,0">
+                                            <Button DockPanel.Dock="Right"
+                                                    Style="{StaticResource ChartIconButtonStyle}"
+                                                    ToolTip="{DynamicResource ChartDesignerRemoveTooltip}"
+                                                    Command="{Binding DataContext.RemoveQuickButtonCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}">
+                                                <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
+                                            </Button>
+                                            <ComboBox Width="118" Margin="0,0,6,0"
+                                                      materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerFieldHint}"
+                                                      ItemsSource="{Binding FieldOptions}" DisplayMemberPath="Label"
+                                                      SelectedItem="{Binding SelectedField}"/>
+                                            <ComboBox Width="100" Margin="0,0,6,0"
+                                                      materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerValueHint}"
+                                                      ItemsSource="{Binding ValueOptions}" DisplayMemberPath="Label"
+                                                      SelectedItem="{Binding SelectedValue}"/>
+                                            <TextBox MinWidth="50"
+                                                     materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerOptionalLabelHint}"
+                                                     Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button Margin="0,8,0,0" HorizontalAlignment="Left"
+                                    Style="{DynamicResource FunctionButtonStyle}"
+                                    Background="{DynamicResource SecondaryBrush}"
+                                    Padding="8,2" Height="Auto"
+                                    Content="{DynamicResource ChartDesignerAddItem}"
+                                    Command="{Binding AddQuickButtonCommand}"/>
+
+                            <!-- 排序選項（上限 5）＋預設排序 -->
+                            <TextBlock Text="{DynamicResource ChartDesignerSortOptionsLabel}"
+                                       FontSize="12" Margin="0,12,0,0"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <ItemsControl ItemsSource="{Binding SortOptionEditors}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,4,0,0">
+                                            <Button DockPanel.Dock="Right"
+                                                    Style="{StaticResource ChartIconButtonStyle}"
+                                                    ToolTip="{DynamicResource ChartDesignerRemoveTooltip}"
+                                                    Command="{Binding DataContext.RemoveSortOptionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}">
+                                                <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
+                                            </Button>
+                                            <ComboBox materialDesign:HintAssist.Hint="{DynamicResource ChartDesignerFieldHint}"
+                                                      ItemsSource="{Binding Options}" DisplayMemberPath="Label"
+                                                      SelectedItem="{Binding SelectedField}"/>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button Margin="0,8,0,0" HorizontalAlignment="Left"
+                                    Style="{DynamicResource FunctionButtonStyle}"
+                                    Background="{DynamicResource SecondaryBrush}"
+                                    Padding="8,2" Height="Auto"
+                                    Content="{DynamicResource ChartDesignerAddItem}"
+                                    Command="{Binding AddSortOptionCommand}"/>
+
+                            <TextBlock Text="{DynamicResource ChartDesignerDefaultSortLabel}"
+                                       FontSize="12" Margin="0,12,0,0"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <DockPanel Margin="0,4,0,8">
+                                <ToggleButton DockPanel.Dock="Right" Width="34" Height="26" Margin="8,0,0,0"
+                                              Style="{StaticResource FunctionToggleButtonStyle}"
+                                              IsChecked="{Binding IsDefaultSortDescending}">
+                                    <TextBlock FontSize="11">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="▲"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsDefaultSortDescending}" Value="True">
+                                                        <Setter Property="Text" Value="▼"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </ToggleButton>
+                                <ComboBox ItemsSource="{Binding DefaultSortOptions}" DisplayMemberPath="Label"
+                                          SelectedItem="{Binding SelectedDefaultSort}"/>
+                            </DockPanel>
+
+                        </StackPanel>
+                    </ScrollViewer>
                 </Grid>
             </Border>
         </Grid>

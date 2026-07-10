@@ -30,12 +30,14 @@ namespace FProductionDashBoard.Tests.ViewModels
         }
 
         private static ChartDesignerViewModel CreateDesigner(
-            ChartDefinition source, FakeStore store, Action<bool>? onClose = null, bool isNew = false)
+            ChartDefinition source, FakeStore store, Action<bool>? onClose = null, bool isNew = false,
+            Mock<IDialogService>? dialogMock = null)
         {
             var core = new DashboardCoreServices(
                 new LogService(), new Mock<IDataService>().Object,
                 new AuthorizationService(), new Mock<ICardReaderService>().Object);
-            return new ChartDesignerViewModel(source, isNew, store, core, onClose ?? (_ => { }));
+            var dialog = dialogMock ?? new Mock<IDialogService>();
+            return new ChartDesignerViewModel(source, isNew, store, core, dialog.Object, onClose ?? (_ => { }));
         }
 
         // --- deep-clone 隔離 ---
@@ -161,6 +163,200 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal(7, vm.PreviewTableColumns.Count);
             Assert.Equal(FieldCatalog.ScheduleStatus, vm.PreviewIndicatorFieldId);
             Assert.Equal(3, vm.PreviewRows.Count);
+        }
+
+        // --- C2：基本區 ---
+
+        [Fact]
+        public void ChartName_Edit_WritesNameAndClearsNameKey()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateScheduleBoard(), new FakeStore());
+
+            vm.ChartName = "我的看板";
+
+            Assert.Equal("我的看板", vm.WorkingDefinition.Name);
+            Assert.Null(vm.WorkingDefinition.NameKey);
+            Assert.Equal("我的看板", vm.DisplayName);
+        }
+
+        [Fact]
+        public void SortOrder_Edit_WritesThrough()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateScheduleBoard(), new FakeStore());
+
+            vm.SortOrder = 7;
+
+            Assert.Equal(7, vm.WorkingDefinition.SortOrder);
+        }
+
+        [Fact]
+        public void DataSetSwitch_Confirmed_ResetsSelections_AndPrefillsTitleField()
+        {
+            var dialog = new Mock<IDialogService>();
+            dialog.Setup(d => d.ShowConfirm(It.IsAny<string>())).Returns(true);
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore(),
+                dialogMock: dialog);
+
+            vm.SelectedDataSet = vm.DataSetOptions.First(o => o.Value == ChartDataSet.Schedule);
+
+            var def = vm.WorkingDefinition;
+            Assert.Equal(ChartDataSet.Schedule, def.DataSet);
+            Assert.Empty(def.StatRow.Items);
+            Assert.Empty(def.FilterRow.FilterFieldIds);
+            Assert.Empty(def.FilterRow.QuickButtons);
+            Assert.Empty(def.FilterRow.SortOptionFieldIds);
+            Assert.Equal("", def.FilterRow.DefaultSortFieldId);
+            Assert.Equal(FieldCatalog.ScheduleId, def.Container.Card.TitleFieldId);   // 新資料集第一欄
+            Assert.Empty(def.Container.Card.Chips);
+            Assert.Null(def.Container.Card.ProgressNumeratorFieldId);
+            Assert.Empty(def.Container.Table.ColumnFieldIds);
+            Assert.Empty(vm.StatItemEditors);
+            Assert.Equal(3, vm.PreviewRows.Count);   // 預覽改用排程樣本
+        }
+
+        [Fact]
+        public void DataSetSwitch_Declined_RevertsSelection_KeepsDefinition()
+        {
+            var dialog = new Mock<IDialogService>();
+            dialog.Setup(d => d.ShowConfirm(It.IsAny<string>())).Returns(false);
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore(),
+                dialogMock: dialog);
+
+            vm.SelectedDataSet = vm.DataSetOptions.First(o => o.Value == ChartDataSet.Schedule);
+
+            Assert.Equal(ChartDataSet.Equipment, vm.SelectedDataSet?.Value);   // 已還原
+            Assert.Equal(ChartDataSet.Equipment, vm.WorkingDefinition.DataSet);
+            Assert.NotEmpty(vm.WorkingDefinition.StatRow.Items);               // 定義未被重置
+        }
+
+        // --- C2：統計列 ---
+
+        [Fact]
+        public void AddStatItem_UpToLimit_ThenDisabled()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+            Assert.Equal(4, vm.StatItemEditors.Count);   // 種子 4 項
+
+            while (vm.CanAddStatItem)
+                vm.AddStatItemCommand.Execute(null);
+
+            Assert.Equal(ChartConstants.MaxStatItems, vm.StatItemEditors.Count);
+            Assert.Equal(ChartConstants.MaxStatItems, vm.WorkingDefinition.StatRow.Items.Count);
+            Assert.False(vm.AddStatItemCommand.CanExecute(null));
+
+            vm.RemoveStatItemCommand.Execute(vm.StatItemEditors[^1]);
+            Assert.True(vm.AddStatItemCommand.CanExecute(null));
+            Assert.Equal(ChartConstants.MaxStatItems - 1, vm.WorkingDefinition.StatRow.Items.Count);
+        }
+
+        [Fact]
+        public void StatItemEditor_LabelEdit_ClearsLabelKey()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+            var editor = vm.StatItemEditors[0];   // 種子第一項使用 LabelKey
+
+            editor.Label = "自訂標籤";
+
+            Assert.Equal("自訂標籤", editor.Config.Label);
+            Assert.Null(editor.Config.LabelKey);
+        }
+
+        [Fact]
+        public void StatItemEditor_SumAggregate_RestrictsToNumberFields()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+            var editor = vm.StatItemEditors[1];   // 生產狀態（Enum）計數項
+
+            editor.SelectedAggregate = editor.AggregateOptions.First(o => o.Value == ChartAggregateType.Sum);
+
+            Assert.All(editor.FieldOptions, o =>
+                Assert.Equal(ChartFieldType.Number,
+                    FieldCatalog.Find(ChartDataSet.Equipment, o.FieldId)!.Type));
+            Assert.Equal(ChartAggregateType.Sum, editor.Config.Aggregate);
+            // 原 Enum 欄位不在 Sum 選項內 → 自動落到第一個 Number 欄位
+            Assert.Contains(editor.FieldOptions, o => o.FieldId == editor.Config.FieldId);
+        }
+
+        [Fact]
+        public void StatRowToggle_Off_HidesPreviewStats()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+            Assert.True(vm.IsPreviewStatVisible);
+
+            vm.IsStatRowEnabled = false;
+
+            Assert.False(vm.WorkingDefinition.StatRow.Enabled);
+            Assert.False(vm.IsPreviewStatVisible);
+        }
+
+        // --- C2：篩選列三清單 ---
+
+        [Fact]
+        public void AddFilterField_UpToLimit_ThenDisabled_AndSyncsDefinition()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+            Assert.Equal(2, vm.FilterFieldEditors.Count);   // 種子 2 項
+
+            vm.AddFilterFieldCommand.Execute(null);
+
+            Assert.Equal(3, vm.FilterFieldEditors.Count);
+            Assert.Equal(3, vm.WorkingDefinition.FilterRow.FilterFieldIds.Count);
+            Assert.False(vm.AddFilterFieldCommand.CanExecute(null));
+
+            vm.RemoveFilterFieldCommand.Execute(vm.FilterFieldEditors[0]);
+            Assert.Equal(2, vm.WorkingDefinition.FilterRow.FilterFieldIds.Count);
+            Assert.True(vm.AddFilterFieldCommand.CanExecute(null));
+        }
+
+        [Fact]
+        public void QuickButtonEditor_FieldChange_ResetsValueToFirstOfNewField()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+            var editor = vm.QuickButtonEditors[0];   // 生產狀態=生產中
+
+            editor.SelectedField = editor.FieldOptions.First(o => o.FieldId == FieldCatalog.LoadLevel);
+
+            Assert.Equal(FieldCatalog.LoadLevel, editor.Config.FieldId);
+            Assert.Equal(FieldCatalog.ValLoadNone, editor.Config.Value);   // 新欄位第一個值
+            Assert.All(editor.ValueOptions, o => Assert.NotNull(o.Value)); // 快捷按鈕無「無」選項
+        }
+
+        [Fact]
+        public void AddQuickButton_UpToLimit_ThenDisabled()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+            Assert.Equal(4, vm.QuickButtonEditors.Count);   // 種子 4 顆
+
+            vm.AddQuickButtonCommand.Execute(null);
+
+            Assert.Equal(5, vm.QuickButtonEditors.Count);
+            Assert.Equal(5, vm.WorkingDefinition.FilterRow.QuickButtons.Count);
+            Assert.False(vm.AddQuickButtonCommand.CanExecute(null));
+        }
+
+        [Fact]
+        public void RemoveSortOption_ThatIsDefaultSort_FallsBackToTitle()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+            // 種子預設排序＝設備名稱
+            Assert.Equal(FieldCatalog.EquipmentName, vm.SelectedDefaultSort?.FieldId);
+
+            var target = vm.SortOptionEditors.First(e => e.SelectedField?.FieldId == FieldCatalog.EquipmentName);
+            vm.RemoveSortOptionCommand.Execute(target);
+
+            Assert.Equal("", vm.WorkingDefinition.FilterRow.DefaultSortFieldId);   // 落回主名稱
+            Assert.Equal("", vm.SelectedDefaultSort?.FieldId);
+            Assert.Equal(2, vm.WorkingDefinition.FilterRow.SortOptionFieldIds.Count);
+        }
+
+        [Fact]
+        public void DefaultSortDirection_Toggle_WritesThrough()
+        {
+            var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
+
+            vm.IsDefaultSortDescending = true;
+
+            Assert.Equal(ChartSortDirection.Descending, vm.WorkingDefinition.FilterRow.DefaultSortDirection);
         }
     }
 }

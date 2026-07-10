@@ -819,4 +819,28 @@
   <data name="ChartDesignerSanitizedNotice" xml:space="preserve">
     <value>Automatically removed {0} invalid field reference(s)</value>
   </data>
+  <data name="ChartDataSetEquipment" xml:space="preserve">
+    <value>Equipment View</value>
+  </data>
+  <data name="ChartDataSetSchedule" xml:space="preserve">
+    <value>Schedule View</value>
+  </data>
+  <data name="ChartDataSetSwitchConfirm" xml:space="preserve">
+    <value>Switching the data source will reset the selected field settings. Continue?</value>
+  </data>
+  <data name="ChartAggregateCount" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="ChartAggregateSum" xml:space="preserve">
+    <value>Sum</value>
+  </data>
+  <data name="ChartStatFieldAllRows" xml:space="preserve">
+    <value>All (row count)</value>
+  </data>
+  <data name="ChartFilterValueNone" xml:space="preserve">
+    <value>(None)</value>
+  </data>
+  <data name="ChartDefaultSortByTitle" xml:space="preserve">
+    <value>(Title)</value>
+  </data>
 </root>

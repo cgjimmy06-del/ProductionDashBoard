@@ -31,7 +31,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             var store = new JsonChartDefinitionStore(
                 _ => definitions ?? new List<ChartDefinition>(),
                 (_, _) => { });
-            return new ChartViewModel(core, store);
+            return new ChartViewModel(core, store, new Mock<IDialogService>().Object);
         }
 
         private static Equipment MakeEquipment(int id, string name)

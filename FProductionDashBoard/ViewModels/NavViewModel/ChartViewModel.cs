@@ -22,6 +22,7 @@ namespace FProductionDashBoard.ViewModels
     {
         private readonly DashboardCoreServices _core;
         private readonly IChartDefinitionStore _store;
+        private readonly IDialogService _dialog;
 
         private List<Schedule> _schedules = new();
         private List<OrderProductionInfo> _orders = new();
@@ -66,10 +67,11 @@ namespace FProductionDashBoard.ViewModels
         /// <summary>重建/恢復預設期間抑制逐項刷新，結束後一次套用</summary>
         private bool _suppressRefresh;
 
-        public ChartViewModel(DashboardCoreServices core, IChartDefinitionStore store)
+        public ChartViewModel(DashboardCoreServices core, IChartDefinitionStore store, IDialogService dialog)
         {
             _core = core;
             _store = store;
+            _dialog = dialog;
             RowsView = CollectionViewSource.GetDefaultView(_rows);
             RowsView.Filter = FilterRow;
 
@@ -511,7 +513,7 @@ namespace FProductionDashBoard.ViewModels
 
         private void OpenDesigner(ChartDefinition source, bool isNew)
         {
-            Designer = new ChartDesignerViewModel(source, isNew, _store, _core, OnDesignerClosed);
+            Designer = new ChartDesignerViewModel(source, isNew, _store, _core, _dialog, OnDesignerClosed);
             IsDesignerOpen = true;
         }
 

@@ -564,6 +564,23 @@
     <sys:String x:Key="ChartDesignerFrameworkPreview">Layout Preview</sys:String>
     <sys:String x:Key="ChartDesignerSamplePreview">Component Sample</sys:String>
     <sys:String x:Key="ChartDesignerOptionsTitle">Edit Options</sys:String>
+    <sys:String x:Key="ChartDesignerBasicSection">Basic</sys:String>
+    <sys:String x:Key="ChartDesignerNameLabel">Chart name</sys:String>
+    <sys:String x:Key="ChartDesignerSortOrderLabel">Sort order</sys:String>
+    <sys:String x:Key="ChartDesignerDataSetLabel">Data source</sys:String>
+    <sys:String x:Key="ChartDesignerStatSection">Stat Row</sys:String>
+    <sys:String x:Key="ChartDesignerFilterSection">Filter Row</sys:String>
+    <sys:String x:Key="ChartDesignerFilterFieldsLabel">Filter fields (max 3)</sys:String>
+    <sys:String x:Key="ChartDesignerQuickButtonsLabel">Quick buttons (max 5)</sys:String>
+    <sys:String x:Key="ChartDesignerSortOptionsLabel">Sort options (max 5)</sys:String>
+    <sys:String x:Key="ChartDesignerDefaultSortLabel">Default sort</sys:String>
+    <sys:String x:Key="ChartDesignerAddItem">+ Add</sys:String>
+    <sys:String x:Key="ChartDesignerRemoveTooltip">Remove</sys:String>
+    <sys:String x:Key="ChartDesignerAggregateHint">Aggregate</sys:String>
+    <sys:String x:Key="ChartDesignerFieldHint">Field</sys:String>
+    <sys:String x:Key="ChartDesignerValueHint">Value</sys:String>
+    <sys:String x:Key="ChartDesignerLabelHint">Label</sys:String>
+    <sys:String x:Key="ChartDesignerOptionalLabelHint">Custom label (optional)</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>
