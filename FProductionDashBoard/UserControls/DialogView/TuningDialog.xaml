@@ -74,7 +74,55 @@
                     </Style>
                 </Button.Style>
             </Button>
+            <!-- 強制安排（僅 Setting 權限可見；反色＝開啟） -->
+            <Button Content="{DynamicResource TuningForceArrangeToggle}"
+                    Command="{Binding ToggleForceArrangeCommand}"
+                    Visibility="{Binding CanForceArrange, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Margin="20,0" Width="100">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsForceArrange}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ButtonWarningBrush}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
         </StackPanel>
+
+        <!-- 強制安排篩選列（僅開啟時顯示） -->
+        <Grid Margin="0,0,0,10"
+              Visibility="{Binding IsForceArrange, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="130"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Margin="0,0,8,0"
+                     materialDesign:HintAssist.Hint="{DynamicResource TuningFilterKeyword}"
+                     Text="{Binding KeywordFilter, UpdateSourceTrigger=PropertyChanged}"/>
+            <ComboBox Grid.Column="1"
+                      ItemsSource="{Binding TuningTypeFilterOptions}"
+                      SelectedValue="{Binding StatusFilter}"
+                      SelectedValuePath="Value">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding Value, Converter={StaticResource TuningTypeToLabelConverter}}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
+                                            <Setter Property="Text" Value="{DynamicResource PioFilterStatusAll}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </Grid>
 
         <!-- 品項選擇清單 -->
         <ListBox ItemsSource="{Binding FilteredEquipmentProducts}"
@@ -85,9 +133,16 @@
                  Margin="0,0,0,10">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding DisplayLabel}"
-                               Foreground="{DynamicResource TextPrimaryBrush}"
-                               FontSize="16" Padding="4,2"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding DisplayLabel}"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   FontSize="16" Padding="4,2"/>
+                        <!-- 強制安排模式顯示各品項當前狀態 -->
+                        <TextBlock Text="{Binding ProductionStatus, Converter={StaticResource TuningTypeToLabelConverter}, StringFormat='({0})'}"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                   FontSize="14" Padding="0,2" VerticalAlignment="Center"
+                                   Visibility="{Binding DataContext.IsForceArrange, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

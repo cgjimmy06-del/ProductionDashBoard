@@ -12,10 +12,10 @@ namespace FProductionDashBoard.Tests.ViewModels
 
         private static List<EquipmentProductItem> MakeItems() =>
         [
-            new() { EquipmentProductId = 1, SeqNo = 1, DisplayLabel = "#1 PartA_M1 · 加工", ProductionStatus = TuningType.Teaching },
-            new() { EquipmentProductId = 2, SeqNo = 2, DisplayLabel = "#2 PartA_M2 · 加工", ProductionStatus = TuningType.Offset },
-            new() { EquipmentProductId = 3, SeqNo = 3, DisplayLabel = "#3 PartB_M1 · 組裝", ProductionStatus = TuningType.Teaching },
-            new() { EquipmentProductId = 4, SeqNo = 4, DisplayLabel = "#4 PartB_M2 · 組裝", ProductionStatus = TuningType.Feasible },
+            new() { EquipmentProductId = 1, SeqNo = 1, DisplayLabel = "#1 PartA_M1 · 加工", ProductionStatus = TuningType.Teaching, Brand = "ACME", PartNo = "PA-001", Model = "M1", Process = "加工" },
+            new() { EquipmentProductId = 2, SeqNo = 2, DisplayLabel = "#2 PartA_M2 · 加工", ProductionStatus = TuningType.Offset,   Brand = "ACME", PartNo = "PA-002", Model = "M2", Process = "加工" },
+            new() { EquipmentProductId = 3, SeqNo = 3, DisplayLabel = "#3 PartB_M1 · 組裝", ProductionStatus = TuningType.Teaching, Brand = "TC",   PartNo = "PB-001", Model = "M1", Process = "組裝" },
+            new() { EquipmentProductId = 4, SeqNo = 4, DisplayLabel = "#4 PartB_M2 · 組裝", ProductionStatus = TuningType.Feasible, Brand = "TC",   PartNo = "PB-002", Model = "M2", Process = "組裝" },
         ];
 
         private static List<UserInfo> MakeEmployees() =>
@@ -272,6 +272,88 @@ namespace FProductionDashBoard.Tests.ViewModels
         {
             Assert.False(Create(canForceArrange: false).CanForceArrange);
             Assert.True(Create(canForceArrange: true).CanForceArrange);
+        }
+
+        // ─── ForceArrange（強制安排模式）─────────────────────────────────────
+
+        [Fact]
+        public void ForceArrange_On_ShowsAllItems()
+        {
+            var vm = Create(canForceArrange: true);
+            vm.ToggleForceArrangeCommand.Execute(null);
+            Assert.True(vm.IsForceArrange);
+            Assert.Equal(4, vm.FilteredEquipmentProducts.Count);
+        }
+
+        [Fact]
+        public void ForceArrange_Off_RestoresModeFiltering()
+        {
+            var vm = Create(canForceArrange: true);
+            vm.ToggleForceArrangeCommand.Execute(null);
+            vm.ToggleForceArrangeCommand.Execute(null);
+            Assert.False(vm.IsForceArrange);
+            Assert.Equal(2, vm.FilteredEquipmentProducts.Count);
+            Assert.All(vm.FilteredEquipmentProducts, i => Assert.Equal(TuningType.Teaching, i.ProductionStatus));
+        }
+
+        [Theory]
+        [InlineData("acme", new[] { 1, 2 })]   // Brand（不分大小寫）
+        [InlineData("PB-", new[] { 3, 4 })]    // PartNo
+        [InlineData("M1", new[] { 1, 3 })]     // Model
+        [InlineData("組裝", new[] { 3, 4 })]   // Process
+        public void ForceArrange_KeywordFilter_MatchesAnyField(string keyword, int[] expectedIds)
+        {
+            var vm = Create(canForceArrange: true);
+            vm.ToggleForceArrangeCommand.Execute(null);
+            vm.KeywordFilter = keyword;
+            Assert.Equal(expectedIds, vm.FilteredEquipmentProducts.Select(i => i.EquipmentProductId).ToArray());
+        }
+
+        [Fact]
+        public void ForceArrange_StatusFilter_FiltersByStatus()
+        {
+            var vm = Create(canForceArrange: true);
+            vm.ToggleForceArrangeCommand.Execute(null);
+            vm.StatusFilter = TuningType.Feasible;
+            Assert.Single(vm.FilteredEquipmentProducts);
+            Assert.Equal(4, vm.FilteredEquipmentProducts[0].EquipmentProductId);
+        }
+
+        [Fact]
+        public void ForceArrange_KeywordAndStatus_Combined()
+        {
+            var vm = Create(canForceArrange: true);
+            vm.ToggleForceArrangeCommand.Execute(null);
+            vm.KeywordFilter = "TC";
+            vm.StatusFilter = TuningType.Teaching;
+            Assert.Single(vm.FilteredEquipmentProducts);
+            Assert.Equal(3, vm.FilteredEquipmentProducts[0].EquipmentProductId);
+        }
+
+        [Fact]
+        public void ForceArrange_ModeSwitch_KeepsListAndSelection()
+        {
+            var vm = Create(canForceArrange: true);
+            vm.ToggleForceArrangeCommand.Execute(null);
+            var item = vm.FilteredEquipmentProducts.First(i => i.EquipmentProductId == 4); // Feasible
+            vm.SelectedEquipmentProduct = item;
+            vm.OffsetCommand.Execute(null); // 強制模式下切換模式不影響清單與選取
+            Assert.Equal(4, vm.FilteredEquipmentProducts.Count);
+            Assert.Same(item, vm.SelectedEquipmentProduct);
+        }
+
+        [Fact]
+        public void ForceArrange_Confirm_OutputsIsForceArrangeAndMode()
+        {
+            var vm = Create(canForceArrange: true);
+            vm.ToggleForceArrangeCommand.Execute(null);
+            vm.OffsetCommand.Execute(null);
+            vm.SelectedEquipmentProduct = vm.FilteredEquipmentProducts.First(i => i.EquipmentProductId == 4);
+            vm.ConfirmCommand.Execute(null);
+            Assert.NotNull(vm.Result);
+            Assert.True(vm.Result!.IsForceArrange);
+            Assert.Equal(TuningType.Offset, vm.Result.TuningType);
+            Assert.Equal(4, vm.Result.EquipmentProductId);
         }
     }
 }

@@ -39,6 +39,11 @@ namespace FProductionDashBoard.ViewModels
         public int SeqNo { get; set; }
         public string DisplayLabel { get; set; } = string.Empty;
         public TuningType ProductionStatus { get; set; }
+        // 供 TuningDialog 強制安排模式綜合搜尋用的分欄
+        public string Brand { get; set; } = string.Empty;
+        public string PartNo { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
+        public string Process { get; set; } = string.Empty;
     }
 
     public partial class SopChecklistDisplayItem : ObservableObject

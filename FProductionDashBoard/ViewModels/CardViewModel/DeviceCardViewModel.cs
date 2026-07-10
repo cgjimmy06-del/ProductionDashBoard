@@ -506,7 +506,11 @@ namespace FProductionDashBoard.ViewModels
                     SopId = ep.SopId,
                     SeqNo = ep.SeqNo,
                     DisplayLabel = BuildTuningProductLabel(ep),
-                    ProductionStatus = ep.ProductionStatus
+                    ProductionStatus = ep.ProductionStatus,
+                    Brand = ep.Sop?.Product?.Part?.Brand ?? string.Empty,
+                    PartNo = ep.Sop?.Product?.Part?.PartNo ?? string.Empty,
+                    Model = ep.Sop?.Product?.Model?.Name ?? string.Empty,
+                    Process = ep.Sop?.Process?.Name ?? string.Empty
                 })
                 .ToList();
 
@@ -542,6 +546,10 @@ namespace FProductionDashBoard.ViewModels
                 _activeTuningManagedByEmployee = CurrentUser;
                 TuningUserName = executor.Name;
                 TuningProductLabel = items.FirstOrDefault(i => i.EquipmentProductId == result.EquipmentProductId)?.DisplayLabel ?? string.Empty;
+
+                // 強制安排屬敏感操作（同交易改品項狀態），明確留痕
+                if (result.IsForceArrange)
+                    _core.Log.AddLog($"[{Info.Name}] 已強制安排調試（{TuningProductLabel}）", LogLevel.Warning);
             }
             catch (Exception ex)
             {

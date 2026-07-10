@@ -39,8 +39,15 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string employeeFilterText = string.Empty;
         [ObservableProperty] private string teachedUserName = LastTeachingPlaceholder;
 
+        // 強制安排：跨程式當前狀態挑選任一程式（僅 Setting 權限可用）
+        [ObservableProperty] private bool isForceArrange;
+        [ObservableProperty] private string keywordFilter = string.Empty;
+        [ObservableProperty] private TuningType? statusFilter;
+        public IReadOnlyList<TuningTypeFilterOption> TuningTypeFilterOptions { get; }
+
         public ICommand TeachingCommand { get; }
         public ICommand OffsetCommand { get; }
+        public ICommand ToggleForceArrangeCommand { get; }
 
         public TuningDialogViewModel(
             string device,
@@ -59,8 +66,13 @@ namespace FProductionDashBoard.ViewModels
             _lastTeachingMap = lastTeachingMap;
             CanForceArrange = canForceArrange;
 
+            TuningTypeFilterOptions = new TuningTypeFilterOption[] { new(null) }
+                .Concat(Enum.GetValues<TuningType>().Select(t => new TuningTypeFilterOption(t)))
+                .ToArray();
+
             TeachingCommand = new RelayCommand(SelectTeaching);
             OffsetCommand = new RelayCommand(SelectOffset);
+            ToggleForceArrangeCommand = new RelayCommand(() => IsForceArrange = !IsForceArrange);
             ConfirmCommand = new RelayCommand(() => OnConfirm(),
                 () => SelectedEquipmentProduct != null && SelectedEmployee != null);
 
@@ -89,15 +101,54 @@ namespace FProductionDashBoard.ViewModels
 
         partial void OnEmployeeFilterTextChanged(string value) => RefilterEmployees();
 
+        partial void OnIsForceArrangeChanged(bool value) => RefilterProducts();
+
+        partial void OnKeywordFilterChanged(string value)
+        {
+            if (IsForceArrange) RefilterProducts();
+        }
+
+        partial void OnStatusFilterChanged(TuningType? value)
+        {
+            if (IsForceArrange) RefilterProducts();
+        }
+
         private void RefilterProducts()
         {
+            var previous = SelectedEquipmentProduct;
             SelectedEquipmentProduct = null;
             FilteredEquipmentProducts.Clear();
-            var targetStatus = TuningMode == (int)TuningType.Teaching
-                ? TuningType.Teaching
-                : TuningType.Offset;
-            foreach (var item in _allItems.Where(i => i.ProductionStatus == targetStatus))
+
+            IEnumerable<EquipmentProductItem> source;
+            if (IsForceArrange)
+            {
+                // 強制安排：列全部品項，套關鍵字（廠牌/件號/型號/工序）與狀態篩選；
+                // 帶點/調品質按鈕此時只決定確認後的目標狀態，不影響清單
+                source = _allItems;
+                var kw = KeywordFilter?.Trim() ?? string.Empty;
+                if (kw.Length > 0)
+                    source = source.Where(i =>
+                        i.Brand.Contains(kw, StringComparison.OrdinalIgnoreCase)
+                        || i.PartNo.Contains(kw, StringComparison.OrdinalIgnoreCase)
+                        || i.Model.Contains(kw, StringComparison.OrdinalIgnoreCase)
+                        || i.Process.Contains(kw, StringComparison.OrdinalIgnoreCase));
+                if (StatusFilter != null)
+                    source = source.Where(i => i.ProductionStatus == StatusFilter);
+            }
+            else
+            {
+                var targetStatus = TuningMode == (int)TuningType.Teaching
+                    ? TuningType.Teaching
+                    : TuningType.Offset;
+                source = _allItems.Where(i => i.ProductionStatus == targetStatus);
+            }
+
+            foreach (var item in source)
                 FilteredEquipmentProducts.Add(item);
+
+            // 原選取仍在結果內則保留（比照執行人員篩選行為）
+            if (previous != null && FilteredEquipmentProducts.Contains(previous))
+                SelectedEquipmentProduct = previous;
         }
 
         private void RefilterEmployees()
@@ -128,7 +179,7 @@ namespace FProductionDashBoard.ViewModels
                 TuningType = (TuningType)TuningMode,
                 EquipmentProductId = SelectedEquipmentProduct.EquipmentProductId,
                 StartedBy = SelectedEmployee.Id,
-                IsForceArrange = false
+                IsForceArrange = IsForceArrange
             };
             base.OnConfirm();
         }

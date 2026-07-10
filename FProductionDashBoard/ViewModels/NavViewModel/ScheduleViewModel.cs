@@ -636,7 +636,11 @@ namespace FProductionDashBoard.ViewModels
                     SopId              = ep.SopId,
                     SeqNo              = ep.SeqNo,
                     DisplayLabel       = BuildTuningProductLabel(ep),
-                    ProductionStatus   = ep.ProductionStatus
+                    ProductionStatus   = ep.ProductionStatus,
+                    Brand              = ep.Sop?.Product?.Part?.Brand ?? string.Empty,
+                    PartNo             = ep.Sop?.Product?.Part?.PartNo ?? string.Empty,
+                    Model              = ep.Sop?.Product?.Model?.Name ?? string.Empty,
+                    Process            = ep.Sop?.Process?.Name ?? string.Empty
                 })
                 .ToList();
 
@@ -662,7 +666,10 @@ namespace FProductionDashBoard.ViewModels
                 await _core.Data.StartProgramTuningAsync(
                     card.EquipmentId, result.EquipmentProductId, result.TuningType,
                     result.StartedBy, currentUser.Id, DateTime.Now, forceArrange: result.IsForceArrange);
-                _core.Log.AddLog($"[{card.Name}] 調試已安排", LogLevel.Info);
+                if (result.IsForceArrange)
+                    _core.Log.AddLog($"[{card.Name}] 已強制安排調試", LogLevel.Warning);
+                else
+                    _core.Log.AddLog($"[{card.Name}] 調試已安排", LogLevel.Info);
                 await LoadAllAsync();
             }
             catch (Exception ex)
