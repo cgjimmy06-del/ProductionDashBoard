@@ -666,4 +666,151 @@
   <data name="MesSyncState_DataMismatch" xml:space="preserve">
     <value>Data Mismatch</value>
   </data>
+  <data name="ChartFieldEquipmentName" xml:space="preserve">
+    <value>Equipment Name</value>
+  </data>
+  <data name="ChartFieldProductionStatus" xml:space="preserve">
+    <value>Production Status</value>
+  </data>
+  <data name="ChartFieldLoadLevel" xml:space="preserve">
+    <value>Load Level</value>
+  </data>
+  <data name="ChartFieldTuningStatus" xml:space="preserve">
+    <value>Tuning Status</value>
+  </data>
+  <data name="ChartFieldActiveOrderCount" xml:space="preserve">
+    <value>Active Orders</value>
+  </data>
+  <data name="ChartFieldTotalPendingQty" xml:space="preserve">
+    <value>Pending Qty</value>
+  </data>
+  <data name="ChartFieldFeasibleProgramCount" xml:space="preserve">
+    <value>Feasible Programs</value>
+  </data>
+  <data name="ChartFieldTotalProgramCount" xml:space="preserve">
+    <value>Total Programs</value>
+  </data>
+  <data name="ChartFieldCurrentProduct" xml:space="preserve">
+    <value>Current Product</value>
+  </data>
+  <data name="ChartFieldProgressCompleted" xml:space="preserve">
+    <value>Completed Qty</value>
+  </data>
+  <data name="ChartFieldProgressTarget" xml:space="preserve">
+    <value>Target Qty</value>
+  </data>
+  <data name="ChartFieldScheduleId" xml:space="preserve">
+    <value>Schedule No.</value>
+  </data>
+  <data name="ChartFieldBrand" xml:space="preserve">
+    <value>Brand</value>
+  </data>
+  <data name="ChartFieldPartNo" xml:space="preserve">
+    <value>Part No.</value>
+  </data>
+  <data name="ChartFieldModel" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="ChartFieldProcess" xml:space="preserve">
+    <value>Process</value>
+  </data>
+  <data name="ChartFieldQuantity" xml:space="preserve">
+    <value>Quantity</value>
+  </data>
+  <data name="ChartFieldActualQuantity" xml:space="preserve">
+    <value>Actual Qty</value>
+  </data>
+  <data name="ChartFieldStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ChartFieldSopType" xml:space="preserve">
+    <value>SOP Type</value>
+  </data>
+  <data name="ChartFieldReceivedAt" xml:space="preserve">
+    <value>Received Date</value>
+  </data>
+  <data name="ChartFieldWaitingDays" xml:space="preserve">
+    <value>Waiting Days</value>
+  </data>
+  <data name="ChartFieldActiveEquipmentCount" xml:space="preserve">
+    <value>Active Equipments</value>
+  </data>
+  <data name="ChartValInProduction" xml:space="preserve">
+    <value>In Production</value>
+  </data>
+  <data name="ChartValPendingProd" xml:space="preserve">
+    <value>Pending Production</value>
+  </data>
+  <data name="ChartValIdle" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="ChartValUnavailable" xml:space="preserve">
+    <value>Unavailable</value>
+  </data>
+  <data name="ChartValLoadNone" xml:space="preserve">
+    <value>No Load</value>
+  </data>
+  <data name="ChartValLoadLow" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="ChartValLoadMid" xml:space="preserve">
+    <value>Mid</value>
+  </data>
+  <data name="ChartValLoadHigh" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="ChartValTuningNone" xml:space="preserve">
+    <value>Not Tuning</value>
+  </data>
+  <data name="ChartValTuningActive" xml:space="preserve">
+    <value>Tuning</value>
+  </data>
+  <data name="ChartValSchPending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="ChartValSchScheduled" xml:space="preserve">
+    <value>Scheduled</value>
+  </data>
+  <data name="ChartValSchCompleted" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="ChartValSchReleased" xml:space="preserve">
+    <value>Released</value>
+  </data>
+  <data name="ChartValSchCancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="ChartValSopDevelop" xml:space="preserve">
+    <value>Develop</value>
+  </data>
+  <data name="ChartValSopOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="ChartValSopClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ChartValSopACME" xml:space="preserve">
+    <value>ACME</value>
+  </data>
+  <data name="ChartValSopTC" xml:space="preserve">
+    <value>TC</value>
+  </data>
+  <data name="ChartValSopOther" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="ChartDefaultEquipmentOverview" xml:space="preserve">
+    <value>Equipment Overview</value>
+  </data>
+  <data name="ChartDefaultScheduleBoard" xml:space="preserve">
+    <value>Schedule Board</value>
+  </data>
+  <data name="ChartStatEquipmentTotal" xml:space="preserve">
+    <value>Total Equipments</value>
+  </data>
+  <data name="ChartStatScheduleTotal" xml:space="preserve">
+    <value>Total Schedules</value>
+  </data>
+  <data name="ChartBtnHighLoad" xml:space="preserve">
+    <value>High Load</value>
+  </data>
 </root>

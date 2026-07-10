@@ -621,4 +621,151 @@
   <data name="MesSyncState_DataMismatch" xml:space="preserve">
     <value>資料不一致</value>
   </data>
+  <data name="ChartFieldEquipmentName" xml:space="preserve">
+    <value>設備名稱</value>
+  </data>
+  <data name="ChartFieldProductionStatus" xml:space="preserve">
+    <value>生產狀態</value>
+  </data>
+  <data name="ChartFieldLoadLevel" xml:space="preserve">
+    <value>負載狀態</value>
+  </data>
+  <data name="ChartFieldTuningStatus" xml:space="preserve">
+    <value>調試狀態</value>
+  </data>
+  <data name="ChartFieldActiveOrderCount" xml:space="preserve">
+    <value>接單數</value>
+  </data>
+  <data name="ChartFieldTotalPendingQty" xml:space="preserve">
+    <value>待生產量</value>
+  </data>
+  <data name="ChartFieldFeasibleProgramCount" xml:space="preserve">
+    <value>可生產程式數</value>
+  </data>
+  <data name="ChartFieldTotalProgramCount" xml:space="preserve">
+    <value>程式總數</value>
+  </data>
+  <data name="ChartFieldCurrentProduct" xml:space="preserve">
+    <value>目前品項</value>
+  </data>
+  <data name="ChartFieldProgressCompleted" xml:space="preserve">
+    <value>完成數</value>
+  </data>
+  <data name="ChartFieldProgressTarget" xml:space="preserve">
+    <value>目標數</value>
+  </data>
+  <data name="ChartFieldScheduleId" xml:space="preserve">
+    <value>單號</value>
+  </data>
+  <data name="ChartFieldBrand" xml:space="preserve">
+    <value>品牌</value>
+  </data>
+  <data name="ChartFieldPartNo" xml:space="preserve">
+    <value>品號</value>
+  </data>
+  <data name="ChartFieldModel" xml:space="preserve">
+    <value>型號</value>
+  </data>
+  <data name="ChartFieldProcess" xml:space="preserve">
+    <value>工序</value>
+  </data>
+  <data name="ChartFieldQuantity" xml:space="preserve">
+    <value>數量</value>
+  </data>
+  <data name="ChartFieldActualQuantity" xml:space="preserve">
+    <value>實排量</value>
+  </data>
+  <data name="ChartFieldStatus" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="ChartFieldSopType" xml:space="preserve">
+    <value>SOP 類型</value>
+  </data>
+  <data name="ChartFieldReceivedAt" xml:space="preserve">
+    <value>接單日期</value>
+  </data>
+  <data name="ChartFieldWaitingDays" xml:space="preserve">
+    <value>等待天數</value>
+  </data>
+  <data name="ChartFieldActiveEquipmentCount" xml:space="preserve">
+    <value>進行中設備數</value>
+  </data>
+  <data name="ChartValInProduction" xml:space="preserve">
+    <value>生產中</value>
+  </data>
+  <data name="ChartValPendingProd" xml:space="preserve">
+    <value>待生產</value>
+  </data>
+  <data name="ChartValIdle" xml:space="preserve">
+    <value>閒置</value>
+  </data>
+  <data name="ChartValUnavailable" xml:space="preserve">
+    <value>無可生產</value>
+  </data>
+  <data name="ChartValLoadNone" xml:space="preserve">
+    <value>無負載</value>
+  </data>
+  <data name="ChartValLoadLow" xml:space="preserve">
+    <value>低</value>
+  </data>
+  <data name="ChartValLoadMid" xml:space="preserve">
+    <value>中</value>
+  </data>
+  <data name="ChartValLoadHigh" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="ChartValTuningNone" xml:space="preserve">
+    <value>未調試</value>
+  </data>
+  <data name="ChartValTuningActive" xml:space="preserve">
+    <value>調試中</value>
+  </data>
+  <data name="ChartValSchPending" xml:space="preserve">
+    <value>待排單</value>
+  </data>
+  <data name="ChartValSchScheduled" xml:space="preserve">
+    <value>已排單</value>
+  </data>
+  <data name="ChartValSchCompleted" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+  <data name="ChartValSchReleased" xml:space="preserve">
+    <value>已放行</value>
+  </data>
+  <data name="ChartValSchCancelled" xml:space="preserve">
+    <value>已取消</value>
+  </data>
+  <data name="ChartValSopDevelop" xml:space="preserve">
+    <value>開發</value>
+  </data>
+  <data name="ChartValSopOpen" xml:space="preserve">
+    <value>開放式</value>
+  </data>
+  <data name="ChartValSopClose" xml:space="preserve">
+    <value>箱體式</value>
+  </data>
+  <data name="ChartValSopACME" xml:space="preserve">
+    <value>ACME</value>
+  </data>
+  <data name="ChartValSopTC" xml:space="preserve">
+    <value>TC</value>
+  </data>
+  <data name="ChartValSopOther" xml:space="preserve">
+    <value>其他</value>
+  </data>
+  <data name="ChartDefaultEquipmentOverview" xml:space="preserve">
+    <value>設備總覽</value>
+  </data>
+  <data name="ChartDefaultScheduleBoard" xml:space="preserve">
+    <value>排程看板</value>
+  </data>
+  <data name="ChartStatEquipmentTotal" xml:space="preserve">
+    <value>設備總數</value>
+  </data>
+  <data name="ChartStatScheduleTotal" xml:space="preserve">
+    <value>全部排單</value>
+  </data>
+  <data name="ChartBtnHighLoad" xml:space="preserve">
+    <value>高負載</value>
+  </data>
 </root>

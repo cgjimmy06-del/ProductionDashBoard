@@ -1283,5 +1283,201 @@ namespace FProductionDashBoard.Properties {
         internal static string MesSyncState_DataMismatch {
             get { return ResourceManager.GetString("MesSyncState_DataMismatch", resourceCulture); }
         }
+
+        internal static string ChartFieldEquipmentName {
+            get { return ResourceManager.GetString("ChartFieldEquipmentName", resourceCulture); }
+        }
+
+        internal static string ChartFieldProductionStatus {
+            get { return ResourceManager.GetString("ChartFieldProductionStatus", resourceCulture); }
+        }
+
+        internal static string ChartFieldLoadLevel {
+            get { return ResourceManager.GetString("ChartFieldLoadLevel", resourceCulture); }
+        }
+
+        internal static string ChartFieldTuningStatus {
+            get { return ResourceManager.GetString("ChartFieldTuningStatus", resourceCulture); }
+        }
+
+        internal static string ChartFieldActiveOrderCount {
+            get { return ResourceManager.GetString("ChartFieldActiveOrderCount", resourceCulture); }
+        }
+
+        internal static string ChartFieldTotalPendingQty {
+            get { return ResourceManager.GetString("ChartFieldTotalPendingQty", resourceCulture); }
+        }
+
+        internal static string ChartFieldFeasibleProgramCount {
+            get { return ResourceManager.GetString("ChartFieldFeasibleProgramCount", resourceCulture); }
+        }
+
+        internal static string ChartFieldTotalProgramCount {
+            get { return ResourceManager.GetString("ChartFieldTotalProgramCount", resourceCulture); }
+        }
+
+        internal static string ChartFieldCurrentProduct {
+            get { return ResourceManager.GetString("ChartFieldCurrentProduct", resourceCulture); }
+        }
+
+        internal static string ChartFieldProgressCompleted {
+            get { return ResourceManager.GetString("ChartFieldProgressCompleted", resourceCulture); }
+        }
+
+        internal static string ChartFieldProgressTarget {
+            get { return ResourceManager.GetString("ChartFieldProgressTarget", resourceCulture); }
+        }
+
+        internal static string ChartFieldScheduleId {
+            get { return ResourceManager.GetString("ChartFieldScheduleId", resourceCulture); }
+        }
+
+        internal static string ChartFieldBrand {
+            get { return ResourceManager.GetString("ChartFieldBrand", resourceCulture); }
+        }
+
+        internal static string ChartFieldPartNo {
+            get { return ResourceManager.GetString("ChartFieldPartNo", resourceCulture); }
+        }
+
+        internal static string ChartFieldModel {
+            get { return ResourceManager.GetString("ChartFieldModel", resourceCulture); }
+        }
+
+        internal static string ChartFieldProcess {
+            get { return ResourceManager.GetString("ChartFieldProcess", resourceCulture); }
+        }
+
+        internal static string ChartFieldQuantity {
+            get { return ResourceManager.GetString("ChartFieldQuantity", resourceCulture); }
+        }
+
+        internal static string ChartFieldActualQuantity {
+            get { return ResourceManager.GetString("ChartFieldActualQuantity", resourceCulture); }
+        }
+
+        internal static string ChartFieldStatus {
+            get { return ResourceManager.GetString("ChartFieldStatus", resourceCulture); }
+        }
+
+        internal static string ChartFieldSopType {
+            get { return ResourceManager.GetString("ChartFieldSopType", resourceCulture); }
+        }
+
+        internal static string ChartFieldReceivedAt {
+            get { return ResourceManager.GetString("ChartFieldReceivedAt", resourceCulture); }
+        }
+
+        internal static string ChartFieldWaitingDays {
+            get { return ResourceManager.GetString("ChartFieldWaitingDays", resourceCulture); }
+        }
+
+        internal static string ChartFieldActiveEquipmentCount {
+            get { return ResourceManager.GetString("ChartFieldActiveEquipmentCount", resourceCulture); }
+        }
+
+        internal static string ChartValInProduction {
+            get { return ResourceManager.GetString("ChartValInProduction", resourceCulture); }
+        }
+
+        internal static string ChartValPendingProd {
+            get { return ResourceManager.GetString("ChartValPendingProd", resourceCulture); }
+        }
+
+        internal static string ChartValIdle {
+            get { return ResourceManager.GetString("ChartValIdle", resourceCulture); }
+        }
+
+        internal static string ChartValUnavailable {
+            get { return ResourceManager.GetString("ChartValUnavailable", resourceCulture); }
+        }
+
+        internal static string ChartValLoadNone {
+            get { return ResourceManager.GetString("ChartValLoadNone", resourceCulture); }
+        }
+
+        internal static string ChartValLoadLow {
+            get { return ResourceManager.GetString("ChartValLoadLow", resourceCulture); }
+        }
+
+        internal static string ChartValLoadMid {
+            get { return ResourceManager.GetString("ChartValLoadMid", resourceCulture); }
+        }
+
+        internal static string ChartValLoadHigh {
+            get { return ResourceManager.GetString("ChartValLoadHigh", resourceCulture); }
+        }
+
+        internal static string ChartValTuningNone {
+            get { return ResourceManager.GetString("ChartValTuningNone", resourceCulture); }
+        }
+
+        internal static string ChartValTuningActive {
+            get { return ResourceManager.GetString("ChartValTuningActive", resourceCulture); }
+        }
+
+        internal static string ChartValSchPending {
+            get { return ResourceManager.GetString("ChartValSchPending", resourceCulture); }
+        }
+
+        internal static string ChartValSchScheduled {
+            get { return ResourceManager.GetString("ChartValSchScheduled", resourceCulture); }
+        }
+
+        internal static string ChartValSchCompleted {
+            get { return ResourceManager.GetString("ChartValSchCompleted", resourceCulture); }
+        }
+
+        internal static string ChartValSchReleased {
+            get { return ResourceManager.GetString("ChartValSchReleased", resourceCulture); }
+        }
+
+        internal static string ChartValSchCancelled {
+            get { return ResourceManager.GetString("ChartValSchCancelled", resourceCulture); }
+        }
+
+        internal static string ChartValSopDevelop {
+            get { return ResourceManager.GetString("ChartValSopDevelop", resourceCulture); }
+        }
+
+        internal static string ChartValSopOpen {
+            get { return ResourceManager.GetString("ChartValSopOpen", resourceCulture); }
+        }
+
+        internal static string ChartValSopClose {
+            get { return ResourceManager.GetString("ChartValSopClose", resourceCulture); }
+        }
+
+        internal static string ChartValSopACME {
+            get { return ResourceManager.GetString("ChartValSopACME", resourceCulture); }
+        }
+
+        internal static string ChartValSopTC {
+            get { return ResourceManager.GetString("ChartValSopTC", resourceCulture); }
+        }
+
+        internal static string ChartValSopOther {
+            get { return ResourceManager.GetString("ChartValSopOther", resourceCulture); }
+        }
+
+        internal static string ChartDefaultEquipmentOverview {
+            get { return ResourceManager.GetString("ChartDefaultEquipmentOverview", resourceCulture); }
+        }
+
+        internal static string ChartDefaultScheduleBoard {
+            get { return ResourceManager.GetString("ChartDefaultScheduleBoard", resourceCulture); }
+        }
+
+        internal static string ChartStatEquipmentTotal {
+            get { return ResourceManager.GetString("ChartStatEquipmentTotal", resourceCulture); }
+        }
+
+        internal static string ChartStatScheduleTotal {
+            get { return ResourceManager.GetString("ChartStatScheduleTotal", resourceCulture); }
+        }
+
+        internal static string ChartBtnHighLoad {
+            get { return ResourceManager.GetString("ChartBtnHighLoad", resourceCulture); }
+        }
     }
 }
