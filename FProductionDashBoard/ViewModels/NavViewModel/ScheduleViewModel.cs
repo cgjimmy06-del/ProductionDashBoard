@@ -665,9 +665,13 @@ namespace FProductionDashBoard.ViewModels
             {
                 await _core.Data.StartProgramTuningAsync(
                     card.EquipmentId, result.EquipmentProductId, result.TuningType,
-                    result.StartedBy, currentUser.Id, DateTime.Now, forceArrange: result.IsForceArrange);
+                    result.Executor.Id, currentUser.Id, DateTime.Now, forceArrange: result.IsForceArrange);
                 if (result.IsForceArrange)
-                    _core.Log.AddLog($"[{card.Name}] 已強制安排調試", LogLevel.Warning);
+                {
+                    // 敏感操作留痕含品項標籤，與現場入口格式一致
+                    var label = items.FirstOrDefault(i => i.EquipmentProductId == result.EquipmentProductId)?.DisplayLabel ?? string.Empty;
+                    _core.Log.AddLog($"[{card.Name}] 已強制安排調試（{label}）", LogLevel.Warning);
+                }
                 else
                     _core.Log.AddLog($"[{card.Name}] 調試已安排", LogLevel.Info);
                 await LoadAllAsync();

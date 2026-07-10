@@ -535,13 +535,13 @@ namespace FProductionDashBoard.ViewModels
             _tuningElapsedSeconds = 0;
 
             // 執行人（下拉選定）；安排人＝當前登入者
-            var executor = _commonLists.UsersList.FirstOrDefault(u => u.Id == result.StartedBy) ?? CurrentUser;
+            var executor = result.Executor;
 
             try
             {
                 _activeProgramTuningId = await _core.Data.StartProgramTuningAsync(
                     Info.Id, result.EquipmentProductId, result.TuningType,
-                    result.StartedBy, CurrentUser.Id, DateTime.Now, forceArrange: result.IsForceArrange);
+                    executor.Id, CurrentUser.Id, DateTime.Now, forceArrange: result.IsForceArrange);
                 _activeTuningStartedByEmployee = executor;
                 _activeTuningManagedByEmployee = CurrentUser;
                 TuningUserName = executor.Name;
