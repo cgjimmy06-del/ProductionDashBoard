@@ -556,6 +556,8 @@
     <sys:String x:Key="ChartImportTooltip">Import Chart (Coming soon)</sys:String>
     <sys:String x:Key="ChartDefaultLockedTooltip">Default chart (locked)</sys:String>
     <sys:String x:Key="ChartZoomTooltip">Zoom</sys:String>
+    <sys:String x:Key="ChartSortHint">Sort</sys:String>
+    <sys:String x:Key="ChartRestoreDefaultTooltip">Restore defaults (reset filters, quick buttons and sort)</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

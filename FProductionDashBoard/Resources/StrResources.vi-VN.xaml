@@ -556,6 +556,8 @@
     <sys:String x:Key="ChartImportTooltip">Nhập biểu đồ (Sắp ra mắt)</sys:String>
     <sys:String x:Key="ChartDefaultLockedTooltip">Biểu đồ mặc định (khóa)</sys:String>
     <sys:String x:Key="ChartZoomTooltip">Tỷ lệ hiển thị</sys:String>
+    <sys:String x:Key="ChartSortHint">Sắp xếp</sys:String>
+    <sys:String x:Key="ChartRestoreDefaultTooltip">Khôi phục mặc định (đặt lại bộ lọc, nút nhanh và sắp xếp)</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

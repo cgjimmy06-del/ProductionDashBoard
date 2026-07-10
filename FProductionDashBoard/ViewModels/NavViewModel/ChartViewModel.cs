@@ -42,11 +42,34 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string? indicatorFieldId;
         [ObservableProperty] private IReadOnlyList<ChartTableColumn> tableColumns = Array.Empty<ChartTableColumn>();
 
+        // 篩選列狀態（依定義於 BuildFilterRow 重建）
+        public ObservableCollection<ChartFilterFieldViewModel> FilterFields { get; } = new();
+        public ObservableCollection<ChartQuickButtonViewModel> QuickButtons { get; } = new();
+        public ObservableCollection<ChartSortOptionItem> SortOptions { get; } = new();
+
+        [ObservableProperty] private bool isFilterRowVisible;
+        [ObservableProperty] private ChartSortOptionItem? selectedSortOption;
+        [ObservableProperty] private bool isSortDescending;
+        [ObservableProperty] private int zoomPercent = ChartConstants.DefaultZoomPercent;
+
+        /// <summary>檢視端縮放倍率（內容區單一 LayoutTransform 用）</summary>
+        public double ZoomScale => ZoomPercent / 100.0;
+
+        /// <summary>重建/恢復預設期間抑制逐項刷新，結束後一次套用</summary>
+        private bool _suppressRefresh;
+
         public ChartViewModel(DashboardCoreServices core, IChartDefinitionStore store)
         {
             _core = core;
             _store = store;
             RowsView = CollectionViewSource.GetDefaultView(_rows);
+            RowsView.Filter = FilterRow;
+
+            // 縮放偏好屬本機不進定義；直接設欄位避免觸發 OnZoomPercentChanged 回存
+            var savedZoom = Properties.Settings.Default.ChartZoomPercent;
+            zoomPercent = ChartConstants.ZoomLevels.Contains(savedZoom)
+                ? savedZoom
+                : ChartConstants.DefaultZoomPercent;
         }
 
         [RelayCommand]
@@ -114,6 +137,8 @@ namespace FProductionDashBoard.ViewModels
                 IsTableContainer = false;
                 IndicatorFieldId = null;
                 TableColumns = Array.Empty<ChartTableColumn>();
+                ClearFilterRow();
+                IsFilterRowVisible = false;
                 return;
             }
 
@@ -125,7 +150,7 @@ namespace FProductionDashBoard.ViewModels
 
             ComputeStats(def);
             ApplyContainer(def);
-            ApplyDefaultSort(def);
+            BuildFilterRow(def);
         }
 
         #region 列建構（衍生欄位計算）
@@ -321,11 +346,188 @@ namespace FProductionDashBoard.ViewModels
                 : Array.Empty<ChartTableColumn>();
         }
 
-        private void ApplyDefaultSort(ChartDefinition def)
+        #endregion
+
+        #region 篩選列（篩選欄位 / 快捷按鈕 / 排序 / 恢復預設）
+
+        private void BuildFilterRow(ChartDefinition def)
         {
-            if (RowsView is ListCollectionView lcv)
-                lcv.CustomSort = ChartRowComparer.Create(
-                    def.DataSet, def.FilterRow.DefaultSortFieldId, def.FilterRow.DefaultSortDirection);
+            _suppressRefresh = true;
+            try
+            {
+                ClearFilterRow();
+
+                foreach (var fieldId in def.FilterRow.FilterFieldIds.Take(ChartConstants.MaxFilterFields))
+                {
+                    var field = FieldCatalog.Find(def.DataSet, fieldId);
+                    if (field == null) continue;
+
+                    var options = field.Type == ChartFieldType.Enum
+                        ? new[] { new ChartFilterOption(null, Properties.Resources.ChartFilterAll) }
+                            .Concat(field.Values.Select(v => new ChartFilterOption(
+                                v.Value, Properties.Resources.ResourceManager.GetString(v.LabelKey) ?? v.Value)))
+                            .ToList()
+                        : new List<ChartFilterOption>();
+
+                    var filter = new ChartFilterFieldViewModel(
+                        fieldId, ResolveFieldLabel(def.DataSet, fieldId), field.Type, options);
+                    filter.PropertyChanged += OnFilterConditionChanged;
+                    FilterFields.Add(filter);
+                }
+
+                foreach (var cfg in def.FilterRow.QuickButtons.Take(ChartConstants.MaxQuickFilterButtons))
+                {
+                    var field = FieldCatalog.Find(def.DataSet, cfg.FieldId);
+                    if (field?.CanQuickFilter != true) continue;
+
+                    // 標籤：LabelKey > 自訂 Label > 值標籤
+                    var label = cfg.LabelKey != null
+                        ? Properties.Resources.ResourceManager.GetString(cfg.LabelKey) ?? cfg.Value
+                        : !string.IsNullOrEmpty(cfg.Label) ? cfg.Label : ResolveEnumLabel(field, cfg.Value);
+
+                    var button = new ChartQuickButtonViewModel(cfg.FieldId, cfg.Value, label);
+                    button.PropertyChanged += OnQuickButtonChanged;
+                    QuickButtons.Add(button);
+                }
+
+                foreach (var fieldId in def.FilterRow.SortOptionFieldIds.Take(ChartConstants.MaxSortOptions))
+                    if (FieldCatalog.Find(def.DataSet, fieldId) != null)
+                        SortOptions.Add(new ChartSortOptionItem(fieldId, ResolveFieldLabel(def.DataSet, fieldId)));
+
+                SelectedSortOption = SortOptions.FirstOrDefault(o => o.FieldId == def.FilterRow.DefaultSortFieldId)
+                                     ?? SortOptions.FirstOrDefault();
+                IsSortDescending = def.FilterRow.DefaultSortDirection == ChartSortDirection.Descending;
+
+                IsFilterRowVisible = def.FilterRow.Enabled
+                    && (FilterFields.Count > 0 || QuickButtons.Count > 0 || SortOptions.Count > 0);
+            }
+            finally
+            {
+                _suppressRefresh = false;
+            }
+
+            ApplySort();
+            RowsView.Refresh();
+        }
+
+        private void ClearFilterRow()
+        {
+            foreach (var f in FilterFields) f.PropertyChanged -= OnFilterConditionChanged;
+            foreach (var b in QuickButtons) b.PropertyChanged -= OnQuickButtonChanged;
+            FilterFields.Clear();
+            QuickButtons.Clear();
+            SortOptions.Clear();
+        }
+
+        /// <summary>ICollectionView 過濾：篩選欄位與快捷按鈕全部 AND 疊加</summary>
+        private bool FilterRow(object obj)
+        {
+            if (obj is not ChartRowViewModel row) return false;
+            return FilterFields.All(f => f.Matches(row))
+                && QuickButtons.All(b => b.Matches(row));
+        }
+
+        private void OnFilterConditionChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (_suppressRefresh) return;
+            RowsView.Refresh();
+        }
+
+        private void OnQuickButtonChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (_suppressRefresh) return;
+            if (e.PropertyName != nameof(ChartQuickButtonViewModel.IsActive)) return;
+
+            // 同欄位互斥：後按覆蓋前按
+            if (sender is ChartQuickButtonViewModel { IsActive: true } pressed)
+            {
+                _suppressRefresh = true;
+                try
+                {
+                    foreach (var other in QuickButtons.Where(b => b != pressed && b.FieldId == pressed.FieldId))
+                        other.IsActive = false;
+                }
+                finally { _suppressRefresh = false; }
+            }
+
+            RowsView.Refresh();
+        }
+
+        private void ApplySort()
+        {
+            var def = SelectedTab?.Definition;
+            if (def == null || RowsView is not ListCollectionView lcv) return;
+
+            var fieldId = SelectedSortOption?.FieldId ?? def.FilterRow.DefaultSortFieldId;
+            var direction = IsSortDescending ? ChartSortDirection.Descending : ChartSortDirection.Ascending;
+            lcv.CustomSort = ChartRowComparer.Create(def.DataSet, fieldId, direction);
+        }
+
+        partial void OnSelectedSortOptionChanged(ChartSortOptionItem? value)
+        {
+            if (_suppressRefresh) return;
+            ApplySort();
+        }
+
+        partial void OnIsSortDescendingChanged(bool value)
+        {
+            if (_suppressRefresh) return;
+            ApplySort();
+        }
+
+        [RelayCommand]
+        private void ToggleSortDirection() => IsSortDescending = !IsSortDescending;
+
+        /// <summary>恢復預設：篩選值回預設＋快捷全釋放＋排序回預設欄位與方向</summary>
+        [RelayCommand]
+        private void RestoreDefaults()
+        {
+            var def = SelectedTab?.Definition;
+            if (def == null) return;
+
+            _suppressRefresh = true;
+            try
+            {
+                foreach (var f in FilterFields) f.Reset();
+                foreach (var b in QuickButtons) b.IsActive = false;
+                SelectedSortOption = SortOptions.FirstOrDefault(o => o.FieldId == def.FilterRow.DefaultSortFieldId)
+                                     ?? SortOptions.FirstOrDefault();
+                IsSortDescending = def.FilterRow.DefaultSortDirection == ChartSortDirection.Descending;
+            }
+            finally { _suppressRefresh = false; }
+
+            ApplySort();
+            RowsView.Refresh();
+        }
+
+        #endregion
+
+        #region 檢視端縮放（檔位存本機 Properties.Settings）
+
+        public bool CanZoomIn => Array.IndexOf(ChartConstants.ZoomLevels, ZoomPercent) < ChartConstants.ZoomLevels.Length - 1;
+        public bool CanZoomOut => Array.IndexOf(ChartConstants.ZoomLevels, ZoomPercent) > 0;
+
+        [RelayCommand(CanExecute = nameof(CanZoomIn))]
+        private void ZoomIn() => StepZoom(+1);
+
+        [RelayCommand(CanExecute = nameof(CanZoomOut))]
+        private void ZoomOut() => StepZoom(-1);
+
+        private void StepZoom(int step)
+        {
+            var index = Array.IndexOf(ChartConstants.ZoomLevels, ZoomPercent);
+            var next = Math.Clamp(index + step, 0, ChartConstants.ZoomLevels.Length - 1);
+            ZoomPercent = ChartConstants.ZoomLevels[next];
+        }
+
+        partial void OnZoomPercentChanged(int value)
+        {
+            OnPropertyChanged(nameof(ZoomScale));
+            ZoomInCommand.NotifyCanExecuteChanged();
+            ZoomOutCommand.NotifyCanExecuteChanged();
+
+            Properties.Settings.Default.ChartZoomPercent = value;
+            Properties.Settings.Default.Save();
         }
 
         #endregion

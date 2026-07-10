@@ -768,4 +768,7 @@
   <data name="ChartBtnHighLoad" xml:space="preserve">
     <value>Tải cao</value>
   </data>
+  <data name="ChartFilterAll" xml:space="preserve">
+    <value>Tất cả</value>
+  </data>
 </root>

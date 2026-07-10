@@ -213,5 +213,186 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Empty(vm.TableColumns);
             Assert.Single(GetRows(vm));
         }
+
+        // --- 篩選列：篩選欄位 ---
+
+        private static ChartViewModel CreateVmWithTwoEquipments(out Equipment inProd, out Equipment idle)
+        {
+            var vm = CreateVm();
+            inProd = MakeEquipment(1, "CNC-01");
+            idle   = MakeEquipment(2, "EDM-02");
+            Inject(vm,
+                orders: new() { MakeOrder(1, 1, OrderProductionStatus.InProduction, 30) },
+                eps: new() { MakeEp(inProd, TuningType.Feasible), MakeEp(idle, TuningType.Feasible) });
+            return vm;
+        }
+
+        [Fact]
+        public void EnumFilter_SelectValue_FiltersRows()
+        {
+            var vm = CreateVmWithTwoEquipments(out _, out _);
+            Assert.True(vm.IsFilterRowVisible);
+
+            var filter = vm.FilterFields.First(f => f.FieldId == FieldCatalog.ProductionStatus);
+            filter.SelectedOption = filter.Options.First(o => o.Value == FieldCatalog.ValInProduction);
+
+            var row = Assert.Single(GetRows(vm));
+            Assert.Equal("CNC-01", row.Title);
+        }
+
+        [Fact]
+        public void TextFilter_Keyword_FiltersCaseInsensitive()
+        {
+            var vm = CreateVmWithTwoEquipments(out _, out _);
+
+            var filter = vm.FilterFields.First(f => f.FieldId == FieldCatalog.EquipmentName);
+            filter.Keyword = "cnc";
+
+            var row = Assert.Single(GetRows(vm));
+            Assert.Equal("CNC-01", row.Title);
+        }
+
+        [Fact]
+        public void DateFilter_Range_FiltersScheduleRows()
+        {
+            var vm = CreateVm();
+            Inject(vm, schedules: new()
+            {
+                MakeSchedule(1, ScheduleStatus.Pending, receivedAt: DateTime.Today.AddDays(-10)),
+                MakeSchedule(2, ScheduleStatus.Pending, receivedAt: DateTime.Today.AddDays(-1)),
+            });
+            vm.SelectedTab = vm.Tabs.First(t => t.Definition.Id == DefaultChartDefinitions.ScheduleBoardId);
+
+            var filter = vm.FilterFields.First(f => f.FieldId == FieldCatalog.ReceivedAt);
+            filter.DateStart = DateTime.Today.AddDays(-5);
+
+            var row = Assert.Single(GetRows(vm));
+            Assert.Equal(2, row.Values[FieldCatalog.ScheduleId]);
+        }
+
+        // --- 篩選列：快捷按鈕 ---
+
+        [Fact]
+        public void QuickButton_Toggle_FiltersAndSecondPressReleases()
+        {
+            var vm = CreateVmWithTwoEquipments(out _, out _);
+
+            var btn = vm.QuickButtons.First(b => b.Value == FieldCatalog.ValInProduction);
+            btn.IsActive = true;
+            Assert.Single(GetRows(vm));
+
+            btn.IsActive = false;
+            Assert.Equal(2, GetRows(vm).Count);
+        }
+
+        [Fact]
+        public void QuickButtons_SameField_MutuallyExclusive()
+        {
+            var vm = CreateVmWithTwoEquipments(out _, out _);
+
+            var inProdBtn = vm.QuickButtons.First(b => b.Value == FieldCatalog.ValInProduction);
+            var idleBtn   = vm.QuickButtons.First(b => b.Value == FieldCatalog.ValIdle);
+
+            inProdBtn.IsActive = true;
+            idleBtn.IsActive = true;   // 後按覆蓋前按
+
+            Assert.False(inProdBtn.IsActive);
+            Assert.True(idleBtn.IsActive);
+            var row = Assert.Single(GetRows(vm));
+            Assert.Equal("EDM-02", row.Title);
+        }
+
+        [Fact]
+        public void QuickButtons_DifferentFields_CombineWithAnd()
+        {
+            var vm = CreateVm();
+            var eq1 = MakeEquipment(1, "A");   // 生產中＋調試中
+            var eq2 = MakeEquipment(2, "B");   // 生產中
+            Inject(vm,
+                orders: new()
+                {
+                    MakeOrder(1, 1, OrderProductionStatus.InProduction, 30),
+                    MakeOrder(2, 2, OrderProductionStatus.InProduction, 30),
+                },
+                eps: new() { MakeEp(eq1, TuningType.Feasible), MakeEp(eq2, TuningType.Feasible) },
+                tunings: new() { new ProgramTuningRecord { EquipmentId = 1 } });
+
+            vm.QuickButtons.First(b => b.Value == FieldCatalog.ValInProduction).IsActive = true;
+            Assert.Equal(2, GetRows(vm).Count);
+
+            vm.QuickButtons.First(b => b.FieldId == FieldCatalog.TuningStatus).IsActive = true;
+            var row = Assert.Single(GetRows(vm));
+            Assert.Equal("A", row.Title);
+        }
+
+        // --- 篩選列：排序切換 ---
+
+        [Fact]
+        public void SortOption_ChangeToLoadLevelDescending_OrdersByRank()
+        {
+            var vm = CreateVm();
+            var eqLow  = MakeEquipment(1, "A-Low");
+            var eqHigh = MakeEquipment(2, "B-High");
+            Inject(vm,
+                orders: new()
+                {
+                    MakeOrder(1, 1, OrderProductionStatus.Pending, 50),    // Low
+                    MakeOrder(2, 2, OrderProductionStatus.Pending, 600),   // High
+                },
+                eps: new() { MakeEp(eqLow, TuningType.Feasible), MakeEp(eqHigh, TuningType.Feasible) });
+
+            vm.SelectedSortOption = vm.SortOptions.First(o => o.FieldId == FieldCatalog.LoadLevel);
+            vm.IsSortDescending = true;
+
+            var rows = GetRows(vm);
+            Assert.Equal(new[] { "B-High", "A-Low" }, rows.Select(r => r.Title).ToArray());
+        }
+
+        // --- 恢復預設 ---
+
+        [Fact]
+        public void RestoreDefaults_ResetsFiltersButtonsAndSort()
+        {
+            var vm = CreateVmWithTwoEquipments(out _, out _);
+
+            var filter = vm.FilterFields.First(f => f.FieldId == FieldCatalog.ProductionStatus);
+            filter.SelectedOption = filter.Options.First(o => o.Value == FieldCatalog.ValIdle);
+            vm.QuickButtons.First(b => b.Value == FieldCatalog.ValIdle).IsActive = true;
+            vm.SelectedSortOption = vm.SortOptions.First(o => o.FieldId == FieldCatalog.LoadLevel);
+            vm.IsSortDescending = true;
+
+            vm.RestoreDefaultsCommand.Execute(null);
+
+            Assert.Equal(2, GetRows(vm).Count);
+            Assert.Null(filter.SelectedOption?.Value);
+            Assert.All(vm.QuickButtons, b => Assert.False(b.IsActive));
+            Assert.Equal(FieldCatalog.EquipmentName, vm.SelectedSortOption?.FieldId);
+            Assert.False(vm.IsSortDescending);
+            Assert.Equal(new[] { "CNC-01", "EDM-02" }, GetRows(vm).Select(r => r.Title).ToArray());
+        }
+
+        // --- 縮放 ---
+
+        [Fact]
+        public void Zoom_StepsThroughLevels_AndClampsAtBounds()
+        {
+            FProductionDashBoard.Properties.Settings.Default.ChartZoomPercent = 100;
+            var vm = CreateVm();
+
+            Assert.Equal(100, vm.ZoomPercent);
+            Assert.True(vm.CanZoomIn);
+            Assert.True(vm.CanZoomOut);
+
+            vm.ZoomOutCommand.Execute(null);
+            Assert.Equal(75, vm.ZoomPercent);
+            Assert.False(vm.CanZoomOut);
+            Assert.Equal(0.75, vm.ZoomScale, 3);
+
+            vm.ZoomInCommand.Execute(null);
+            vm.ZoomInCommand.Execute(null);
+            vm.ZoomInCommand.Execute(null);
+            Assert.Equal(150, vm.ZoomPercent);
+            Assert.False(vm.CanZoomIn);
+        }
     }
 }

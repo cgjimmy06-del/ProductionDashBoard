@@ -768,4 +768,7 @@
   <data name="ChartBtnHighLoad" xml:space="preserve">
     <value>高負載</value>
   </data>
+  <data name="ChartFilterAll" xml:space="preserve">
+    <value>全部</value>
+  </data>
 </root>

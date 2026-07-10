@@ -813,4 +813,7 @@
   <data name="ChartBtnHighLoad" xml:space="preserve">
     <value>High Load</value>
   </data>
+  <data name="ChartFilterAll" xml:space="preserve">
+    <value>All</value>
+  </data>
 </root>

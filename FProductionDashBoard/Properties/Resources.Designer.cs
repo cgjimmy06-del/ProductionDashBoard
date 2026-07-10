@@ -1479,5 +1479,9 @@ namespace FProductionDashBoard.Properties {
         internal static string ChartBtnHighLoad {
             get { return ResourceManager.GetString("ChartBtnHighLoad", resourceCulture); }
         }
+
+        internal static string ChartFilterAll {
+            get { return ResourceManager.GetString("ChartFilterAll", resourceCulture); }
+        }
     }
 }
