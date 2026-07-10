@@ -867,4 +867,7 @@
   <data name="ChartValidationTableColumnsRequired" xml:space="preserve">
     <value>Table container requires at least one column</value>
   </data>
+  <data name="ChartDeleteConfirm" xml:space="preserve">
+    <value>Delete chart "{0}"?</value>
+  </data>
 </root>

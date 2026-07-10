@@ -1551,5 +1551,9 @@ namespace FProductionDashBoard.Properties {
         internal static string ChartValidationTableColumnsRequired {
             get { return ResourceManager.GetString("ChartValidationTableColumnsRequired", resourceCulture); }
         }
+
+        internal static string ChartDeleteConfirm {
+            get { return ResourceManager.GetString("ChartDeleteConfirm", resourceCulture); }
+        }
     }
 }

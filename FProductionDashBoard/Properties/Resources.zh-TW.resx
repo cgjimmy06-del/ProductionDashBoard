@@ -822,4 +822,7 @@
   <data name="ChartValidationTableColumnsRequired" xml:space="preserve">
     <value>表格容器至少需要一個欄位</value>
   </data>
+  <data name="ChartDeleteConfirm" xml:space="preserve">
+    <value>確定要刪除圖表「{0}」嗎？</value>
+  </data>
 </root>

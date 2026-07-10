@@ -547,13 +547,13 @@
     <!--#endregion-->
 
     <!--#region 圖表看板 Chart -->
-    <sys:String x:Key="ChartAddTooltip">新增圖表（開發中）</sys:String>
+    <sys:String x:Key="ChartAddTooltip">新增圖表</sys:String>
     <sys:String x:Key="ChartEmptyPlaceholder">無可顯示的圖表</sys:String>
-    <sys:String x:Key="ChartEditTooltip">編輯圖表（開發中）</sys:String>
-    <sys:String x:Key="ChartCopyTooltip">複製圖表（開發中）</sys:String>
-    <sys:String x:Key="ChartDeleteTooltip">刪除圖表（開發中）</sys:String>
-    <sys:String x:Key="ChartExportTooltip">匯出圖表（開發中）</sys:String>
-    <sys:String x:Key="ChartImportTooltip">匯入圖表（開發中）</sys:String>
+    <sys:String x:Key="ChartEditTooltip">編輯圖表</sys:String>
+    <sys:String x:Key="ChartCopyTooltip">複製圖表</sys:String>
+    <sys:String x:Key="ChartDeleteTooltip">刪除圖表</sys:String>
+    <sys:String x:Key="ChartExportTooltip">匯出圖表</sys:String>
+    <sys:String x:Key="ChartImportTooltip">匯入圖表</sys:String>
     <sys:String x:Key="ChartDefaultLockedTooltip">預設圖表（鎖定）</sys:String>
     <sys:String x:Key="ChartZoomTooltip">顯示比例</sys:String>
     <sys:String x:Key="ChartSortHint">排序</sys:String>

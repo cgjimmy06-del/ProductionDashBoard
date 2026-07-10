@@ -4,11 +4,14 @@ using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.UiModels;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
@@ -141,12 +144,14 @@ namespace FProductionDashBoard.ViewModels
                 RebuildForDefinition();     // setter 不觸發時（皆為 null）仍需重建清空
             else
                 SelectedTab = restored;     // setter 觸發 OnSelectedTabChanged → 重建
+
+            NotifyChartCommands();          // 頁籤數量變動影響 新增/複製/匯入 的上限反灰
         }
 
         partial void OnSelectedTabChanged(ChartTabItemViewModel? value)
         {
             RebuildForDefinition();
-            EditChartCommand.NotifyCanExecuteChanged();
+            NotifyChartCommands();
         }
 
         private void RebuildForDefinition()
@@ -500,9 +505,38 @@ namespace FProductionDashBoard.ViewModels
 
         #endregion
 
-        #region 設計器（開啟/關閉；C1 先接編輯入口，其餘命令於 C4 補齊）
+        #region 操作列命令（新增/編輯/複製/刪除/匯出/匯入；整組綁 PermissionId.Edit）
 
-        private bool CanEditChart() => SelectedTab is { IsDefault: false };
+        private static readonly JsonSerializerOptions ExportJsonOptions = new() { WriteIndented = true };
+        private static readonly JsonSerializerOptions ImportJsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true,
+            AllowTrailingCommas = true,
+        };
+
+        private bool HasEditPermission => _core.Authorization.HasPermission(PermissionId.Edit);
+
+        private bool CanAddChart()    => HasEditPermission && Tabs.Count < ChartConstants.MaxCharts;
+        private bool CanEditChart()   => HasEditPermission && SelectedTab is { IsDefault: false };
+        private bool CanCopyChart()   => HasEditPermission && SelectedTab != null && Tabs.Count < ChartConstants.MaxCharts;
+        private bool CanDeleteChart() => HasEditPermission && SelectedTab is { IsDefault: false };
+        private bool CanExportChart() => HasEditPermission && SelectedTab != null;
+        private bool CanImportChart() => HasEditPermission && Tabs.Count < ChartConstants.MaxCharts;
+
+        [RelayCommand(CanExecute = nameof(CanAddChart))]
+        private void AddChart()
+        {
+            var defs = _store.Load();
+            var def = new ChartDefinition
+            {
+                Id = Guid.NewGuid().ToString("N"),
+                DataSet = ChartDataSet.Equipment,
+                SortOrder = NextSortOrder(defs),
+            };
+            // 主名稱預填目錄第一欄（左預覽開場即有內容）；其餘沿用 DTO 預設（統計/篩選開＋清單空、卡片牆）
+            def.Container.Card.TitleFieldId = FieldCatalog.For(def.DataSet)[0].FieldId;
+            OpenDesigner(def, isNew: true);
+        }
 
         [RelayCommand(CanExecute = nameof(CanEditChart))]
         private void EditChart()
@@ -510,6 +544,162 @@ namespace FProductionDashBoard.ViewModels
             if (SelectedTab == null) return;
             OpenDesigner(SelectedTab.Definition, isNew: false);
         }
+
+        [RelayCommand(CanExecute = nameof(CanCopyChart))]
+        private void CopyChart()
+        {
+            if (SelectedTab == null) return;
+            var defs = _store.Load();
+            var clone = ChartDesignerViewModel.Clone(SelectedTab.Definition);
+            clone.Id = Guid.NewGuid().ToString("N");
+            clone.IsDefault = false;
+            clone.Name = DeduplicateName(ChartDesignerViewModel.ResolveDefinitionName(clone), defs);
+            clone.NameKey = null;   // 複製即自訂內容，物化為純文字
+            clone.SortOrder = NextSortOrder(defs);
+            OpenDesigner(clone, isNew: true);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanDeleteChart))]
+        private void DeleteChart()
+        {
+            if (SelectedTab == null) return;
+            var name = SelectedTab.DisplayName;
+            if (!_dialog.ShowConfirm(string.Format(Properties.Resources.ChartDeleteConfirm, name)))
+                return;
+
+            try
+            {
+                _store.Delete(SelectedTab.Definition.Id);
+                ReloadTabs();
+                _core.Log.AddLog($"[圖表] 已刪除圖表「{name}」");
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[圖表] 刪除圖表失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[DeleteChart] {ex.Message}");
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExportChart))]
+        private void ExportChart()
+        {
+            if (SelectedTab == null) return;
+            var dialog = new SaveFileDialog
+            {
+                Filter = "圖表定義 (*.json)|*.json",
+                FileName = ToSafeFileName(SelectedTab.DisplayName) + ".json",
+            };
+            if (dialog.ShowDialog() != true) return;
+            ExportDefinitionTo(SelectedTab.Definition, dialog.FileName);
+        }
+
+        internal void ExportDefinitionTo(ChartDefinition definition, string path)
+        {
+            try
+            {
+                File.WriteAllText(path, JsonSerializer.Serialize(definition, ExportJsonOptions));
+                _core.Log.AddLog($"[圖表] 已匯出圖表定義至 {path}");
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[圖表] 匯出圖表失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ExportDefinitionTo] {ex.Message}");
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanImportChart))]
+        private void ImportChart()
+        {
+            var dialog = new OpenFileDialog { Filter = "圖表定義 (*.json)|*.json" };
+            if (dialog.ShowDialog() != true) return;
+
+            try
+            {
+                ImportDefinitionJson(File.ReadAllText(dialog.FileName));
+            }
+            catch (Exception ex)   // 讀檔失敗；內容錯誤由 ImportDefinitionJson 自理
+            {
+                _core.Log.AddLog("[圖表] 匯入圖表失敗：無法讀取檔案", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ImportChart] {ex.Message}");
+            }
+        }
+
+        /// <summary>匯入單張定義：新 Id、IsDefault=false、失效引用淨化、名稱去衝突、選中新頁籤</summary>
+        internal bool ImportDefinitionJson(string json)
+        {
+            try
+            {
+                var def = JsonSerializer.Deserialize<ChartDefinition>(json, ImportJsonOptions)
+                    ?? throw new InvalidOperationException("[ImportDefinitionJson] 檔案內容不是有效的圖表定義");
+
+                ChartDefinitionSanitizer.Sanitize(def);   // 含 DataSet/容器類型合法化與失效欄位剔除
+
+                var resolved = ChartDesignerViewModel.ResolveDefinitionName(def);
+                if (string.IsNullOrWhiteSpace(resolved))
+                    throw new InvalidOperationException("[ImportDefinitionJson] 圖表定義缺少名稱");
+
+                var defs = _store.Load();
+                def.Id = Guid.NewGuid().ToString("N");
+                def.IsDefault = false;
+                def.SortOrder = NextSortOrder(defs);
+
+                var deduplicated = DeduplicateName(resolved, defs);
+                if (!string.Equals(deduplicated, resolved, StringComparison.Ordinal))
+                {
+                    def.Name = deduplicated;   // 衝突加「(n)」後綴：物化為純文字
+                    def.NameKey = null;
+                }
+
+                _store.Save(def);              // 超限由 store 最終防線 throw
+                ReloadTabs();
+                SelectedTab = Tabs.FirstOrDefault(t => t.Definition.Id == def.Id) ?? SelectedTab;
+                _core.Log.AddLog($"[圖表] 已匯入圖表「{deduplicated}」");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[圖表] 匯入圖表失敗：檔案無效或圖表數已達上限", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ImportDefinitionJson] {ex.Message}");
+                return false;
+            }
+        }
+
+        private static int NextSortOrder(IReadOnlyList<ChartDefinition> defs)
+            => defs.Count == 0 ? 1 : defs.Max(d => d.SortOrder) + 1;
+
+        private static string DeduplicateName(string baseName, IReadOnlyList<ChartDefinition> existing)
+        {
+            var names = existing.Select(ChartDesignerViewModel.ResolveDefinitionName)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            if (!names.Contains(baseName)) return baseName;
+
+            for (var i = 2; ; i++)
+            {
+                var candidate = $"{baseName} ({i})";
+                if (!names.Contains(candidate)) return candidate;
+            }
+        }
+
+        private static string ToSafeFileName(string name)
+        {
+            foreach (var c in Path.GetInvalidFileNameChars())
+                name = name.Replace(c, '_');
+            return name;
+        }
+
+        private void NotifyChartCommands()
+        {
+            AddChartCommand.NotifyCanExecuteChanged();
+            EditChartCommand.NotifyCanExecuteChanged();
+            CopyChartCommand.NotifyCanExecuteChanged();
+            DeleteChartCommand.NotifyCanExecuteChanged();
+            ExportChartCommand.NotifyCanExecuteChanged();
+            ImportChartCommand.NotifyCanExecuteChanged();
+        }
+
+        #endregion
+
+        #region 設計器（開啟/關閉）
 
         private void OpenDesigner(ChartDefinition source, bool isNew)
         {

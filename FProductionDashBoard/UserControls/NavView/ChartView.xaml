@@ -35,7 +35,7 @@
                     </StackPanel>
                 </Border>
 
-                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                <Button Command="{Binding AddChartCommand}" Style="{StaticResource ChartIconButtonStyle}"
                         ToolTip="{DynamicResource ChartAddTooltip}">
                     <materialDesign:PackIcon Kind="Plus" Width="20" Height="20"/>
                 </Button>
@@ -43,19 +43,19 @@
                         ToolTip="{DynamicResource ChartEditTooltip}">
                     <materialDesign:PackIcon Kind="PencilOutline" Width="18" Height="18"/>
                 </Button>
-                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                <Button Command="{Binding CopyChartCommand}" Style="{StaticResource ChartIconButtonStyle}"
                         ToolTip="{DynamicResource ChartCopyTooltip}">
                     <materialDesign:PackIcon Kind="ContentCopy" Width="17" Height="17"/>
                 </Button>
-                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                <Button Command="{Binding DeleteChartCommand}" Style="{StaticResource ChartIconButtonStyle}"
                         ToolTip="{DynamicResource ChartDeleteTooltip}">
                     <materialDesign:PackIcon Kind="DeleteOutline" Width="18" Height="18"/>
                 </Button>
-                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                <Button Command="{Binding ExportChartCommand}" Style="{StaticResource ChartIconButtonStyle}"
                         ToolTip="{DynamicResource ChartExportTooltip}">
                     <materialDesign:PackIcon Kind="TrayArrowUp" Width="18" Height="18"/>
                 </Button>
-                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                <Button Command="{Binding ImportChartCommand}" Style="{StaticResource ChartIconButtonStyle}"
                         ToolTip="{DynamicResource ChartImportTooltip}">
                     <materialDesign:PackIcon Kind="TrayArrowDown" Width="18" Height="18"/>
                 </Button>

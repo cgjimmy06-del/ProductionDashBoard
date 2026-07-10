@@ -685,7 +685,8 @@ namespace FProductionDashBoard.ViewModels
             return null;
         }
 
-        private static string ResolveDefinitionName(ChartDefinition def)
+        /// <summary>解析定義顯示名稱（NameKey 優先）；重名比對與複製/匯入去衝突共用</summary>
+        internal static string ResolveDefinitionName(ChartDefinition def)
             => def.NameKey != null
                 ? Properties.Resources.ResourceManager.GetString(def.NameKey) ?? def.Name
                 : def.Name.Trim();
