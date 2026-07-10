@@ -28,8 +28,17 @@
             </Grid.ColumnDefinitions>
             <ComboBox Grid.Column="0"
                       ItemsSource="{Binding FilteredEmployees}"
-                      SelectedItem="{Binding SelectedEmployee}"
-                      DisplayMemberPath="Name"/>
+                      SelectedItem="{Binding SelectedEmployee}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding UserId}"/>
+                            <TextBlock Text=" - "/>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
             <TextBox Grid.Column="1" Width="130" Margin="8,0,0,0"
                      VerticalAlignment="Bottom"
                      materialDesign:HintAssist.Hint="{DynamicResource TuningEmployeeFilterHint}"

@@ -66,7 +66,10 @@ namespace FProductionDashBoard.ViewModels
 
             RefilterProducts();
             RefilterEmployees();
-            SelectedEmployee = _allEmployees.FirstOrDefault(e => e.Id == currentUserId);
+            // 預設選當前人員；若當前人員不在清單（如 admin/visitor）則保留 RefilterEmployees 選定的第一項
+            var current = _allEmployees.FirstOrDefault(e => e.Id == currentUserId);
+            if (current != null)
+                SelectedEmployee = current;
         }
 
         partial void OnSelectedEquipmentProductChanged(EquipmentProductItem? value)
@@ -108,6 +111,10 @@ namespace FProductionDashBoard.ViewModels
                     || (e.UserId?.Contains(kw, StringComparison.OrdinalIgnoreCase) ?? false));
             foreach (var e in source)
                 FilteredEmployees.Add(e);
+
+            // 篩選後預設選第一項，避免原選取被濾掉時變空白
+            if (SelectedEmployee == null || !FilteredEmployees.Contains(SelectedEmployee))
+                SelectedEmployee = FilteredEmployees.FirstOrDefault();
         }
 
         private void SelectTeaching() => TuningMode = (int)TuningType.Teaching;

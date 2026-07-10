@@ -208,6 +208,33 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal(2, vm.FilteredEmployees.Count);
         }
 
+        [Fact]
+        public void EmployeeFilter_WhenSelectionDropsOut_SelectsFirstMatch()
+        {
+            var vm = Create(); // 預設選 John(100)
+            vm.EmployeeFilterText = "mary"; // John 被濾掉
+            Assert.NotNull(vm.SelectedEmployee);
+            Assert.Equal(200, vm.SelectedEmployee!.Id);
+        }
+
+        [Fact]
+        public void EmployeeFilter_NoMatch_ClearsSelection()
+        {
+            var vm = Create();
+            vm.EmployeeFilterText = "zzz";
+            Assert.Empty(vm.FilteredEmployees);
+            Assert.Null(vm.SelectedEmployee);
+        }
+
+        [Fact]
+        public void Executor_WhenCurrentUserNotInList_DefaultsToFirst()
+        {
+            var vm = new TuningDialogViewModel("機台: Device-01", "人員: X", MakeItems(), MakeEmployees(),
+                currentUserId: 999, new Dictionary<int, string>(), canForceArrange: false);
+            Assert.NotNull(vm.SelectedEmployee);
+            Assert.Equal(CurrentUserId, vm.SelectedEmployee!.Id); // 第一項 John
+        }
+
         // ─── TeachedUserName（上次帶點人員）─────────────────────────────────
 
         [Fact]
