@@ -8,33 +8,208 @@
              d:DesignHeight="800" d:DesignWidth="1200">
     <Grid Margin="12">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>  <!-- 圖表操作列 -->
-            <RowDefinition Height="*"/>     <!-- 圖表內容 -->
+            <RowDefinition Height="Auto"/>  <!-- Row 0：圖表操作列 -->
+            <RowDefinition Height="Auto"/>  <!-- Row 1：統計列 -->
+            <RowDefinition Height="*"/>     <!-- Row 2：容器（卡片牆 / 表格） -->
         </Grid.RowDefinitions>
 
-        <!-- ========== Row0：圖表操作列骨架 ========== -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
-            <Button IsEnabled="False"
-                    ToolTip="{DynamicResource ChartAddTooltip}"
-                    Style="{StaticResource FunctionButtonStyle}">
-                <materialDesign:PackIcon Kind="Plus" Margin="0" Width="30" Height="30"
-                                         VerticalAlignment="Center"
-                                         HorizontalAlignment="Center"/>
-            </Button>
-        </StackPanel>
+        <!-- ========== Row 0：圖表操作列 ========== -->
+        <DockPanel Grid.Row="0" Margin="0,0,0,10">
 
-        <!-- ========== Row1：圖表內容（空殼） ========== -->
-        <Grid Grid.Row="1" Background="{DynamicResource BackgroundBrush}">
+            <!-- 右：縮放（Commit 3 接功能）＋ icon 群（設計器功能屬 Stage 3，僅顯示） -->
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="4"
+                        Margin="0,0,8,0" ToolTip="{DynamicResource ChartZoomTooltip}">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="−" IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"/>
+                        <TextBlock Text="100%" VerticalAlignment="Center" MinWidth="42" TextAlignment="Center"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <Button Content="＋" IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"/>
+                    </StackPanel>
+                </Border>
+
+                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                        ToolTip="{DynamicResource ChartAddTooltip}">
+                    <materialDesign:PackIcon Kind="Plus" Width="20" Height="20"/>
+                </Button>
+                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                        ToolTip="{DynamicResource ChartEditTooltip}">
+                    <materialDesign:PackIcon Kind="PencilOutline" Width="18" Height="18"/>
+                </Button>
+                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                        ToolTip="{DynamicResource ChartCopyTooltip}">
+                    <materialDesign:PackIcon Kind="ContentCopy" Width="17" Height="17"/>
+                </Button>
+                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                        ToolTip="{DynamicResource ChartDeleteTooltip}">
+                    <materialDesign:PackIcon Kind="DeleteOutline" Width="18" Height="18"/>
+                </Button>
+                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                        ToolTip="{DynamicResource ChartExportTooltip}">
+                    <materialDesign:PackIcon Kind="TrayArrowUp" Width="18" Height="18"/>
+                </Button>
+                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                        ToolTip="{DynamicResource ChartImportTooltip}">
+                    <materialDesign:PackIcon Kind="TrayArrowDown" Width="18" Height="18"/>
+                </Button>
+            </StackPanel>
+
+            <!-- 左：圖表頁籤（預設圖表帶鎖定標記） -->
+            <ListBox ItemsSource="{Binding Tabs}"
+                     SelectedItem="{Binding SelectedTab}"
+                     Style="{StaticResource ChartTabListBoxStyle}"
+                     ItemContainerStyle="{StaticResource ChartTabItemStyle}">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Lock" Width="12" Height="12"
+                                                     Margin="0,0,4,0" VerticalAlignment="Center"
+                                                     ToolTip="{DynamicResource ChartDefaultLockedTooltip}"
+                                                     Visibility="{Binding IsDefault, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            <TextBlock Text="{Binding DisplayName}" FontSize="14" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+
+        <!-- ========== Row 1：統計列 ========== -->
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding StatItems}" Margin="0,0,0,5"
+                      Visibility="{Binding IsStatRowVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource StatCardBorderStyle}">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Label}" Style="{StaticResource StatLabelStyle}"/>
+                            <TextBlock Text="{Binding Value}" Style="{StaticResource StatNumberStyle}"
+                                       Foreground="{Binding ColorKey, Converter={StaticResource BrushKeyToBrushConverter}}"/>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- ========== Row 2：容器 ========== -->
+        <Grid Grid.Row="2">
+
+            <!-- 卡片牆容器 -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          Visibility="{Binding IsCardContainer, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ItemsControl ItemsSource="{Binding RowsView}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="190" CornerRadius="8" Margin="0,0,10,10" Padding="10"
+                                    Background="{DynamicResource PrimaryBackgroundBrush}"
+                                    BorderThickness="2"
+                                    BorderBrush="{Binding BorderBrushKey, Converter={StaticResource BrushKeyToBrushConverter}}">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.15"/>
+                                </Border.Effect>
+                                <StackPanel>
+
+                                    <!-- 標題：主名稱 + 右上狀態色點 -->
+                                    <Grid Margin="0,0,0,6">
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="16" FontWeight="SemiBold" Margin="0,0,14,0"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <Ellipse Width="10" Height="10"
+                                                 HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                 Fill="{Binding BorderBrushKey, Converter={StaticResource BrushKeyToBrushConverter}}"/>
+                                    </Grid>
+
+                                    <!-- Chip 獨立列（wrap，有值才顯示） -->
+                                    <ItemsControl ItemsSource="{Binding Chips}" Margin="0,0,0,6">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border CornerRadius="6" Padding="6,2" Margin="0,0,4,2"
+                                                        Background="{Binding BrushKey, Converter={StaticResource BrushKeyToBrushConverter}}">
+                                                    <TextBlock Text="{Binding Text}" FontSize="12" FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource TextDarkBrush}"/>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- 次要資訊（每列一欄位） -->
+                                    <ItemsControl ItemsSource="{Binding SecondaryInfos}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                                    <TextBlock Text="{Binding Label}" FontSize="12" Margin="0,0,4,0"
+                                                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                                    <TextBlock Text="{Binding Text}" FontSize="13"
+                                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- 進度條（分子/分母） -->
+                                    <StackPanel Margin="0,2,0,0"
+                                                Visibility="{Binding HasProgress, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}" Maximum="100" Height="8"/>
+                                        <TextBlock Text="{Binding ProgressText}" FontSize="11" Margin="0,2,0,0"
+                                                   HorizontalAlignment="Right"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </StackPanel>
+
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- 表格容器（欄位由 code-behind 依定義動態建立） -->
+            <DataGrid x:Name="ChartTable"
+                      ItemsSource="{Binding RowsView}"
+                      AutoGenerateColumns="False" IsReadOnly="True"
+                      CanUserSortColumns="False" CanUserReorderColumns="False"
+                      CanUserAddRows="False" CanUserDeleteRows="False"
+                      HeadersVisibility="Column" SelectionMode="Single"
+                      Visibility="{Binding IsTableContainer, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <!-- 空狀態（無任何圖表定義時） -->
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <materialDesign:PackIcon Kind="ChartBox"
-                                         Width="72" Height="72"
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Tabs.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                <materialDesign:PackIcon Kind="ChartBox" Width="72" Height="72"
                                          Foreground="{DynamicResource BorderBrush}"
                                          HorizontalAlignment="Center"/>
                 <TextBlock Text="{DynamicResource ChartEmptyPlaceholder}"
                            FontSize="22" FontWeight="Medium"
                            Foreground="{DynamicResource BorderBrush}"
-                           HorizontalAlignment="Center"
-                           Margin="0,12,0,0"/>
+                           HorizontalAlignment="Center" Margin="0,12,0,0"/>
             </StackPanel>
         </Grid>
     </Grid>

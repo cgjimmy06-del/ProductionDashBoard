@@ -346,6 +346,19 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+    /// <summary>Brush key 字串 → 當前主題 Brush（圖表宣告式定義用）；查無 key 回 BorderBrush</summary>
+    public class BrushKeyToBrushConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            return value is string key && resources[key] is Brush brush
+                ? brush
+                : (Brush)resources["BorderBrush"];
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
     public class ScheduleCardLoadLevelToLabelConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -548,7 +548,14 @@
 
     <!--#region Bảng biểu đồ Chart -->
     <sys:String x:Key="ChartAddTooltip">Thêm biểu đồ (Sắp ra mắt)</sys:String>
-    <sys:String x:Key="ChartEmptyPlaceholder">Tính năng biểu đồ đang được phát triển</sys:String>
+    <sys:String x:Key="ChartEmptyPlaceholder">Không có biểu đồ để hiển thị</sys:String>
+    <sys:String x:Key="ChartEditTooltip">Chỉnh sửa biểu đồ (Sắp ra mắt)</sys:String>
+    <sys:String x:Key="ChartCopyTooltip">Nhân bản biểu đồ (Sắp ra mắt)</sys:String>
+    <sys:String x:Key="ChartDeleteTooltip">Xóa biểu đồ (Sắp ra mắt)</sys:String>
+    <sys:String x:Key="ChartExportTooltip">Xuất biểu đồ (Sắp ra mắt)</sys:String>
+    <sys:String x:Key="ChartImportTooltip">Nhập biểu đồ (Sắp ra mắt)</sys:String>
+    <sys:String x:Key="ChartDefaultLockedTooltip">Biểu đồ mặc định (khóa)</sys:String>
+    <sys:String x:Key="ChartZoomTooltip">Tỷ lệ hiển thị</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>
