@@ -97,7 +97,16 @@ namespace FProductionDashBoard.ViewModels
             }
             catch (Exception ex)
             {
-                _core.Log.AddLog("[圖表] 載入資料失敗", LogLevel.Error);
+                if (Tabs.Count == 0)
+                {
+                    // DB 不可用時仍渲染頁籤與圖表骨架（現場永遠有畫面），統計顯示 0、容器空白
+                    ApplyData(new(), new(), new(), new());
+                    _core.Log.AddLog("[圖表] 載入資料失敗，請確認資料庫連線；圖表暫以空資料顯示", LogLevel.Error);
+                }
+                else
+                {
+                    _core.Log.AddLog("[圖表] 更新資料失敗，請確認資料庫連線；維持前次資料顯示", LogLevel.Error);
+                }
                 _core.Log.AddErrorLog($"[LoadAsync] {ex.Message}");
             }
         }

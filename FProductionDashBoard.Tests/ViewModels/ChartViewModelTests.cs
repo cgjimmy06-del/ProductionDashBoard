@@ -466,6 +466,41 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.True(vm.IsDesignerOpen);
         }
 
+        // --- DB 不可用時的骨架渲染（A-2：首次空資料、其後保留前次資料） ---
+
+        [Fact]
+        public async Task LoadCommand_DataServiceThrows_StillBuildsTabsWithEmptyData()
+        {
+            var vm = CreateVm(out var dataMock);
+            dataMock.Setup(d => d.GetAllSchedulesAsync())
+                    .ThrowsAsync(new InvalidOperationException("no db"));
+
+            await vm.LoadCommand.ExecuteAsync(null);
+
+            Assert.Equal(2, vm.Tabs.Count);           // 兩張預設圖表頁籤仍建立
+            Assert.NotNull(vm.SelectedTab);
+            Assert.Empty(GetRows(vm));                // 無資料列
+            Assert.True(vm.IsStatRowVisible);
+            Assert.Equal("0", vm.StatItems[0].Value); // 統計顯示 0
+        }
+
+        [Fact]
+        public async Task LoadCommand_ThrowsAfterSuccessfulLoad_KeepsPreviousData()
+        {
+            var vm = CreateVm(out var dataMock);
+            var eq = MakeEquipment(1, "CNC-01");
+            Inject(vm, eps: new() { MakeEp(eq, TuningType.Feasible) });
+            Assert.Single(GetRows(vm));
+
+            dataMock.Setup(d => d.GetAllSchedulesAsync())
+                    .ThrowsAsync(new InvalidOperationException("db down"));
+            await vm.LoadCommand.ExecuteAsync(null);
+
+            Assert.Equal(2, vm.Tabs.Count);
+            Assert.Single(GetRows(vm));               // 前次資料未被清空
+            Assert.Equal("CNC-01", GetRows(vm)[0].Title);
+        }
+
         // --- 檢視端失效引用防護（唯讀容忍，不改寫檔案） ---
 
         [Fact]
