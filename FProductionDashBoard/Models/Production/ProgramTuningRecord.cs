@@ -18,7 +18,8 @@ namespace FProductionDashBoard.Models
         public int EquipmentProductId { get; set; }
         public TuningType TuningType { get; set; } // 來源: EquipmentProduct
         public ProgramTuningStatus Status { get; set; }
-        public int StartedBy { get; set; }
+        public int StartedBy { get; set; }        // 實際執行人
+        public int? ManagedBy { get; set; }        // 安排人（歷史列為 NULL）
         public DateTime StartedAt { get; set; }
         public DateTime? EndedAt { get; set; }
         public string? Description { get; set; }
@@ -28,6 +29,7 @@ namespace FProductionDashBoard.Models
         public Equipment? Equipment { get; set; }
         public EquipmentProduct? EquipmentProduct { get; set; }
         public Employee? StartedByEmployee { get; set; }
+        public Employee? ManagedByEmployee { get; set; }
     }
 
     public class ProgramTuningRecordConfiguration : IEntityTypeConfiguration<ProgramTuningRecord>
@@ -44,6 +46,7 @@ namespace FProductionDashBoard.Models
             builder.Property(r => r.TuningType).HasColumnName("tuning_type").HasConversion<string>();
             builder.Property(r => r.Status).HasColumnName("status").HasConversion<string>();
             builder.Property(r => r.StartedBy).HasColumnName("started_by");
+            builder.Property(r => r.ManagedBy).HasColumnName("managed_by");
             builder.Property(r => r.StartedAt).HasColumnName("started_at");
             builder.Property(r => r.EndedAt).HasColumnName("ended_at");
             builder.Property(r => r.Description).HasColumnName("description");
@@ -61,6 +64,10 @@ namespace FProductionDashBoard.Models
             builder.HasOne(r => r.StartedByEmployee)
                    .WithMany()
                    .HasForeignKey(r => r.StartedBy);
+
+            builder.HasOne(r => r.ManagedByEmployee)
+                   .WithMany()
+                   .HasForeignKey(r => r.ManagedBy);
         }
     }
 }

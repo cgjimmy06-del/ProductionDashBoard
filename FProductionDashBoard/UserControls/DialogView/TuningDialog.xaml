@@ -3,22 +3,59 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d" Height="Auto" Width="400"
-             d:DesignHeight="340" d:DesignWidth="400" d:Background="White">
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" Height="Auto" Width="440"
+             d:DesignHeight="400" d:DesignWidth="440" d:Background="White">
 
     <StackPanel Margin="20,5">
         <!-- 當前操作資訊 -->
         <TextBlock Margin="0,0,0,10" d:Text="機台"
                    Text="{Binding CurrentDevice}"/>
-        <TextBlock Margin="0,0,0,16" d:Text="操作人員"
+        <TextBlock Margin="0,0,0,10" d:Text="操作人員"
                    Text="{Binding CurrentUser}"/>
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+            <TextBlock Text="{DynamicResource TuningLastTeachedByLabel}"/>
+            <TextBlock Text=" : "/>
+            <TextBlock Text="{Binding TeachedUserName}" FontWeight="SemiBold" d:Text="—"/>
+        </StackPanel>
 
-        <!-- 選擇按鈕 -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                    Margin="0,0,0,10" Height="40">
-            <Button Content="{DynamicResource TuningTeachingButton}"
+        <!-- 執行人員 -->
+        <TextBlock Margin="0,0,0,4" Text="{DynamicResource TuningExecutorLabel}"/>
+        <Grid Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox Grid.Column="0"
+                      ItemsSource="{Binding FilteredEmployees}"
+                      SelectedItem="{Binding SelectedEmployee}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding UserId}"/>
+                            <TextBlock Text=" - "/>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBox Grid.Column="1" Width="130" Margin="8,0,0,0"
+                     VerticalAlignment="Bottom"
+                     materialDesign:HintAssist.Hint="{DynamicResource TuningEmployeeFilterHint}"
+                     Text="{Binding EmployeeFilterText, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+
+        <!-- 選擇按鈕（左）＋ 強制安排開關（右） -->
+        <Grid Margin="0,0,0,10" Height="40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="{DynamicResource TuningTeachingButton}"
                     Command="{Binding TeachingCommand}"
-                    Margin="20,0" Width="100">
+                    Margin="0,0,12,0" Width="100">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
                         <Style.Triggers>
@@ -29,9 +66,9 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Content="{DynamicResource TuningOffsetButton}"
+            <Button Grid.Column="1" Content="{DynamicResource TuningOffsetButton}"
                     Command="{Binding OffsetCommand}"
-                    Margin="20,0" Width="100">
+                    Width="100">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource FunctionButtonStyle}">
                         <Style.Triggers>
@@ -42,7 +79,48 @@
                     </Style>
                 </Button.Style>
             </Button>
-        </StackPanel>
+            <!-- 強制安排開關（僅 Setting 權限可見；比照 SystemSettingsView 開關慣例） -->
+            <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center"
+                        Visibility="{Binding CanForceArrange, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Text="{DynamicResource TuningForceArrangeToggle}"
+                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <ToggleButton IsChecked="{Binding IsForceArrange}"
+                              Style="{StaticResource MaterialDesignSwitchToggleButton}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- 強制安排篩選列（僅開啟時顯示） -->
+        <Grid Margin="0,0,0,10"
+              Visibility="{Binding IsForceArrange, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="130"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Margin="0,0,8,0"
+                     materialDesign:HintAssist.Hint="{DynamicResource TuningFilterKeyword}"
+                     Text="{Binding KeywordFilter, UpdateSourceTrigger=PropertyChanged}"/>
+            <ComboBox Grid.Column="1"
+                      ItemsSource="{Binding TuningTypeFilterOptions}"
+                      SelectedValue="{Binding StatusFilter}"
+                      SelectedValuePath="Value">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding Value, Converter={StaticResource TuningTypeToLabelConverter}}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Value}" Value="{x:Null}">
+                                            <Setter Property="Text" Value="{DynamicResource PioFilterStatusAll}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </Grid>
 
         <!-- 品項選擇清單 -->
         <ListBox ItemsSource="{Binding FilteredEquipmentProducts}"
@@ -53,9 +131,16 @@
                  Margin="0,0,0,10">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding DisplayLabel}"
-                               Foreground="{DynamicResource TextPrimaryBrush}"
-                               FontSize="16" Padding="4,2"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding DisplayLabel}"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   FontSize="16" Padding="4,2"/>
+                        <!-- 強制安排模式顯示各品項當前狀態 -->
+                        <TextBlock Text="{Binding ProductionStatus, Converter={StaticResource TuningTypeToLabelConverter}, StringFormat='({0})'}"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                   FontSize="14" Padding="0,2" VerticalAlignment="Center"
+                                   Visibility="{Binding DataContext.IsForceArrange, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

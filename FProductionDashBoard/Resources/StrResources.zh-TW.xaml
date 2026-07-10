@@ -62,6 +62,11 @@
     <sys:String x:Key="OperationButton">調試</sys:String>
     <sys:String x:Key="TuningTeachingButton">帶點</sys:String>
     <sys:String x:Key="TuningOffsetButton">調品質</sys:String>
+    <sys:String x:Key="TuningExecutorLabel">執行人員</sys:String>
+    <sys:String x:Key="TuningLastTeachedByLabel">上次帶點人員</sys:String>
+    <sys:String x:Key="TuningEmployeeFilterHint">搜尋姓名</sys:String>
+    <sys:String x:Key="TuningForceArrangeToggle">強制安排</sys:String>
+    <sys:String x:Key="TuningFilterKeyword">搜尋 品牌/型號/工序</sys:String>
     <sys:String x:Key="OrderListButtonTooltip">開啟訂單清單頁面</sys:String>
     <sys:String x:Key="OrderButton">接單</sys:String>
     <sys:String x:Key="TuningClickToEnd">點擊任意處結束</sys:String>

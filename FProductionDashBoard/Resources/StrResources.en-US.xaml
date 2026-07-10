@@ -62,6 +62,11 @@
     <sys:String x:Key="OperationButton">Operation</sys:String>
     <sys:String x:Key="TuningTeachingButton">Teaching</sys:String>
     <sys:String x:Key="TuningOffsetButton">Offset</sys:String>
+    <sys:String x:Key="TuningExecutorLabel">Executor</sys:String>
+    <sys:String x:Key="TuningLastTeachedByLabel">Last Teaching By</sys:String>
+    <sys:String x:Key="TuningEmployeeFilterHint">Search name</sys:String>
+    <sys:String x:Key="TuningForceArrangeToggle">Force Arrange</sys:String>
+    <sys:String x:Key="TuningFilterKeyword">Search brand/model/process</sys:String>
     <sys:String x:Key="OrderListButtonTooltip">Open the order list page</sys:String>
     <sys:String x:Key="OrderButton">Order</sys:String>
     <sys:String x:Key="TuningClickToEnd">Click anywhere to end</sys:String>

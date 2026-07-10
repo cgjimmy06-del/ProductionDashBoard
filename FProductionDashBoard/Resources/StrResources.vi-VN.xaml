@@ -62,6 +62,11 @@
     <sys:String x:Key="OperationButton">Điều chỉnh</sys:String>
     <sys:String x:Key="TuningTeachingButton">Dạy điểm</sys:String>
     <sys:String x:Key="TuningOffsetButton">Tinh chỉnh</sys:String>
+    <sys:String x:Key="TuningExecutorLabel">Người thực hiện</sys:String>
+    <sys:String x:Key="TuningLastTeachedByLabel">Người dạy điểm lần trước</sys:String>
+    <sys:String x:Key="TuningEmployeeFilterHint">Tìm tên</sys:String>
+    <sys:String x:Key="TuningForceArrangeToggle">Sắp xếp bắt buộc</sys:String>
+    <sys:String x:Key="TuningFilterKeyword">Tìm thương hiệu/kiểu máy/công đoạn</sys:String>
     <sys:String x:Key="OrderListButtonTooltip">Vào trang danh sách đơn hàng</sys:String>
     <sys:String x:Key="OrderButton">Đặt hàng</sys:String>
     <sys:String x:Key="TuningClickToEnd">Nhấn bất kỳ để kết thúc</sys:String>

@@ -945,13 +945,13 @@ namespace FProductionDashBoard.Services
 
         #region 調試服務
 
-        public async Task<int> StartProgramTuningAsync(int equipmentId, int equipmentProductId, TuningType type, int startedBy, DateTime startedAt)
+        public async Task<int> StartProgramTuningAsync(int equipmentId, int equipmentProductId, TuningType type, int startedBy, int managedBy, DateTime startedAt, bool forceArrange = false)
         {
             if (type != TuningType.Teaching && type != TuningType.Offset)
                 throw new ArgumentException($"[StartProgramTuningAsync] 不支援的調試模式 type={type}");
             if (!await _programTuningRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[StartProgramTuningAsync] 調試 Repository 連線失敗");
-            return await _programTuningRep.StartAsync(equipmentId, equipmentProductId, type, startedBy, startedAt).ConfigureAwait(false);
+            return await _programTuningRep.StartAsync(equipmentId, equipmentProductId, type, startedBy, managedBy, startedAt, forceStatus: forceArrange).ConfigureAwait(false);
         }
 
         public async Task EndProgramTuningAsync(int programTuningId, DateTime endedAt, string? description = null)
@@ -973,6 +973,13 @@ namespace FProductionDashBoard.Services
             if (!await _programTuningRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[GetAllInProgressProgramTuningAsync] 調試 Repository 連線失敗");
             return await _programTuningRep.GetAllInProgressAsync().ConfigureAwait(false);
+        }
+
+        public async Task<Dictionary<int, string>> GetLastCompletedTeachingNamesByEquipmentAsync(int equipmentId)
+        {
+            if (!await _programTuningRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetLastCompletedTeachingNamesByEquipmentAsync] 調試 Repository 連線失敗");
+            return await _programTuningRep.GetLastCompletedTeachingNamesByEquipmentAsync(equipmentId).ConfigureAwait(false);
         }
 
         #endregion

@@ -40,6 +40,7 @@ namespace FProductionDashBoard.ViewModels
     {
         private readonly DashboardCoreServices _core;
         private readonly IDialogService _dialog;
+        private readonly ListsFromSql _commonLists;
         private readonly List<ScheduleUiModel> _allSchedules = new();
         private readonly List<OrderProductionInfo> _allOrders = new();
         private readonly List<ScheduleEquipmentCardViewModel> _allCards = new();
@@ -127,10 +128,11 @@ namespace FProductionDashBoard.ViewModels
             EquipmentCardsView?.Refresh();
         }
 
-        public ScheduleViewModel(DashboardCoreServices core, IDialogService dialog)
+        public ScheduleViewModel(DashboardCoreServices core, IDialogService dialog, ListsFromSql commonLists)
         {
             _core = core;
             _dialog = dialog;
+            _commonLists = commonLists;
 
             StatusFilterOptions = new ScheduleViewFilterOption[]
             {
@@ -612,9 +614,11 @@ namespace FProductionDashBoard.ViewModels
         private async Task StartTuningAsync(ScheduleEquipmentCardViewModel card)
         {
             List<EquipmentProduct> rawList;
+            Dictionary<int, string> lastTeachingMap;
             try
             {
                 rawList = await _core.Data.GetEquipmentProductsByEquipmentAsync(card.EquipmentId);
+                lastTeachingMap = await _core.Data.GetLastCompletedTeachingNamesByEquipmentAsync(card.EquipmentId);
             }
             catch (Exception ex)
             {
@@ -632,14 +636,26 @@ namespace FProductionDashBoard.ViewModels
                     SopId              = ep.SopId,
                     SeqNo              = ep.SeqNo,
                     DisplayLabel       = BuildTuningProductLabel(ep),
-                    ProductionStatus   = ep.ProductionStatus
+                    ProductionStatus   = ep.ProductionStatus,
+                    Brand              = ep.Sop?.Product?.Part?.Brand ?? string.Empty,
+                    PartNo             = ep.Sop?.Product?.Part?.PartNo ?? string.Empty,
+                    Model              = ep.Sop?.Product?.Model?.Name ?? string.Empty,
+                    Process            = ep.Sop?.Process?.Name ?? string.Empty
                 })
+                .ToList();
+
+            var employees = _commonLists.UsersList
+                .Where(u => u.UserId != "admin" && u.UserId != "visitor")
                 .ToList();
 
             var vm = new TuningDialogViewModel(
                 $"{Properties.Resources.ComStrDevice}: {card.Name}",
                 $"{Properties.Resources.ComStrUser}: {currentUser.Name}",
-                items);
+                items,
+                employees,
+                currentUser.Id,
+                lastTeachingMap,
+                _core.Authorization.HasPermission(PermissionId.Setting));
             _dialog.ShowDialog(vm);
 
             if (!vm.IsConfirmed || vm.Result == null) return;
@@ -648,8 +664,12 @@ namespace FProductionDashBoard.ViewModels
             try
             {
                 await _core.Data.StartProgramTuningAsync(
-                    card.EquipmentId, result.EquipmentProductId, result.TuningType, currentUser.Id, DateTime.Now);
-                _core.Log.AddLog($"[{card.Name}] 調試已安排", LogLevel.Info);
+                    card.EquipmentId, result.EquipmentProductId, result.TuningType,
+                    result.StartedBy, currentUser.Id, DateTime.Now, forceArrange: result.IsForceArrange);
+                if (result.IsForceArrange)
+                    _core.Log.AddLog($"[{card.Name}] 已強制安排調試", LogLevel.Warning);
+                else
+                    _core.Log.AddLog($"[{card.Name}] 調試已安排", LogLevel.Info);
                 await LoadAllAsync();
             }
             catch (Exception ex)
