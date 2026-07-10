@@ -256,14 +256,14 @@ namespace FProductionDashBoard.Tests.ViewModels
         // ─── Confirm 輸出 StartedBy ──────────────────────────────────────────
 
         [Fact]
-        public void Confirm_OutputsSelectedExecutorAsStartedBy()
+        public void Confirm_OutputsSelectedExecutor()
         {
             var vm = Create();
             vm.SelectedEquipmentProduct = vm.FilteredEquipmentProducts[0];
             vm.SelectedEmployee = vm.FilteredEmployees.First(e => e.Id == 200);
             vm.ConfirmCommand.Execute(null);
             Assert.NotNull(vm.Result);
-            Assert.Equal(200, vm.Result!.StartedBy);
+            Assert.Equal(200, vm.Result!.Executor.Id);
             Assert.False(vm.Result.IsForceArrange);
         }
 

@@ -85,7 +85,7 @@
                 <TextBlock Text="{DynamicResource TuningForceArrangeToggle}"
                            VerticalAlignment="Center" Margin="0,0,8,0"/>
                 <ToggleButton IsChecked="{Binding IsForceArrange}"
-                              Style="{StaticResource MaterialDesignSwitchToggleButton}"/>
+                              Style="{StaticResource SwitchToggleButtonStyle}"/>
             </StackPanel>
         </Grid>
 

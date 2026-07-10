@@ -14,8 +14,8 @@ namespace FProductionDashBoard.ViewModels
     {
         public TuningType TuningType { get; set; }
         public int EquipmentProductId { get; set; }
-        public int StartedBy { get; set; }        // 執行人（下拉選定）
-        public bool IsForceArrange { get; set; }  // 強制安排（Commit 3 toggle 才會設 true）
+        public UserInfo Executor { get; set; } = null!;  // 執行人（下拉選定，OnConfirm 保證非 null）
+        public bool IsForceArrange { get; set; }         // 強制安排
     }
 
     public partial class TuningDialogViewModel : DialogBaseViewModel<TuningResult>
@@ -176,7 +176,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 TuningType = (TuningType)TuningMode,
                 EquipmentProductId = SelectedEquipmentProduct.EquipmentProductId,
-                StartedBy = SelectedEmployee.Id,
+                Executor = SelectedEmployee,
                 IsForceArrange = IsForceArrange
             };
             base.OnConfirm();

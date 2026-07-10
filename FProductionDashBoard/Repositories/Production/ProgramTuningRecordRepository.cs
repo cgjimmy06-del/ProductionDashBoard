@@ -112,22 +112,24 @@ namespace FProductionDashBoard.Repositories
         public async Task<Dictionary<int, string>> GetLastCompletedTeachingNamesByEquipmentAsync(int equipmentId)
         {
             await using var ctx = _factory.CreateDbContext();
-            var records = await ctx.ProgramTuningRecords
+            // 每個 equipment_product 取最近一筆（EndedAt 為主、缺則 StartedAt）的執行人姓名；
+            // DB 端分組投影，避免歷史紀錄隨時間累積後全量載入
+            var rows = await ctx.ProgramTuningRecords
                 .Where(r => r.EquipmentId == equipmentId
                          && r.Status == ProgramTuningStatus.Completed
                          && r.TuningType == TuningType.Teaching)
-                .Include(r => r.StartedByEmployee)
+                .GroupBy(r => r.EquipmentProductId)
+                .Select(g => new
+                {
+                    g.Key,
+                    Name = g.OrderByDescending(r => r.EndedAt ?? r.StartedAt)
+                            .Select(r => r.StartedByEmployee!.Name)
+                            .First()
+                })
                 .ToListAsync()
                 .ConfigureAwait(false);
 
-            // 每個 equipment_product 取最近一筆（EndedAt 為主、缺則 StartedAt）的執行人姓名
-            return records
-                .GroupBy(r => r.EquipmentProductId)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.OrderByDescending(r => r.EndedAt ?? r.StartedAt)
-                          .Select(r => r.StartedByEmployee?.Name ?? string.Empty)
-                          .First());
+            return rows.ToDictionary(x => x.Key, x => x.Name);
         }
     }
 }
