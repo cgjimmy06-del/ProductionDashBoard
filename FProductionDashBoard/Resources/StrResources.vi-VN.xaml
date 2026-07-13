@@ -141,6 +141,7 @@
     <sys:String x:Key="SopItemCheckType">Loại</sys:String>
     <sys:String x:Key="SopItemWorkstation">Vị trí</sys:String>
     <sys:String x:Key="SopItemMaterial">Vật tư</sys:String>
+    <sys:String x:Key="SopItemMaterialFilterHint">Mã / Tên</sys:String>
     <sys:String x:Key="SopItemQuantity">Số lượng</sys:String>
     <sys:String x:Key="SopItemContent">Nội dung</sys:String>
     <sys:String x:Key="SopItemRemark">Ghi chú</sys:String>

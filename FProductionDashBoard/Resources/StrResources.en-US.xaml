@@ -141,6 +141,7 @@
     <sys:String x:Key="SopItemCheckType">Type</sys:String>
     <sys:String x:Key="SopItemWorkstation">Station</sys:String>
     <sys:String x:Key="SopItemMaterial">Material</sys:String>
+    <sys:String x:Key="SopItemMaterialFilterHint">Code / Name</sys:String>
     <sys:String x:Key="SopItemQuantity">Quantity</sys:String>
     <sys:String x:Key="SopItemContent">Content</sys:String>
     <sys:String x:Key="SopItemRemark">Remark</sys:String>

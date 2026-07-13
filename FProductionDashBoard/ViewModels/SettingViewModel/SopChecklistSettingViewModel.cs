@@ -22,6 +22,7 @@ namespace FProductionDashBoard.ViewModels
         public ObservableCollection<ProductModel> FilteredModelList { get; } = new();
         public ObservableCollection<WorkProcess> ProcessList { get; } = new();
         public ObservableCollection<Material> StationMaterials { get; } = new();
+        public ObservableCollection<Material> FilteredStationMaterials { get; } = new();
         public ObservableCollection<Material> FixtureMaterials { get; } = new();
         public ObservableCollection<SopChecklistItemFormDto> FormItems { get; } = new();
 
@@ -79,6 +80,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private CheckType itemFormCheckType = CheckType.Station;
         [ObservableProperty] private int? itemFormWorkstationNo;
         [ObservableProperty] private int? itemFormMaterialId;
+        [ObservableProperty] private string itemMaterialFilter = "";
         [ObservableProperty] private int? itemFormQuantity;
         [ObservableProperty] private string? itemFormContent;
         [ObservableProperty] private string? itemFormRemark;
@@ -96,6 +98,7 @@ namespace FProductionDashBoard.ViewModels
         partial void OnSopTypeFilterChanged(SopType? value) => RecomputeFilteredSopList();
         partial void OnPartFilterChanged(string value) => RecomputeFilteredPartList();
         partial void OnModelFilterChanged(string value) => RecomputeFilteredModelList();
+        partial void OnItemMaterialFilterChanged(string value) => RecomputeFilteredStationMaterials();
 
         private void RecomputeFilteredSopList()
         {
@@ -115,8 +118,11 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
+        // 呼叫開頭先快照目前選取值，避免 ComboBox SelectedValue 雙向綁定在
+        // Clear()+Add() 重建過程中回寫 null 蓋掉原值，導致誤觸「代選第一筆」
         private void RecomputeFilteredPartList()
         {
+            var desiredId = FormPartId;
             FilteredPartList.Clear();
             foreach (var p in PartList)
             {
@@ -128,14 +134,17 @@ namespace FProductionDashBoard.ViewModels
                 }
                 FilteredPartList.Add(p);
             }
-            if (FilteredPartList.Count > 0 && (FormPartId == null || FilteredPartList.All(p => p.PartId != FormPartId)))
-                FormPartId = FilteredPartList[0].PartId;
-            else if (FilteredPartList.Count == 0)
+            if (FilteredPartList.Count == 0)
                 FormPartId = null;
+            else if (FilteredPartList.Any(p => p.PartId == desiredId))
+                FormPartId = desiredId;
+            else
+                FormPartId = FilteredPartList[0].PartId;
         }
 
         private void RecomputeFilteredModelList()
         {
+            var desiredId = FormModelId;
             FilteredModelList.Clear();
             foreach (var m in ModelList)
             {
@@ -144,10 +153,42 @@ namespace FProductionDashBoard.ViewModels
                     continue;
                 FilteredModelList.Add(m);
             }
-            if (FilteredModelList.Count > 0 && (FormModelId == null || FilteredModelList.All(m => m.ModelId != FormModelId)))
-                FormModelId = FilteredModelList[0].ModelId;
-            else if (FilteredModelList.Count == 0)
+            if (FilteredModelList.Count == 0)
                 FormModelId = null;
+            else if (FilteredModelList.Any(m => m.ModelId == desiredId))
+                FormModelId = desiredId;
+            else
+                FormModelId = FilteredModelList[0].ModelId;
+        }
+
+        private void RecomputeFilteredStationMaterials()
+        {
+            var desiredId = ItemFormMaterialId;
+            FilteredStationMaterials.Clear();
+            foreach (var m in StationMaterials)
+            {
+                if (!string.IsNullOrEmpty(ItemMaterialFilter))
+                {
+                    var hay = string.Join(" ", new[] { m.MaterialCode, m.Name }
+                        .Where(x => !string.IsNullOrEmpty(x)));
+                    if (hay.IndexOf(ItemMaterialFilter, StringComparison.OrdinalIgnoreCase) < 0) continue;
+                }
+                FilteredStationMaterials.Add(m);
+            }
+            if (FilteredStationMaterials.Count == 0)
+                ItemFormMaterialId = null;
+            else if (FilteredStationMaterials.Any(m => m.MaterialId == desiredId))
+                ItemFormMaterialId = desiredId;
+            else
+                ItemFormMaterialId = FilteredStationMaterials[0].MaterialId;
+        }
+
+        // 顯式呼叫 Recompute：ItemMaterialFilter 若本來就是空字串，賦值不會觸發
+        // OnItemMaterialFilterChanged，需靠這裡保證每次進入工位明細時清單一定重建
+        private void ResetStationMaterialFilter()
+        {
+            ItemMaterialFilter = "";
+            RecomputeFilteredStationMaterials();
         }
 
         private int AssignNextStationNo()
@@ -172,6 +213,7 @@ namespace FProductionDashBoard.ViewModels
                     ItemFormContent = null;
                     ItemFormWorkstationNo = AssignNextStationNo();
                     ItemFormMaterialId = StationMaterials.FirstOrDefault()?.MaterialId;
+                    ResetStationMaterialFilter();
                     break;
                 case CheckType.Fixture:
                     ItemFormWorkstationNo = null;
@@ -236,8 +278,7 @@ namespace FProductionDashBoard.ViewModels
                 });
                 FormPartId = newId;
                 IsCreatingPart = false;
-                PartFilter = "";
-                RecomputeFilteredPartList();
+                PartFilter = ""; // 觸發 OnPartFilterChanged → RecomputeFilteredPartList()
                 FormErrorString = null;
             }
             catch (Exception ex)
@@ -272,8 +313,7 @@ namespace FProductionDashBoard.ViewModels
                 ModelList.Add(new ProductModel { ModelId = newId, Name = dto.Name, Remark = dto.Remark });
                 FormModelId = newId;
                 IsCreatingModel = false;
-                ModelFilter = "";
-                RecomputeFilteredModelList();
+                ModelFilter = ""; // 觸發 OnModelFilterChanged → RecomputeFilteredModelList()
                 FormErrorString = null;
             }
             catch (Exception ex)
@@ -297,6 +337,7 @@ namespace FProductionDashBoard.ViewModels
             // Auto-preset for Station (most common)
             ItemFormWorkstationNo = AssignNextStationNo();
             ItemFormMaterialId = StationMaterials.FirstOrDefault()?.MaterialId;
+            ResetStationMaterialFilter();
             ItemFormQuantity = 0;
             ItemFormContent = null;
             ItemFormRemark = null;
@@ -311,6 +352,7 @@ namespace FProductionDashBoard.ViewModels
             ItemFormCheckType = item.CheckType;
             ItemFormWorkstationNo = item.WorkstationNo;
             ItemFormMaterialId = item.MaterialId;
+            if (item.CheckType == CheckType.Station) ResetStationMaterialFilter();
             ItemFormQuantity = item.Quantity;
             ItemFormContent = item.Content;
             ItemFormRemark = item.Remark;

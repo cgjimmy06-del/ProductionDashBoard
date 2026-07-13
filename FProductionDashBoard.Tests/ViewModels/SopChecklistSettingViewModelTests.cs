@@ -213,6 +213,56 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal("", vm.PartFilter);
         }
 
+        [Fact]
+        public async Task PartFilter_PreservesSelectionWhenStillMatched_ElseFallsBackToFirst()
+        {
+            _data.Setup(d => d.GetAllProductPartsAsync()).ReturnsAsync([
+                new ProductPart { PartId = 1, PartNo = "AAA11111" },
+                new ProductPart { PartId = 2, PartNo = "AAA22222" },
+                new ProductPart { PartId = 3, PartNo = "BBB33333" }
+            ]);
+            _data.Setup(d => d.GetProductModelsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetWorkProcessesAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetMaterialsByTypeAsync(It.IsAny<int>())).ReturnsAsync([]);
+            _data.Setup(d => d.GetAllSopChecklistsAsync()).ReturnsAsync([]);
+
+            var vm = CreateVm();
+            await ((CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)vm.LoadCommand).ExecuteAsync(null);
+
+            vm.FormPartId = 2; // 手動選第二筆（非第一筆）
+
+            vm.PartFilter = "AAA"; // 篩選後仍含 PartId=2
+            Assert.Equal(2, vm.FormPartId); // 保留原選取，不會被換成篩選結果第一筆(PartId=1)
+
+            vm.PartFilter = "BBB"; // 篩選後 PartId=2 已不在結果內
+            Assert.Equal(3, vm.FormPartId); // 代選篩選結果第一筆(PartId=3)
+        }
+
+        [Fact]
+        public async Task ModelFilter_PreservesSelectionWhenStillMatched_ElseFallsBackToFirst()
+        {
+            _data.Setup(d => d.GetAllProductPartsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetProductModelsAsync()).ReturnsAsync([
+                new ProductModel { ModelId = 1, Name = "M1A" },
+                new ProductModel { ModelId = 2, Name = "M1B" },
+                new ProductModel { ModelId = 3, Name = "M2A" }
+            ]);
+            _data.Setup(d => d.GetWorkProcessesAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetMaterialsByTypeAsync(It.IsAny<int>())).ReturnsAsync([]);
+            _data.Setup(d => d.GetAllSopChecklistsAsync()).ReturnsAsync([]);
+
+            var vm = CreateVm();
+            await ((CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)vm.LoadCommand).ExecuteAsync(null);
+
+            vm.FormModelId = 2; // 手動選第二筆（非第一筆）
+
+            vm.ModelFilter = "M1"; // 篩選後仍含 ModelId=2
+            Assert.Equal(2, vm.FormModelId); // 保留原選取
+
+            vm.ModelFilter = "M2"; // 篩選後 ModelId=2 已不在結果內
+            Assert.Equal(3, vm.FormModelId); // 代選篩選結果第一筆(ModelId=3)
+        }
+
         // ─── 明細子表單 ──────────────────────────────────────────────────────
 
         [Fact]
@@ -409,6 +459,113 @@ namespace FProductionDashBoard.Tests.ViewModels
 
             vm.RemoveItemCommand.Execute(item);
             Assert.Single(vm.FormItems);
+        }
+
+        // ─── 工位物料篩選 ────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task ItemMaterialFilter_MatchesCodeOrName()
+        {
+            _data.Setup(d => d.GetAllProductPartsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetProductModelsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetWorkProcessesAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetMaterialsByTypeAsync(MaterialTypeIds.Station)).ReturnsAsync([
+                new Material { MaterialId = 1, MaterialCode = "MC001", Name = "螺絲" },
+                new Material { MaterialId = 2, MaterialCode = "MC002", Name = "螺帽" },
+                new Material { MaterialId = 3, MaterialCode = "XY003", Name = "墊片" }
+            ]);
+            _data.Setup(d => d.GetMaterialsByTypeAsync(MaterialTypeIds.Fixture)).ReturnsAsync([]);
+            _data.Setup(d => d.GetAllSopChecklistsAsync()).ReturnsAsync([]);
+
+            var vm = CreateVm();
+            await ((CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)vm.LoadCommand).ExecuteAsync(null);
+            vm.OpenNewItemFormCommand.Execute(null);
+
+            vm.ItemMaterialFilter = "MC00"; // 編號比對
+            Assert.Equal(2, vm.FilteredStationMaterials.Count);
+
+            vm.ItemMaterialFilter = "墊片"; // 名稱比對
+            Assert.Single(vm.FilteredStationMaterials);
+            Assert.Equal(3, vm.FilteredStationMaterials[0].MaterialId);
+        }
+
+        [Fact]
+        public async Task ItemMaterialFilter_PreservesSelectionWhenStillMatched_ElseFallsBackToFirst()
+        {
+            _data.Setup(d => d.GetAllProductPartsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetProductModelsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetWorkProcessesAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetMaterialsByTypeAsync(MaterialTypeIds.Station)).ReturnsAsync([
+                new Material { MaterialId = 1, MaterialCode = "MC001", Name = "螺絲" },
+                new Material { MaterialId = 2, MaterialCode = "MC002", Name = "螺帽" },
+                new Material { MaterialId = 3, MaterialCode = "XY003", Name = "墊片" }
+            ]);
+            _data.Setup(d => d.GetMaterialsByTypeAsync(MaterialTypeIds.Fixture)).ReturnsAsync([]);
+            _data.Setup(d => d.GetAllSopChecklistsAsync()).ReturnsAsync([]);
+
+            var vm = CreateVm();
+            await ((CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)vm.LoadCommand).ExecuteAsync(null);
+            vm.OpenNewItemFormCommand.Execute(null);
+
+            vm.ItemFormMaterialId = 2; // 手動改選第二筆
+
+            vm.ItemMaterialFilter = "MC00"; // 篩選後仍含 MaterialId=2
+            Assert.Equal(2, vm.ItemFormMaterialId); // 保留原選取
+
+            vm.ItemMaterialFilter = "XY"; // 篩選後 MaterialId=2 已不在結果內
+            Assert.Equal(3, vm.ItemFormMaterialId); // 代選篩選結果第一筆
+        }
+
+        [Fact]
+        public async Task OpenNewItemForm_ResetsMaterialFilterToFullList()
+        {
+            _data.Setup(d => d.GetAllProductPartsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetProductModelsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetWorkProcessesAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetMaterialsByTypeAsync(MaterialTypeIds.Station)).ReturnsAsync([
+                new Material { MaterialId = 1, MaterialCode = "MC001", Name = "螺絲" },
+                new Material { MaterialId = 2, MaterialCode = "MC002", Name = "螺帽" }
+            ]);
+            _data.Setup(d => d.GetMaterialsByTypeAsync(MaterialTypeIds.Fixture)).ReturnsAsync([]);
+            _data.Setup(d => d.GetAllSopChecklistsAsync()).ReturnsAsync([]);
+
+            var vm = CreateVm();
+            await ((CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)vm.LoadCommand).ExecuteAsync(null);
+            vm.OpenNewItemFormCommand.Execute(null);
+            vm.ItemMaterialFilter = "MC001";
+            Assert.Single(vm.FilteredStationMaterials);
+
+            vm.OpenNewItemFormCommand.Execute(null); // 重新開一次新明細
+            Assert.Equal("", vm.ItemMaterialFilter);
+            Assert.Equal(2, vm.FilteredStationMaterials.Count);
+        }
+
+        [Fact]
+        public async Task EditItem_Station_ResetsMaterialFilterAndShowsSelectedMaterial()
+        {
+            _data.Setup(d => d.GetAllProductPartsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetProductModelsAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetWorkProcessesAsync()).ReturnsAsync([]);
+            _data.Setup(d => d.GetMaterialsByTypeAsync(MaterialTypeIds.Station)).ReturnsAsync([
+                new Material { MaterialId = 1, MaterialCode = "MC001", Name = "螺絲" },
+                new Material { MaterialId = 2, MaterialCode = "MC002", Name = "螺帽" },
+                new Material { MaterialId = 3, MaterialCode = "XY003", Name = "墊片" }
+            ]);
+            _data.Setup(d => d.GetMaterialsByTypeAsync(MaterialTypeIds.Fixture)).ReturnsAsync([]);
+            _data.Setup(d => d.GetAllSopChecklistsAsync()).ReturnsAsync([]);
+
+            var vm = CreateVm();
+            await ((CommunityToolkit.Mvvm.Input.IAsyncRelayCommand)vm.LoadCommand).ExecuteAsync(null);
+            vm.OpenNewItemFormCommand.Execute(null);
+            vm.ItemMaterialFilter = "MC00"; // 留下殘留篩選文字（只剩 MaterialId 1,2）
+            var item = new SopChecklistItemFormDto { Id = 1, Seq = 1, CheckType = CheckType.Station, WorkstationNo = 1, MaterialId = 3 };
+            vm.FormItems.Add(item);
+
+            vm.EditItemCommand.Execute(item); // 編輯的物料(3)本來會被殘留篩選擋掉
+
+            Assert.Equal("", vm.ItemMaterialFilter); // 篩選已重置
+            Assert.Equal(3, vm.FilteredStationMaterials.Count); // 完整清單
+            Assert.Equal(3, vm.ItemFormMaterialId); // 選取正確保留在該物料
         }
 
         // ─── EditAsync / ApplyTemplateAsync（LoadIntoFormAsync 共用邏輯） ─────
