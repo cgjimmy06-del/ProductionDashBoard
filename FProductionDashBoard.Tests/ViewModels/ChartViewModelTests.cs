@@ -6,7 +6,9 @@ using FProductionDashBoard.ViewModels;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FProductionDashBoard.Tests.ViewModels
@@ -17,17 +19,40 @@ namespace FProductionDashBoard.Tests.ViewModels
         // 透過 InjectDataForTest 繞過非同步載入，驗證：
         //   頁籤建構 / 設備與排程列衍生欄位 / 統計計算 / 容器切換 / 預設排序
 
-        private static ChartViewModel CreateVm()
+        private static ChartViewModel CreateVm() => CreateVm(out _);
+
+        private static ChartViewModel CreateVm(out Mock<IDataService> dataMock,
+            List<ChartDefinition>? definitions = null, bool hasEditPermission = true,
+            Mock<IDialogService>? dialogMock = null)
         {
-            var mock = new Mock<IDataService>();
+            dataMock = new Mock<IDataService>();
             var log = new LogService();
+
+            // 操作列六命令綁 PermissionId.Edit，預設授權以免干擾其餘測試
             var auth = new AuthorizationService();
+            if (hasEditPermission)
+            {
+                auth.SetCachedRoles(new List<Role>
+                {
+                    new()
+                    {
+                        RoleId = 1,
+                        RolePermissions = new List<RolePermission>
+                        {
+                            new() { RoleId = 1, PermissionId = PermissionId.Edit },
+                        },
+                    },
+                });
+                auth.InitializeAsync(new UserInfo { UserId = "u1", Name = "n1", RoleId = 1 })
+                    .GetAwaiter().GetResult();
+            }
+
             var cardReader = new Mock<ICardReaderService>().Object;
-            var core = new DashboardCoreServices(log, mock.Object, auth, cardReader);
+            var core = new DashboardCoreServices(log, dataMock.Object, auth, cardReader);
             var store = new JsonChartDefinitionStore(
-                _ => new List<ChartDefinition>(),
+                _ => definitions ?? new List<ChartDefinition>(),
                 (_, _) => { });
-            return new ChartViewModel(core, store);
+            return new ChartViewModel(core, store, (dialogMock ?? new Mock<IDialogService>()).Object);
         }
 
         private static Equipment MakeEquipment(int id, string name)
@@ -393,6 +418,383 @@ namespace FProductionDashBoard.Tests.ViewModels
             vm.ZoomInCommand.Execute(null);
             Assert.Equal(150, vm.ZoomPercent);
             Assert.False(vm.CanZoomIn);
+        }
+
+        // --- 設計器切換（C1：編輯入口 / 關閉回呼 / LoadAsync guard） ---
+
+        [Fact]
+        public void EditChart_NonDefaultTab_OpensDesigner_CancelCloses()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+            vm.SelectedTab = vm.Tabs.First(t => !t.IsDefault);
+
+            Assert.True(vm.EditChartCommand.CanExecute(null));
+            vm.EditChartCommand.Execute(null);
+
+            Assert.True(vm.IsDesignerOpen);
+            Assert.False(vm.IsViewerVisible);
+            Assert.NotNull(vm.Designer);
+
+            vm.Designer!.CancelCommand.Execute(null);
+
+            Assert.False(vm.IsDesignerOpen);
+            Assert.True(vm.IsViewerVisible);
+            Assert.Null(vm.Designer);
+        }
+
+        [Fact]
+        public void EditChart_DefaultTab_CannotExecute()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+
+            vm.SelectedTab = vm.Tabs.First(t => t.IsDefault);
+
+            Assert.False(vm.EditChartCommand.CanExecute(null));
+        }
+
+        [Fact]
+        public void EditChart_Save_ReloadsTabs_WithUpdatedDefinition()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+            vm.SelectedTab = vm.Tabs.First(t => !t.IsDefault);
+
+            vm.EditChartCommand.Execute(null);
+            vm.Designer!.WorkingDefinition.Name = "MyChart";
+            vm.Designer.WorkingDefinition.NameKey = null;
+            vm.Designer.SaveCommand.Execute(null);
+
+            Assert.False(vm.IsDesignerOpen);
+            Assert.Null(vm.Designer);
+            Assert.Equal("MyChart", vm.SelectedTab?.DisplayName);   // 依 previousId 還原選中頁籤
+        }
+
+        [Fact]
+        public async Task LoadCommand_WhileDesignerOpen_SkipsReload()
+        {
+            var vm = CreateVm(out var dataMock);
+            Inject(vm);
+            vm.SelectedTab = vm.Tabs.First(t => !t.IsDefault);
+            vm.EditChartCommand.Execute(null);
+            var tabBefore = vm.SelectedTab;
+
+            await vm.LoadCommand.ExecuteAsync(null);
+
+            dataMock.Verify(d => d.GetAllSchedulesAsync(), Times.Never);
+            Assert.Same(tabBefore, vm.SelectedTab);
+            Assert.True(vm.IsDesignerOpen);
+        }
+
+        // --- DB 不可用時的骨架渲染（A-2：首次空資料、其後保留前次資料） ---
+
+        [Fact]
+        public async Task LoadCommand_DataServiceThrows_StillBuildsTabsWithEmptyData()
+        {
+            var vm = CreateVm(out var dataMock);
+            dataMock.Setup(d => d.GetAllSchedulesAsync())
+                    .ThrowsAsync(new InvalidOperationException("no db"));
+
+            await vm.LoadCommand.ExecuteAsync(null);
+
+            Assert.Equal(2, vm.Tabs.Count);           // 兩張預設圖表頁籤仍建立
+            Assert.NotNull(vm.SelectedTab);
+            Assert.Empty(GetRows(vm));                // 無資料列
+            Assert.True(vm.IsStatRowVisible);
+            Assert.Equal("0", vm.StatItems[0].Value); // 統計顯示 0
+        }
+
+        [Fact]
+        public async Task LoadCommand_ThrowsAfterSuccessfulLoad_KeepsPreviousData()
+        {
+            var vm = CreateVm(out var dataMock);
+            var eq = MakeEquipment(1, "CNC-01");
+            Inject(vm, eps: new() { MakeEp(eq, TuningType.Feasible) });
+            Assert.Single(GetRows(vm));
+
+            dataMock.Setup(d => d.GetAllSchedulesAsync())
+                    .ThrowsAsync(new InvalidOperationException("db down"));
+            await vm.LoadCommand.ExecuteAsync(null);
+
+            Assert.Equal(2, vm.Tabs.Count);
+            Assert.Single(GetRows(vm));               // 前次資料未被清空
+            Assert.Equal("CNC-01", GetRows(vm)[0].Title);
+        }
+
+        // --- 檢視端失效引用防護（唯讀容忍，不改寫檔案） ---
+
+        [Fact]
+        public void SelectTab_UnknownDataSet_NoCrash_ShowsEmpty()
+        {
+            var badDef = new ChartDefinition { Id = "bad", Name = "Bad", DataSet = (ChartDataSet)99 };
+            var vm = CreateVm(out _, new List<ChartDefinition>
+            {
+                DefaultChartDefinitions.CreateEquipmentOverview(),
+                badDef,
+            });
+            // 需有資料列才會進 FinishRow 觸發 FieldCatalog.For 的 throw 路徑
+            Inject(vm, schedules: new() { MakeSchedule(1, ScheduleStatus.Pending) });
+
+            vm.SelectedTab = vm.Tabs.First(t => t.Definition.Id == "bad");
+
+            Assert.Empty(GetRows(vm));
+            Assert.False(vm.IsCardContainer);
+            Assert.False(vm.IsTableContainer);
+            Assert.False(vm.IsStatRowVisible);
+            Assert.False(vm.IsFilterRowVisible);
+        }
+
+        [Fact]
+        public void SelectTab_InvalidTableColumnsAndSort_FilteredWithoutCrash()
+        {
+            var tableDef = DefaultChartDefinitions.CreateScheduleBoard();
+            tableDef.Container.Table.ColumnFieldIds.Add("Ghost");
+            tableDef.FilterRow.SortOptionFieldIds.Clear();          // 無排序選項
+            tableDef.FilterRow.DefaultSortFieldId = "Ghost";        // 預設排序失效 → TieBreak 落回主名稱
+            var vm = CreateVm(out _, new List<ChartDefinition>
+            {
+                DefaultChartDefinitions.CreateEquipmentOverview(),
+                tableDef,
+            });
+            Inject(vm, schedules: new() { MakeSchedule(1, ScheduleStatus.Pending) });
+
+            vm.SelectedTab = vm.Tabs.First(t => t.Definition.Id == DefaultChartDefinitions.ScheduleBoardId);
+
+            Assert.Equal(7, vm.TableColumns.Count);   // Ghost 欄不渲染
+            Assert.Single(GetRows(vm));               // 排序失效不擲例外
+        }
+
+        // --- C4：操作列命令權限與反灰 ---
+
+        [Fact]
+        public void ChartCommands_WithoutEditPermission_AllDisabled()
+        {
+            var vm = CreateVm(out _, hasEditPermission: false);
+            Inject(vm);
+            vm.SelectedTab = vm.Tabs.First(t => !t.IsDefault);
+
+            Assert.False(vm.AddChartCommand.CanExecute(null));
+            Assert.False(vm.EditChartCommand.CanExecute(null));
+            Assert.False(vm.CopyChartCommand.CanExecute(null));
+            Assert.False(vm.DeleteChartCommand.CanExecute(null));
+            Assert.False(vm.ExportChartCommand.CanExecute(null));
+            Assert.False(vm.ImportChartCommand.CanExecute(null));
+        }
+
+        [Fact]
+        public void DeleteChart_DefaultTab_CannotExecute()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+
+            vm.SelectedTab = vm.Tabs.First(t => t.IsDefault);
+
+            Assert.False(vm.DeleteChartCommand.CanExecute(null));
+            Assert.True(vm.CopyChartCommand.CanExecute(null));     // 預設圖表可複製
+            Assert.True(vm.ExportChartCommand.CanExecute(null));   // 預設圖表可匯出
+        }
+
+        private static List<ChartDefinition> TenCharts()
+        {
+            var defs = new List<ChartDefinition> { DefaultChartDefinitions.CreateEquipmentOverview() };
+            for (var i = 2; i <= 10; i++)
+                defs.Add(new ChartDefinition
+                {
+                    Id = $"c{i}",
+                    Name = $"Chart{i}",
+                    DataSet = ChartDataSet.Equipment,
+                    SortOrder = i,
+                });
+            return defs;
+        }
+
+        [Fact]
+        public void ChartCommands_AtMaxCharts_AddCopyImportDisabled()
+        {
+            var vm = CreateVm(out _, TenCharts());
+            Inject(vm);
+            vm.SelectedTab = vm.Tabs.First(t => !t.IsDefault);
+
+            Assert.False(vm.AddChartCommand.CanExecute(null));
+            Assert.False(vm.CopyChartCommand.CanExecute(null));
+            Assert.False(vm.ImportChartCommand.CanExecute(null));
+            Assert.True(vm.EditChartCommand.CanExecute(null));
+            Assert.True(vm.DeleteChartCommand.CanExecute(null));
+        }
+
+        // --- C4：新增／複製 ---
+
+        [Fact]
+        public void AddChart_OpensDesigner_WithDefaultContent()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+
+            vm.AddChartCommand.Execute(null);
+
+            Assert.True(vm.IsDesignerOpen);
+            Assert.True(vm.Designer!.IsNew);
+            var def = vm.Designer.WorkingDefinition;
+            Assert.Equal("", def.Name);
+            Assert.Equal(ChartDataSet.Equipment, def.DataSet);
+            Assert.Equal(3, def.SortOrder);                        // 種子 1、2 → 新圖表排最後
+            Assert.False(def.IsDefault);
+            Assert.True(def.StatRow.Enabled);
+            Assert.Empty(def.StatRow.Items);
+            Assert.True(def.FilterRow.Enabled);
+            Assert.Empty(def.FilterRow.FilterFieldIds);
+            Assert.Equal(ChartContainerType.Card, def.Container.Type);
+            Assert.Equal(FieldCatalog.EquipmentName, def.Container.Card.TitleFieldId);   // 預填第一欄
+        }
+
+        [Fact]
+        public void CopyChart_ClonesWithNewId_DedupedName_NotDefault()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+            vm.SelectedTab = vm.Tabs.First(t => t.IsDefault);   // 複製鎖定預設圖表
+
+            vm.CopyChartCommand.Execute(null);
+
+            Assert.True(vm.IsDesignerOpen);
+            Assert.True(vm.Designer!.IsNew);
+            var clone = vm.Designer.WorkingDefinition;
+            var source = DefaultChartDefinitions.CreateEquipmentOverview();
+            Assert.NotEqual(source.Id, clone.Id);
+            Assert.False(clone.IsDefault);
+            Assert.Null(clone.NameKey);
+            var resolved = FProductionDashBoard.Properties.Resources.ChartDefaultEquipmentOverview;
+            Assert.Equal($"{resolved} (2)", clone.Name);       // 與來源同名 → 加 (2)
+            Assert.Equal(source.Container.Card.TitleFieldId, clone.Container.Card.TitleFieldId);
+        }
+
+        // --- C4：刪除 ---
+
+        [Fact]
+        public void DeleteChart_Confirmed_RemovesAndReloads()
+        {
+            var dialog = new Mock<IDialogService>();
+            dialog.Setup(d => d.ShowConfirm(It.IsAny<string>())).Returns(true);
+            var vm = CreateVm(out _, dialogMock: dialog);
+            Inject(vm);
+            vm.SelectedTab = vm.Tabs.First(t => !t.IsDefault);
+
+            vm.DeleteChartCommand.Execute(null);
+
+            Assert.Single(vm.Tabs);
+            Assert.True(vm.Tabs[0].IsDefault);
+            Assert.Same(vm.Tabs[0], vm.SelectedTab);
+        }
+
+        [Fact]
+        public void DeleteChart_Declined_KeepsTabs()
+        {
+            var dialog = new Mock<IDialogService>();
+            dialog.Setup(d => d.ShowConfirm(It.IsAny<string>())).Returns(false);
+            var vm = CreateVm(out _, dialogMock: dialog);
+            Inject(vm);
+            vm.SelectedTab = vm.Tabs.First(t => !t.IsDefault);
+
+            vm.DeleteChartCommand.Execute(null);
+
+            Assert.Equal(2, vm.Tabs.Count);
+        }
+
+        // --- C4：匯入／匯出 ---
+
+        private static string SerializeDef(ChartDefinition def)
+            => System.Text.Json.JsonSerializer.Serialize(def);
+
+        [Fact]
+        public void ImportDefinitionJson_Valid_AddsSelectsAndForcesNonDefault()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+            var import = new ChartDefinition
+            {
+                Id = "foreign-id",
+                Name = "外部圖表",
+                DataSet = ChartDataSet.Equipment,
+                IsDefault = true,   // 匯入強制轉為一般圖表
+                Container = new ContainerConfig
+                {
+                    Type = ChartContainerType.Card,
+                    Card = new CardContainerConfig { TitleFieldId = FieldCatalog.EquipmentName },
+                },
+            };
+
+            Assert.True(vm.ImportDefinitionJson(SerializeDef(import)));
+
+            Assert.Equal(3, vm.Tabs.Count);
+            var imported = vm.SelectedTab!;
+            Assert.Equal("外部圖表", imported.DisplayName);
+            Assert.NotEqual("foreign-id", imported.Definition.Id);
+            Assert.False(imported.Definition.IsDefault);
+        }
+
+        [Fact]
+        public void ImportDefinitionJson_NameConflict_AppendsSuffix()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+            var import = new ChartDefinition { Id = "x", Name = "MyChart", DataSet = ChartDataSet.Equipment };
+            Assert.True(vm.ImportDefinitionJson(SerializeDef(import)));
+
+            Assert.True(vm.ImportDefinitionJson(SerializeDef(import)));   // 同名再匯入一次
+
+            Assert.Contains(vm.Tabs, t => t.DisplayName == "MyChart");
+            Assert.Contains(vm.Tabs, t => t.DisplayName == "MyChart (2)");
+        }
+
+        [Fact]
+        public void ImportDefinitionJson_InvalidJsonOrNameless_ReturnsFalse()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+
+            Assert.False(vm.ImportDefinitionJson("not-json"));
+            Assert.False(vm.ImportDefinitionJson("{}"));   // 缺名稱
+
+            Assert.Equal(2, vm.Tabs.Count);
+        }
+
+        [Fact]
+        public void ImportDefinitionJson_AtMaxCharts_ReturnsFalse()
+        {
+            var vm = CreateVm(out _, TenCharts());
+            Inject(vm);
+            var import = new ChartDefinition { Id = "x", Name = "溢出圖表", DataSet = ChartDataSet.Equipment };
+
+            Assert.False(vm.ImportDefinitionJson(SerializeDef(import)));   // store 上限防線 throw → false
+
+            Assert.Equal(10, vm.Tabs.Count);
+        }
+
+        [Fact]
+        public void ExportThenImport_RoundTripsDefinition()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+            var source = vm.Tabs.First(t => !t.IsDefault).Definition;
+            var path = Path.Combine(Path.GetTempPath(), $"chart-export-{Guid.NewGuid():N}.json");
+
+            try
+            {
+                vm.ExportDefinitionTo(source, path);
+                Assert.True(vm.ImportDefinitionJson(File.ReadAllText(path)));
+
+                var imported = vm.SelectedTab!.Definition;
+                Assert.NotEqual(source.Id, imported.Id);
+                Assert.Equal(source.DataSet, imported.DataSet);
+                Assert.Equal(source.Container.Table.ColumnFieldIds, imported.Container.Table.ColumnFieldIds);
+                // 與來源同名 → 去衝突後綴
+                Assert.EndsWith("(2)", vm.SelectedTab.DisplayName);
+            }
+            finally
+            {
+                File.Delete(path);
+            }
         }
     }
 }

@@ -771,4 +771,58 @@
   <data name="ChartFilterAll" xml:space="preserve">
     <value>Tất cả</value>
   </data>
+  <data name="ChartDesignerSanitizedNotice" xml:space="preserve">
+    <value>Đã tự động xóa {0} tham chiếu trường không hợp lệ</value>
+  </data>
+  <data name="ChartDataSetEquipment" xml:space="preserve">
+    <value>Góc nhìn thiết bị</value>
+  </data>
+  <data name="ChartDataSetSchedule" xml:space="preserve">
+    <value>Góc nhìn lịch trình</value>
+  </data>
+  <data name="ChartDataSetSwitchConfirm" xml:space="preserve">
+    <value>Chuyển nguồn dữ liệu sẽ đặt lại các cài đặt trường đã chọn. Tiếp tục?</value>
+  </data>
+  <data name="ChartAggregateCount" xml:space="preserve">
+    <value>Đếm</value>
+  </data>
+  <data name="ChartAggregateSum" xml:space="preserve">
+    <value>Tổng</value>
+  </data>
+  <data name="ChartStatFieldAllRows" xml:space="preserve">
+    <value>Tất cả (số dòng)</value>
+  </data>
+  <data name="ChartFilterValueNone" xml:space="preserve">
+    <value>(Không có)</value>
+  </data>
+  <data name="ChartDefaultSortByTitle" xml:space="preserve">
+    <value>(Tên chính)</value>
+  </data>
+  <data name="ChartContainerCard" xml:space="preserve">
+    <value>Tường thẻ</value>
+  </data>
+  <data name="ChartContainerTable" xml:space="preserve">
+    <value>Bảng</value>
+  </data>
+  <data name="ChartContainerMap" xml:space="preserve">
+    <value>Bản đồ (sắp có)</value>
+  </data>
+  <data name="ChartContainerGraph" xml:space="preserve">
+    <value>Biểu đồ thống kê (sắp có)</value>
+  </data>
+  <data name="ChartValidationNameRequired" xml:space="preserve">
+    <value>Tên biểu đồ là bắt buộc</value>
+  </data>
+  <data name="ChartValidationNameDuplicate" xml:space="preserve">
+    <value>Tên biểu đồ đã tồn tại, vui lòng dùng tên khác</value>
+  </data>
+  <data name="ChartValidationTitleFieldRequired" xml:space="preserve">
+    <value>Bố cục thẻ cần chọn trường tên chính</value>
+  </data>
+  <data name="ChartValidationTableColumnsRequired" xml:space="preserve">
+    <value>Bố cục bảng cần ít nhất một cột</value>
+  </data>
+  <data name="ChartDeleteConfirm" xml:space="preserve">
+    <value>Bạn có chắc muốn xóa biểu đồ "{0}"?</value>
+  </data>
 </root>

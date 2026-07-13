@@ -547,17 +547,52 @@
     <!--#endregion-->
 
     <!--#region Bảng biểu đồ Chart -->
-    <sys:String x:Key="ChartAddTooltip">Thêm biểu đồ (Sắp ra mắt)</sys:String>
+    <sys:String x:Key="ChartAddTooltip">Thêm biểu đồ</sys:String>
     <sys:String x:Key="ChartEmptyPlaceholder">Không có biểu đồ để hiển thị</sys:String>
-    <sys:String x:Key="ChartEditTooltip">Chỉnh sửa biểu đồ (Sắp ra mắt)</sys:String>
-    <sys:String x:Key="ChartCopyTooltip">Nhân bản biểu đồ (Sắp ra mắt)</sys:String>
-    <sys:String x:Key="ChartDeleteTooltip">Xóa biểu đồ (Sắp ra mắt)</sys:String>
-    <sys:String x:Key="ChartExportTooltip">Xuất biểu đồ (Sắp ra mắt)</sys:String>
-    <sys:String x:Key="ChartImportTooltip">Nhập biểu đồ (Sắp ra mắt)</sys:String>
+    <sys:String x:Key="ChartEditTooltip">Chỉnh sửa biểu đồ</sys:String>
+    <sys:String x:Key="ChartCopyTooltip">Nhân bản biểu đồ</sys:String>
+    <sys:String x:Key="ChartDeleteTooltip">Xóa biểu đồ</sys:String>
+    <sys:String x:Key="ChartExportTooltip">Xuất biểu đồ</sys:String>
+    <sys:String x:Key="ChartImportTooltip">Nhập biểu đồ</sys:String>
     <sys:String x:Key="ChartDefaultLockedTooltip">Biểu đồ mặc định (khóa)</sys:String>
     <sys:String x:Key="ChartZoomTooltip">Tỷ lệ hiển thị</sys:String>
     <sys:String x:Key="ChartSortHint">Sắp xếp</sys:String>
     <sys:String x:Key="ChartRestoreDefaultTooltip">Khôi phục mặc định (đặt lại bộ lọc, nút nhanh và sắp xếp)</sys:String>
+    <sys:String x:Key="ChartDesignerBack">← Quay lại</sys:String>
+    <sys:String x:Key="ChartDesignerEditTitle">Chỉnh sửa biểu đồ</sys:String>
+    <sys:String x:Key="ChartDesignerNewTitle">Thêm biểu đồ</sys:String>
+    <sys:String x:Key="ChartDesignerFrameworkPreview">Xem trước bố cục</sys:String>
+    <sys:String x:Key="ChartDesignerSamplePreview">Mẫu thành phần</sys:String>
+    <sys:String x:Key="ChartDesignerOptionsTitle">Tùy chọn chỉnh sửa</sys:String>
+    <sys:String x:Key="ChartDesignerBasicSection">Cơ bản</sys:String>
+    <sys:String x:Key="ChartDesignerNameLabel">Tên biểu đồ</sys:String>
+    <sys:String x:Key="ChartDesignerSortOrderLabel">Số thứ tự</sys:String>
+    <sys:String x:Key="ChartDesignerDataSetLabel">Nguồn dữ liệu</sys:String>
+    <sys:String x:Key="ChartDesignerStatSection">Hàng thống kê</sys:String>
+    <sys:String x:Key="ChartDesignerFilterSection">Hàng bộ lọc</sys:String>
+    <sys:String x:Key="ChartDesignerFilterFieldsLabel">Trường lọc (tối đa 3)</sys:String>
+    <sys:String x:Key="ChartDesignerQuickButtonsLabel">Nút nhanh (tối đa 5)</sys:String>
+    <sys:String x:Key="ChartDesignerSortOptionsLabel">Tùy chọn sắp xếp (tối đa 5)</sys:String>
+    <sys:String x:Key="ChartDesignerDefaultSortLabel">Sắp xếp mặc định</sys:String>
+    <sys:String x:Key="ChartDesignerAddItem">+ Thêm</sys:String>
+    <sys:String x:Key="ChartDesignerRemoveTooltip">Xóa</sys:String>
+    <sys:String x:Key="ChartDesignerAggregateHint">Tổng hợp</sys:String>
+    <sys:String x:Key="ChartDesignerFieldHint">Trường</sys:String>
+    <sys:String x:Key="ChartDesignerValueHint">Giá trị</sys:String>
+    <sys:String x:Key="ChartDesignerLabelHint">Nhãn</sys:String>
+    <sys:String x:Key="ChartDesignerOptionalLabelHint">Nhãn tùy chỉnh (tùy chọn)</sys:String>
+    <sys:String x:Key="ChartDesignerContainerSection">Bố cục</sys:String>
+    <sys:String x:Key="ChartDesignerTitleFieldLabel">Trường tên chính</sys:String>
+    <sys:String x:Key="ChartDesignerBorderColorLabel">Nguồn màu viền</sys:String>
+    <sys:String x:Key="ChartDesignerChipsLabel">Chip (tối đa 3)</sys:String>
+    <sys:String x:Key="ChartDesignerChipShowWhenHasValue">Chỉ hiển thị khi có giá trị</sys:String>
+    <sys:String x:Key="ChartDesignerSecondaryLabel">Thông tin phụ (tối đa 3)</sys:String>
+    <sys:String x:Key="ChartDesignerProgressNumLabel">Tử số tiến độ</sys:String>
+    <sys:String x:Key="ChartDesignerProgressDenLabel">Mẫu số tiến độ</sys:String>
+    <sys:String x:Key="ChartDesignerTableColumnsLabel">Cột bảng</sys:String>
+    <sys:String x:Key="ChartDesignerIndicatorLabel">Nguồn đèn báo</sys:String>
+    <sys:String x:Key="ChartDesignerMoveUpTooltip">Chuyển lên</sys:String>
+    <sys:String x:Key="ChartDesignerMoveDownTooltip">Chuyển xuống</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

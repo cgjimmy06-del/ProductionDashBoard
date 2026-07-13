@@ -4,12 +4,14 @@ using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Services;
 using FProductionDashBoard.UiModels;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
@@ -23,6 +25,7 @@ namespace FProductionDashBoard.ViewModels
     {
         private readonly DashboardCoreServices _core;
         private readonly IChartDefinitionStore _store;
+        private readonly IDialogService _dialog;
 
         private List<Schedule> _schedules = new();
         private List<OrderProductionInfo> _orders = new();
@@ -55,13 +58,23 @@ namespace FProductionDashBoard.ViewModels
         /// <summary>檢視端縮放倍率（內容區單一 LayoutTransform 用）</summary>
         public double ZoomScale => ZoomPercent / 100.0;
 
+        // 設計器層（頁內雙層切換，比照 ScheduleView 焦點模式）
+        [ObservableProperty] private bool isDesignerOpen;
+        [ObservableProperty] private ChartDesignerViewModel? designer;
+
+        /// <summary>檢視層可見性（無 Inverse converter，比照 ScheduleView 以互補屬性各自綁 Visibility）</summary>
+        public bool IsViewerVisible => !IsDesignerOpen;
+
+        partial void OnIsDesignerOpenChanged(bool value) => OnPropertyChanged(nameof(IsViewerVisible));
+
         /// <summary>重建/恢復預設期間抑制逐項刷新，結束後一次套用</summary>
         private bool _suppressRefresh;
 
-        public ChartViewModel(DashboardCoreServices core, IChartDefinitionStore store)
+        public ChartViewModel(DashboardCoreServices core, IChartDefinitionStore store, IDialogService dialog)
         {
             _core = core;
             _store = store;
+            _dialog = dialog;
             RowsView = CollectionViewSource.GetDefaultView(_rows);
             RowsView.Filter = FilterRow;
 
@@ -75,6 +88,9 @@ namespace FProductionDashBoard.ViewModels
         [RelayCommand]
         private async Task LoadAsync()
         {
+            // 設計中切出導覽再切回不重載（避免 ReloadTabs 打掉編輯狀態）
+            if (IsDesignerOpen) return;
+
             try
             {
                 var schedules = await _core.Data.GetAllSchedulesAsync();
@@ -86,7 +102,16 @@ namespace FProductionDashBoard.ViewModels
             }
             catch (Exception ex)
             {
-                _core.Log.AddLog("[圖表] 載入資料失敗", LogLevel.Error);
+                if (Tabs.Count == 0)
+                {
+                    // DB 不可用時仍渲染頁籤與圖表骨架（現場永遠有畫面），統計顯示 0、容器空白
+                    ApplyData(new(), new(), new(), new());
+                    _core.Log.AddLog("[圖表] 載入資料失敗，請確認資料庫連線；圖表暫以空資料顯示", LogLevel.Error);
+                }
+                else
+                {
+                    _core.Log.AddLog("[圖表] 更新資料失敗，請確認資料庫連線；維持前次資料顯示", LogLevel.Error);
+                }
                 _core.Log.AddErrorLog($"[LoadAsync] {ex.Message}");
             }
         }
@@ -119,9 +144,15 @@ namespace FProductionDashBoard.ViewModels
                 RebuildForDefinition();     // setter 不觸發時（皆為 null）仍需重建清空
             else
                 SelectedTab = restored;     // setter 觸發 OnSelectedTabChanged → 重建
+
+            NotifyChartCommands();          // 頁籤數量變動影響 新增/複製/匯入 的上限反灰
         }
 
-        partial void OnSelectedTabChanged(ChartTabItemViewModel? value) => RebuildForDefinition();
+        partial void OnSelectedTabChanged(ChartTabItemViewModel? value)
+        {
+            RebuildForDefinition();
+            NotifyChartCommands();
+        }
 
         private void RebuildForDefinition()
         {
@@ -132,25 +163,42 @@ namespace FProductionDashBoard.ViewModels
 
             if (def == null)
             {
-                IsStatRowVisible = false;
-                IsCardContainer  = false;
-                IsTableContainer = false;
-                IndicatorFieldId = null;
-                TableColumns = Array.Empty<ChartTableColumn>();
-                ClearFilterRow();
-                IsFilterRowVisible = false;
+                ResetPresentation();
                 return;
             }
 
-            var rows = def.DataSet == ChartDataSet.Equipment
-                ? BuildEquipmentRows(def)
-                : BuildScheduleRows(def);
-            foreach (var row in rows)
-                _rows.Add(row);
+            try
+            {
+                var rows = def.DataSet == ChartDataSet.Equipment
+                    ? BuildEquipmentRows(def)
+                    : BuildScheduleRows(def);
+                foreach (var row in rows)
+                    _rows.Add(row);
 
-            ComputeStats(def);
-            ApplyContainer(def);
-            BuildFilterRow(def);
+                ComputeStats(def);
+                ApplyContainer(def);
+                BuildFilterRow(def);
+            }
+            catch (Exception ex)
+            {
+                // 失效引用防護：定義損毀（如 DataSet 未知值）時該圖表顯示空白，不崩潰、不改寫檔案
+                _rows.Clear();
+                StatItems.Clear();
+                ResetPresentation();
+                _core.Log.AddLog("[圖表] 圖表定義渲染失敗，已改為空白顯示", LogLevel.Error);
+                _core.Log.AddErrorLog($"[RebuildForDefinition] {ex.Message}");
+            }
+        }
+
+        private void ResetPresentation()
+        {
+            IsStatRowVisible = false;
+            IsCardContainer  = false;
+            IsTableContainer = false;
+            IndicatorFieldId = null;
+            TableColumns = Array.Empty<ChartTableColumn>();
+            ClearFilterRow();
+            IsFilterRowVisible = false;
         }
 
         #region 列建構（衍生欄位計算）
@@ -207,7 +255,7 @@ namespace FProductionDashBoard.ViewModels
                 row.Values[FieldCatalog.ProgressTarget]       = equipOrders
                     .Where(o => o.Status != OrderProductionStatus.Cancelled).Sum(o => o.Quantity ?? 0);
 
-                FinishRow(row, def);
+                ChartRowBuilder.FinishRow(row, def);
                 rows.Add(row);
             }
 
@@ -242,65 +290,11 @@ namespace FProductionDashBoard.ViewModels
                 row.Values[FieldCatalog.ActiveEquipmentCount] = activeOrders
                     .Select(o => o.EquipmentId).Distinct().Count();
 
-                FinishRow(row, def);
+                ChartRowBuilder.FinishRow(row, def);
                 rows.Add(row);
             }
 
             return rows;
-        }
-
-        private static void FinishRow(ChartRowViewModel row, ChartDefinition def)
-        {
-            foreach (var field in FieldCatalog.For(def.DataSet))
-                row.Display[field.FieldId] = FormatValue(field, row.Values.GetValueOrDefault(field.FieldId));
-
-            if (def.Container.Type == ChartContainerType.Card)
-                ApplyCardSlots(row, def);
-            else if (def.Container.Type == ChartContainerType.Table)
-                row.IndicatorBrushKey = ResolveValueBrushKey(
-                    def.DataSet, def.Container.Table.IndicatorFieldId, row) ?? "IdleBrush";
-        }
-
-        private static void ApplyCardSlots(ChartRowViewModel row, ChartDefinition def)
-        {
-            var card = def.Container.Card;
-            row.Title = row.Display.GetValueOrDefault(card.TitleFieldId) ?? "";
-            row.BorderBrushKey = ResolveValueBrushKey(def.DataSet, card.BorderColorFieldId, row) ?? "BorderBrush";
-
-            foreach (var chip in card.Chips.Take(ChartConstants.MaxChips))
-            {
-                var field = FieldCatalog.Find(def.DataSet, chip.FieldId);
-                if (field == null) continue;
-
-                var raw = row.Values.GetValueOrDefault(chip.FieldId)?.ToString();
-                var value = raw == null ? null : field.Values.FirstOrDefault(v => v.Value == raw);
-
-                // Enum 值 rank==0 視為「無值」（None 類），配合「有值才顯示」不出 chip
-                var hasValue = field.Type == ChartFieldType.Enum
-                    ? value is { Rank: > 0 }
-                    : !string.IsNullOrEmpty(raw);
-                if (!hasValue && chip.ShowOnlyWhenHasValue) continue;
-
-                row.Chips.Add(new ChartChipItem(
-                    row.Display.GetValueOrDefault(chip.FieldId) ?? "",
-                    value?.BrushKey ?? "IdleBrush"));
-            }
-
-            foreach (var fieldId in card.SecondaryFieldIds.Take(ChartConstants.MaxSecondaryInfos))
-                row.SecondaryInfos.Add(new ChartSecondaryItem(
-                    ResolveFieldLabel(def.DataSet, fieldId),
-                    row.Display.GetValueOrDefault(fieldId) ?? "—"));
-
-            if (card.ProgressNumeratorFieldId != null && card.ProgressDenominatorFieldId != null)
-            {
-                var num = ToDouble(row.Values.GetValueOrDefault(card.ProgressNumeratorFieldId));
-                var den = ToDouble(row.Values.GetValueOrDefault(card.ProgressDenominatorFieldId));
-                row.HasProgress = true;
-                row.ProgressPercent = den > 0 ? Math.Clamp(num / den * 100, 0, 100) : 0;
-                row.ProgressText = den > 0
-                    ? $"{num.ToString("N0", CultureInfo.CurrentCulture)} / {den.ToString("N0", CultureInfo.CurrentCulture)}"
-                    : "— / —";
-            }
         }
 
         #endregion
@@ -309,26 +303,8 @@ namespace FProductionDashBoard.ViewModels
 
         private void ComputeStats(ChartDefinition def)
         {
-            if (!def.StatRow.Enabled) return;
-
-            foreach (var item in def.StatRow.Items)
-            {
-                var value = item.Aggregate switch
-                {
-                    ChartAggregateType.Sum => _rows.Sum(r => ToDouble(r.Values.GetValueOrDefault(item.FieldId))),
-                    _ when string.IsNullOrEmpty(item.FieldId) => _rows.Count,
-                    _ when item.FilterValue == null =>
-                        _rows.Count(r => r.Values.GetValueOrDefault(item.FieldId) != null),
-                    _ => _rows.Count(r => string.Equals(
-                             r.Values.GetValueOrDefault(item.FieldId)?.ToString(),
-                             item.FilterValue, StringComparison.Ordinal)),
-                };
-
-                StatItems.Add(new ChartStatItemViewModel(
-                    ResolveLabel(item.LabelKey, item.Label),
-                    value.ToString("N0", CultureInfo.CurrentCulture),
-                    item.ColorKey ?? "TextPrimaryBrush"));
-            }
+            foreach (var item in ChartRowBuilder.BuildStatItems(def, _rows))
+                StatItems.Add(item);
         }
 
         private void ApplyContainer(ChartDefinition def)
@@ -341,7 +317,8 @@ namespace FProductionDashBoard.ViewModels
             IndicatorFieldId = def.Container.Table.IndicatorFieldId;
             TableColumns = IsTableContainer
                 ? def.Container.Table.ColumnFieldIds
-                    .Select(id => new ChartTableColumn(id, ResolveFieldLabel(def.DataSet, id)))
+                    .Where(id => FieldCatalog.Find(def.DataSet, id) != null)   // 失效欄位唯讀容忍：跳過不渲染
+                    .Select(id => new ChartTableColumn(id, ChartRowBuilder.ResolveFieldLabel(def.DataSet, id)))
                     .ToList()
                 : Array.Empty<ChartTableColumn>();
         }
@@ -370,7 +347,7 @@ namespace FProductionDashBoard.ViewModels
                         : new List<ChartFilterOption>();
 
                     var filter = new ChartFilterFieldViewModel(
-                        fieldId, ResolveFieldLabel(def.DataSet, fieldId), field.Type, options);
+                        fieldId, ChartRowBuilder.ResolveFieldLabel(def.DataSet, fieldId), field.Type, options);
                     filter.PropertyChanged += OnFilterConditionChanged;
                     FilterFields.Add(filter);
                 }
@@ -380,19 +357,15 @@ namespace FProductionDashBoard.ViewModels
                     var field = FieldCatalog.Find(def.DataSet, cfg.FieldId);
                     if (field?.CanQuickFilter != true) continue;
 
-                    // 標籤：LabelKey > 自訂 Label > 值標籤
-                    var label = cfg.LabelKey != null
-                        ? Properties.Resources.ResourceManager.GetString(cfg.LabelKey) ?? cfg.Value
-                        : !string.IsNullOrEmpty(cfg.Label) ? cfg.Label : ResolveEnumLabel(field, cfg.Value);
-
-                    var button = new ChartQuickButtonViewModel(cfg.FieldId, cfg.Value, label);
+                    var button = new ChartQuickButtonViewModel(cfg.FieldId, cfg.Value,
+                        ChartRowBuilder.ResolveQuickButtonLabel(field, cfg));
                     button.PropertyChanged += OnQuickButtonChanged;
                     QuickButtons.Add(button);
                 }
 
                 foreach (var fieldId in def.FilterRow.SortOptionFieldIds.Take(ChartConstants.MaxSortOptions))
                     if (FieldCatalog.Find(def.DataSet, fieldId) != null)
-                        SortOptions.Add(new ChartSortOptionItem(fieldId, ResolveFieldLabel(def.DataSet, fieldId)));
+                        SortOptions.Add(new ChartSortOptionItem(fieldId, ChartRowBuilder.ResolveFieldLabel(def.DataSet, fieldId)));
 
                 SelectedSortOption = SortOptions.FirstOrDefault(o => o.FieldId == def.FilterRow.DefaultSortFieldId)
                                      ?? SortOptions.FirstOrDefault();
@@ -532,51 +505,215 @@ namespace FProductionDashBoard.ViewModels
 
         #endregion
 
-        #region 格式化與標籤
+        #region 操作列命令（新增/編輯/複製/刪除/匯出/匯入；整組綁 PermissionId.Edit）
 
-        private static string FormatValue(ChartFieldDescriptor field, object? raw)
+        private static readonly JsonSerializerOptions ExportJsonOptions = new() { WriteIndented = true };
+        private static readonly JsonSerializerOptions ImportJsonOptions = new()
         {
-            if (raw == null) return "—";
-            return field.Type switch
+            PropertyNameCaseInsensitive = true,
+            AllowTrailingCommas = true,
+        };
+
+        private bool HasEditPermission => _core.Authorization.HasPermission(PermissionId.Edit);
+
+        private bool CanAddChart()    => HasEditPermission && Tabs.Count < ChartConstants.MaxCharts;
+        private bool CanEditChart()   => HasEditPermission && SelectedTab is { IsDefault: false };
+        private bool CanCopyChart()   => HasEditPermission && SelectedTab != null && Tabs.Count < ChartConstants.MaxCharts;
+        private bool CanDeleteChart() => HasEditPermission && SelectedTab is { IsDefault: false };
+        private bool CanExportChart() => HasEditPermission && SelectedTab != null;
+        private bool CanImportChart() => HasEditPermission && Tabs.Count < ChartConstants.MaxCharts;
+
+        [RelayCommand(CanExecute = nameof(CanAddChart))]
+        private void AddChart()
+        {
+            var defs = _store.Load();
+            var def = new ChartDefinition
             {
-                ChartFieldType.Enum   => ResolveEnumLabel(field, raw.ToString() ?? ""),
-                ChartFieldType.Number => Convert.ToDouble(raw, CultureInfo.InvariantCulture)
-                                             .ToString("N0", CultureInfo.CurrentCulture),
-                ChartFieldType.Date   => ((DateTime)raw).ToString("yyyy-MM-dd"),
-                _                     => raw.ToString() ?? "—",
+                Id = Guid.NewGuid().ToString("N"),
+                DataSet = ChartDataSet.Equipment,
+                SortOrder = NextSortOrder(defs),
             };
+            // 主名稱預填目錄第一欄（左預覽開場即有內容）；其餘沿用 DTO 預設（統計/篩選開＋清單空、卡片牆）
+            def.Container.Card.TitleFieldId = FieldCatalog.For(def.DataSet)[0].FieldId;
+            OpenDesigner(def, isNew: true);
         }
 
-        private static string ResolveEnumLabel(ChartFieldDescriptor field, string value)
+        [RelayCommand(CanExecute = nameof(CanEditChart))]
+        private void EditChart()
         {
-            var v = field.Values.FirstOrDefault(x => x.Value == value);
-            return v == null ? value
-                : Properties.Resources.ResourceManager.GetString(v.LabelKey) ?? value;
+            if (SelectedTab == null) return;
+            OpenDesigner(SelectedTab.Definition, isNew: false);
         }
 
-        /// <summary>取列在指定 Enum 欄位當前值的狀態色 key（FieldCatalog 值宣告）；查無回 null</summary>
-        private static string? ResolveValueBrushKey(ChartDataSet dataSet, string? fieldId, ChartRowViewModel row)
+        [RelayCommand(CanExecute = nameof(CanCopyChart))]
+        private void CopyChart()
         {
-            if (string.IsNullOrEmpty(fieldId)) return null;
-            var field = FieldCatalog.Find(dataSet, fieldId);
-            var raw = row.Values.GetValueOrDefault(fieldId)?.ToString();
-            return field?.Values.FirstOrDefault(v => v.Value == raw)?.BrushKey;
+            if (SelectedTab == null) return;
+            var defs = _store.Load();
+            var clone = ChartDesignerViewModel.Clone(SelectedTab.Definition);
+            clone.Id = Guid.NewGuid().ToString("N");
+            clone.IsDefault = false;
+            clone.Name = DeduplicateName(ChartDesignerViewModel.ResolveDefinitionName(clone), defs);
+            clone.NameKey = null;   // 複製即自訂內容，物化為純文字
+            clone.SortOrder = NextSortOrder(defs);
+            OpenDesigner(clone, isNew: true);
         }
 
-        private static string ResolveLabel(string? labelKey, string fallback)
-            => labelKey != null
-                ? Properties.Resources.ResourceManager.GetString(labelKey) ?? fallback
-                : fallback;
-
-        private static string ResolveFieldLabel(ChartDataSet dataSet, string fieldId)
+        [RelayCommand(CanExecute = nameof(CanDeleteChart))]
+        private void DeleteChart()
         {
-            var field = FieldCatalog.Find(dataSet, fieldId);
-            return field == null ? fieldId
-                : Properties.Resources.ResourceManager.GetString(field.LabelKey) ?? fieldId;
+            if (SelectedTab == null) return;
+            var name = SelectedTab.DisplayName;
+            if (!_dialog.ShowConfirm(string.Format(Properties.Resources.ChartDeleteConfirm, name)))
+                return;
+
+            try
+            {
+                _store.Delete(SelectedTab.Definition.Id);
+                ReloadTabs();
+                _core.Log.AddLog($"[圖表] 已刪除圖表「{name}」");
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[圖表] 刪除圖表失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[DeleteChart] {ex.Message}");
+            }
         }
 
-        private static double ToDouble(object? raw)
-            => raw == null ? 0 : Convert.ToDouble(raw, CultureInfo.InvariantCulture);
+        [RelayCommand(CanExecute = nameof(CanExportChart))]
+        private void ExportChart()
+        {
+            if (SelectedTab == null) return;
+            var dialog = new SaveFileDialog
+            {
+                Filter = "圖表定義 (*.json)|*.json",
+                FileName = ToSafeFileName(SelectedTab.DisplayName) + ".json",
+            };
+            if (dialog.ShowDialog() != true) return;
+            ExportDefinitionTo(SelectedTab.Definition, dialog.FileName);
+        }
+
+        internal void ExportDefinitionTo(ChartDefinition definition, string path)
+        {
+            try
+            {
+                File.WriteAllText(path, JsonSerializer.Serialize(definition, ExportJsonOptions));
+                _core.Log.AddLog($"[圖表] 已匯出圖表定義至 {path}");
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[圖表] 匯出圖表失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ExportDefinitionTo] {ex.Message}");
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanImportChart))]
+        private void ImportChart()
+        {
+            var dialog = new OpenFileDialog { Filter = "圖表定義 (*.json)|*.json" };
+            if (dialog.ShowDialog() != true) return;
+
+            try
+            {
+                ImportDefinitionJson(File.ReadAllText(dialog.FileName));
+            }
+            catch (Exception ex)   // 讀檔失敗；內容錯誤由 ImportDefinitionJson 自理
+            {
+                _core.Log.AddLog("[圖表] 匯入圖表失敗：無法讀取檔案", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ImportChart] {ex.Message}");
+            }
+        }
+
+        /// <summary>匯入單張定義：新 Id、IsDefault=false、失效引用淨化、名稱去衝突、選中新頁籤</summary>
+        internal bool ImportDefinitionJson(string json)
+        {
+            try
+            {
+                var def = JsonSerializer.Deserialize<ChartDefinition>(json, ImportJsonOptions)
+                    ?? throw new InvalidOperationException("[ImportDefinitionJson] 檔案內容不是有效的圖表定義");
+
+                ChartDefinitionSanitizer.Sanitize(def);   // 含 DataSet/容器類型合法化與失效欄位剔除
+
+                var resolved = ChartDesignerViewModel.ResolveDefinitionName(def);
+                if (string.IsNullOrWhiteSpace(resolved))
+                    throw new InvalidOperationException("[ImportDefinitionJson] 圖表定義缺少名稱");
+
+                var defs = _store.Load();
+                def.Id = Guid.NewGuid().ToString("N");
+                def.IsDefault = false;
+                def.SortOrder = NextSortOrder(defs);
+
+                var deduplicated = DeduplicateName(resolved, defs);
+                if (!string.Equals(deduplicated, resolved, StringComparison.Ordinal))
+                {
+                    def.Name = deduplicated;   // 衝突加「(n)」後綴：物化為純文字
+                    def.NameKey = null;
+                }
+
+                _store.Save(def);              // 超限由 store 最終防線 throw
+                ReloadTabs();
+                SelectedTab = Tabs.FirstOrDefault(t => t.Definition.Id == def.Id) ?? SelectedTab;
+                _core.Log.AddLog($"[圖表] 已匯入圖表「{deduplicated}」");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[圖表] 匯入圖表失敗：檔案無效或圖表數已達上限", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ImportDefinitionJson] {ex.Message}");
+                return false;
+            }
+        }
+
+        private static int NextSortOrder(IReadOnlyList<ChartDefinition> defs)
+            => defs.Count == 0 ? 1 : defs.Max(d => d.SortOrder) + 1;
+
+        private static string DeduplicateName(string baseName, IReadOnlyList<ChartDefinition> existing)
+        {
+            var names = existing.Select(ChartDesignerViewModel.ResolveDefinitionName)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            if (!names.Contains(baseName)) return baseName;
+
+            for (var i = 2; ; i++)
+            {
+                var candidate = $"{baseName} ({i})";
+                if (!names.Contains(candidate)) return candidate;
+            }
+        }
+
+        private static string ToSafeFileName(string name)
+        {
+            foreach (var c in Path.GetInvalidFileNameChars())
+                name = name.Replace(c, '_');
+            return name;
+        }
+
+        private void NotifyChartCommands()
+        {
+            AddChartCommand.NotifyCanExecuteChanged();
+            EditChartCommand.NotifyCanExecuteChanged();
+            CopyChartCommand.NotifyCanExecuteChanged();
+            DeleteChartCommand.NotifyCanExecuteChanged();
+            ExportChartCommand.NotifyCanExecuteChanged();
+            ImportChartCommand.NotifyCanExecuteChanged();
+        }
+
+        #endregion
+
+        #region 設計器（開啟/關閉）
+
+        private void OpenDesigner(ChartDefinition source, bool isNew)
+        {
+            Designer = new ChartDesignerViewModel(source, isNew, _store, _core, _dialog, OnDesignerClosed);
+            IsDesignerOpen = true;
+        }
+
+        private void OnDesignerClosed(bool saved)
+        {
+            IsDesignerOpen = false;
+            Designer = null;      // 每次開啟 new 一份，關閉交 GC
+            if (saved)
+                ReloadTabs();     // 依 previousId 還原選中頁籤
+        }
 
         #endregion
     }

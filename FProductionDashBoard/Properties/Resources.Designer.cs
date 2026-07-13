@@ -1483,5 +1483,77 @@ namespace FProductionDashBoard.Properties {
         internal static string ChartFilterAll {
             get { return ResourceManager.GetString("ChartFilterAll", resourceCulture); }
         }
+
+        internal static string ChartDesignerSanitizedNotice {
+            get { return ResourceManager.GetString("ChartDesignerSanitizedNotice", resourceCulture); }
+        }
+
+        internal static string ChartDataSetEquipment {
+            get { return ResourceManager.GetString("ChartDataSetEquipment", resourceCulture); }
+        }
+
+        internal static string ChartDataSetSchedule {
+            get { return ResourceManager.GetString("ChartDataSetSchedule", resourceCulture); }
+        }
+
+        internal static string ChartDataSetSwitchConfirm {
+            get { return ResourceManager.GetString("ChartDataSetSwitchConfirm", resourceCulture); }
+        }
+
+        internal static string ChartAggregateCount {
+            get { return ResourceManager.GetString("ChartAggregateCount", resourceCulture); }
+        }
+
+        internal static string ChartAggregateSum {
+            get { return ResourceManager.GetString("ChartAggregateSum", resourceCulture); }
+        }
+
+        internal static string ChartStatFieldAllRows {
+            get { return ResourceManager.GetString("ChartStatFieldAllRows", resourceCulture); }
+        }
+
+        internal static string ChartFilterValueNone {
+            get { return ResourceManager.GetString("ChartFilterValueNone", resourceCulture); }
+        }
+
+        internal static string ChartDefaultSortByTitle {
+            get { return ResourceManager.GetString("ChartDefaultSortByTitle", resourceCulture); }
+        }
+
+        internal static string ChartContainerCard {
+            get { return ResourceManager.GetString("ChartContainerCard", resourceCulture); }
+        }
+
+        internal static string ChartContainerTable {
+            get { return ResourceManager.GetString("ChartContainerTable", resourceCulture); }
+        }
+
+        internal static string ChartContainerMap {
+            get { return ResourceManager.GetString("ChartContainerMap", resourceCulture); }
+        }
+
+        internal static string ChartContainerGraph {
+            get { return ResourceManager.GetString("ChartContainerGraph", resourceCulture); }
+        }
+
+        internal static string ChartValidationNameRequired {
+            get { return ResourceManager.GetString("ChartValidationNameRequired", resourceCulture); }
+        }
+
+        internal static string ChartValidationNameDuplicate {
+            get { return ResourceManager.GetString("ChartValidationNameDuplicate", resourceCulture); }
+        }
+
+        internal static string ChartValidationTitleFieldRequired {
+            get { return ResourceManager.GetString("ChartValidationTitleFieldRequired", resourceCulture); }
+        }
+
+        internal static string ChartValidationTableColumnsRequired {
+            get { return ResourceManager.GetString("ChartValidationTableColumnsRequired", resourceCulture); }
+        }
+
+        internal static string ChartDeleteConfirm {
+            get { return ResourceManager.GetString("ChartDeleteConfirm", resourceCulture); }
+        }
     }
 }

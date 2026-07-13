@@ -547,17 +547,52 @@
     <!--#endregion-->
 
     <!--#region Chart Dashboard -->
-    <sys:String x:Key="ChartAddTooltip">Add Chart (Coming soon)</sys:String>
+    <sys:String x:Key="ChartAddTooltip">Add Chart</sys:String>
     <sys:String x:Key="ChartEmptyPlaceholder">No charts to display</sys:String>
-    <sys:String x:Key="ChartEditTooltip">Edit Chart (Coming soon)</sys:String>
-    <sys:String x:Key="ChartCopyTooltip">Duplicate Chart (Coming soon)</sys:String>
-    <sys:String x:Key="ChartDeleteTooltip">Delete Chart (Coming soon)</sys:String>
-    <sys:String x:Key="ChartExportTooltip">Export Chart (Coming soon)</sys:String>
-    <sys:String x:Key="ChartImportTooltip">Import Chart (Coming soon)</sys:String>
+    <sys:String x:Key="ChartEditTooltip">Edit Chart</sys:String>
+    <sys:String x:Key="ChartCopyTooltip">Duplicate Chart</sys:String>
+    <sys:String x:Key="ChartDeleteTooltip">Delete Chart</sys:String>
+    <sys:String x:Key="ChartExportTooltip">Export Chart</sys:String>
+    <sys:String x:Key="ChartImportTooltip">Import Chart</sys:String>
     <sys:String x:Key="ChartDefaultLockedTooltip">Default chart (locked)</sys:String>
     <sys:String x:Key="ChartZoomTooltip">Zoom</sys:String>
     <sys:String x:Key="ChartSortHint">Sort</sys:String>
     <sys:String x:Key="ChartRestoreDefaultTooltip">Restore defaults (reset filters, quick buttons and sort)</sys:String>
+    <sys:String x:Key="ChartDesignerBack">← Back</sys:String>
+    <sys:String x:Key="ChartDesignerEditTitle">Edit Chart</sys:String>
+    <sys:String x:Key="ChartDesignerNewTitle">New Chart</sys:String>
+    <sys:String x:Key="ChartDesignerFrameworkPreview">Layout Preview</sys:String>
+    <sys:String x:Key="ChartDesignerSamplePreview">Component Sample</sys:String>
+    <sys:String x:Key="ChartDesignerOptionsTitle">Edit Options</sys:String>
+    <sys:String x:Key="ChartDesignerBasicSection">Basic</sys:String>
+    <sys:String x:Key="ChartDesignerNameLabel">Chart name</sys:String>
+    <sys:String x:Key="ChartDesignerSortOrderLabel">Sort order</sys:String>
+    <sys:String x:Key="ChartDesignerDataSetLabel">Data source</sys:String>
+    <sys:String x:Key="ChartDesignerStatSection">Stat Row</sys:String>
+    <sys:String x:Key="ChartDesignerFilterSection">Filter Row</sys:String>
+    <sys:String x:Key="ChartDesignerFilterFieldsLabel">Filter fields (max 3)</sys:String>
+    <sys:String x:Key="ChartDesignerQuickButtonsLabel">Quick buttons (max 5)</sys:String>
+    <sys:String x:Key="ChartDesignerSortOptionsLabel">Sort options (max 5)</sys:String>
+    <sys:String x:Key="ChartDesignerDefaultSortLabel">Default sort</sys:String>
+    <sys:String x:Key="ChartDesignerAddItem">+ Add</sys:String>
+    <sys:String x:Key="ChartDesignerRemoveTooltip">Remove</sys:String>
+    <sys:String x:Key="ChartDesignerAggregateHint">Aggregate</sys:String>
+    <sys:String x:Key="ChartDesignerFieldHint">Field</sys:String>
+    <sys:String x:Key="ChartDesignerValueHint">Value</sys:String>
+    <sys:String x:Key="ChartDesignerLabelHint">Label</sys:String>
+    <sys:String x:Key="ChartDesignerOptionalLabelHint">Custom label (optional)</sys:String>
+    <sys:String x:Key="ChartDesignerContainerSection">Container</sys:String>
+    <sys:String x:Key="ChartDesignerTitleFieldLabel">Title field</sys:String>
+    <sys:String x:Key="ChartDesignerBorderColorLabel">Border color source</sys:String>
+    <sys:String x:Key="ChartDesignerChipsLabel">Chips (max 3)</sys:String>
+    <sys:String x:Key="ChartDesignerChipShowWhenHasValue">Show only when has value</sys:String>
+    <sys:String x:Key="ChartDesignerSecondaryLabel">Secondary info (max 3)</sys:String>
+    <sys:String x:Key="ChartDesignerProgressNumLabel">Progress numerator</sys:String>
+    <sys:String x:Key="ChartDesignerProgressDenLabel">Progress denominator</sys:String>
+    <sys:String x:Key="ChartDesignerTableColumnsLabel">Table columns</sys:String>
+    <sys:String x:Key="ChartDesignerIndicatorLabel">Indicator source</sys:String>
+    <sys:String x:Key="ChartDesignerMoveUpTooltip">Move up</sys:String>
+    <sys:String x:Key="ChartDesignerMoveDownTooltip">Move down</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

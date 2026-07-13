@@ -816,4 +816,58 @@
   <data name="ChartFilterAll" xml:space="preserve">
     <value>All</value>
   </data>
+  <data name="ChartDesignerSanitizedNotice" xml:space="preserve">
+    <value>Automatically removed {0} invalid field reference(s)</value>
+  </data>
+  <data name="ChartDataSetEquipment" xml:space="preserve">
+    <value>Equipment View</value>
+  </data>
+  <data name="ChartDataSetSchedule" xml:space="preserve">
+    <value>Schedule View</value>
+  </data>
+  <data name="ChartDataSetSwitchConfirm" xml:space="preserve">
+    <value>Switching the data source will reset the selected field settings. Continue?</value>
+  </data>
+  <data name="ChartAggregateCount" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="ChartAggregateSum" xml:space="preserve">
+    <value>Sum</value>
+  </data>
+  <data name="ChartStatFieldAllRows" xml:space="preserve">
+    <value>All (row count)</value>
+  </data>
+  <data name="ChartFilterValueNone" xml:space="preserve">
+    <value>(None)</value>
+  </data>
+  <data name="ChartDefaultSortByTitle" xml:space="preserve">
+    <value>(Title)</value>
+  </data>
+  <data name="ChartContainerCard" xml:space="preserve">
+    <value>Card Wall</value>
+  </data>
+  <data name="ChartContainerTable" xml:space="preserve">
+    <value>Table</value>
+  </data>
+  <data name="ChartContainerMap" xml:space="preserve">
+    <value>Map (coming soon)</value>
+  </data>
+  <data name="ChartContainerGraph" xml:space="preserve">
+    <value>Graph (coming soon)</value>
+  </data>
+  <data name="ChartValidationNameRequired" xml:space="preserve">
+    <value>Chart name is required</value>
+  </data>
+  <data name="ChartValidationNameDuplicate" xml:space="preserve">
+    <value>A chart with this name already exists</value>
+  </data>
+  <data name="ChartValidationTitleFieldRequired" xml:space="preserve">
+    <value>Card container requires a title field</value>
+  </data>
+  <data name="ChartValidationTableColumnsRequired" xml:space="preserve">
+    <value>Table container requires at least one column</value>
+  </data>
+  <data name="ChartDeleteConfirm" xml:space="preserve">
+    <value>Delete chart "{0}"?</value>
+  </data>
 </root>

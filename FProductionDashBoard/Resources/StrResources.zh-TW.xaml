@@ -547,17 +547,52 @@
     <!--#endregion-->
 
     <!--#region 圖表看板 Chart -->
-    <sys:String x:Key="ChartAddTooltip">新增圖表（開發中）</sys:String>
+    <sys:String x:Key="ChartAddTooltip">新增圖表</sys:String>
     <sys:String x:Key="ChartEmptyPlaceholder">無可顯示的圖表</sys:String>
-    <sys:String x:Key="ChartEditTooltip">編輯圖表（開發中）</sys:String>
-    <sys:String x:Key="ChartCopyTooltip">複製圖表（開發中）</sys:String>
-    <sys:String x:Key="ChartDeleteTooltip">刪除圖表（開發中）</sys:String>
-    <sys:String x:Key="ChartExportTooltip">匯出圖表（開發中）</sys:String>
-    <sys:String x:Key="ChartImportTooltip">匯入圖表（開發中）</sys:String>
+    <sys:String x:Key="ChartEditTooltip">編輯圖表</sys:String>
+    <sys:String x:Key="ChartCopyTooltip">複製圖表</sys:String>
+    <sys:String x:Key="ChartDeleteTooltip">刪除圖表</sys:String>
+    <sys:String x:Key="ChartExportTooltip">匯出圖表</sys:String>
+    <sys:String x:Key="ChartImportTooltip">匯入圖表</sys:String>
     <sys:String x:Key="ChartDefaultLockedTooltip">預設圖表（鎖定）</sys:String>
     <sys:String x:Key="ChartZoomTooltip">顯示比例</sys:String>
     <sys:String x:Key="ChartSortHint">排序</sys:String>
     <sys:String x:Key="ChartRestoreDefaultTooltip">恢復預設（篩選、快捷與排序回到初始狀態）</sys:String>
+    <sys:String x:Key="ChartDesignerBack">← 返回</sys:String>
+    <sys:String x:Key="ChartDesignerEditTitle">編輯圖表</sys:String>
+    <sys:String x:Key="ChartDesignerNewTitle">新增圖表</sys:String>
+    <sys:String x:Key="ChartDesignerFrameworkPreview">版面預覽</sys:String>
+    <sys:String x:Key="ChartDesignerSamplePreview">元件樣本</sys:String>
+    <sys:String x:Key="ChartDesignerOptionsTitle">編輯選項</sys:String>
+    <sys:String x:Key="ChartDesignerBasicSection">基本</sys:String>
+    <sys:String x:Key="ChartDesignerNameLabel">圖表名稱</sys:String>
+    <sys:String x:Key="ChartDesignerSortOrderLabel">排序序號</sys:String>
+    <sys:String x:Key="ChartDesignerDataSetLabel">資料來源</sys:String>
+    <sys:String x:Key="ChartDesignerStatSection">統計列</sys:String>
+    <sys:String x:Key="ChartDesignerFilterSection">篩選列</sys:String>
+    <sys:String x:Key="ChartDesignerFilterFieldsLabel">篩選欄位（上限 3）</sys:String>
+    <sys:String x:Key="ChartDesignerQuickButtonsLabel">快捷按鈕（上限 5）</sys:String>
+    <sys:String x:Key="ChartDesignerSortOptionsLabel">排序選項（上限 5）</sys:String>
+    <sys:String x:Key="ChartDesignerDefaultSortLabel">預設排序</sys:String>
+    <sys:String x:Key="ChartDesignerAddItem">＋ 新增</sys:String>
+    <sys:String x:Key="ChartDesignerRemoveTooltip">移除</sys:String>
+    <sys:String x:Key="ChartDesignerAggregateHint">聚合</sys:String>
+    <sys:String x:Key="ChartDesignerFieldHint">欄位</sys:String>
+    <sys:String x:Key="ChartDesignerValueHint">值</sys:String>
+    <sys:String x:Key="ChartDesignerLabelHint">標籤</sys:String>
+    <sys:String x:Key="ChartDesignerOptionalLabelHint">自訂標籤（選填）</sys:String>
+    <sys:String x:Key="ChartDesignerContainerSection">容器</sys:String>
+    <sys:String x:Key="ChartDesignerTitleFieldLabel">主名稱欄位</sys:String>
+    <sys:String x:Key="ChartDesignerBorderColorLabel">邊框色來源</sys:String>
+    <sys:String x:Key="ChartDesignerChipsLabel">Chip（上限 3）</sys:String>
+    <sys:String x:Key="ChartDesignerChipShowWhenHasValue">有值才顯示</sys:String>
+    <sys:String x:Key="ChartDesignerSecondaryLabel">次要資訊（上限 3）</sys:String>
+    <sys:String x:Key="ChartDesignerProgressNumLabel">進度分子</sys:String>
+    <sys:String x:Key="ChartDesignerProgressDenLabel">進度分母</sys:String>
+    <sys:String x:Key="ChartDesignerTableColumnsLabel">表格欄位</sys:String>
+    <sys:String x:Key="ChartDesignerIndicatorLabel">燈號來源</sys:String>
+    <sys:String x:Key="ChartDesignerMoveUpTooltip">上移</sys:String>
+    <sys:String x:Key="ChartDesignerMoveDownTooltip">下移</sys:String>
     <!--#endregion-->
 
 </ResourceDictionary>

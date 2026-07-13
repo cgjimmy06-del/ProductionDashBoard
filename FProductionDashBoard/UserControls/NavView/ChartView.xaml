@@ -4,9 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:localuc="clr-namespace:FProductionDashBoard.UserControls"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="1200">
-    <Grid Margin="12">
+    <Grid>
+
+    <!-- ========== 檢視層（設計器開啟時隱藏） ========== -->
+    <Grid Margin="12"
+          Visibility="{Binding IsViewerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>  <!-- Row 0：圖表操作列（不縮放） -->
             <RowDefinition Height="*"/>     <!-- Row 1：內容區（單一 LayoutTransform 等比縮放） -->
@@ -30,27 +35,27 @@
                     </StackPanel>
                 </Border>
 
-                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                <Button Command="{Binding AddChartCommand}" Style="{StaticResource ChartIconButtonStyle}"
                         ToolTip="{DynamicResource ChartAddTooltip}">
                     <materialDesign:PackIcon Kind="Plus" Width="20" Height="20"/>
                 </Button>
-                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                <Button Command="{Binding EditChartCommand}" Style="{StaticResource ChartIconButtonStyle}"
                         ToolTip="{DynamicResource ChartEditTooltip}">
                     <materialDesign:PackIcon Kind="PencilOutline" Width="18" Height="18"/>
                 </Button>
-                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                <Button Command="{Binding CopyChartCommand}" Style="{StaticResource ChartIconButtonStyle}"
                         ToolTip="{DynamicResource ChartCopyTooltip}">
                     <materialDesign:PackIcon Kind="ContentCopy" Width="17" Height="17"/>
                 </Button>
-                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                <Button Command="{Binding DeleteChartCommand}" Style="{StaticResource ChartIconButtonStyle}"
                         ToolTip="{DynamicResource ChartDeleteTooltip}">
                     <materialDesign:PackIcon Kind="DeleteOutline" Width="18" Height="18"/>
                 </Button>
-                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                <Button Command="{Binding ExportChartCommand}" Style="{StaticResource ChartIconButtonStyle}"
                         ToolTip="{DynamicResource ChartExportTooltip}">
                     <materialDesign:PackIcon Kind="TrayArrowUp" Width="18" Height="18"/>
                 </Button>
-                <Button IsEnabled="False" Style="{StaticResource ChartIconButtonStyle}"
+                <Button Command="{Binding ImportChartCommand}" Style="{StaticResource ChartIconButtonStyle}"
                         ToolTip="{DynamicResource ChartImportTooltip}">
                     <materialDesign:PackIcon Kind="TrayArrowDown" Width="18" Height="18"/>
                 </Button>
@@ -211,70 +216,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Width="190" CornerRadius="8" Margin="0,0,10,10" Padding="10"
-                                        Background="{DynamicResource PrimaryBackgroundBrush}"
-                                        BorderThickness="2"
-                                        BorderBrush="{Binding BorderBrushKey, Converter={StaticResource BrushKeyToBrushConverter}}">
-                                    <Border.Effect>
-                                        <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.15"/>
-                                    </Border.Effect>
-                                    <StackPanel>
-
-                                        <!-- 標題：主名稱 + 右上狀態色點 -->
-                                        <Grid Margin="0,0,0,6">
-                                            <TextBlock Text="{Binding Title}"
-                                                       FontSize="16" FontWeight="SemiBold" Margin="0,0,14,0"
-                                                       Foreground="{DynamicResource TextPrimaryBrush}"
-                                                       TextTrimming="CharacterEllipsis"/>
-                                            <Ellipse Width="10" Height="10"
-                                                     HorizontalAlignment="Right" VerticalAlignment="Top"
-                                                     Fill="{Binding BorderBrushKey, Converter={StaticResource BrushKeyToBrushConverter}}"/>
-                                        </Grid>
-
-                                        <!-- Chip 獨立列（wrap，有值才顯示） -->
-                                        <ItemsControl ItemsSource="{Binding Chips}" Margin="0,0,0,6">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <WrapPanel/>
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Border CornerRadius="6" Padding="6,2" Margin="0,0,4,2"
-                                                            Background="{Binding BrushKey, Converter={StaticResource BrushKeyToBrushConverter}}">
-                                                        <TextBlock Text="{Binding Text}" FontSize="12" FontWeight="SemiBold"
-                                                                   Foreground="{DynamicResource TextDarkBrush}"/>
-                                                    </Border>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-
-                                        <!-- 次要資訊（每列一欄位） -->
-                                        <ItemsControl ItemsSource="{Binding SecondaryInfos}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                                                        <TextBlock Text="{Binding Label}" FontSize="12" Margin="0,0,4,0"
-                                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                                        <TextBlock Text="{Binding Text}" FontSize="13"
-                                                                   Foreground="{DynamicResource TextPrimaryBrush}"
-                                                                   TextTrimming="CharacterEllipsis"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-
-                                        <!-- 進度條（分子/分母） -->
-                                        <StackPanel Margin="0,2,0,0"
-                                                    Visibility="{Binding HasProgress, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                            <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}" Maximum="100" Height="8"/>
-                                            <TextBlock Text="{Binding ProgressText}" FontSize="11" Margin="0,2,0,0"
-                                                       HorizontalAlignment="Right"
-                                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                        </StackPanel>
-
-                                    </StackPanel>
-                                </Border>
+                                <!-- 卡片抽為 ChartCardView 與設計器左預覽共用（比照 ScheduleEquipmentCardView） -->
+                                <localuc:ChartCardView/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -313,5 +256,12 @@
                 </StackPanel>
             </Grid>
         </Grid>
+    </Grid>
+
+    <!-- ========== 設計器層（IsDesignerOpen 時顯示；DataContext 由包覆層綁定避免 Visibility 解析到 Designer） ========== -->
+    <Grid Visibility="{Binding IsDesignerOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <localuc:ChartDesignerView DataContext="{Binding Designer}"/>
+    </Grid>
+
     </Grid>
 </UserControl>
