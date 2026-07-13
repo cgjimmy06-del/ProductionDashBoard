@@ -141,6 +141,7 @@
     <sys:String x:Key="SopItemCheckType">類型</sys:String>
     <sys:String x:Key="SopItemWorkstation">工位</sys:String>
     <sys:String x:Key="SopItemMaterial">物料</sys:String>
+    <sys:String x:Key="SopItemMaterialFilterHint">編號 / 品名</sys:String>
     <sys:String x:Key="SopItemQuantity">數量</sys:String>
     <sys:String x:Key="SopItemContent">內容</sys:String>
     <sys:String x:Key="SopItemRemark">備註</sys:String>
