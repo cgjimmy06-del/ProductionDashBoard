@@ -765,8 +765,20 @@
   <data name="ChartStatScheduleTotal" xml:space="preserve">
     <value>Tổng phiếu xếp</value>
   </data>
+  <data name="ChartStatInProductionCount" xml:space="preserve">
+    <value>Thiết bị đang sản xuất</value>
+  </data>
+  <data name="ChartStatTuningActiveCount" xml:space="preserve">
+    <value>Thiết bị đang tinh chỉnh</value>
+  </data>
+  <data name="ChartStatIdleCount" xml:space="preserve">
+    <value>Thiết bị nhàn rỗi</value>
+  </data>
   <data name="ChartBtnHighLoad" xml:space="preserve">
     <value>Tải cao</value>
+  </data>
+  <data name="ChartBtnIdle" xml:space="preserve">
+    <value>Nhàn rỗi</value>
   </data>
   <data name="ChartFilterAll" xml:space="preserve">
     <value>Tất cả</value>

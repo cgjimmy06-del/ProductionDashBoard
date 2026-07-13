@@ -1476,8 +1476,24 @@ namespace FProductionDashBoard.Properties {
             get { return ResourceManager.GetString("ChartStatScheduleTotal", resourceCulture); }
         }
 
+        internal static string ChartStatInProductionCount {
+            get { return ResourceManager.GetString("ChartStatInProductionCount", resourceCulture); }
+        }
+
+        internal static string ChartStatTuningActiveCount {
+            get { return ResourceManager.GetString("ChartStatTuningActiveCount", resourceCulture); }
+        }
+
+        internal static string ChartStatIdleCount {
+            get { return ResourceManager.GetString("ChartStatIdleCount", resourceCulture); }
+        }
+
         internal static string ChartBtnHighLoad {
             get { return ResourceManager.GetString("ChartBtnHighLoad", resourceCulture); }
+        }
+
+        internal static string ChartBtnIdle {
+            get { return ResourceManager.GetString("ChartBtnIdle", resourceCulture); }
         }
 
         internal static string ChartFilterAll {

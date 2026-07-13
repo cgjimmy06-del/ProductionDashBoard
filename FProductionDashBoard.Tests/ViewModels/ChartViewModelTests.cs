@@ -127,7 +127,7 @@ namespace FProductionDashBoard.Tests.ViewModels
         }
 
         [Fact]
-        public void EquipmentRow_NoFeasibleEp_IsUnavailable_WithoutChips()
+        public void EquipmentRow_NoFeasibleEp_IsUnavailable_HidesTuningChipOnly()
         {
             var vm = CreateVm();
             var eq = MakeEquipment(1, "EDM-03");
@@ -136,7 +136,9 @@ namespace FProductionDashBoard.Tests.ViewModels
 
             var row = Assert.Single(GetRows(vm));
             Assert.Equal(FieldCatalog.ValUnavailable, row.Values[FieldCatalog.ProductionStatus]);
-            Assert.Empty(row.Chips);   // 調試 None / 負載 None（rank 0）皆不出 chip
+            // 調試中 chip（有值才顯示）：None（rank 0）不出；負載/進行中訂單數 chip（種子已關閉「有值才顯示」）恆顯示
+            Assert.Equal(2, row.Chips.Count);
+            Assert.Equal(new[] { "No Load", "0" }, row.Chips.Select(c => c.Text).ToArray());
             Assert.Equal("IdleBrush", row.BorderBrushKey);
         }
 
@@ -396,9 +398,10 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal(2, GetRows(vm).Count);
             Assert.Null(filter.SelectedOption?.Value);
             Assert.All(vm.QuickButtons, b => Assert.False(b.IsActive));
-            Assert.Equal(FieldCatalog.EquipmentName, vm.SelectedSortOption?.FieldId);
+            Assert.Equal(FieldCatalog.LoadLevel, vm.SelectedSortOption?.FieldId);
             Assert.False(vm.IsSortDescending);
-            Assert.Equal(new[] { "CNC-01", "EDM-02" }, GetRows(vm).Select(r => r.Title).ToArray());
+            // 預設排序＝負載狀態升冪：EDM-02 無負載（rank0）在 CNC-01 低負載（rank1）之前
+            Assert.Equal(new[] { "EDM-02", "CNC-01" }, GetRows(vm).Select(r => r.Title).ToArray());
         }
 
         // --- 定期刷新（資料-only） ---
