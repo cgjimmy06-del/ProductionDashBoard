@@ -810,8 +810,20 @@
   <data name="ChartStatScheduleTotal" xml:space="preserve">
     <value>Total Schedules</value>
   </data>
+  <data name="ChartStatInProductionCount" xml:space="preserve">
+    <value>In-Production Equipment</value>
+  </data>
+  <data name="ChartStatTuningActiveCount" xml:space="preserve">
+    <value>Tuning Equipment</value>
+  </data>
+  <data name="ChartStatIdleCount" xml:space="preserve">
+    <value>Idle Equipment</value>
+  </data>
   <data name="ChartBtnHighLoad" xml:space="preserve">
     <value>High Load</value>
+  </data>
+  <data name="ChartBtnIdle" xml:space="preserve">
+    <value>Idle</value>
   </data>
   <data name="ChartFilterAll" xml:space="preserve">
     <value>All</value>

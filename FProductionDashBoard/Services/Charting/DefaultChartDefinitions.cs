@@ -34,37 +34,37 @@ namespace FProductionDashBoard.Services
                     {
                         FieldId = FieldCatalog.ProductionStatus,
                         FilterValue = FieldCatalog.ValInProduction,
-                        LabelKey = "ChartValInProduction",
+                        LabelKey = "ChartStatInProductionCount",
                         ColorKey = "PrimaryBrush",
                     },
                     new StatItemConfig
                     {
                         FieldId = FieldCatalog.TuningStatus,
                         FilterValue = FieldCatalog.ValTuningActive,
-                        LabelKey = "ChartValTuningActive",
+                        LabelKey = "ChartStatTuningActiveCount",
                         ColorKey = "WarningBrush",
                     },
                     new StatItemConfig
                     {
                         FieldId = FieldCatalog.ProductionStatus,
                         FilterValue = FieldCatalog.ValIdle,
-                        LabelKey = "ChartValIdle",
+                        LabelKey = "ChartStatIdleCount",
                         ColorKey = "SuccessBrush",
                     },
                 },
             },
             FilterRow = new FilterRowConfig
             {
-                FilterFieldIds = { FieldCatalog.ProductionStatus, FieldCatalog.EquipmentName },
+                FilterFieldIds = { FieldCatalog.ProductionStatus, FieldCatalog.EquipmentName, FieldCatalog.LoadLevel },
                 QuickButtons =
                 {
                     new QuickFilterButtonConfig { FieldId = FieldCatalog.ProductionStatus, Value = FieldCatalog.ValInProduction },
-                    new QuickFilterButtonConfig { FieldId = FieldCatalog.ProductionStatus, Value = FieldCatalog.ValIdle },
+                    new QuickFilterButtonConfig { FieldId = FieldCatalog.ProductionStatus, Value = FieldCatalog.ValIdle, LabelKey = "ChartBtnIdle" },
                     new QuickFilterButtonConfig { FieldId = FieldCatalog.TuningStatus,     Value = FieldCatalog.ValTuningActive },
                     new QuickFilterButtonConfig { FieldId = FieldCatalog.LoadLevel,        Value = FieldCatalog.ValLoadHigh, LabelKey = "ChartBtnHighLoad" },
                 },
-                SortOptionFieldIds = { FieldCatalog.EquipmentName, FieldCatalog.ProductionStatus, FieldCatalog.LoadLevel },
-                DefaultSortFieldId = FieldCatalog.EquipmentName,
+                SortOptionFieldIds = { FieldCatalog.EquipmentName, FieldCatalog.ProductionStatus, FieldCatalog.LoadLevel, FieldCatalog.ActiveOrderCount },
+                DefaultSortFieldId = FieldCatalog.LoadLevel,
                 DefaultSortDirection = ChartSortDirection.Ascending,
             },
             Container = new ContainerConfig
@@ -77,7 +77,8 @@ namespace FProductionDashBoard.Services
                     Chips =
                     {
                         new ChipConfig { FieldId = FieldCatalog.TuningStatus },
-                        new ChipConfig { FieldId = FieldCatalog.LoadLevel },
+                        new ChipConfig { FieldId = FieldCatalog.LoadLevel, ShowOnlyWhenHasValue = false },
+                        new ChipConfig { FieldId = FieldCatalog.ActiveOrderCount, ShowOnlyWhenHasValue = false },
                     },
                     SecondaryFieldIds = { FieldCatalog.CurrentProduct, FieldCatalog.TotalPendingQty },
                     ProgressNumeratorFieldId = FieldCatalog.ProgressCompleted,

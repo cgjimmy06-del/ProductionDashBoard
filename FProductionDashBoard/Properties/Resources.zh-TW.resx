@@ -765,8 +765,20 @@
   <data name="ChartStatScheduleTotal" xml:space="preserve">
     <value>全部排單</value>
   </data>
+  <data name="ChartStatInProductionCount" xml:space="preserve">
+    <value>生產中設備數</value>
+  </data>
+  <data name="ChartStatTuningActiveCount" xml:space="preserve">
+    <value>調試中設備數</value>
+  </data>
+  <data name="ChartStatIdleCount" xml:space="preserve">
+    <value>待機中設備數</value>
+  </data>
   <data name="ChartBtnHighLoad" xml:space="preserve">
     <value>高負載</value>
+  </data>
+  <data name="ChartBtnIdle" xml:space="preserve">
+    <value>待機中</value>
   </data>
   <data name="ChartFilterAll" xml:space="preserve">
     <value>全部</value>

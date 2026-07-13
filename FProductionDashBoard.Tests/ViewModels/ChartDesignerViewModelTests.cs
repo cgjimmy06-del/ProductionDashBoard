@@ -148,7 +148,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal("3", vm.PreviewStatItems[0].Value);   // 樣本 3 台設備
 
             Assert.True(vm.IsPreviewFilterVisible);
-            Assert.Equal(2, vm.PreviewFilterLabels.Count);
+            Assert.Equal(3, vm.PreviewFilterLabels.Count);
             Assert.Equal(4, vm.PreviewQuickLabels.Count);
             Assert.NotNull(vm.PreviewSortLabel);
         }
@@ -295,17 +295,17 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void AddFilterField_UpToLimit_ThenDisabled_AndSyncsDefinition()
         {
             var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
-            Assert.Equal(2, vm.FilterFieldEditors.Count);   // 種子 2 項
-
-            vm.AddFilterFieldCommand.Execute(null);
-
-            Assert.Equal(3, vm.FilterFieldEditors.Count);
-            Assert.Equal(3, vm.WorkingDefinition.FilterRow.FilterFieldIds.Count);
+            Assert.Equal(3, vm.FilterFieldEditors.Count);   // 種子 3 項＝已達上限 MaxFilterFields
             Assert.False(vm.AddFilterFieldCommand.CanExecute(null));
 
             vm.RemoveFilterFieldCommand.Execute(vm.FilterFieldEditors[0]);
             Assert.Equal(2, vm.WorkingDefinition.FilterRow.FilterFieldIds.Count);
             Assert.True(vm.AddFilterFieldCommand.CanExecute(null));
+
+            vm.AddFilterFieldCommand.Execute(null);
+            Assert.Equal(3, vm.FilterFieldEditors.Count);
+            Assert.Equal(3, vm.WorkingDefinition.FilterRow.FilterFieldIds.Count);
+            Assert.False(vm.AddFilterFieldCommand.CanExecute(null));
         }
 
         [Fact]
@@ -338,15 +338,15 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void RemoveSortOption_ThatIsDefaultSort_FallsBackToTitle()
         {
             var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
-            // 種子預設排序＝設備名稱
-            Assert.Equal(FieldCatalog.EquipmentName, vm.SelectedDefaultSort?.FieldId);
+            // 種子預設排序＝負載狀態
+            Assert.Equal(FieldCatalog.LoadLevel, vm.SelectedDefaultSort?.FieldId);
 
-            var target = vm.SortOptionEditors.First(e => e.SelectedField?.FieldId == FieldCatalog.EquipmentName);
+            var target = vm.SortOptionEditors.First(e => e.SelectedField?.FieldId == FieldCatalog.LoadLevel);
             vm.RemoveSortOptionCommand.Execute(target);
 
             Assert.Equal("", vm.WorkingDefinition.FilterRow.DefaultSortFieldId);   // 落回主名稱
             Assert.Equal("", vm.SelectedDefaultSort?.FieldId);
-            Assert.Equal(2, vm.WorkingDefinition.FilterRow.SortOptionFieldIds.Count);
+            Assert.Equal(3, vm.WorkingDefinition.FilterRow.SortOptionFieldIds.Count);
         }
 
         [Fact]
@@ -464,21 +464,21 @@ namespace FProductionDashBoard.Tests.ViewModels
         public void AddChip_UpToLimit_ThenDisabled_WritesThrough()
         {
             var vm = CreateDesigner(DefaultChartDefinitions.CreateEquipmentOverview(), new FakeStore());
-            Assert.Equal(2, vm.ChipEditors.Count);   // 種子 2 個 chip
-
-            vm.AddChipCommand.Execute(null);
-
-            Assert.Equal(3, vm.ChipEditors.Count);
-            Assert.Equal(3, vm.WorkingDefinition.Container.Card.Chips.Count);
+            Assert.Equal(3, vm.ChipEditors.Count);   // 種子 3 個 chip＝已達上限 MaxChips
             Assert.False(vm.AddChipCommand.CanExecute(null));
 
             var editor = vm.ChipEditors[^1];
-            editor.ShowOnlyWhenHasValue = false;
-            Assert.False(editor.Config.ShowOnlyWhenHasValue);
+            editor.ShowOnlyWhenHasValue = true;   // 種子預設 false，切回 true 驗證寫回
+            Assert.True(editor.Config.ShowOnlyWhenHasValue);
 
-            vm.RemoveChipCommand.Execute(editor);
+            vm.RemoveChipCommand.Execute(vm.ChipEditors[0]);
             Assert.Equal(2, vm.WorkingDefinition.Container.Card.Chips.Count);
             Assert.True(vm.AddChipCommand.CanExecute(null));
+
+            vm.AddChipCommand.Execute(null);
+            Assert.Equal(3, vm.ChipEditors.Count);
+            Assert.Equal(3, vm.WorkingDefinition.Container.Card.Chips.Count);
+            Assert.False(vm.AddChipCommand.CanExecute(null));
         }
 
         [Fact]
