@@ -1,6 +1,6 @@
 using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Services;
-using FProductionDashBoard.ViewModels;
+using FProductionDashBoard.UiModels;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -57,6 +57,27 @@ namespace FProductionDashBoard.Tests.Services
             var stats = ChartRowBuilder.BuildStatItems(def, rows);
 
             Assert.Equal("0", Assert.Single(stats).Value);
+        }
+
+        [Fact]
+        public void FormatValue_NumberFieldWithNonNumericRaw_ToleratesAsRawString()
+        {
+            // 型別誤配（如欄位新增時型別填錯）：容錯回退為原始值字串，不擲例外
+            var field = new ChartFieldDescriptor("Test", "TestKey", ChartFieldType.Number);
+
+            var formatted = ChartRowBuilder.FormatValue(field, "not-a-number");
+
+            Assert.Equal("not-a-number", formatted);
+        }
+
+        [Fact]
+        public void FormatValue_DateFieldWithNonDateRaw_ToleratesAsRawString()
+        {
+            var field = new ChartFieldDescriptor("Test", "TestKey", ChartFieldType.Date);
+
+            var formatted = ChartRowBuilder.FormatValue(field, 12345);
+
+            Assert.Equal("12345", formatted);
         }
     }
 }

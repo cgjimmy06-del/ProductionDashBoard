@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using FProductionDashBoard.Dtos;
-using FProductionDashBoard.ViewModels;
+using FProductionDashBoard.UiModels;
 
 namespace FProductionDashBoard.Services
 {
@@ -101,14 +101,21 @@ namespace FProductionDashBoard.Services
         internal static string FormatValue(ChartFieldDescriptor field, object? raw)
         {
             if (raw == null) return "—";
-            return field.Type switch
+            try
             {
-                ChartFieldType.Enum   => ResolveEnumLabel(field, raw.ToString() ?? ""),
-                ChartFieldType.Number => Convert.ToDouble(raw, CultureInfo.InvariantCulture)
-                                             .ToString("N0", CultureInfo.CurrentCulture),
-                ChartFieldType.Date   => ((DateTime)raw).ToString("yyyy-MM-dd"),
-                _                     => raw.ToString() ?? "—",
-            };
+                return field.Type switch
+                {
+                    ChartFieldType.Enum   => ResolveEnumLabel(field, raw.ToString() ?? ""),
+                    ChartFieldType.Number => Convert.ToDouble(raw, CultureInfo.InvariantCulture)
+                                                 .ToString("N0", CultureInfo.CurrentCulture),
+                    ChartFieldType.Date   => ((DateTime)raw).ToString("yyyy-MM-dd"),
+                    _                     => raw.ToString() ?? "—",
+                };
+            }
+            catch
+            {
+                return raw.ToString() ?? "—";   // 型別誤配（如欄位新增時型別填錯）容錯：顯示原始值，不崩潰
+            }
         }
 
         internal static string ResolveEnumLabel(ChartFieldDescriptor field, string value)

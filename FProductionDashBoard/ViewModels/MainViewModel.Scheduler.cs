@@ -27,6 +27,9 @@ namespace FProductionDashBoard.ViewModels
         private int _missedCheckCounter = 0;
         private bool _isIdleDialogShowing = false;
 
+        // 4 種輪詢共用下限，避免設定值為 0/負數時每秒全量觸發
+        private const int MinPollIntervalSec = 5;
+
         [DllImport("user32.dll")] private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
         [StructLayout(LayoutKind.Sequential)] private struct LASTINPUTINFO { public uint cbSize; public uint dwTime; }
 
@@ -66,7 +69,7 @@ namespace FProductionDashBoard.ViewModels
             var s = _systemConfig.Current;
 
             _cardRefreshTickCounter++;
-            if (s.CardRefreshEnabled && _cardRefreshTickCounter >= s.CardRefreshIntervalSec && !_isCardRefreshRunning)
+            if (s.CardRefreshEnabled && _cardRefreshTickCounter >= Math.Max(MinPollIntervalSec, s.CardRefreshIntervalSec) && !_isCardRefreshRunning)
             {
                 _cardRefreshTickCounter = 0;
                 _isCardRefreshRunning = true;
@@ -93,7 +96,7 @@ namespace FProductionDashBoard.ViewModels
                 else
                 {
                     _chartRefreshTickCounter++;
-                    if (s.ChartRefreshEnabled && _chartRefreshTickCounter >= s.ChartRefreshIntervalSec && !_isChartRefreshRunning)
+                    if (s.ChartRefreshEnabled && _chartRefreshTickCounter >= Math.Max(MinPollIntervalSec, s.ChartRefreshIntervalSec) && !_isChartRefreshRunning)
                     {
                         _chartRefreshTickCounter = 0;
                         _isChartRefreshRunning = true;
@@ -103,7 +106,7 @@ namespace FProductionDashBoard.ViewModels
             }
 
             _missedCheckCounter++;
-            if (s.MissedCheckEnabled && _missedCheckCounter >= s.MissedCheckIntervalSec)
+            if (s.MissedCheckEnabled && _missedCheckCounter >= Math.Max(MinPollIntervalSec, s.MissedCheckIntervalSec))
             {
                 _missedCheckCounter = 0;
                 var containerSnapshot = BuildActiveContainerSnapshot();
@@ -118,7 +121,7 @@ namespace FProductionDashBoard.ViewModels
                 });
             }
 
-            if (s.IdleLogoutEnabled && IsLoggedIn && !_isIdleDialogShowing && GetIdleSeconds() >= s.IdleLogoutIntervalSec)
+            if (s.IdleLogoutEnabled && IsLoggedIn && !_isIdleDialogShowing && GetIdleSeconds() >= Math.Max(MinPollIntervalSec, s.IdleLogoutIntervalSec))
                 await CheckLogOutForLongIdle();
         }
 

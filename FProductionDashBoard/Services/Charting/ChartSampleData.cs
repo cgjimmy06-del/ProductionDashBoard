@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using FProductionDashBoard.Dtos;
-using FProductionDashBoard.ViewModels;
+using FProductionDashBoard.UiModels;
 
 namespace FProductionDashBoard.Services
 {

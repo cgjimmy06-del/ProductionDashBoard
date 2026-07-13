@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.UiModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
