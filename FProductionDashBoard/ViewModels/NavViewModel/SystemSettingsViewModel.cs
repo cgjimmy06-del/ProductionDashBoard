@@ -47,6 +47,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private int  businessMinute         = 0;
         [ObservableProperty] private bool cardRefreshEnabled     = true;
         [ObservableProperty] private int  cardRefreshIntervalSec = 30;
+        [ObservableProperty] private bool chartRefreshEnabled    = true;
+        [ObservableProperty] private int  chartRefreshIntervalSec = 120;
         [ObservableProperty] private bool missedCheckEnabled     = true;
         [ObservableProperty] private int  missedCheckIntervalSec = 300;
         [ObservableProperty] private bool idleLogoutEnabled      = true;
@@ -57,6 +59,8 @@ namespace FProductionDashBoard.ViewModels
         partial void OnBusinessMinuteChanged(int value)         => HasUnsavedChanges = true;
         partial void OnCardRefreshEnabledChanged(bool value)    => HasUnsavedChanges = true;
         partial void OnCardRefreshIntervalSecChanged(int value) => HasUnsavedChanges = true;
+        partial void OnChartRefreshEnabledChanged(bool value)    => HasUnsavedChanges = true;
+        partial void OnChartRefreshIntervalSecChanged(int value) => HasUnsavedChanges = true;
         partial void OnMissedCheckEnabledChanged(bool value)    => HasUnsavedChanges = true;
         partial void OnMissedCheckIntervalSecChanged(int value) => HasUnsavedChanges = true;
         partial void OnIdleLogoutEnabledChanged(bool value)     => HasUnsavedChanges = true;
@@ -200,6 +204,8 @@ namespace FProductionDashBoard.ViewModels
             BusinessMinute         = sys.BusinessMinute;
             CardRefreshEnabled     = sys.CardRefreshEnabled;
             CardRefreshIntervalSec = sys.CardRefreshIntervalSec;
+            ChartRefreshEnabled    = sys.ChartRefreshEnabled;
+            ChartRefreshIntervalSec = sys.ChartRefreshIntervalSec;
             MissedCheckEnabled     = sys.MissedCheckEnabled;
             MissedCheckIntervalSec = sys.MissedCheckIntervalSec;
             IdleLogoutEnabled      = sys.IdleLogoutEnabled;
@@ -232,6 +238,8 @@ namespace FProductionDashBoard.ViewModels
                 BusinessMinute         = BusinessMinute,
                 CardRefreshEnabled     = CardRefreshEnabled,
                 CardRefreshIntervalSec = CardRefreshIntervalSec,
+                ChartRefreshEnabled    = ChartRefreshEnabled,
+                ChartRefreshIntervalSec = ChartRefreshIntervalSec,
                 MissedCheckEnabled     = MissedCheckEnabled,
                 MissedCheckIntervalSec = MissedCheckIntervalSec,
                 IdleLogoutEnabled      = IdleLogoutEnabled,

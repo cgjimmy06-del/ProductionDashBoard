@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,8 @@ namespace FProductionDashBoard.ViewModels
 
         private int _cardRefreshTickCounter = 0;
         private bool _isCardRefreshRunning = false;
+        private int _chartRefreshTickCounter = 0;
+        private bool _isChartRefreshRunning = false;
         private int _missedCheckCounter = 0;
         private bool _isIdleDialogShowing = false;
 
@@ -81,6 +84,24 @@ namespace FProductionDashBoard.ViewModels
                 });
             }
 
+            // 圖表定期刷新：僅圖表頁可見且非設計器開啟時計時；歸零語意＝進頁面起重新計時
+            if (CurrentNavMode != NavMode.Chart) { _chartRefreshTickCounter = 0; }
+            else
+            {
+                var chartVm = _serviceProvider.GetRequiredService<ChartViewModel>();
+                if (chartVm.IsDesignerOpen) { _chartRefreshTickCounter = 0; }
+                else
+                {
+                    _chartRefreshTickCounter++;
+                    if (s.ChartRefreshEnabled && _chartRefreshTickCounter >= s.ChartRefreshIntervalSec && !_isChartRefreshRunning)
+                    {
+                        _chartRefreshTickCounter = 0;
+                        _isChartRefreshRunning = true;
+                        _ = RefreshChartAsync(chartVm);   // UI 執行緒 fire-and-forget（刷新改動綁定 UI 的集合，不可 Task.Run）
+                    }
+                }
+            }
+
             _missedCheckCounter++;
             if (s.MissedCheckEnabled && _missedCheckCounter >= s.MissedCheckIntervalSec)
             {
@@ -130,6 +151,18 @@ namespace FProductionDashBoard.ViewModels
                     _core.Log.AddErrorLog($"[RefreshActiveCardsAsync] [{card.Info.Name}] {ex.Message}");
                 }
             }
+        }
+
+        private async Task RefreshChartAsync(ChartViewModel chartVm)
+        {
+            try { await chartVm.RefreshDataAsync(); }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[RefreshChartAsync] 圖表資料刷新背景任務發生例外", LogLevel.Error);
+                _core.Log.AddErrorLog($"[RefreshChartAsync] {ex.Message}");
+            }
+            finally
+            { _isChartRefreshRunning = false; }
         }
 
         private async Task CheckMissedInspectionsAsync(IReadOnlyList<DeviceCardViewModel> activeDevices)

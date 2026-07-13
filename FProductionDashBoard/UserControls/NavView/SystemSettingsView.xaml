@@ -295,6 +295,30 @@
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </Grid>
 
+                        <!-- 圖表資料刷新 -->
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource SsChartRefreshLabel}" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <ToggleButton Grid.Column="1"
+                                      IsChecked="{Binding ChartRefreshEnabled}"
+                                      Style="{StaticResource SwitchToggleButtonStyle}"
+                                      Margin="8,0"/>
+                            <TextBlock Grid.Column="2" Text="{DynamicResource SsEvery}" VerticalAlignment="Center" Margin="16,0,8,0"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBox Grid.Column="3" Width="60"
+                                 Text="{Binding ChartRefreshIntervalSec, UpdateSourceTrigger=PropertyChanged}"
+                                 IsEnabled="{Binding ChartRefreshEnabled}"/>
+                            <TextBlock Grid.Column="4" Text="{DynamicResource SsSecondUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </Grid>
+
                         <!-- 未巡檢偵測 -->
                         <Grid Margin="0,4">
                             <Grid.ColumnDefinitions>
