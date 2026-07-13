@@ -158,24 +158,17 @@ namespace FProductionDashBoard.ViewModels
         {
             var def = SelectedTab?.Definition;
 
-            _rows.Clear();
-            StatItems.Clear();
-
             if (def == null)
             {
+                _rows.Clear();
+                StatItems.Clear();
                 ResetPresentation();
                 return;
             }
 
             try
             {
-                var rows = def.DataSet == ChartDataSet.Equipment
-                    ? BuildEquipmentRows(def)
-                    : BuildScheduleRows(def);
-                foreach (var row in rows)
-                    _rows.Add(row);
-
-                ComputeStats(def);
+                RebuildRowsAndStats(def);
                 ApplyContainer(def);
                 BuildFilterRow(def);
             }
@@ -187,6 +180,76 @@ namespace FProductionDashBoard.ViewModels
                 ResetPresentation();
                 _core.Log.AddLog("[圖表] 圖表定義渲染失敗，已改為空白顯示", LogLevel.Error);
                 _core.Log.AddErrorLog($"[RebuildForDefinition] {ex.Message}");
+            }
+        }
+
+        /// <summary>清空並重建列與統計列（不動容器/篩選列設定）；檢視端重建與定期刷新共用</summary>
+        private void RebuildRowsAndStats(ChartDefinition def)
+        {
+            _rows.Clear();
+            StatItems.Clear();
+
+            var rows = def.DataSet == ChartDataSet.Equipment
+                ? BuildEquipmentRows(def)
+                : BuildScheduleRows(def);
+            foreach (var row in rows)
+                _rows.Add(row);
+
+            ComputeStats(def);
+        }
+
+        /// <summary>
+        /// 定期刷新（資料-only）：重查後只更新快取＋重建列/統計列，保留頁籤/篩選/排序/快捷的使用者狀態。
+        /// 測試 seam，比照 <see cref="InjectDataForTest"/>。
+        /// </summary>
+        internal void ApplyRefreshedData(List<Schedule> schedules, List<OrderProductionInfo> orders,
+            List<EquipmentProduct> allEps, List<ProgramTuningRecord> tunings)
+        {
+            // 套用時重查 guard：發起後至套用前若開啟設計器或無選中頁籤則丟棄本輪
+            if (IsDesignerOpen) return;
+            var def = SelectedTab?.Definition;
+            if (def == null) return;
+
+            try
+            {
+                _schedules = schedules;
+                _orders    = orders;
+                _allEps    = allEps;
+                _tunings   = tunings;
+
+                RebuildRowsAndStats(def);
+                RowsView.Refresh();
+            }
+            catch (Exception ex)
+            {
+                // 比照 RebuildForDefinition：渲染失敗改空白顯示，不崩潰、不改寫檔案
+                _rows.Clear();
+                StatItems.Clear();
+                ResetPresentation();
+                _core.Log.AddLog("[圖表] 圖表定義渲染失敗，已改為空白顯示", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ApplyRefreshedData] {ex.Message}");
+            }
+        }
+
+        /// <summary>定期刷新入口：頁面可見且非設計中時，重查 4 個資料集後套用（保留使用者篩選/排序）</summary>
+        public async Task RefreshDataAsync()
+        {
+            if (IsDesignerOpen || SelectedTab == null) return;
+
+            try
+            {
+                var schedules = await _core.Data.GetAllSchedulesAsync();
+                var orders    = await _core.Data.GetAllOrderProductionsAsync();
+                var allEps    = await _core.Data.GetAllEquipmentProductsAsync();
+                var tunings   = await _core.Data.GetAllInProgressProgramTuningAsync();
+
+                ApplyRefreshedData(schedules, orders.Select(OrderProductionInfo.FromEntity).ToList(), allEps, tunings);
+            }
+            catch (Exception ex)
+            {
+                // 週期路徑：降為 Warning、維持前次資料顯示（LoadAsync 主動路徑維持 Error 不動）
+                _core.Log.AddLog("[圖表] 資料刷新略過：資料庫連線失敗，維持前次資料顯示", LogLevel.Warning);
+                _core.Log.AddErrorLog($"[RefreshDataAsync] {ex.Message}");
             }
         }
 

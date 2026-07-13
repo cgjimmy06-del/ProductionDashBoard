@@ -76,6 +76,11 @@ namespace FProductionDashBoard.Tests.ViewModels
             List<EquipmentProduct>? eps = null, List<ProgramTuningRecord>? tunings = null)
             => vm.InjectDataForTest(schedules ?? new(), orders ?? new(), eps ?? new(), tunings ?? new());
 
+        private static void Refresh(ChartViewModel vm,
+            List<Schedule>? schedules = null, List<OrderProductionInfo>? orders = null,
+            List<EquipmentProduct>? eps = null, List<ProgramTuningRecord>? tunings = null)
+            => vm.ApplyRefreshedData(schedules ?? new(), orders ?? new(), eps ?? new(), tunings ?? new());
+
         // --- 頁籤 ---
 
         [Fact]
@@ -394,6 +399,121 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal(FieldCatalog.EquipmentName, vm.SelectedSortOption?.FieldId);
             Assert.False(vm.IsSortDescending);
             Assert.Equal(new[] { "CNC-01", "EDM-02" }, GetRows(vm).Select(r => r.Title).ToArray());
+        }
+
+        // --- 定期刷新（資料-only） ---
+
+        [Fact]
+        public void ApplyRefreshedData_RebuildsRowsAndStats_WithNewData()
+        {
+            var vm = CreateVm();
+            var eq1 = MakeEquipment(1, "A");
+            Inject(vm, eps: new() { MakeEp(eq1, TuningType.Feasible) });
+            Assert.Single(GetRows(vm));
+
+            var eq2 = MakeEquipment(2, "B");
+            var eq3 = MakeEquipment(3, "C");
+            Refresh(vm, eps: new() { MakeEp(eq2, TuningType.Feasible), MakeEp(eq3, TuningType.Feasible) });
+
+            Assert.Equal(2, GetRows(vm).Count);
+            Assert.Equal("2", vm.StatItems[0].Value);   // 設備總數統計反映新資料
+        }
+
+        [Fact]
+        public void ApplyRefreshedData_PreservesFilterSortSelection_AppliesToNewData()
+        {
+            var vm = CreateVmWithTwoEquipments(out _, out _);   // CNC-01 生產中 / EDM-02 閒置
+            var filter = vm.FilterFields.First(f => f.FieldId == FieldCatalog.ProductionStatus);
+            filter.SelectedOption = filter.Options.First(o => o.Value == FieldCatalog.ValInProduction);
+            vm.SelectedSortOption = vm.SortOptions.First(o => o.FieldId == FieldCatalog.LoadLevel);
+            vm.IsSortDescending = true;
+            Assert.Single(GetRows(vm));
+
+            // 新資料：兩台生產中（負載 High/Low）＋一台閒置
+            var high = MakeEquipment(10, "P-10");
+            var low  = MakeEquipment(11, "P-11");
+            var idle = MakeEquipment(12, "Z-12");
+            Refresh(vm,
+                orders: new()
+                {
+                    MakeOrder(1, 10, OrderProductionStatus.InProduction, 600),   // High
+                    MakeOrder(2, 11, OrderProductionStatus.InProduction, 50),    // Low
+                },
+                eps: new()
+                {
+                    MakeEp(high, TuningType.Feasible),
+                    MakeEp(low, TuningType.Feasible),
+                    MakeEp(idle, TuningType.Feasible),
+                });
+
+            // 篩選 VM 未被重建（同一實例）、選值保留
+            Assert.Same(filter, vm.FilterFields.First(f => f.FieldId == FieldCatalog.ProductionStatus));
+            Assert.Equal(FieldCatalog.ValInProduction, filter.SelectedOption?.Value);
+            // 生產中篩選濾掉閒置台；負載遞減排序仍生效 → High 在 Low 前
+            var rows = GetRows(vm);
+            Assert.Equal(new[] { "P-10", "P-11" }, rows.Select(r => r.Title).ToArray());
+        }
+
+        [Fact]
+        public void ApplyRefreshedData_KeepsTabsAndSelectedTabInstances()
+        {
+            var vm = CreateVm();
+            Inject(vm);
+            var selectedBefore = vm.SelectedTab;
+            var tabsBefore = vm.Tabs.ToArray();
+
+            var eq = MakeEquipment(1, "A");
+            Refresh(vm, eps: new() { MakeEp(eq, TuningType.Feasible) });
+
+            Assert.Same(selectedBefore, vm.SelectedTab);
+            Assert.Equal(tabsBefore, vm.Tabs.ToArray());   // 頁籤實例不變
+        }
+
+        [Fact]
+        public void ApplyRefreshedData_DesignerOpen_DoesNotApply()
+        {
+            var vm = CreateVm();
+            var eq = MakeEquipment(1, "A");
+            Inject(vm, eps: new() { MakeEp(eq, TuningType.Feasible) });
+            Assert.Single(GetRows(vm));
+
+            vm.IsDesignerOpen = true;
+            var eq2 = MakeEquipment(2, "B");
+            var eq3 = MakeEquipment(3, "C");
+            Refresh(vm, eps: new() { MakeEp(eq2, TuningType.Feasible), MakeEp(eq3, TuningType.Feasible) });
+
+            Assert.Single(GetRows(vm));   // 套用前 guard：本輪丟棄，維持前次 1 列
+        }
+
+        [Fact]
+        public async Task RefreshDataAsync_DesignerOpen_DoesNotQueryDb()
+        {
+            var vm = CreateVm(out var dataMock);
+            var eq = MakeEquipment(1, "A");
+            Inject(vm, eps: new() { MakeEp(eq, TuningType.Feasible) });
+
+            vm.IsDesignerOpen = true;
+            await vm.RefreshDataAsync();
+
+            dataMock.Verify(d => d.GetAllSchedulesAsync(), Times.Never);
+            dataMock.Verify(d => d.GetAllEquipmentProductsAsync(), Times.Never);
+        }
+
+        [Fact]
+        public async Task RefreshDataAsync_DbFailure_KeepsPreviousRowsWithoutThrowing()
+        {
+            var vm = CreateVm(out var dataMock);
+            var eq1 = MakeEquipment(1, "A");
+            var eq2 = MakeEquipment(2, "B");
+            Inject(vm, eps: new() { MakeEp(eq1, TuningType.Feasible), MakeEp(eq2, TuningType.Feasible) });
+            Assert.Equal(2, GetRows(vm).Count);
+
+            dataMock.Setup(d => d.GetAllSchedulesAsync())
+                .ThrowsAsync(new InvalidOperationException("db down"));
+
+            await vm.RefreshDataAsync();   // 週期路徑吞例外、維持前次資料
+
+            Assert.Equal(2, GetRows(vm).Count);
         }
 
         // --- 縮放 ---
