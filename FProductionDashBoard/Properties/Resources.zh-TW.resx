@@ -837,4 +837,7 @@
   <data name="ChartDeleteConfirm" xml:space="preserve">
     <value>確定要刪除圖表「{0}」嗎？</value>
   </data>
+  <data name="PlBulkStatusConfirm" xml:space="preserve">
+    <value>確定要將「{0}」底下 {1} 筆程式狀態改為「{2}」嗎？</value>
+  </data>
 </root>

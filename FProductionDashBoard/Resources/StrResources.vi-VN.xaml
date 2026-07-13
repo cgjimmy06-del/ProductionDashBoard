@@ -348,6 +348,8 @@
     <sys:String x:Key="PlFilterProcess">Công đoạn</sys:String>
     <sys:String x:Key="PlDetailPlaceholder">Chọn thiết bị để xem chương trình</sys:String>
     <sys:String x:Key="PlDetailClose">Đóng</sys:String>
+    <sys:String x:Key="PlBulkTeachingTooltip">Đặt tất cả thành Teaching</sys:String>
+    <sys:String x:Key="PlBulkOffsetTooltip">Đặt tất cả thành Offset</sys:String>
     <!--#endregion-->
     <!--#region 進出料管理 ProductInOut -->
     <sys:String x:Key="PioStatusPending">Đang chờ</sys:String>

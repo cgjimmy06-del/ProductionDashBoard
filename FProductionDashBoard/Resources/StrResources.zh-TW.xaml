@@ -348,6 +348,8 @@
     <sys:String x:Key="PlFilterProcess">工序</sys:String>
     <sys:String x:Key="PlDetailPlaceholder">選擇設備以檢視程式清單</sys:String>
     <sys:String x:Key="PlDetailClose">關閉</sys:String>
+    <sys:String x:Key="PlBulkTeachingTooltip">全部設為帶點</sys:String>
+    <sys:String x:Key="PlBulkOffsetTooltip">全部設為調品質</sys:String>
     <!--#endregion-->
     <!--#region 進出料管理 ProductInOut -->
     <sys:String x:Key="PioStatusPending">待排單</sys:String>

@@ -868,6 +868,13 @@ namespace FProductionDashBoard.Services
             return entity.UpdateAt.Value;
         }
 
+        public async Task<DateTime> BulkUpdateProductionStatusAsync(IEnumerable<int> equipmentProductIds, TuningType newStatus)
+        {
+            if (!await _equipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[BulkUpdateProductionStatusAsync] 機台可生產清單 Repository 連線失敗");
+            return await _equipmentProductRep.BulkUpdateProductionStatusAsync(equipmentProductIds, newStatus).ConfigureAwait(false);
+        }
+
         public async Task DeleteEquipmentProductAsync(int id)
         {
             if (!await _equipmentProductRep.CheckConnectionAsync().ConfigureAwait(false))

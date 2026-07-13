@@ -882,4 +882,7 @@
   <data name="ChartDeleteConfirm" xml:space="preserve">
     <value>Delete chart "{0}"?</value>
   </data>
+  <data name="PlBulkStatusConfirm" xml:space="preserve">
+    <value>Set all {1} program(s) under "{0}" to "{2}"?</value>
+  </data>
 </root>
