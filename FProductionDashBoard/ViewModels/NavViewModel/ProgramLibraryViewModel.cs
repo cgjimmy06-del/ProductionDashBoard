@@ -114,11 +114,12 @@ namespace FProductionDashBoard.ViewModels
         private async Task BulkSetStatusAsync(TuningType newStatus, string labelResourceKey)
         {
             if (SelectedCard == null) return;
+            var deviceName = SelectedCard.DeviceName;
             var targets = _all.Where(ep => ep.EquipmentId == SelectedCard.EquipmentId && ep.ProductionStatus != newStatus).ToList();
             if (targets.Count == 0) return;
 
             var statusLabel = Application.Current?.Resources[labelResourceKey] as string ?? newStatus.ToString();
-            var message = string.Format(Properties.Resources.PlBulkStatusConfirm, SelectedCard.DeviceName, targets.Count, statusLabel);
+            var message = string.Format(Properties.Resources.PlBulkStatusConfirm, deviceName, targets.Count, statusLabel);
             if (!_dialog.ShowConfirm(message)) return;
 
             try
@@ -131,7 +132,7 @@ namespace FProductionDashBoard.ViewModels
                 }
                 ComputeGlobalStats();
                 RebuildCards();
-                _core.Log.AddLog($"[程式庫管理] 「{SelectedCard.DeviceName}」{targets.Count} 筆程式狀態已改為{statusLabel}");
+                _core.Log.AddLog($"[程式庫管理] 「{deviceName}」{targets.Count} 筆程式狀態已改為{statusLabel}");
             }
             catch (Exception ex)
             {
