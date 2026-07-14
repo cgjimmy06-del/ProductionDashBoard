@@ -1,5 +1,7 @@
 using FProductionDashBoard.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +22,23 @@ namespace FProductionDashBoard.Repositories
                 .OrderBy(ep => ep.SeqNo)
                 .ToListAsync()
                 .ConfigureAwait(false);
+        }
+
+        public async Task<DateTime> BulkUpdateProductionStatusAsync(IEnumerable<int> equipmentProductIds, TuningType newStatus)
+        {
+            await using var ctx = _factory.CreateDbContext();
+            var now = DateTime.Now;
+            var entities = await ctx.EquipmentProducts
+                .Where(ep => EF.Constant(equipmentProductIds).Contains(ep.EquipmentProductId))
+                .ToListAsync()
+                .ConfigureAwait(false);
+            foreach (var ep in entities)
+            {
+                ep.ProductionStatus = newStatus;
+                ep.UpdateAt = now;
+            }
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
+            return now;
         }
     }
 }

@@ -50,7 +50,13 @@
                                Foreground="{DynamicResource ProgramFeasibleBrush}"
                                VerticalAlignment="Center"
                                Margin="0,0,12,0"/>
-                    <!-- 帶點 -->
+                    <!-- 帶點（前面加批次按鈕） -->
+                    <Button Style="{StaticResource GridEditButtonStyle}" Margin="0,0,2,0"
+                            Command="{Binding BulkSetTeachingCommand}"
+                            ToolTip="{DynamicResource PlBulkTeachingTooltip}"
+                            VerticalAlignment="Center">
+                        <Ellipse Width="10" Height="10" Fill="{DynamicResource ProgramErrorBrush}"/>
+                    </Button>
                     <TextBlock Text="{DynamicResource PlStatTeaching}"
                                FontSize="16"
                                Foreground="{DynamicResource ProgramErrorBrush}"
@@ -61,7 +67,13 @@
                                Foreground="{DynamicResource ProgramErrorBrush}"
                                VerticalAlignment="Center"
                                Margin="0,0,12,0"/>
-                    <!-- 調品質 -->
+                    <!-- 調品質（前面加批次按鈕） -->
+                    <Button Style="{StaticResource GridEditButtonStyle}" Margin="0,0,2,0"
+                            Command="{Binding BulkSetOffsetCommand}"
+                            ToolTip="{DynamicResource PlBulkOffsetTooltip}"
+                            VerticalAlignment="Center">
+                        <Ellipse Width="10" Height="10" Fill="{DynamicResource ProgramOffsetBrush}"/>
+                    </Button>
                     <TextBlock Text="{DynamicResource PlStatOffset}"
                                FontSize="16"
                                Foreground="{DynamicResource ProgramOffsetBrush}"

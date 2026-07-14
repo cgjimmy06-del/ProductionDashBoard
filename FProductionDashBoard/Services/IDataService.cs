@@ -119,6 +119,7 @@ namespace FProductionDashBoard.Services
         public Task AddEquipmentProductAsync(EquipmentProductFormDto dto);
         public Task UpdateEquipmentProductAsync(EquipmentProductFormDto dto);
         public Task<DateTime> UpdateProductionStatusAsync(int equipmentProductId, TuningType newStatus);
+        public Task<DateTime> BulkUpdateProductionStatusAsync(IEnumerable<int> equipmentProductIds, TuningType newStatus);
         public Task DeleteEquipmentProductAsync(int id);
 
         // ─── 接單服務 ─────────────────────────────────────────────────────────

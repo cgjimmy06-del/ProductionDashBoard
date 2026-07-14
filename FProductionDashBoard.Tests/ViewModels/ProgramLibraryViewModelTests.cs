@@ -321,6 +321,97 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal(1, vm.GlobalPendingCount);
             Assert.Equal(TuningType.Pending, GetSelectedPrograms(vm).First().ProductionStatus);
         }
+
+        // ── 批次狀態（BulkSetTeaching / BulkSetOffset） ───────────────────────
+        [Fact]
+        public async Task BulkSetTeaching_AllAlreadyTeaching_DoesNotPromptOrCallService()
+        {
+            var data = new List<EquipmentProduct>
+            {
+                MakeEp(1, "EQ-A", "P1", "B1", "M1", "Pr1", TuningType.Teaching),
+                MakeEp(1, "EQ-A", "P2", "B1", "M1", "Pr1", TuningType.Teaching),
+            };
+            var mockData = new Mock<IDataService>();
+            var mockDialog = new Mock<IDialogService>();
+            var vm = CreateVmWithData(data, mockData, mockDialog.Object);
+            vm.SelectCardCommand.Execute(GetCards(vm).First(c => c.EquipmentId == 1));
+
+            await vm.BulkSetTeachingCommand.ExecuteAsync(null);
+
+            mockDialog.Verify(d => d.ShowConfirm(It.IsAny<string>()), Times.Never);
+            mockData.Verify(d => d.BulkUpdateProductionStatusAsync(It.IsAny<IEnumerable<int>>(), It.IsAny<TuningType>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task BulkSetTeaching_PartialMatch_ConfirmedUpdatesOnlyNonMatching()
+        {
+            var ep1 = MakeEp(1, "EQ-A", "P1", "B1", "M1", "Pr1", TuningType.Feasible);
+            ep1.EquipmentProductId = 10;
+            var ep2 = MakeEp(1, "EQ-A", "P2", "B1", "M1", "Pr1", TuningType.Teaching);
+            ep2.EquipmentProductId = 20;
+            var ep3 = MakeEp(1, "EQ-A", "P3", "B1", "M1", "Pr1", TuningType.Offset);
+            ep3.EquipmentProductId = 30;
+            var data = new List<EquipmentProduct> { ep1, ep2, ep3 };
+
+            var fixedDate = new DateTime(2026, 7, 14, 9, 0, 0);
+            var mockData = new Mock<IDataService>();
+            mockData.Setup(d => d.BulkUpdateProductionStatusAsync(It.IsAny<IEnumerable<int>>(), TuningType.Teaching))
+                    .ReturnsAsync(fixedDate);
+            var mockDialog = new Mock<IDialogService>();
+            mockDialog.Setup(d => d.ShowConfirm(It.IsAny<string>())).Returns(true);
+
+            var vm = CreateVmWithData(data, mockData, mockDialog.Object);
+            vm.SelectCardCommand.Execute(GetCards(vm).First(c => c.EquipmentId == 1));
+
+            await vm.BulkSetTeachingCommand.ExecuteAsync(null);
+
+            mockData.Verify(d => d.BulkUpdateProductionStatusAsync(
+                It.Is<IEnumerable<int>>(ids => ids.OrderBy(x => x).SequenceEqual(new[] { 10, 30 })),
+                TuningType.Teaching), Times.Once);
+            Assert.Equal(TuningType.Teaching, ep1.ProductionStatus);
+            Assert.Equal(TuningType.Teaching, ep2.ProductionStatus); // 本來就是，維持不變
+            Assert.Equal(TuningType.Teaching, ep3.ProductionStatus);
+            Assert.Equal(fixedDate, ep1.UpdateAt);
+            Assert.Null(ep2.UpdateAt); // 本來就符合狀態，略過未寫入
+            Assert.Equal(fixedDate, ep3.UpdateAt);
+        }
+
+        [Fact]
+        public async Task BulkSetOffset_NotConfirmed_DoesNotCallService()
+        {
+            var ep = MakeEp(1, "EQ-A", "P1", "B1", "M1", "Pr1", TuningType.Feasible);
+            ep.EquipmentProductId = 5;
+            var data = new List<EquipmentProduct> { ep };
+
+            var mockData = new Mock<IDataService>();
+            var mockDialog = new Mock<IDialogService>();
+            mockDialog.Setup(d => d.ShowConfirm(It.IsAny<string>())).Returns(false);
+
+            var vm = CreateVmWithData(data, mockData, mockDialog.Object);
+            vm.SelectCardCommand.Execute(GetCards(vm).First(c => c.EquipmentId == 1));
+
+            await vm.BulkSetOffsetCommand.ExecuteAsync(null);
+
+            mockData.Verify(d => d.BulkUpdateProductionStatusAsync(It.IsAny<IEnumerable<int>>(), It.IsAny<TuningType>()), Times.Never);
+            Assert.Equal(TuningType.Feasible, ep.ProductionStatus);
+        }
+
+        [Fact]
+        public async Task BulkSetTeaching_NoSelectedCard_DoesNothing()
+        {
+            var data = new List<EquipmentProduct>
+            {
+                MakeEp(1, "EQ-A", "P1", "B1", "M1", "Pr1", TuningType.Feasible),
+            };
+            var mockData = new Mock<IDataService>();
+            var mockDialog = new Mock<IDialogService>();
+            var vm = CreateVmWithData(data, mockData, mockDialog.Object);
+
+            await vm.BulkSetTeachingCommand.ExecuteAsync(null);
+
+            mockDialog.Verify(d => d.ShowConfirm(It.IsAny<string>()), Times.Never);
+            mockData.Verify(d => d.BulkUpdateProductionStatusAsync(It.IsAny<IEnumerable<int>>(), It.IsAny<TuningType>()), Times.Never);
+        }
     }
 
     internal static class EquipmentProductExtensions

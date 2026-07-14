@@ -1571,5 +1571,9 @@ namespace FProductionDashBoard.Properties {
         internal static string ChartDeleteConfirm {
             get { return ResourceManager.GetString("ChartDeleteConfirm", resourceCulture); }
         }
+
+        internal static string PlBulkStatusConfirm {
+            get { return ResourceManager.GetString("PlBulkStatusConfirm", resourceCulture); }
+        }
     }
 }

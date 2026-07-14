@@ -105,6 +105,41 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
+        [RelayCommand]
+        private Task BulkSetTeaching() => BulkSetStatusAsync(TuningType.Teaching, "PlStatTeaching");
+
+        [RelayCommand]
+        private Task BulkSetOffset() => BulkSetStatusAsync(TuningType.Offset, "PlStatOffset");
+
+        private async Task BulkSetStatusAsync(TuningType newStatus, string labelResourceKey)
+        {
+            if (SelectedCard == null) return;
+            var targets = _all.Where(ep => ep.EquipmentId == SelectedCard.EquipmentId && ep.ProductionStatus != newStatus).ToList();
+            if (targets.Count == 0) return;
+
+            var statusLabel = Application.Current?.Resources[labelResourceKey] as string ?? newStatus.ToString();
+            var message = string.Format(Properties.Resources.PlBulkStatusConfirm, SelectedCard.DeviceName, targets.Count, statusLabel);
+            if (!_dialog.ShowConfirm(message)) return;
+
+            try
+            {
+                var updatedAt = await _core.Data.BulkUpdateProductionStatusAsync(targets.Select(ep => ep.EquipmentProductId), newStatus);
+                foreach (var ep in targets)
+                {
+                    ep.ProductionStatus = newStatus;
+                    ep.UpdateAt = updatedAt;
+                }
+                ComputeGlobalStats();
+                RebuildCards();
+                _core.Log.AddLog($"[程式庫管理] 「{SelectedCard.DeviceName}」{targets.Count} 筆程式狀態已改為{statusLabel}");
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[程式庫管理] 批次更新程式狀態失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[BulkSetStatusAsync] {ex.Message}");
+            }
+        }
+
         public ProgramLibraryViewModel(DashboardCoreServices core, IDialogService dialog)
         {
             _core = core;

@@ -837,4 +837,7 @@
   <data name="ChartDeleteConfirm" xml:space="preserve">
     <value>Bạn có chắc muốn xóa biểu đồ "{0}"?</value>
   </data>
+  <data name="PlBulkStatusConfirm" xml:space="preserve">
+    <value>Đặt {1} chương trình thuộc "{0}" thành "{2}"?</value>
+  </data>
 </root>
