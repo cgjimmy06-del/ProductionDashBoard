@@ -10,7 +10,7 @@ from datetime import date
 from pathlib import Path
 
 OUTPUT_DIR = Path(__file__).parent
-VERSION_TAG = "v3.3.2"
+VERSION_TAG = "v3.4.0"
 XLSX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.xlsx"
 DOCX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.docx"
 PDF_PATH  = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.pdf"
@@ -318,15 +318,36 @@ TESTS_LIST = [
     "DataServiceV1Tests.CheckAndInsertMissedInspectionAsync (8 tests)",
     "DataServiceV1Tests.GetCurrentTimeSlotIdAsync (2 tests)",
     "DataServiceV1Tests.Role CRUD (6 tests)",
-    "TuningDialogViewModelTests.TeachingCommand_SetsConfirmedWithTeachingResult",
-    "TuningDialogViewModelTests.OffsetCommand_SetsConfirmedWithOffsetResult",
-    "TuningDialogViewModelTests.CancelCommand_SetsNotConfirmedNullResult",
+    "TuningDialogViewModelTests.教學/調品質模式與確認流程 (12 tests)",
+    "TuningDialogViewModelTests.執行人員選取、篩選與上次帶點顯示 (10 tests)",
+    "TuningDialogViewModelTests.強制安排模式（關鍵字/狀態篩選、確認輸出） (12 tests)",
     "CardReaderServiceTests.TryExtractCardId_CrTerminator_ReturnsCardId",
     "CardReaderServiceTests.TryExtractCardId_LfTerminator_ReturnsCardId",
     "CardReaderServiceTests.TryExtractCardId_CrLfTerminator_ReturnsCardId",
     "CardReaderServiceTests.TryExtractCardId_IncompleteData_ReturnsNullAndPreservesBuffer",
     "CardReaderServiceTests.TryExtractCardId_EmptyLine_ReturnsNull",
     "CardReaderServiceTests.TryExtractCardId_TwoConsecutiveCards_ReturnsFirstAndLeavesSecond",
+    # ─── 圖表設計（v3.4.0 新增，NavMode.Chart） ──────────────────────
+    "FieldCatalogTests.欄位目錄查詢與篩選/排序/統計可用性 (9 tests)",
+    "JsonChartDefinitionStoreTests.本機JSON讀寫與預設圖表補回 (12 tests)",
+    "ChartDefinitionSanitizerTests.失效欄位引用淨化 (4 tests)",
+    "ChartRowBuilderTests.數值/日期格式化容錯 (4 tests)",
+    "ChartRowComparerTests.排序比較容錯與TieBreak (2 tests)",
+    "ChartViewModelTests.分頁載入與切換（設備/排程視角） (9 tests)",
+    "ChartViewModelTests.篩選/排序/快捷按鈕/縮放 (10 tests)",
+    "ChartViewModelTests.統計列與資料列渲染、定期刷新套用 (9 tests)",
+    "ChartViewModelTests.圖表CRUD、匯出入與權限 (15 tests)",
+    "ChartDesignerViewModelTests.基本設定與資料來源切換 (9 tests)",
+    "ChartDesignerViewModelTests.統計列/篩選列/容器編輯器 (14 tests)",
+    "ChartDesignerViewModelTests.儲存驗證與預覽渲染 (9 tests)",
+    # ─── 程式庫管理（v3.4.0 補列，批次帶點/調品質新增於本版） ─────────
+    "ProgramLibraryViewModelTests.卡片燈號/統計/篩選 (14 tests)",
+    "ProgramLibraryViewModelTests.單筆狀態編輯與批次帶點/調品質 (10 tests)",
+    # ─── SOP Checklist（v3.4.0 補列，工位物料篩選新增於本版） ─────────
+    "SopChecklistSettingViewModelTests.SOP清單載入/篩選/範本套用 (10 tests)",
+    "SopChecklistSettingViewModelTests.明細子表單存檔驗證（工位/治具/其他/工時） (12 tests)",
+    "SopChecklistSettingViewModelTests.Part/Model新增與篩選保留邏輯 (7 tests)",
+    "SopChecklistSettingViewModelTests.工位物料篩選（編號/名稱比對、殘留重置） (5 tests)",
 ]
 
 # ─────────────────────────────────────────
@@ -630,7 +651,8 @@ def generate_word():
         ["v3.2.0", "2026-06-22", "AI-assisted Review", "V3.2.0 發佈版本更新；AI Agent 操作面板（PR#87~91）+ 設備卡片 SOP 作業指引區（PR#101）", "已歸檔"],
         ["v3.3.0", "2026-06-29", "AI-assisted Review", "V3.3.0 正式版發佈；授權系統（PR#104~105）+ AI Agent 現場狀況工具（PR#107）+ 首次正式版（移除 Beta 標籤）", "已歸檔"],
         ["v3.3.1", "2026-06-29", "AI-assisted Review", "V3.3.1 維護版本；Code Review 修復（PR#110）：異常處理補強、MES 連線防護、i18n、授權可見性", "已歸檔"],
-        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V3.3.2 維護版本發佈；移除離線寫入功能（PR#112）+ DeviceCard 跨用戶端狀態即時刷新（PR#113）+ SOP Checklist 套用範本與存檔唯一鍵檢查（PR#114）+ LogUploadApi 可下載副檔名可設定化（PR#115）", "更新版"],
+        ["v3.3.2", "2026-07-03", "AI-assisted Review", "V3.3.2 維護版本發佈；移除離線寫入功能（PR#112）+ DeviceCard 跨用戶端狀態即時刷新（PR#113）+ SOP Checklist 套用範本與存檔唯一鍵檢查（PR#114）+ LogUploadApi 可下載副檔名可設定化（PR#115）", "已歸檔"],
+        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V3.4.0 正式版發佈；圖表設計全計畫上線（PR#118,#122~125：戰情室看板、設計器、CRUD/匯出入、定期刷新）+ 調試 ManagedBy（PR#120~121）+ 程式庫批次狀態按鈕（PR#127~128）+ SOP 物料篩選（PR#126）+ Code Review 2026-07-03 修復（PR#117）", "更新版"],
     ]
     rev_tbl = doc.add_table(rows=len(rev_history)+1, cols=5)
     rev_tbl.style = "Table Grid"
