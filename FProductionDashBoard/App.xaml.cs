@@ -66,9 +66,14 @@ namespace FProductionDashBoard
                 // 註冊 ConfigurationBuilder 資訊
                 services.AddSingleton(config);
 
+                // 連線狀態訊號源（DbConnectionInterceptor 掛 MesDbContext）
+                var connectionStatusService = new Services.ConnectionStatusService();
+                services.AddSingleton(connectionStatusService);
+
                 // 註冊 DbContext
                 services.AddDbContextFactory<Repositories.MesDbContext>(options =>
-                    options.UseSqlServer(config.GetConnectionString($"{selectedServer}_MESDashboard") ?? ""));
+                    options.UseSqlServer(config.GetConnectionString($"{selectedServer}_MESDashboard") ?? "")
+                           .AddInterceptors(new Services.ConnectionStatusInterceptor(connectionStatusService)));
                 services.AddDbContextFactory<Repositories.DataDbContext>(options =>
                     options.UseSqlServer(config.GetConnectionString($"{selectedServer}_MESData") ?? ""));
                 services.AddDbContextFactory<Repositories.InfoDbContext>(options =>
