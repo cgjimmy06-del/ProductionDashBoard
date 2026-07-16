@@ -33,6 +33,7 @@ namespace FProductionDashBoard.ViewModels
         private readonly CardReaderHandler _cardReaderHandler;
         private readonly IConfigService<SystemConfigDto> _systemConfig;
         private readonly ILicenseService _licenseService;
+        private readonly ConnectionStatusService _connectionStatus;
         #endregion
 
         [ObservableProperty] public string? systemUser;
@@ -66,6 +67,7 @@ namespace FProductionDashBoard.ViewModels
         public SystemSettingsViewModel SystemSettings { get; }
 
         private Action? _onUserChanged;
+        private EventHandler? _onConnectionStatusChanged;
 
         partial void InitializeScheduler();
         partial void InitializePanelLayout();
@@ -77,7 +79,8 @@ namespace FProductionDashBoard.ViewModels
             IDialogService dialogService,
             ListsFromSql commonLists,
             IConfigService<SystemConfigDto> systemConfig,
-            ILicenseService licenseService)
+            ILicenseService licenseService,
+            ConnectionStatusService connectionStatus)
         {
             _core = core;
             _multiCardReaderService = multiCardReaderService;
@@ -86,6 +89,7 @@ namespace FProductionDashBoard.ViewModels
             CommonLists = commonLists;
             _systemConfig = systemConfig;
             _licenseService = licenseService;
+            _connectionStatus = connectionStatus;
 
             _cardReaderHandler = new CardReaderHandler(
                 _core, sp.GetRequiredService<Services.WebApi.IErpApiService>(), _dialog, CommonLists);
@@ -109,6 +113,10 @@ namespace FProductionDashBoard.ViewModels
             SystemUser = $"{Properties.Resources.ComStrSystemUser}: {_core.Authorization.CurrentUser!.Name}";
             _onUserChanged = () => OnUserChanged();
             _core.Authorization.UserChanged += _onUserChanged;
+
+            _onConnectionStatusChanged = (_, _) => OnConnectionStatusChanged();
+            _connectionStatus.StatusChanged += _onConnectionStatusChanged;
+            OnConnectionStatusChanged();
 
             // 關於 - 版本 / ABB SDK / AI API Key / 授權狀態
             ShowAboutCommand = new RelayCommand(() =>
@@ -149,10 +157,6 @@ namespace FProductionDashBoard.ViewModels
 
             try
             {
-                IsNetConnected = true;
-                var sb = new StringBuilder("最後更新時間:\n");
-                NetStatusTooltip = sb.Append(DateTime.Now.ToString("yyyy/MM/dd HH:mm")).ToString().TrimEnd();
-
                 var t1 = FetchListAsync(() => _core.Data.GetDevicesAsync());
                 var t2 = FetchListAsync(() => _core.Data.GetUsersAsync());
                 var t3 = FetchListAsync(() => _core.Data.GetMaterialsAsync());
@@ -186,7 +190,6 @@ namespace FProductionDashBoard.ViewModels
             try { return await fetch(); }
             catch (Exception ex)
             {
-                IsNetConnected = false;
                 _core.Log.AddLog("清單載入失敗，請確認連線", LogLevel.Error);
                 _core.Log.AddErrorLog($"[FetchListAsync] {ex.Message}");
                 return [];
@@ -227,6 +230,31 @@ namespace FProductionDashBoard.ViewModels
                 }
             });
         }
+
+        private void OnConnectionStatusChanged()
+        {
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                try
+                {
+                    var snapshot = _connectionStatus.GetSnapshot();
+                    IsNetConnected = snapshot.IsConnected;
+                    NetStatusTooltip = BuildNetStatusTooltip(snapshot.IsConnected, snapshot.LastChangedAt);
+                }
+                catch (Exception ex)
+                {
+                    _core.Log.AddLog("連線狀態更新時發生錯誤", LogLevel.Error);
+                    _core.Log.AddErrorLog($"[OnConnectionStatusChanged] {ex.Message}");
+                }
+            });
+        }
+
+        private static string BuildNetStatusTooltip(bool isConnected, DateTime? lastChangedAt)
+        {
+            var label = isConnected ? "連線正常" : "連線中斷";
+            var since = lastChangedAt?.ToString("yyyy/MM/dd HH:mm") ?? "-";
+            return $"{label}，自 {since}";
+        }
         #endregion
 
         public void Dispose()
@@ -236,6 +264,8 @@ namespace FProductionDashBoard.ViewModels
             _cardReaderHandler.Detach();
             if (_onUserChanged != null)
                 _core.Authorization.UserChanged -= _onUserChanged;
+            if (_onConnectionStatusChanged != null)
+                _connectionStatus.StatusChanged -= _onConnectionStatusChanged;
         }
 
         private string BuildCardReaderTooltip()
