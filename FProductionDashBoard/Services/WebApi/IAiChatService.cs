@@ -8,7 +8,7 @@ namespace FProductionDashBoard.Services.WebApi
         bool IsConfigured { get; }
         string[] AvailableModels { get; }
 
-        Task<string> SendAsync(
+        Task<AiChatResult> SendAsync(
             string model,
             IEnumerable<ChatMessage> history,
             string userMessage,

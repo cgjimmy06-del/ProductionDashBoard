@@ -28,6 +28,16 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string inputText = "";
         [ObservableProperty] private bool isTyping = false;
         [ObservableProperty] private string? configWarning;
+
+        // 目前 session 累計 tokens 的顯示鏡像（ChatSession 為 POCO 無變更通知，故由 VM 同步）
+        [ObservableProperty] private int sessionInputTokens;
+        [ObservableProperty] private int sessionOutputTokens;
+
+        partial void OnCurrentSessionChanged(ChatSession value)
+        {
+            SessionInputTokens  = value?.InputTokens  ?? 0;
+            SessionOutputTokens = value?.OutputTokens ?? 0;
+        }
         #endregion
 
         #region -- 歷史與分類 --
@@ -154,7 +164,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 var systemPrompt = _toolService.GetSystemPromptForMode(SelectedMode);
                 var modeTools    = _toolService.GetToolsForMode(SelectedMode);
-                var reply = await _aiChatService.SendAsync(
+                var result = await _aiChatService.SendAsync(
                     SelectedModel,
                     CurrentSession.Messages.Where(m => !m.IsTyping && !m.IsUiOnly).SkipLast(1),
                     text,
@@ -166,9 +176,13 @@ namespace FProductionDashBoard.ViewModels
                 CurrentSession.Messages.Add(new ChatMessage
                 {
                     Sender  = ChatSender.Ai,
-                    Content = reply,
+                    Content = result.Reply,
                     Time    = DateTime.Now
                 });
+                CurrentSession.InputTokens  += result.InputTokens;
+                CurrentSession.OutputTokens += result.OutputTokens;
+                SessionInputTokens  = CurrentSession.InputTokens;
+                SessionOutputTokens = CurrentSession.OutputTokens;
                 ConfigWarning = null;
             }
             catch (OperationCanceledException)

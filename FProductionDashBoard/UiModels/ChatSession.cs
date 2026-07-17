@@ -10,6 +10,10 @@ namespace FProductionDashBoard.UiModels
         public string   ModelUsed { get; set; }  = "";
         public DateTime LastTime  { get; set; }  = DateTime.Now;
         public bool     IsStarred { get; set; }
+        /// <summary>本對話累計輸入 tokens（UI 顯示走 VM 鏡像屬性）</summary>
+        public int      InputTokens  { get; set; }
+        /// <summary>本對話累計輸出 tokens（UI 顯示走 VM 鏡像屬性）</summary>
+        public int      OutputTokens { get; set; }
         public ObservableCollection<ChatMessage> Messages { get; } = new();
     }
 }

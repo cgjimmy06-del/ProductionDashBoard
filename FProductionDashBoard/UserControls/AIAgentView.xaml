@@ -244,6 +244,10 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <TextBox x:Name="InputBox" Grid.Column="0"
                          Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
                          AcceptsReturn="False" TextWrapping="Wrap"
@@ -290,6 +294,19 @@
                     </Button.Style>
                     <materialDesign:PackIcon Kind="Stop" Width="18" Height="18"/>
                 </Button>
+                <!-- 本次對話累計 tokens（輸入 / 輸出） -->
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal"
+                            HorizontalAlignment="Left" Margin="6,0"
+                            ToolTip="{DynamicResource AiTokenUsageTooltip}">
+                    <TextBlock Text="{DynamicResource AiTokenUsage}" FontSize="10"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding SessionInputTokens, StringFormat='{}{0:N0}'}" FontSize="10"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text=" / " FontSize="10"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding SessionOutputTokens, StringFormat='{}{0:N0}'}" FontSize="10"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
             </Grid>
         </Border>
 

@@ -533,6 +533,8 @@
     <sys:String x:Key="AiModeChat">Hỏi đáp</sys:String>
     <sys:String x:Key="AiModeFieldStatus">Hiện trường</sys:String>
     <sys:String x:Key="AiCancelTooltip">Hủy</sys:String>
+    <sys:String x:Key="AiTokenUsage">Tokens: </sys:String>
+    <sys:String x:Key="AiTokenUsageTooltip">Tổng phiên hiện tại (đầu vào / đầu ra)</sys:String>
     <sys:String x:Key="FilterPanelToggleTooltip">Mở rộng/Thu gọn bộ lọc</sys:String>
     <!--#endregion-->
 
