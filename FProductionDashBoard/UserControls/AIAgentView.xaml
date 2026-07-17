@@ -73,7 +73,8 @@
                                               VerticalScrollBarVisibility="Disabled"
                                               HorizontalScrollBarVisibility="Disabled"
                                               Zoom="100" MinZoom="100" MaxZoom="100"
-                                              PreviewMouseWheel="MarkdownViewer_PreviewMouseWheel">
+                                              PreviewMouseWheel="MarkdownViewer_PreviewMouseWheel"
+                                              PreviewMouseLeftButtonDown="MarkdownViewer_PreviewMouseLeftButtonDown">
                         <FlowDocumentScrollViewer.Style>
                             <Style TargetType="FlowDocumentScrollViewer">
                                 <Setter Property="Visibility" Value="Collapsed"/>

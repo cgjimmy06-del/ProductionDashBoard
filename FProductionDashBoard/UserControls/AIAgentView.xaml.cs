@@ -58,6 +58,14 @@ namespace FProductionDashBoard.UserControls
                 Dispatcher.InvokeAsync(MessageScrollViewer.ScrollToBottom, DispatcherPriority.Background);
         }
 
+        // WPF 文字引擎對「按在既有選取範圍內」會進入拖放文字待命模式並吞掉這次拖曳，
+        // 造成選取卡在舊範圍無法重選；按下左鍵時先收合既有選取，讓每次拖曳都重新開始
+        private void MarkdownViewer_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FlowDocumentScrollViewer viewer && viewer.Selection is { IsEmpty: false } selection)
+                selection.Select(selection.Start, selection.Start);
+        }
+
         // FlowDocumentScrollViewer 內部會吞掉 MouseWheel，一律轉發給外層訊息清單捲動
         private void MarkdownViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
