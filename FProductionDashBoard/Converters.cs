@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Media;
 
 namespace FProductionDashBoard
@@ -389,6 +390,54 @@ namespace FProductionDashBoard
             } : string.Empty;
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
+    }
+
+    public class AiMarkdownToDocumentConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var markdown = value as string ?? string.Empty;
+
+            // 引擎為 DependencyObject（執行緒親和）不可跨執行緒共用；HyperlinkCommand = null 讓超連結僅顯示為文字
+            var engine = new MdXaml.Markdown { HyperlinkCommand = null };
+            var document = engine.Transform(markdown);
+            ReplacePlainCodeBlocks(document.Blocks);
+            document.Style = Application.Current?.TryFindResource("AiMarkdownStyle") as Style;
+            return document;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+
+        // MdXaml 引擎將程式碼區塊硬編碼為 AvalonEdit TextEditor（自帶高亮與獨立配色，不隨主題），
+        // 依需求換成純 Paragraph（Tag=CodeBlock，吃 AiMarkdownStyle 的主題化樣式）
+        private static void ReplacePlainCodeBlocks(BlockCollection blocks)
+        {
+            foreach (var block in blocks.ToList())
+            {
+                switch (block)
+                {
+                    case BlockUIContainer { Child: ICSharpCode.AvalonEdit.TextEditor editor } container:
+                        var paragraph = new Paragraph(new Run(editor.Text)) { Tag = "CodeBlock" };
+                        blocks.InsertBefore(container, paragraph);
+                        blocks.Remove(container);
+                        break;
+                    case Section section:
+                        ReplacePlainCodeBlocks(section.Blocks);
+                        break;
+                    case List list:
+                        foreach (var item in list.ListItems)
+                            ReplacePlainCodeBlocks(item.Blocks);
+                        break;
+                    case Table table:
+                        foreach (var rowGroup in table.RowGroups)
+                            foreach (var row in rowGroup.Rows)
+                                foreach (var cell in row.Cells)
+                                    ReplacePlainCodeBlocks(cell.Blocks);
+                        break;
+                }
+            }
+        }
     }
 
     public static class ListBoxBehavior

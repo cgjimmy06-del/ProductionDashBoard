@@ -41,11 +41,12 @@
                                    Foreground="{DynamicResource TextSecondaryBrush}"
                                    VerticalAlignment="Center"/>
                     </StackPanel>
-                    <!-- 內容 / Typing 動畫 -->
+                    <!-- 內容 / Typing 動畫（User 與思考中訊息用；AI 完成訊息改由下方 Markdown 檢視器顯示） -->
                     <TextBlock TextWrapping="Wrap" FontSize="13" Margin="0,2,0,0">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Text" Value="{Binding Content}"/>
+                                <Setter Property="Visibility" Value="Visible"/>
                                 <Setter Property="Foreground" Value="{Binding Foreground,
                                     RelativeSource={RelativeSource AncestorType=ItemsControl}}"/>
                                 <Style.Triggers>
@@ -53,10 +54,43 @@
                                         <Setter Property="Text" Value="{DynamicResource AiThinking}"/>
                                         <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                     </DataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Sender}" Value="Ai"/>
+                                            <Condition Binding="{Binding IsTyping}" Value="False"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </MultiDataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
                     </TextBlock>
+                    <!-- AI 完成訊息的 Markdown 渲染（Document 只在 trigger 內綁定，User/思考中訊息不觸發解析） -->
+                    <FlowDocumentScrollViewer Margin="0,2,0,0"
+                                              Padding="0"
+                                              BorderThickness="0"
+                                              Background="Transparent"
+                                              VerticalScrollBarVisibility="Disabled"
+                                              HorizontalScrollBarVisibility="Disabled"
+                                              Zoom="100" MinZoom="100" MaxZoom="100"
+                                              PreviewMouseWheel="MarkdownViewer_PreviewMouseWheel"
+                                              PreviewMouseLeftButtonDown="MarkdownViewer_PreviewMouseLeftButtonDown">
+                        <FlowDocumentScrollViewer.Style>
+                            <Style TargetType="FlowDocumentScrollViewer">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Sender}" Value="Ai"/>
+                                            <Condition Binding="{Binding IsTyping}" Value="False"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Setter Property="Document" Value="{Binding Content, Converter={StaticResource AiMarkdownToDocumentConverter}}"/>
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </FlowDocumentScrollViewer.Style>
+                    </FlowDocumentScrollViewer>
                 </StackPanel>
             </Border>
         </DataTemplate>

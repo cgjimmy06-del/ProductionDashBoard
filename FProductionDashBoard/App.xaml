@@ -67,6 +67,7 @@
             <local:BrushKeyToBrushConverter x:Key="BrushKeyToBrushConverter"/>
             <local:ScheduleCardLoadLevelToLabelConverter x:Key="ScheduleCardLoadLevelToLabelConverter"/>
             <local:OrderProductionStatusToLabelConverter x:Key="OrderProductionStatusToLabelConverter"/>
+            <local:AiMarkdownToDocumentConverter x:Key="AiMarkdownToDocumentConverter"/>
             <!--#endregion-->
             
         </ResourceDictionary>
