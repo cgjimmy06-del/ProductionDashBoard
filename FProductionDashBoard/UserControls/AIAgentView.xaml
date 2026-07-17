@@ -296,7 +296,7 @@
                 </Button>
                 <!-- 本次對話累計 tokens（輸入 / 輸出） -->
                 <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal"
-                            HorizontalAlignment="Left" Margin="0,4,0,0"
+                            HorizontalAlignment="Left" Margin="6,0"
                             ToolTip="{DynamicResource AiTokenUsageTooltip}">
                     <TextBlock Text="{DynamicResource AiTokenUsage}" FontSize="10"
                                Foreground="{DynamicResource TextSecondaryBrush}"/>
