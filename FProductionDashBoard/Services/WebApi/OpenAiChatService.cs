@@ -33,7 +33,7 @@ namespace FProductionDashBoard.Services.WebApi
 
         public string[] AvailableModels => _options.AvailableModels;
 
-        public async Task<string> SendAsync(
+        public async Task<AiChatResult> SendAsync(
             string model,
             IEnumerable<ChatMessage> history,
             string userMessage,
@@ -54,6 +54,8 @@ namespace FProductionDashBoard.Services.WebApi
                 })));
             }
             inputItems.Add(JsonNode.Parse(JsonSerializer.Serialize(new { role = "user", content = userMessage })));
+
+            int inputTokens = 0, outputTokens = 0;
 
             for (int round = 0; round < MaxToolRounds; round++)
             {
@@ -101,11 +103,16 @@ namespace FProductionDashBoard.Services.WebApi
                 var root = JsonNode.Parse(json)!;
                 var output = root["output"]!.AsArray();
 
+                // 逐回合累加 usage（欄位缺失視為 0，不拋錯）
+                inputTokens  += root["usage"]?["input_tokens"]?.GetValue<int>() ?? 0;
+                outputTokens += root["usage"]?["output_tokens"]?.GetValue<int>() ?? 0;
+
                 var funcCallNode = output.FirstOrDefault(n => n?["type"]?.GetValue<string>() == "function_call");
                 if (funcCallNode == null)
                 {
                     var msgNode = output.FirstOrDefault(n => n?["type"]?.GetValue<string>() == "message");
-                    return msgNode?["content"]?[0]?["text"]?.GetValue<string>() ?? "";
+                    var text = msgNode?["content"]?[0]?["text"]?.GetValue<string>() ?? "";
+                    return new AiChatResult(text, inputTokens, outputTokens);
                 }
 
                 // 執行工具
@@ -133,7 +140,7 @@ namespace FProductionDashBoard.Services.WebApi
                 })));
             }
 
-            return Properties.Resources.AiMaxRoundsExceeded;
+            return new AiChatResult(Properties.Resources.AiMaxRoundsExceeded, inputTokens, outputTokens);
         }
 
         private static JsonArray BuildToolsArray(IReadOnlyList<AiToolDefinition> tools)

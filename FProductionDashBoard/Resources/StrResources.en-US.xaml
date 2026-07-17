@@ -533,6 +533,8 @@
     <sys:String x:Key="AiModeChat">Chat</sys:String>
     <sys:String x:Key="AiModeFieldStatus">Field Status</sys:String>
     <sys:String x:Key="AiCancelTooltip">Cancel</sys:String>
+    <sys:String x:Key="AiTokenUsage">Tokens: </sys:String>
+    <sys:String x:Key="AiTokenUsageTooltip">Session total (input / output)</sys:String>
     <sys:String x:Key="FilterPanelToggleTooltip">Expand/Collapse Filter</sys:String>
     <!--#endregion-->
 
