@@ -572,6 +572,119 @@
         <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp0"/>
     </Style>
 
+    <!--#region AI 助理 Markdown（FlowDocument）樣式 -->
+    <!-- AIAgentView 訊息渲染用；元素 Tag 值由 MdXaml 引擎指派（Heading1~4/CodeBlock/CodeSpan/Blockquote/TableHeader/EvenTableRow/RuleSingle） -->
+    <Style x:Key="AiMarkdownStyle" TargetType="FlowDocument">
+        <Setter Property="FontFamily" Value="{DynamicResource PrimaryFont}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="TextAlignment" Value="Left"/>
+        <Setter Property="PagePadding" Value="0"/>
+        <Setter Property="ColumnWidth" Value="Infinity"/>
+        <Style.Resources>
+            <Style TargetType="Paragraph">
+                <Setter Property="Margin" Value="0,2,0,6"/>
+                <Style.Triggers>
+                    <Trigger Property="Tag" Value="Heading1">
+                        <Setter Property="FontSize" Value="20"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Margin" Value="0,8,0,4"/>
+                    </Trigger>
+                    <Trigger Property="Tag" Value="Heading2">
+                        <Setter Property="FontSize" Value="17"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Margin" Value="0,8,0,4"/>
+                    </Trigger>
+                    <Trigger Property="Tag" Value="Heading3">
+                        <Setter Property="FontSize" Value="15"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Margin" Value="0,6,0,4"/>
+                    </Trigger>
+                    <Trigger Property="Tag" Value="Heading4">
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Margin" Value="0,6,0,4"/>
+                    </Trigger>
+                    <Trigger Property="Tag" Value="CodeBlock">
+                        <Setter Property="FontFamily" Value="Consolas"/>
+                        <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="Padding" Value="8,6"/>
+                        <Setter Property="Margin" Value="0,4,0,6"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="Run">
+                <Style.Triggers>
+                    <Trigger Property="Tag" Value="CodeSpan">
+                        <Setter Property="FontFamily" Value="Consolas"/>
+                        <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="Span">
+                <Style.Triggers>
+                    <Trigger Property="Tag" Value="CodeSpan">
+                        <Setter Property="FontFamily" Value="Consolas"/>
+                        <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="List">
+                <Setter Property="Margin" Value="12,2,0,6"/>
+                <Setter Property="Padding" Value="8,0,0,0"/>
+            </Style>
+            <Style TargetType="Section">
+                <Style.Triggers>
+                    <Trigger Property="Tag" Value="Blockquote">
+                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                        <Setter Property="BorderThickness" Value="3,0,0,0"/>
+                        <Setter Property="Padding" Value="8,2"/>
+                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="Table">
+                <Setter Property="CellSpacing" Value="0"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                <Setter Property="BorderThickness" Value="1,1,0,0"/>
+                <Setter Property="Margin" Value="0,4,0,6"/>
+            </Style>
+            <Style TargetType="TableRowGroup">
+                <Style.Triggers>
+                    <Trigger Property="Tag" Value="TableHeader">
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="TableCell">
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                <Setter Property="Padding" Value="6,3"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TableRow}}, Path=Tag}" Value="EvenTableRow">
+                        <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="BlockUIContainer">
+                <Style.Triggers>
+                    <Trigger Property="Tag" Value="RuleSingle">
+                        <Setter Property="Margin" Value="0,4"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="Hyperlink">
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                <Setter Property="TextDecorations" Value="None"/>
+                <Setter Property="Cursor" Value="IBeam"/>
+            </Style>
+        </Style.Resources>
+    </Style>
+    <!--#endregion-->
+
     <!--#region 圖表頁（ChartView）樣式 -->
     <!-- 圖表頁籤列：水平、無框、透明背景 -->
     <Style x:Key="ChartTabListBoxStyle" TargetType="ListBox">
