@@ -114,8 +114,8 @@
                                             </Button.Style>
                                         </Button>
 
-                                        <!-- 取消訂單（Setting 權限 + Pending 才顯示） -->
-                                        <StackPanel Visibility="{Binding DataContext.HasSettingPermission,
+                                        <!-- 取消訂單（Edit 權限 + Pending 才顯示） -->
+                                        <StackPanel Visibility="{Binding DataContext.HasEditPermission,
                                                                   RelativeSource={RelativeSource AncestorType=UserControl},
                                                                   Converter={StaticResource BooleanToVisibilityConverter}}">
                                             <Button Content="{DynamicResource CancelOrderButton}"
@@ -268,8 +268,8 @@
                     HorizontalAlignment="Center"
                     FontSize="16" Margin="0,0,0,8"/>
 
-            <!-- 取消訂單區域（Setting 權限限定） -->
-            <StackPanel Visibility="{Binding HasSettingPermission, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <!-- 取消訂單區域（Edit 權限限定） -->
+            <StackPanel Visibility="{Binding HasEditPermission, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                 <!-- 取消訂單按鈕（未展開輸入時顯示） -->
                 <Button Content="{DynamicResource CancelOrderButton}"

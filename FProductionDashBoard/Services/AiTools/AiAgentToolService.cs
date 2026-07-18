@@ -80,7 +80,7 @@ public class AiAgentToolService
     {
         try
         {
-            if (!core.Authorization.HasPermission(PermissionId.Schedule))
+            if (!core.Authorization.HasAnyPermission(PermissionId.Schedule, PermissionId.Order))
                 return """{"error":"no_permission"}""";
 
             var all = await core.Data.GetAllSchedulesAsync();
@@ -158,7 +158,7 @@ public class AiAgentToolService
 
     private static async Task<string> QueryOrdersAsync(DashboardCoreServices core, JsonObject args)
     {
-        if (!core.Authorization.HasPermission(PermissionId.Order))
+        if (!core.Authorization.HasAnyPermission(PermissionId.Schedule, PermissionId.Order))
             return """{"error":"no_permission"}""";
         try
         {
@@ -210,7 +210,7 @@ public class AiAgentToolService
 
     private static async Task<string> QueryEquipmentStatusAsync(DashboardCoreServices core, JsonObject args)
     {
-        if (!core.Authorization.HasPermission(PermissionId.View))
+        if (!core.Authorization.HasAnyPermission(PermissionId.Schedule, PermissionId.Order))
             return """{"error":"no_permission"}""";
         try
         {
@@ -251,7 +251,7 @@ public class AiAgentToolService
 
     private static async Task<string> QueryTuningStatusAsync(DashboardCoreServices core, JsonObject args)
     {
-        if (!core.Authorization.HasPermission(PermissionId.OperateTuning))
+        if (!core.Authorization.HasAnyPermission(PermissionId.Schedule, PermissionId.Order))
             return """{"error":"no_permission"}""";
         try
         {
@@ -286,7 +286,7 @@ public class AiAgentToolService
 
     private static async Task<string> QueryEquipmentCapabilitiesAsync(DashboardCoreServices core, JsonObject args)
     {
-        if (!core.Authorization.HasPermission(PermissionId.View))
+        if (!core.Authorization.HasAnyPermission(PermissionId.Schedule, PermissionId.Order))
             return """{"error":"no_permission"}""";
         try
         {

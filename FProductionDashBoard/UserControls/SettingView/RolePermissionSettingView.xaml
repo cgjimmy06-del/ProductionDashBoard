@@ -162,6 +162,7 @@
                                 <DataTemplate>
                                     <CheckBox Content="{Binding Permission.Name}"
                                               IsChecked="{Binding IsSelected}"
+                                              Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               Margin="0,0,20,6"/>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

@@ -32,11 +32,18 @@ namespace FProductionDashBoard.ViewModels
         {
             try
             {
-                if (!RoleItems.Any())
+                // 每次載入依當前使用者權限重建角色清單 (避免換人登入後 admin 選項殘留/缺漏)
+                var canAssignAdmin = _core.Authorization.HasPermission(PermissionId.Special);
+                var roles = await _core.Data.GetAllRolesAsync();
+
+                var desiredRoleId = FormRoleId; // 快照 : 避免 Clear() + add() 觸發 SelectedValue 回寫
+                RoleItems.Clear();
+                foreach (var r in roles)
                 {
-                    var roles = await _core.Data.GetAllRolesAsync();
-                    foreach (var r in roles) RoleItems.Add(r);
+                    if (!canAssignAdmin && r.RoleId == 0) continue;
+                    RoleItems.Add(r);
                 }
+                FormRoleId = desiredRoleId;
 
                 var employees = await _core.Data.GetAllEmployeesAsync();
                 var employeesNoSystem = employees.Where(e => e.UserId != "admin" && e.UserId != "visitor");

@@ -40,7 +40,7 @@ namespace FProductionDashBoard.ViewModels
         private void RefreshTabVisibility()
         {
             IsGeneralTabVisible = _core.Authorization.HasPermission(PermissionId.Edit);
-            IsAdminTabVisible = _core.Authorization.HasPermission(PermissionId.Special);
+            IsAdminTabVisible = _core.Authorization.HasPermission(PermissionId.Setting);
         }
     }
 }
