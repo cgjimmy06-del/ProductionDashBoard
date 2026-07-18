@@ -34,8 +34,14 @@ namespace FProductionDashBoard.ViewModels
             {
                 if (!RoleItems.Any())
                 {
+                    // 僅 special 權限者可指派 admin 角色（role 0）
+                    var canAssignAdmin = _core.Authorization.HasPermission(PermissionId.Special);
                     var roles = await _core.Data.GetAllRolesAsync();
-                    foreach (var r in roles) RoleItems.Add(r);
+                    foreach (var r in roles)
+                    {
+                        if (!canAssignAdmin && r.RoleId == 0) continue;
+                        RoleItems.Add(r);
+                    }
                 }
 
                 var employees = await _core.Data.GetAllEmployeesAsync();

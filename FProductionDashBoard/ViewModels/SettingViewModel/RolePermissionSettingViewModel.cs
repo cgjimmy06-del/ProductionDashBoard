@@ -30,11 +30,19 @@ namespace FProductionDashBoard.ViewModels
                 var roles = await _core.Data.GetAllRolesAsync();
                 var perms = await _core.Data.GetAllPermissionsAsync();
 
+                // 僅 special 權限者可勾選 special / test 兩個權限標籤
+                var canManageSpecial = _core.Authorization.HasPermission(PermissionId.Special);
+
                 RoleList.Clear();
                 foreach (var r in roles) RoleList.Add(r);
 
                 PermissionItems.Clear();
-                foreach (var p in perms) PermissionItems.Add(new PermissionCheckItem(p, false));
+                foreach (var p in perms)
+                {
+                    var isVisible = canManageSpecial
+                        || (p.PermissionId != PermissionId.Special && p.PermissionId != PermissionId.Test);
+                    PermissionItems.Add(new PermissionCheckItem(p, false, isVisible));
+                }
             }
             catch (Exception ex)
             {
