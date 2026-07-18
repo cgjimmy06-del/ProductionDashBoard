@@ -525,7 +525,7 @@ namespace FProductionDashBoard.ViewModels
                 employees,
                 CurrentUser.Id,
                 lastTeachingMap,
-                _core.Authorization.HasPermission(PermissionId.Setting));
+                _core.Authorization.HasPermission(PermissionId.Edit));
             _dialog.ShowDialog(vm);
 
             if (!vm.IsConfirmed || vm.Result == null) return;
@@ -565,10 +565,10 @@ namespace FProductionDashBoard.ViewModels
             StartTuningTimer();
         }
 
-        private bool HasSettingPermission(UiModels.UserInfo user)
+        private bool HasEditPermission(UiModels.UserInfo user)
         {
             var role = _commonLists.RolesList.FirstOrDefault(r => r.RoleId == user.RoleId);
-            return role?.RolePermissions.Any(rp => rp.PermissionId == PermissionId.Setting) == true;
+            return role?.RolePermissions.Any(rp => rp.PermissionId == PermissionId.Edit) == true;
         }
 
         // 調試視窗與結束事件
@@ -589,7 +589,7 @@ namespace FProductionDashBoard.ViewModels
 
             void OnCardConfirm(object? s, CardReadEventArgs e)
             {
-                // 可結束者：執行人 或 安排人 或 具 Setting 權限者
+                // 可結束者：執行人 或 安排人 或 具 Edit 權限者
                 UiModels.UserInfo? matched = null;
                 if (e.CardId != null && e.CardId == _activeTuningStartedByEmployee?.CardId)
                     matched = _activeTuningStartedByEmployee;
@@ -598,7 +598,7 @@ namespace FProductionDashBoard.ViewModels
                 else
                 {
                     var swiper = _commonLists.UsersList.FirstOrDefault(u => u.CardId == e.CardId);
-                    if (swiper != null && HasSettingPermission(swiper))
+                    if (swiper != null && HasEditPermission(swiper))
                         matched = swiper;
                 }
 

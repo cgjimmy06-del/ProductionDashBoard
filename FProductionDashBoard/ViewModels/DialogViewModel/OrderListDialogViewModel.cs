@@ -79,7 +79,7 @@ namespace FProductionDashBoard.ViewModels
 
         // ─ OrderList Page
         public ObservableCollection<OrderProductionInfo> Orders { get; } = new();
-        public bool HasSettingPermission => _core.Authorization.HasPermission(PermissionId.Setting);
+        public bool HasEditPermission => _core.Authorization.HasPermission(PermissionId.Edit);
 
         // ─ QuickOrder Page
         public List<EquipmentProductItem> EquipmentProducts { get; }
