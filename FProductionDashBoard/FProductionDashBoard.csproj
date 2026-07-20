@@ -10,9 +10,9 @@
 		<ApplicationIcon>appIcon.ico</ApplicationIcon>
 
 		<!-- 正式版發佈前確認伺服器: LOGIN SERVER -->
-		<AssemblyVersion>3.4.0.1</AssemblyVersion>
-		<FileVersion>3.4.0.1</FileVersion>
-		<Version>3.4.0</Version>
+		<AssemblyVersion>3.4.1.1</AssemblyVersion>
+		<FileVersion>3.4.1.1</FileVersion>
+		<Version>3.4.1</Version>
 		<!-- 禁用將 Git Commit ID 加入 InformationalVersion -->
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	</PropertyGroup>
