@@ -453,6 +453,12 @@
   <data name="AiCancelled" xml:space="preserve">
     <value>已取消</value>
   </data>
+  <data name="NetStatusConnected" xml:space="preserve">
+    <value>主資料庫連線正常，自 {0}</value>
+  </data>
+  <data name="NetStatusDisconnected" xml:space="preserve">
+    <value>主資料庫連線中斷，自 {0}</value>
+  </data>
   <data name="AboutSdkInstalled" xml:space="preserve">
     <value>✓ 已安裝</value>
   </data>

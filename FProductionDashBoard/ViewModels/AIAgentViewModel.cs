@@ -141,23 +141,25 @@ namespace FProductionDashBoard.ViewModels
 
             if (_aiChatService.IsConfigured) ConfigWarning = null;
 
-            CurrentSession.Messages.Add(new ChatMessage
+            // 快照發話當下的 session：await 期間使用者可能切換 session，後續一律操作此快照
+            var session = CurrentSession;
+            session.Messages.Add(new ChatMessage
             {
                 Sender  = ChatSender.User,
                 Content = text,
                 Time    = DateTime.Now
             });
 
-            if (CurrentSession.Title == Properties.Resources.AiDefaultTitle && CurrentSession.Messages.Count == 2)
-                CurrentSession.Title = text.Length > 20 ? text[..20] + "…" : text;
+            if (session.Title == Properties.Resources.AiDefaultTitle && session.Messages.Count == 2)
+                session.Title = text.Length > 20 ? text[..20] + "…" : text;
 
-            CurrentSession.ModelUsed = SelectedModel;
-            CurrentSession.LastTime  = DateTime.Now;
+            session.ModelUsed = SelectedModel;
+            session.LastTime  = DateTime.Now;
             InputText = "";
             IsTyping  = true;
 
             var typing = new ChatMessage { Sender = ChatSender.Ai, IsTyping = true, Time = DateTime.Now };
-            CurrentSession.Messages.Add(typing);
+            session.Messages.Add(typing);
 
             _cts = new CancellationTokenSource();
             try
@@ -166,29 +168,32 @@ namespace FProductionDashBoard.ViewModels
                 var modeTools    = _toolService.GetToolsForMode(SelectedMode);
                 var result = await _aiChatService.SendAsync(
                     SelectedModel,
-                    CurrentSession.Messages.Where(m => !m.IsTyping && !m.IsUiOnly).SkipLast(1),
+                    session.Messages.Where(m => !m.IsTyping && !m.IsUiOnly).SkipLast(1),
                     text,
                     modeTools.Count > 0 ? modeTools : null,
                     systemPrompt,
                     _cts.Token);
 
-                CurrentSession.Messages.Remove(typing);
-                CurrentSession.Messages.Add(new ChatMessage
+                session.Messages.Remove(typing);
+                session.Messages.Add(new ChatMessage
                 {
                     Sender  = ChatSender.Ai,
                     Content = result.Reply,
                     Time    = DateTime.Now
                 });
-                CurrentSession.InputTokens  += result.InputTokens;
-                CurrentSession.OutputTokens += result.OutputTokens;
-                SessionInputTokens  = CurrentSession.InputTokens;
-                SessionOutputTokens = CurrentSession.OutputTokens;
+                session.InputTokens  += result.InputTokens;
+                session.OutputTokens += result.OutputTokens;
+                if (session == CurrentSession)
+                {
+                    SessionInputTokens  = session.InputTokens;
+                    SessionOutputTokens = session.OutputTokens;
+                }
                 ConfigWarning = null;
             }
             catch (OperationCanceledException)
             {
-                CurrentSession.Messages.Remove(typing);
-                CurrentSession.Messages.Add(new ChatMessage
+                session.Messages.Remove(typing);
+                session.Messages.Add(new ChatMessage
                 {
                     Sender  = ChatSender.Ai,
                     Content = Properties.Resources.AiCancelled,
@@ -199,8 +204,8 @@ namespace FProductionDashBoard.ViewModels
             {
                 _core.Log.AddLog("[AI 助理] 送出訊息失敗", LogLevel.Error);
                 _core.Log.AddErrorLog($"[SendAsync] {ex.Message}");
-                CurrentSession.Messages.Remove(typing);
-                CurrentSession.Messages.Add(new ChatMessage
+                session.Messages.Remove(typing);
+                session.Messages.Add(new ChatMessage
                 {
                     Sender  = ChatSender.Ai,
                     Content = Properties.Resources.AiSendFailed,

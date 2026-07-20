@@ -624,6 +624,24 @@ namespace FProductionDashBoard.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 Main database connected, since {0} 的當地語系化字串。
+        /// </summary>
+        internal static string NetStatusConnected {
+            get {
+                return ResourceManager.GetString("NetStatusConnected", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查詢類似 Main database disconnected, since {0} 的當地語系化字串。
+        /// </summary>
+        internal static string NetStatusDisconnected {
+            get {
+                return ResourceManager.GetString("NetStatusDisconnected", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   查詢類似 No current product 的當地語系化字串。
         /// </summary>
         internal static string NoCurrentProduct {

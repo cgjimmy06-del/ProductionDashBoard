@@ -253,11 +253,13 @@ namespace FProductionDashBoard.ViewModels
             });
         }
 
+        // 燈號語意＝主資料庫（MesDbContext）連線；Data/Info context 不納入訊號源（刻意設計）
         private static string BuildNetStatusTooltip(bool isConnected, DateTime? lastChangedAt)
         {
-            var label = isConnected ? "連線正常" : "連線中斷";
+            var template = isConnected ? Properties.Resources.NetStatusConnected
+                                       : Properties.Resources.NetStatusDisconnected;
             var since = lastChangedAt?.ToString("yyyy/MM/dd HH:mm") ?? "-";
-            return $"{label}，自 {since}";
+            return string.Format(template, since);
         }
         #endregion
 
