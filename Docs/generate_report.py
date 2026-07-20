@@ -10,7 +10,7 @@ from datetime import date
 from pathlib import Path
 
 OUTPUT_DIR = Path(__file__).parent
-VERSION_TAG = "v3.4.0"
+VERSION_TAG = "v3.4.1"
 XLSX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.xlsx"
 DOCX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.docx"
 PDF_PATH  = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.pdf"
@@ -348,6 +348,17 @@ TESTS_LIST = [
     "SopChecklistSettingViewModelTests.明細子表單存檔驗證（工位/治具/其他/工時） (12 tests)",
     "SopChecklistSettingViewModelTests.Part/Model新增與篩選保留邏輯 (7 tests)",
     "SopChecklistSettingViewModelTests.工位物料篩選（編號/名稱比對、殘留重置） (5 tests)",
+    # ─── 連線狀態訊號源（v3.4.1 新增，PR#130/#134） ──────────────────
+    "ConnectionStatusServiceTests.狀態翻轉事件/快照一致性/併發 (6 tests)",
+    # ─── AI 助理（v3.4.1 新增，PR#131/#132/#134） ────────────────────
+    "AIAgentMarkdownRenderingTests.Markdown轉換/程式碼區塊/超連結/主題樣式 (5 tests)",
+    "OpenAiChatServiceTests.Tokens用量累加與缺欄容錯 (3 tests)",
+    "AIAgentViewModelTests.回覆期間切換session的訊息歸屬 (2 tests)",
+    # ─── 權限顯示控管（v3.4.1 新增，PR#133） ─────────────────────────
+    "EmployeeSettingViewModelTests.角色下拉admin顯示控管 (2 tests)",
+    "RolePermissionSettingViewModelTests.special/test勾選顯示與存檔保留 (3 tests)",
+    # ─── 授權（v3.4.1 補列，AiAgent 功能項新增於本版） ────────────────
+    "FileLicenseServiceTests.HMAC簽章驗證/Trial模式/功能授權判定 (14 tests)",
 ]
 
 # ─────────────────────────────────────────
@@ -652,7 +663,8 @@ def generate_word():
         ["v3.3.0", "2026-06-29", "AI-assisted Review", "V3.3.0 正式版發佈；授權系統（PR#104~105）+ AI Agent 現場狀況工具（PR#107）+ 首次正式版（移除 Beta 標籤）", "已歸檔"],
         ["v3.3.1", "2026-06-29", "AI-assisted Review", "V3.3.1 維護版本；Code Review 修復（PR#110）：異常處理補強、MES 連線防護、i18n、授權可見性", "已歸檔"],
         ["v3.3.2", "2026-07-03", "AI-assisted Review", "V3.3.2 維護版本發佈；移除離線寫入功能（PR#112）+ DeviceCard 跨用戶端狀態即時刷新（PR#113）+ SOP Checklist 套用範本與存檔唯一鍵檢查（PR#114）+ LogUploadApi 可下載副檔名可設定化（PR#115）", "已歸檔"],
-        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V3.4.0 正式版發佈；圖表設計全計畫上線（PR#118,#122~125：戰情室看板、設計器、CRUD/匯出入、定期刷新）+ 調試 ManagedBy（PR#120~121）+ 程式庫批次狀態按鈕（PR#127~128）+ SOP 物料篩選（PR#126）+ Code Review 2026-07-03 修復（PR#117）", "更新版"],
+        ["v3.4.0", "2026-07-14", "AI-assisted Review", "V3.4.0 正式版發佈；圖表設計全計畫上線（PR#118,#122~125：戰情室看板、設計器、CRUD/匯出入、定期刷新）+ 調試 ManagedBy（PR#120~121）+ 程式庫批次狀態按鈕（PR#127~128）+ SOP 物料篩選（PR#126）+ Code Review 2026-07-03 修復（PR#117）", "已歸檔"],
+        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V3.4.1 維護版發佈；AI 助理 Markdown 渲染（PR#131）+ Tokens 用量顯示（PR#132）+ 權限閘門修正與 AI 面板雙層控管（PR#133 + AiAgent 授權）+ 連線狀態訊號源（PR#130）+ Code Review 2026-07-20 修復（PR#134）", "更新版"],
     ]
     rev_tbl = doc.add_table(rows=len(rev_history)+1, cols=5)
     rev_tbl.style = "Table Grid"
@@ -930,7 +942,7 @@ def generate_word():
     # ══════════════════════════════════════
     # 6. 附錄：現有測試清單
     # ══════════════════════════════════════
-    heading("6. 附錄：現有測試清單（共 84 項）", size=16)
+    heading("6. 附錄：現有測試清單（共 119 項）", size=16)
     hr()
     body("以下為截至審查日期，FProductionDashBoard.Tests 專案中已存在的測試方法：")
     for test in TESTS_LIST:
