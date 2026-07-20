@@ -17,7 +17,7 @@ namespace FProductionDashBoard.Tests.Services
             {
                 CustomerName = customer,
                 ExpiryDate = expiry,
-                EnabledFeatures = features ?? new List<string> { "Charts", "Scheduling", "ProgramLibrary", "MaterialManagement" },
+                EnabledFeatures = features ?? new List<string> { "Charts", "Scheduling", "ProgramLibrary", "MaterialManagement", "AiAgent" },
                 IssuedAt = new DateTime(2026, 1, 1),
                 Signature = ""
             };
@@ -92,6 +92,19 @@ namespace FProductionDashBoard.Tests.Services
             Assert.True(svc.IsFeatureEnabled(LicensedFeature.Scheduling));
             Assert.False(svc.IsFeatureEnabled(LicensedFeature.ProgramLibrary));
             Assert.False(svc.IsFeatureEnabled(LicensedFeature.MaterialManagement));
+            Assert.False(svc.IsFeatureEnabled(LicensedFeature.AiAgent));
+        }
+
+        [Fact]
+        public void ValidLicense_AiAgentFeature_EnablesAiAgent()
+        {
+            var dto = CreateValidDto(features: new List<string> { "AiAgent" });
+            var svc = BuildService(license: dto);
+            Assert.True(svc.IsFeatureEnabled(LicensedFeature.AiAgent));
+            Assert.False(svc.IsFeatureEnabled(LicensedFeature.Charts));
+            Assert.False(svc.IsFeatureEnabled(LicensedFeature.Scheduling));
+            Assert.False(svc.IsFeatureEnabled(LicensedFeature.ProgramLibrary));
+            Assert.False(svc.IsFeatureEnabled(LicensedFeature.MaterialManagement));
         }
 
         // --- Invalid signature ---
@@ -160,6 +173,7 @@ namespace FProductionDashBoard.Tests.Services
             Assert.True(svc.IsFeatureEnabled(LicensedFeature.Scheduling));
             Assert.True(svc.IsFeatureEnabled(LicensedFeature.ProgramLibrary));
             Assert.True(svc.IsFeatureEnabled(LicensedFeature.MaterialManagement));
+            Assert.True(svc.IsFeatureEnabled(LicensedFeature.AiAgent));
         }
 
         // --- Reload ---

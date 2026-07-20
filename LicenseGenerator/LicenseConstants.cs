@@ -6,5 +6,5 @@ internal static class LicenseConstants
 
     // ⚠ 新增 LicensedFeature enum 值時，必須同步更新此清單
     internal static readonly string[] KnownFeatures =
-        ["Charts", "Scheduling", "ProgramLibrary", "MaterialManagement"];
+        ["Charts", "Scheduling", "ProgramLibrary", "MaterialManagement", "AiAgent"];
 }

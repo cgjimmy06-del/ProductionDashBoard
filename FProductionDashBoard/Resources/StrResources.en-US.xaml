@@ -518,6 +518,7 @@
     <sys:String x:Key="LicenseFeatureScheduling">Scheduling</sys:String>
     <sys:String x:Key="LicenseFeatureProgramLib">Program Library</sys:String>
     <sys:String x:Key="LicenseFeatureMaterial">Material Mgmt</sys:String>
+    <sys:String x:Key="LicenseFeatureAiAgent">AI Agent</sys:String>
     <!--#endregion-->
     <!--#region AI Agent 面板 -->
     <sys:String x:Key="AiAgentTitle">AI Agent</sys:String>

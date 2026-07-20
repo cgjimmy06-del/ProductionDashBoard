@@ -152,6 +152,7 @@ namespace FProductionDashBoard.ViewModels
         public bool   IsSchedulingEnabled      => _licenseService.IsFeatureEnabled(LicensedFeature.Scheduling);
         public bool   IsProgramLibEnabled      => _licenseService.IsFeatureEnabled(LicensedFeature.ProgramLibrary);
         public bool   IsMaterialEnabled        => _licenseService.IsFeatureEnabled(LicensedFeature.MaterialManagement);
+        public bool   IsAiAgentEnabled         => _licenseService.IsFeatureEnabled(LicensedFeature.AiAgent);
 
         public ICommand ApplyCommand { get; }
         public IRelayCommand AddAttachmentCommand { get; }
@@ -303,6 +304,7 @@ namespace FProductionDashBoard.ViewModels
                 OnPropertyChanged(nameof(IsSchedulingEnabled));
                 OnPropertyChanged(nameof(IsProgramLibEnabled));
                 OnPropertyChanged(nameof(IsMaterialEnabled));
+                OnPropertyChanged(nameof(IsAiAgentEnabled));
 
                 _core.Log.AddLog("[SystemSettings] 授權已匯入，功能已更新", LogLevel.Success);
             }

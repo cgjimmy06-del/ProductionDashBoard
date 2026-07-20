@@ -600,6 +600,20 @@
                                            Margin="6,0,0,0" VerticalAlignment="Center"
                                            Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
                             </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,2">
+                                <materialDesign:PackIcon Kind="CheckCircle" Width="16" Height="16"
+                                    Foreground="{DynamicResource SuccessBrush}"
+                                    Visibility="{Binding IsAiAgentEnabled,
+                                        Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <materialDesign:PackIcon Kind="CloseCircle" Width="16" Height="16"
+                                    Foreground="{DynamicResource ErrorBrush}"
+                                    Visibility="{Binding IsAiAgentEnabled,
+                                        Converter={StaticResource BooleanToVisibilityConverter},
+                                        ConverterParameter='Invert'}"/>
+                                <TextBlock Text="{DynamicResource LicenseFeatureAiAgent}"
+                                           Margin="6,0,0,0" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
+                            </StackPanel>
                         </StackPanel>
 
                         <!-- 匯入授權按鈕（PR1 disabled） -->
