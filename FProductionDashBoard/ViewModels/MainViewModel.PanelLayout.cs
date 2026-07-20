@@ -50,6 +50,9 @@ namespace FProductionDashBoard.ViewModels
             OnPropertyChanged(nameof(IsScheduleLocked));
             OnPropertyChanged(nameof(IsProgramLibLocked));
             OnPropertyChanged(nameof(IsProductInOutLocked));
+            OnPropertyChanged(nameof(IsAiAgentLicensed));
+            if (!IsAiAgentLicensed && IsAiAgentVisible)
+                IsAiAgentVisible = false;
         }
 
         private static LicensedFeature? GetRequiredFeature(NavMode mode) => mode switch
@@ -73,6 +76,7 @@ namespace FProductionDashBoard.ViewModels
         public bool IsScheduleLocked     => !_licenseService.IsFeatureEnabled(LicensedFeature.Scheduling);
         public bool IsProgramLibLocked   => !_licenseService.IsFeatureEnabled(LicensedFeature.ProgramLibrary);
         public bool IsProductInOutLocked => !_licenseService.IsFeatureEnabled(LicensedFeature.MaterialManagement);
+        public bool IsAiAgentLicensed    => _licenseService.IsFeatureEnabled(LicensedFeature.AiAgent);
 
         public void SwitchMode(NavMode mode)
         {

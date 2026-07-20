@@ -2,7 +2,7 @@ using System;
 
 namespace FProductionDashBoard.Services
 {
-    public enum LicensedFeature { Charts, Scheduling, ProgramLibrary, MaterialManagement }
+    public enum LicensedFeature { Charts, Scheduling, ProgramLibrary, MaterialManagement, AiAgent }
 
     public enum LicenseStatus
     {

@@ -215,10 +215,20 @@
                 </Button>
                 <Separator/>
                 <ToggleButton ToolTip="{DynamicResource ToggleAiAgentTooltip}"
+                              ToolTipService.ShowOnDisabled="True"
                               Foreground="{DynamicResource TextPrimaryBrush}"
                               IsChecked="{Binding IsAiAgentVisible, Mode=TwoWay}"
-                              Visibility="{x:Static local:App.DebugVisibility}">
-                    <materialDesign:PackIcon Kind="Robot" Width="20" Height="20"/>
+                              IsEnabled="{Binding IsAiAgentLicensed}"
+                              Visibility="{Binding HasAiAgentPermission,
+                                  Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Robot" Width="20" Height="20"/>
+                        <materialDesign:PackIcon Kind="Lock" Width="12" Height="12"
+                                                 VerticalAlignment="Center" Margin="2,0,0,0"
+                                                 Visibility="{Binding IsAiAgentLicensed,
+                                                     Converter={StaticResource BooleanToVisibilityConverter},
+                                                     ConverterParameter='Invert'}"/>
+                    </StackPanel>
                 </ToggleButton>
             </ToolBar>
         </ToolBarTray>

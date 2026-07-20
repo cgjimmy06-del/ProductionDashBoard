@@ -44,6 +44,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private bool isCollapsedNav = false;
         [ObservableProperty] private bool isLogPanelVisible = true;
         [ObservableProperty] private bool isAiAgentVisible = false;
+        public bool HasAiAgentPermission => _core.Authorization.HasPermission(PermissionId.Test);
         [ObservableProperty] private int progressValue = 0;
         [ObservableProperty] private string progressString = Properties.Resources.MainProgressIdle;
         [ObservableProperty] private bool isProgressIndeterminate = false;
@@ -222,6 +223,9 @@ namespace FProductionDashBoard.ViewModels
                     LogoutCommand.NotifyCanExecuteChanged();
                     OnPropertyChanged(nameof(CurrentUser));
                     OnPropertyChanged(nameof(IsLoggedIn));
+                    OnPropertyChanged(nameof(HasAiAgentPermission));
+                    if (!HasAiAgentPermission && IsAiAgentVisible)
+                        IsAiAgentVisible = false;
                 }
                 catch (Exception ex)
                 {
