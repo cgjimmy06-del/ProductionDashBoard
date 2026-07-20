@@ -453,6 +453,12 @@
   <data name="AiCancelled" xml:space="preserve">
     <value>Đã hủy</value>
   </data>
+  <data name="NetStatusConnected" xml:space="preserve">
+    <value>Cơ sở dữ liệu chính kết nối bình thường, từ {0}</value>
+  </data>
+  <data name="NetStatusDisconnected" xml:space="preserve">
+    <value>Cơ sở dữ liệu chính mất kết nối, từ {0}</value>
+  </data>
   <data name="AboutSdkInstalled" xml:space="preserve">
     <value>✓ Đã cài đặt</value>
   </data>

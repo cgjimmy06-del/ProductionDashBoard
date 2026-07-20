@@ -498,6 +498,12 @@
   <data name="AiCancelled" xml:space="preserve">
     <value>Cancelled</value>
   </data>
+  <data name="NetStatusConnected" xml:space="preserve">
+    <value>Main database connected, since {0}</value>
+  </data>
+  <data name="NetStatusDisconnected" xml:space="preserve">
+    <value>Main database disconnected, since {0}</value>
+  </data>
   <data name="AboutSdkInstalled" xml:space="preserve">
     <value>✓ Installed</value>
   </data>

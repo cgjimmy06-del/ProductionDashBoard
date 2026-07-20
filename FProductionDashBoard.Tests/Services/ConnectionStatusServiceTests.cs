@@ -81,7 +81,7 @@ namespace FProductionDashBoard.Tests.Services
         }
 
         [Fact]
-        public void Report_ConcurrentCalls_DoesNotThrowAndStaysConsistent()
+        public void Report_ConcurrentCalls_DoesNotThrowAndRaisesWithinBounds()
         {
             var svc = new ConnectionStatusService();
             int raised = 0;
@@ -92,8 +92,9 @@ namespace FProductionDashBoard.Tests.Services
                 svc.Report(i % 2 == 0);
             });
 
-            Assert.True(raised >= 1);
-            Assert.True(svc.IsConnected == true || svc.IsConnected == false);
+            // 每次 raise 對應一次狀態翻轉，次數必落在 1 與呼叫總數之間；最終狀態不可預期，不做斷言
+            Assert.InRange(raised, 1, 200);
+            Assert.NotNull(svc.LastChangedAt);
         }
     }
 }
