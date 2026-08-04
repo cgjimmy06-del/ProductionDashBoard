@@ -10,7 +10,7 @@ from datetime import date
 from pathlib import Path
 
 OUTPUT_DIR = Path(__file__).parent
-VERSION_TAG = "v3.4.1"
+VERSION_TAG = "v3.4.2"
 XLSX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.xlsx"
 DOCX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.docx"
 PDF_PATH  = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.pdf"
@@ -359,6 +359,9 @@ TESTS_LIST = [
     "RolePermissionSettingViewModelTests.special/test勾選顯示與存檔保留 (3 tests)",
     # ─── 授權（v3.4.1 補列，AiAgent 功能項新增於本版） ────────────────
     "FileLicenseServiceTests.HMAC簽章驗證/Trial模式/功能授權判定 (14 tests)",
+    # ─── 出料確認完成閘門（v3.4.2 新增，PR#136） ─────────────────────
+    "ScheduleOperationDialogViewModelTests.確認完成接單狀態閘門/清單/提示/實際數量預設值 (14 tests)",
+    "OrderProductionInfoTests.FromEntity機台名稱映射 (2 tests)",
 ]
 
 # ─────────────────────────────────────────
@@ -664,7 +667,8 @@ def generate_word():
         ["v3.3.1", "2026-06-29", "AI-assisted Review", "V3.3.1 維護版本；Code Review 修復（PR#110）：異常處理補強、MES 連線防護、i18n、授權可見性", "已歸檔"],
         ["v3.3.2", "2026-07-03", "AI-assisted Review", "V3.3.2 維護版本發佈；移除離線寫入功能（PR#112）+ DeviceCard 跨用戶端狀態即時刷新（PR#113）+ SOP Checklist 套用範本與存檔唯一鍵檢查（PR#114）+ LogUploadApi 可下載副檔名可設定化（PR#115）", "已歸檔"],
         ["v3.4.0", "2026-07-14", "AI-assisted Review", "V3.4.0 正式版發佈；圖表設計全計畫上線（PR#118,#122~125：戰情室看板、設計器、CRUD/匯出入、定期刷新）+ 調試 ManagedBy（PR#120~121）+ 程式庫批次狀態按鈕（PR#127~128）+ SOP 物料篩選（PR#126）+ Code Review 2026-07-03 修復（PR#117）", "已歸檔"],
-        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V3.4.1 維護版發佈；AI 助理 Markdown 渲染（PR#131）+ Tokens 用量顯示（PR#132）+ 權限閘門修正與 AI 面板雙層控管（PR#133 + AiAgent 授權）+ 連線狀態訊號源（PR#130）+ Code Review 2026-07-20 修復（PR#134）", "更新版"],
+        ["v3.4.1", "2026-07-20", "AI-assisted Review", "V3.4.1 維護版發佈；AI 助理 Markdown 渲染（PR#131）+ Tokens 用量顯示（PR#132）+ 權限閘門修正與 AI 面板雙層控管（PR#133 + AiAgent 授權）+ 連線狀態訊號源（PR#130）+ Code Review 2026-07-20 修復（PR#134）", "已歸檔"],
+        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V3.4.2 維護版發佈；出料「確認完成」前檢查對應接單狀態——列出各機台接單（機台/數量/狀態），需所有接單完成才可確認（PR#136）", "更新版"],
     ]
     rev_tbl = doc.add_table(rows=len(rev_history)+1, cols=5)
     rev_tbl.style = "Table Grid"
@@ -942,7 +946,7 @@ def generate_word():
     # ══════════════════════════════════════
     # 6. 附錄：現有測試清單
     # ══════════════════════════════════════
-    heading("6. 附錄：現有測試清單（共 119 項）", size=16)
+    heading("6. 附錄：現有測試清單（共 135 項）", size=16)
     hr()
     body("以下為截至審查日期，FProductionDashBoard.Tests 專案中已存在的測試方法：")
     for test in TESTS_LIST:

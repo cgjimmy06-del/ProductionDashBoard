@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import date
 
 OUTPUT_DIR = Path(__file__).parent
-VERSION_TAG = "v3.4.1"
+VERSION_TAG = "v3.4.2"
 DOCX_PATH  = OUTPUT_DIR / f"UserManual_PDB_{VERSION_TAG}.docx"
 PDF_PATH   = OUTPUT_DIR / f"UserManual_PDB_{VERSION_TAG}.pdf"
 REVIEW_DATE = date.today().strftime("%Y-%m-%d")
@@ -328,7 +328,8 @@ def generate_manual():
             ["v3.3.1", "2026-06-29", "AI-assisted",   "V3.3.1 維護版本；Code Review 修復（PR#110）+ 操作手冊圖號嵌入機制（F3-1 ～ F11-2）"],
             ["v3.3.2", "2026-07-03", "AI-assisted",   "V3.3.2 版本號同步；本次未新增操作手冊章節（SOP 管理頁籤含套用範本功能，待後續統一補充完整說明）"],
             ["v3.4.0", "2026-07-14", "AI-assisted",   "新增第 6 章圖表設計（戰情室看板、設計器、CRUD/匯出入、定期刷新）；原第 6~14 章順移為第 7~15 章；補充 5.6 調試操作的執行人員/強制安排說明；修正 4.1 導覽列圖表項說明"],
-            [VERSION_TAG, REVIEW_DATE, "AI-assisted",   "14 章補 AI 回覆 Markdown 顯示與 Tokens 用量說明及未開通提示；13 章授權功能清單補 AI 助理；4.2 連線燈號補主資料庫連線提示說明；5.6 調試權限措辭修正（系統設定→編輯）"],
+            ["v3.4.1", "2026-07-20", "AI-assisted",   "14 章補 AI 回覆 Markdown 顯示與 Tokens 用量說明及未開通提示；13 章授權功能清單補 AI 助理；4.2 連線燈號補主資料庫連線提示說明；5.6 調試權限措辭修正（系統設定→編輯）"],
+            [VERSION_TAG, REVIEW_DATE, "AI-assisted",   "7.5 出入料『已確認』操作補接單狀態檢查說明——確認前列出各機台接單，需全部完成才可確認（PR#136）"],
         ],
         [2.0, 2.5, 3.5, 8.0]
     )
@@ -793,6 +794,8 @@ def generate_manual():
         [3, 3.5, 9.5]
     )
     note("拆單需輸入本次實際完成數量，系統自動計算剩餘（原始數量 − 本次數量）並建立子單", kind="info")
+    note("執行「已確認」時，系統會先列出該排單對應的各機台接單（機台／數量／狀態）；"
+         "需所有接單皆為「已完成」才能確認，若仍有接單未開始或進行中，會顯示提示且無法確認。", kind="warn")
     img_placeholder("F7-4", "詳細資訊面板操作按鈕（依狀態顯示可用操作）")
     doc.add_page_break()
 
