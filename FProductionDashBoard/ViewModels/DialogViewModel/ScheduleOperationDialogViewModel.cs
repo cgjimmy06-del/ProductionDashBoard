@@ -1,5 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using FProductionDashBoard.Models;
 using FProductionDashBoard.UiModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FProductionDashBoard.ViewModels
 {
@@ -15,6 +19,27 @@ namespace FProductionDashBoard.ViewModels
     public partial class ScheduleOperationDialogViewModel : DialogBaseViewModel<ScheduleOperationResult>
     {
         public ScheduleOperationType OperationType { get; }
+
+        // 對應接單清單（僅 Verify 使用）；D1：排除 Cancelled 後不得有 Pending/InProduction
+        public IReadOnlyList<OrderProductionInfo> Orders { get; }
+        public bool HasOrderList => OperationType == ScheduleOperationType.Verify && Orders.Count > 0;
+        public bool AllOrdersCompleted => !Orders.Any(o =>
+            o.Status == OrderProductionStatus.Pending ||
+            o.Status == OrderProductionStatus.InProduction);
+        public string? IncompleteHint
+        {
+            get
+            {
+                if (OperationType != ScheduleOperationType.Verify || AllOrdersCompleted)
+                    return null;
+                var names = Orders
+                    .Where(o => o.Status == OrderProductionStatus.Pending
+                             || o.Status == OrderProductionStatus.InProduction)
+                    .Select(o => o.EquipmentName)
+                    .Where(n => !string.IsNullOrWhiteSpace(n));
+                return string.Format(Properties.Resources.PioVerifyIncompleteHint, string.Join("、", names));
+            }
+        }
 
         public bool IsDescriptionVisible => true;
         public bool IsActualQtyVisible   => OperationType == ScheduleOperationType.ForceComplete
@@ -33,10 +58,12 @@ namespace FProductionDashBoard.ViewModels
         public ScheduleOperationDialogViewModel(
             ScheduleOperationType operationType,
             ScheduleUiModel schedule,
-            string currentUserName)
+            string currentUserName,
+            IReadOnlyList<OrderProductionInfo>? orders = null)
             : base(GetTitle(operationType))
         {
             OperationType = operationType;
+            Orders = orders ?? Array.Empty<OrderProductionInfo>();
 
             if (operationType == ScheduleOperationType.ForceComplete)
                 Description = $"{Properties.Resources.ScheduleOpForcedByPrefix}{currentUserName}{Properties.Resources.ScheduleOpForcedBySuffix}";
@@ -53,6 +80,11 @@ namespace FProductionDashBoard.ViewModels
 
         protected override void OnConfirm()
         {
+            if (OperationType == ScheduleOperationType.Verify && !AllOrdersCompleted)
+            {
+                DialogErrorString = IncompleteHint;
+                return;
+            }
             if (IsDescriptionRequired && string.IsNullOrWhiteSpace(Description))
             {
                 DialogErrorString = Properties.Resources.ScheduleOpDescRequired;

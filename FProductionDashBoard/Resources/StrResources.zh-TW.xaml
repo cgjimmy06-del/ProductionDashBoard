@@ -425,6 +425,8 @@
     <sys:String x:Key="PioDialogDescription">備註</sys:String>
     <sys:String x:Key="PioDialogActualQty">實際數量</sys:String>
     <sys:String x:Key="PioDialogRemainingQty">剩餘數量</sys:String>
+    <sys:String x:Key="PioVerifyOrderListHeader">對應接單狀態</sys:String>
+    <sys:String x:Key="PioVerifyColEquipment">機台</sys:String>
     <sys:String x:Key="PioSopChipNew">新</sys:String>
     <sys:String x:Key="PioSopChipDevelop">開</sys:String>
     <sys:String x:Key="PioSopChipMass">量</sys:String>

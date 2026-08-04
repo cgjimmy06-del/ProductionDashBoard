@@ -384,6 +384,9 @@
   <data name="PioFormSubmitError" xml:space="preserve">
     <value>入料失敗，請重試</value>
   </data>
+  <data name="PioVerifyIncompleteHint" xml:space="preserve">
+    <value>因 {0} 尚未完成，故此單無法確認完成</value>
+  </data>
   <data name="WaitedDaysForSchedule" xml:space="preserve">
     <value>已等待</value>
   </data>

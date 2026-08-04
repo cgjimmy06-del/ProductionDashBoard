@@ -703,7 +703,16 @@ namespace FProductionDashBoard.Properties {
                 return ResourceManager.GetString("PioFormSubmitError", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   查詢類似 因 {0} 尚未完成，故此單無法確認完成 的當地語系化字串。
+        /// </summary>
+        internal static string PioVerifyIncompleteHint {
+            get {
+                return ResourceManager.GetString("PioVerifyIncompleteHint", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   查詢類似 Edit Program Status 的當地語系化字串。
         /// </summary>

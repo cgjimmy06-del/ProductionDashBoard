@@ -397,7 +397,20 @@ namespace FProductionDashBoard.ViewModels
         [RelayCommand]
         private async Task Verify(ScheduleUiModel schedule)
         {
-            var vm = new ScheduleOperationDialogViewModel(ScheduleOperationType.Verify, schedule, string.Empty);
+            List<OrderProductionInfo> orders;
+            try
+            {
+                var entities = await _core.Data.GetOrdersByScheduleAsync(schedule.ScheduleId);
+                orders = entities.Select(OrderProductionInfo.FromEntity).ToList();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[進出料管理] 載入接單狀態失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[Verify] {ex.Message}");
+                return;
+            }
+
+            var vm = new ScheduleOperationDialogViewModel(ScheduleOperationType.Verify, schedule, string.Empty, orders);
             _dialog.ShowDialog(vm);
             if (!vm.IsConfirmed || vm.Result == null) return;
             var employeeId = _core.Authorization.CurrentUser?.Id ?? 0;

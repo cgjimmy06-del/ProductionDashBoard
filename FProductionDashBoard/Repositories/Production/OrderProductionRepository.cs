@@ -63,6 +63,7 @@ namespace FProductionDashBoard.Repositories
             await using var ctx = _factory.CreateDbContext();
             return await ctx.OrderProductions
                 .Where(o => o.ScheduleId == scheduleId)
+                .Include(o => o.Equipment)
                 .Include(o => o.EquipmentProduct)
                     .ThenInclude(ep => ep!.Sop)
                     .ThenInclude(s => s!.Product)

@@ -425,6 +425,8 @@
     <sys:String x:Key="PioDialogDescription">Ghi chú</sys:String>
     <sys:String x:Key="PioDialogActualQty">SL thực</sys:String>
     <sys:String x:Key="PioDialogRemainingQty">SL còn lại</sys:String>
+    <sys:String x:Key="PioVerifyOrderListHeader">Trạng thái đơn liên quan</sys:String>
+    <sys:String x:Key="PioVerifyColEquipment">Thiết bị</sys:String>
     <sys:String x:Key="PioSopChipNew">Mới</sys:String>
     <sys:String x:Key="PioSopChipDevelop">PT</sys:String>
     <sys:String x:Key="PioSopChipMass">SL</sys:String>

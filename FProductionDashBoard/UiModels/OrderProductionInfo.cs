@@ -6,6 +6,7 @@ namespace FProductionDashBoard.UiModels
     {
         public int OrderId { get; set; }
         public int EquipmentId { get; set; }
+        public string EquipmentName { get; set; } = string.Empty;  // Equipment.Name
         public int? ScheduleId { get; set; }
         public int EquipmentProductId { get; set; }
         public int SopId { get; set; }
@@ -24,6 +25,7 @@ namespace FProductionDashBoard.UiModels
         {
             OrderId = o.OrderId,
             EquipmentId = o.EquipmentId,
+            EquipmentName = o.Equipment?.Name ?? string.Empty,
             ScheduleId = o.ScheduleId,
             EquipmentProductId = o.EquipmentProductId,
             SopId = o.EquipmentProduct?.SopId ?? 0,
