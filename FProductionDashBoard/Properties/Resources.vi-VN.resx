@@ -384,6 +384,9 @@
   <data name="PioFormSubmitError" xml:space="preserve">
     <value>Nhập kho thất bại, vui lòng thử lại</value>
   </data>
+  <data name="PioVerifyIncompleteHint" xml:space="preserve">
+    <value>Không thể xác nhận: {0} chưa hoàn thành</value>
+  </data>
   <data name="WaitedDaysForSchedule" xml:space="preserve">
     <value>Đã chờ</value>
   </data>

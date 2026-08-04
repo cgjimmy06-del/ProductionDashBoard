@@ -5,10 +5,95 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:FProductionDashBoard"
+             xmlns:models="clr-namespace:FProductionDashBoard.Models"
              mc:Ignorable="d"
-             Width="380" d:DesignHeight="260" d:DesignWidth="380" d:Background="White">
+             Width="430" d:DesignHeight="360" d:DesignWidth="430" d:Background="White">
 
     <StackPanel Margin="16,5">
+
+        <!-- 對應接單狀態（僅 Verify 顯示） -->
+        <StackPanel Margin="0,0,0,12"
+                    Visibility="{Binding HasOrderList,
+                                 Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="{DynamicResource PioVerifyOrderListHeader}"
+                       FontWeight="SemiBold" Margin="0,0,0,4"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                    CornerRadius="4" Padding="8,4">
+                <StackPanel>
+                    <!-- 表頭 -->
+                    <Grid Margin="0,0,0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="90"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource PioVerifyColEquipment}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock Grid.Column="1" Text="{DynamicResource PioColQty}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   TextAlignment="Right"/>
+                        <TextBlock Grid.Column="2" Text="{DynamicResource PioColStatus}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="8,0,0,0"/>
+                    </Grid>
+                    <!-- 清單（全展開，不折疊） -->
+                    <ItemsControl ItemsSource="{Binding Orders}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="90"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding EquipmentName}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Quantity, TargetNullValue='-'}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                               TextAlignment="Right" VerticalAlignment="Center"/>
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                                Margin="8,0,0,0" VerticalAlignment="Center">
+                                        <Ellipse Width="8" Height="8" Margin="0,0,4,0" VerticalAlignment="Center">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Fill" Value="{DynamicResource TextSecondaryBrush}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}"
+                                                                     Value="{x:Static models:OrderProductionStatus.InProduction}">
+                                                            <Setter Property="Fill" Value="{DynamicResource ButtonWarningBrush}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}"
+                                                                     Value="{x:Static models:OrderProductionStatus.Completed}">
+                                                            <Setter Property="Fill" Value="{DynamicResource SuccessBrush}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}"
+                                                                     Value="{x:Static models:OrderProductionStatus.Cancelled}">
+                                                            <Setter Property="Fill" Value="{DynamicResource ErrorBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+                                        <TextBlock Text="{Binding Status,
+                                                          Converter={StaticResource OrderProductionStatusToLabelConverter}}"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- 未完成提示（未通過時持續顯示） -->
+            <TextBlock Text="{Binding IncompleteHint}" TextWrapping="Wrap"
+                       Foreground="{DynamicResource ErrorBrush}" FontSize="12" Margin="0,6,0,0"
+                       Visibility="{Binding IncompleteHint,
+                                    Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
+        </StackPanel>
 
         <!-- 備註 -->
         <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
