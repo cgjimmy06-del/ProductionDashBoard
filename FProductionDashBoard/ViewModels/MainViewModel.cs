@@ -67,6 +67,9 @@ namespace FProductionDashBoard.ViewModels
         public AIAgentViewModel AiAgent { get; }
         public SystemSettingsViewModel SystemSettings { get; }
 
+        // 即時通知浮層通道狀態（供 MainWindow 的 Snackbar 綁定）
+        public SnackbarNotificationChannel Notifications { get; }
+
         private Action? _onUserChanged;
         private EventHandler? _onConnectionStatusChanged;
 
@@ -81,7 +84,8 @@ namespace FProductionDashBoard.ViewModels
             ListsFromSql commonLists,
             IConfigService<SystemConfigDto> systemConfig,
             ILicenseService licenseService,
-            ConnectionStatusService connectionStatus)
+            ConnectionStatusService connectionStatus,
+            SnackbarNotificationChannel notifications)
         {
             _core = core;
             _multiCardReaderService = multiCardReaderService;
@@ -91,6 +95,7 @@ namespace FProductionDashBoard.ViewModels
             _systemConfig = systemConfig;
             _licenseService = licenseService;
             _connectionStatus = connectionStatus;
+            Notifications = notifications;
 
             _cardReaderHandler = new CardReaderHandler(
                 _core, sp.GetRequiredService<Services.WebApi.IErpApiService>(), _dialog, CommonLists);

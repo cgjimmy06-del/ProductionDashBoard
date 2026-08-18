@@ -117,6 +117,12 @@ namespace FProductionDashBoard
                 // 圖表定義儲存（本機 JSON，與上方設定檔同資料夾）
                 services.AddSingleton<Services.IChartDefinitionStore, Services.JsonChartDefinitionStore>();
 
+                // 通知系統：Snackbar 浮層通道 + 彙整層（訂閱連線狀態訊號源，斷線常駐/恢復暫態）
+                services.AddSingleton<Services.SnackbarNotificationChannel>();
+                services.AddSingleton<Services.INotificationChannel>(sp =>
+                    sp.GetRequiredService<Services.SnackbarNotificationChannel>());
+                services.AddSingleton<Services.NotificationService>();
+
                 // 授權服務（#if DEBUG 保留 Stub 供開發測試）
 #if DEBUG
                 services.AddSingleton<Services.ILicenseService, Services.DevelopmentLicenseService>();
@@ -184,6 +190,9 @@ namespace FProductionDashBoard
                 // 載入持久化設定
                 _serviceProvider.GetRequiredService<Services.IConfigService<Dtos.SystemConfigDto>>().Load();
                 _serviceProvider.GetRequiredService<Services.IConfigService<Dtos.HardwareConfigDto>>().Load();
+
+                // 啟動通知彙整層（singleton 為延遲建立，主動解析一次以完成訊號源訂閱；須早於首波 DB 呼叫）
+                _serviceProvider.GetRequiredService<Services.NotificationService>();
 
                 // 啟動登入權限
                 var authService = _serviceProvider.GetRequiredService<Services.AuthorizationService>();

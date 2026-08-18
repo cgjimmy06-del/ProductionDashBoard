@@ -272,6 +272,22 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+    public class NotificationSeverityToBrushConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            return value is Services.NotificationSeverity s ? s switch
+            {
+                Services.NotificationSeverity.Success => (Brush)resources["SuccessBrush"],
+                Services.NotificationSeverity.Warning => (Brush)resources["WarningBrush"],
+                Services.NotificationSeverity.Error   => (Brush)resources["ErrorBrush"],
+                _                                     => (Brush)resources["PrimaryBrush"],
+            } : (Brush)resources["PrimaryBrush"];
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
     public class ScheduleStatusToLabelConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

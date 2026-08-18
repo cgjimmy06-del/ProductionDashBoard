@@ -462,6 +462,12 @@
   <data name="NetStatusDisconnected" xml:space="preserve">
     <value>Cơ sở dữ liệu chính mất kết nối, từ {0}</value>
   </data>
+  <data name="NotifyDbDisconnected" xml:space="preserve">
+    <value>Đã mất kết nối cơ sở dữ liệu chính ({0})</value>
+  </data>
+  <data name="NotifyDbReconnected" xml:space="preserve">
+    <value>Đã khôi phục kết nối cơ sở dữ liệu chính ({0})</value>
+  </data>
   <data name="AboutSdkInstalled" xml:space="preserve">
     <value>✓ Đã cài đặt</value>
   </data>
