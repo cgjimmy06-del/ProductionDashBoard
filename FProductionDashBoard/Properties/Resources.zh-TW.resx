@@ -462,6 +462,12 @@
   <data name="NetStatusDisconnected" xml:space="preserve">
     <value>主資料庫連線中斷，自 {0}</value>
   </data>
+  <data name="NotifyDbDisconnected" xml:space="preserve">
+    <value>與主資料庫的連線已中斷（{0}）</value>
+  </data>
+  <data name="NotifyDbReconnected" xml:space="preserve">
+    <value>已恢復與主資料庫的連線（{0}）</value>
+  </data>
   <data name="AboutSdkInstalled" xml:space="preserve">
     <value>✓ 已安裝</value>
   </data>

@@ -647,6 +647,17 @@
                           Background="{DynamicResource BorderBrush}"/>
             <!-- AI Agent 面板 -->
             <localuc:AIAgentView Grid.Column="3" DataContext="{Binding AiAgent}"/>
+
+            <!-- 即時通知浮層（斷線＝ErrorBrush 常駐；恢復＝SuccessBrush 暫態自動消）；overlay 不插版面列 -->
+            <!-- 直接綁 Background（不設 explicit Style，保留 MD 隱式樣式與模板）；顏色由嚴重度 converter 決定 -->
+            <materialDesign:Snackbar Grid.Column="1"
+                                     VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                                     Margin="0,0,0,24"
+                                     IsActive="{Binding Notifications.IsActive}"
+                                     Background="{Binding Notifications.CurrentSeverity,
+                                         Converter={StaticResource NotificationSeverityToBrushConverter}}">
+                <materialDesign:SnackbarMessage Content="{Binding Notifications.CurrentMessage}"/>
+            </materialDesign:Snackbar>
         </Grid>
     </DockPanel>
 </Window>

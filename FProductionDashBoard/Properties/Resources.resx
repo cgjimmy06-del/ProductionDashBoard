@@ -507,6 +507,12 @@
   <data name="NetStatusDisconnected" xml:space="preserve">
     <value>Main database disconnected, since {0}</value>
   </data>
+  <data name="NotifyDbDisconnected" xml:space="preserve">
+    <value>Main database connection lost ({0})</value>
+  </data>
+  <data name="NotifyDbReconnected" xml:space="preserve">
+    <value>Main database connection restored ({0})</value>
+  </data>
   <data name="AboutSdkInstalled" xml:space="preserve">
     <value>✓ Installed</value>
   </data>
