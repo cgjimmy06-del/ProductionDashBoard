@@ -96,11 +96,13 @@ namespace FProductionDashBoard
                 services.AddScoped<Repositories.IOrderProductionRepository, Repositories.OrderProductionRepository>();
                 services.AddScoped<Repositories.IProgramTuningRecordRepository, Repositories.ProgramTuningRecordRepository>();
                 services.AddScoped<Repositories.IScheduleRepository, Repositories.ScheduleRepository>();
+                services.AddScoped<Repositories.IWarehouseRepository, Repositories.WarehouseRepository>();
                 services.AddScoped<Repositories.ExtraDb.IInfoDbRepository, Repositories.ExtraDb.InfoDbRepository>();
                 services.AddScoped<Repositories.ExtraDb.IDataDbRepository, Repositories.ExtraDb.DataDbRepository>();
 
                 // 註冊 Service
                 services.AddScoped<Services.IDataService, Services.DataService>();
+                services.AddScoped<Services.IWarehouseService, Services.WarehouseService>();
                 services.AddScoped<Services.LogService>();
                 services.AddSingleton<Services.AuthorizationService>();
                 services.AddSingleton<Services.IDialogService, Services.DialogService>();

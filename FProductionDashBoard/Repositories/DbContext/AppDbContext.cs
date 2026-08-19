@@ -31,6 +31,8 @@ namespace FProductionDashBoard.Repositories
         public DbSet<OrderProduction> OrderProductions { get; set; }
         public DbSet<ProgramTuningRecord> ProgramTuningRecords { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<StorageLocation> StorageLocations { get; set; }
+        public DbSet<LocationAssignment> LocationAssignments { get; set; }
 
         public DbSet<Role> Roles => Set<Role>();
         public DbSet<Permission> Permissions => Set<Permission>();
