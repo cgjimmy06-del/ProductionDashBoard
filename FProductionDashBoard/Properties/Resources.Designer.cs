@@ -1177,6 +1177,10 @@ namespace FProductionDashBoard.Properties {
             get { return ResourceManager.GetString("SettingValidationMaterialCodeNameRequired", resourceCulture); }
         }
 
+        internal static string WarehouseValidationCodeRequired {
+            get { return ResourceManager.GetString("WarehouseValidationCodeRequired", resourceCulture); }
+        }
+
         internal static string SettingValidationErrorCodeRequired {
             get { return ResourceManager.GetString("SettingValidationErrorCodeRequired", resourceCulture); }
         }

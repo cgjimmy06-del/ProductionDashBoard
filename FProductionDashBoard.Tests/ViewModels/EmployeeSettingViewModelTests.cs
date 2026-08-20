@@ -36,7 +36,7 @@ namespace FProductionDashBoard.Tests.ViewModels
                 .GetAwaiter().GetResult();
 
             var cardReader = new Mock<ICardReaderService>().Object;
-            var core = new DashboardCoreServices(log, _data.Object, auth, cardReader);
+            var core = new DashboardCoreServices(log, _data.Object, auth, cardReader, new Mock<IWarehouseService>().Object);
             return new EmployeeSettingViewModel(core, _dialog.Object);
         }
 

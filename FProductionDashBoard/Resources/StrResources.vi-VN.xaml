@@ -604,4 +604,20 @@
     <sys:String x:Key="ChartDesignerMoveDownTooltip">Chuyển xuống</sys:String>
     <!--#endregion-->
 
+    <!--#region Cài đặt vị trí kho -->
+    <sys:String x:Key="SettingTabWarehouse">Vị trí kho</sys:String>
+    <sys:String x:Key="WarehouseZoneLabel">Khu vực</sys:String>
+    <sys:String x:Key="WarehouseCapacityLabel">Sức chứa</sys:String>
+    <sys:String x:Key="WarehouseEquipmentLabel">Thiết bị cạnh máy</sys:String>
+    <sys:String x:Key="WarehouseEnabledLabel">Kích hoạt</sys:String>
+    <sys:String x:Key="WarehouseOccupancyHeader">Số thùng hiện có</sys:String>
+    <sys:String x:Key="WarehouseStatusHeader">Trạng thái</sys:String>
+    <sys:String x:Key="WarehouseStatusEnabled">Kích hoạt</sys:String>
+    <sys:String x:Key="WarehouseStatusDisabled">Vô hiệu</sys:String>
+    <sys:String x:Key="LocationTypeReceiving">Khu nhận liệu</sys:String>
+    <sys:String x:Key="LocationTypeBuffer">Khu đệm</sys:String>
+    <sys:String x:Key="LocationTypeMachineSide">Cạnh máy</sys:String>
+    <sys:String x:Key="LocationTypeShipping">Khu xuất hàng</sys:String>
+    <!--#endregion-->
+
 </ResourceDictionary>

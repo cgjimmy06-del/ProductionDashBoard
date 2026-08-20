@@ -48,7 +48,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             }
 
             var cardReader = new Mock<ICardReaderService>().Object;
-            var core = new DashboardCoreServices(log, dataMock.Object, auth, cardReader);
+            var core = new DashboardCoreServices(log, dataMock.Object, auth, cardReader, new Mock<IWarehouseService>().Object);
             var store = new JsonChartDefinitionStore(
                 _ => definitions ?? new List<ChartDefinition>(),
                 (_, _) => { });

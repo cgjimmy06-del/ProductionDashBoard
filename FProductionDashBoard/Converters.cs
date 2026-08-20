@@ -254,6 +254,24 @@ namespace FProductionDashBoard
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+    public class LocationTypeToLabelConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var resources = Application.Current.Resources;
+            var key = value is Models.LocationType t ? t switch
+            {
+                Models.LocationType.Receiving   => "LocationTypeReceiving",
+                Models.LocationType.Buffer      => "LocationTypeBuffer",
+                Models.LocationType.MachineSide => "LocationTypeMachineSide",
+                Models.LocationType.Shipping    => "LocationTypeShipping",
+                _                               => null,
+            } : null;
+            return key != null && resources[key] is string label ? label : value?.ToString() ?? string.Empty;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
     public class ScheduleStatusToBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

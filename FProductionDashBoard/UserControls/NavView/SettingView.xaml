@@ -38,34 +38,6 @@
             <localuc:MaterialSettingView DataContext="{Binding Material}"/>
         </TabItem>
 
-        <TabItem Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TabItem.Header>
-                <StackPanel Orientation="Horizontal" Margin="4,0">
-                    <materialDesign:PackIcon Kind="AlertCircleOutline"
-                                             Width="20" Height="20"
-                                             VerticalAlignment="Center"
-                                             Margin="0,0,6,0"/>
-                    <TextBlock Text="{DynamicResource SettingTabErrorList}" VerticalAlignment="Center"
-                               Style="{StaticResource MaterialDesignBody1TextBlock}"/>
-                </StackPanel>
-            </TabItem.Header>
-            <localuc:ErrorListSettingView DataContext="{Binding ErrorList}"/>
-        </TabItem>
-
-        <TabItem Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TabItem.Header>
-                <StackPanel Orientation="Horizontal" Margin="4,0">
-                    <materialDesign:PackIcon Kind="ClockOutline"
-                                             Width="20" Height="20"
-                                             VerticalAlignment="Center"
-                                             Margin="0,0,6,0"/>
-                    <TextBlock Text="{DynamicResource SettingTabTimeSlot}" VerticalAlignment="Center"
-                               Style="{StaticResource MaterialDesignBody1TextBlock}"/>
-                </StackPanel>
-            </TabItem.Header>
-            <localuc:TimeSlotSettingView DataContext="{Binding TimeSlot}"/>
-        </TabItem>
-
         <TabItem MinWidth="140" Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
@@ -93,7 +65,21 @@
             </TabItem.Header>
             <localuc:EquipmentProductSettingView DataContext="{Binding EquipmentProduct}"/>
         </TabItem>
-        
+
+        <TabItem MinWidth="140" Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Margin="4,0">
+                    <materialDesign:PackIcon Kind="Warehouse"
+                                             Width="20" Height="20"
+                                             VerticalAlignment="Center"
+                                             Margin="0,0,6,0"/>
+                    <TextBlock Text="{DynamicResource SettingTabWarehouse}" VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </StackPanel>
+            </TabItem.Header>
+            <localuc:LocationSettingView DataContext="{Binding Location}"/>
+        </TabItem>
+
         <TabItem Visibility="{Binding IsAdminTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal" Margin="4,0">
@@ -120,6 +106,34 @@
                 </StackPanel>
             </TabItem.Header>
             <localuc:RolePermissionSettingView DataContext="{Binding RolePermission}"/>
+        </TabItem>
+
+        <TabItem Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Margin="4,0">
+                    <materialDesign:PackIcon Kind="AlertCircleOutline"
+                                             Width="20" Height="20"
+                                             VerticalAlignment="Center"
+                                             Margin="0,0,6,0"/>
+                    <TextBlock Text="{DynamicResource SettingTabErrorList}" VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </StackPanel>
+            </TabItem.Header>
+            <localuc:ErrorListSettingView DataContext="{Binding ErrorList}"/>
+        </TabItem>
+
+        <TabItem Visibility="{Binding IsGeneralTabVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Margin="4,0">
+                    <materialDesign:PackIcon Kind="ClockOutline"
+                                             Width="20" Height="20"
+                                             VerticalAlignment="Center"
+                                             Margin="0,0,6,0"/>
+                    <TextBlock Text="{DynamicResource SettingTabTimeSlot}" VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </StackPanel>
+            </TabItem.Header>
+            <localuc:TimeSlotSettingView DataContext="{Binding TimeSlot}"/>
         </TabItem>
 
     </TabControl>

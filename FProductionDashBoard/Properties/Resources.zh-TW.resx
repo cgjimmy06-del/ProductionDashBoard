@@ -522,6 +522,9 @@
   <data name="SettingValidationMaterialCodeNameRequired" xml:space="preserve">
     <value>MaterialCode、Name 為必填</value>
   </data>
+  <data name="WarehouseValidationCodeRequired" xml:space="preserve">
+    <value>倉位編號不可為空</value>
+  </data>
   <data name="SettingValidationErrorCodeRequired" xml:space="preserve">
     <value>ErrorCode 為必填</value>
   </data>

@@ -9,8 +9,10 @@ using System.Threading.Tasks;
 namespace FProductionDashBoard.Services
 {
     /// <summary>
-    /// 倉儲業務服務：倉位主檔 CRUD + 上架/下架生命週期 + 佔用查詢。
-    /// 獨立於 DataService（不進 Facade），比照 DataService 的三段式錯誤處理慣例。
+    /// <see cref="IWarehouseService"/> 的實作（服務定位與跨域查詢說明見介面 doc）。
+    /// 獨立於 DataService 的倉儲領域服務，經 Facade <see cref="DashboardCoreServices.Warehouse"/> 對外；
+    /// 比照 DataService 的三段式錯誤處理慣例（連線守衛 → BusinessRuleException 規則檢查 →
+    /// SqlException/TimeoutException 包成 DatabaseConnectionException）。
     /// </summary>
     public class WarehouseService : IWarehouseService
     {

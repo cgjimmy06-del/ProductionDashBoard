@@ -24,7 +24,8 @@ namespace FProductionDashBoard.Tests.Services
                 new LogService(),
                 mockData.Object,
                 new AuthorizationService(),
-                mockCardReader.Object);
+                mockCardReader.Object,
+                new Mock<IWarehouseService>().Object);
 
             var mockErp = new Mock<IErpApiService>();
             var mockDialog = new Mock<IDialogService>();
