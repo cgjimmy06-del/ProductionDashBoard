@@ -604,4 +604,20 @@
     <sys:String x:Key="ChartDesignerMoveDownTooltip">下移</sys:String>
     <!--#endregion-->
 
+    <!--#region 倉位設定 -->
+    <sys:String x:Key="SettingTabWarehouse">倉位設定</sys:String>
+    <sys:String x:Key="WarehouseZoneLabel">分區</sys:String>
+    <sys:String x:Key="WarehouseCapacityLabel">容量</sys:String>
+    <sys:String x:Key="WarehouseEquipmentLabel">機邊設備</sys:String>
+    <sys:String x:Key="WarehouseEnabledLabel">啟用</sys:String>
+    <sys:String x:Key="WarehouseOccupancyHeader">現況箱數</sys:String>
+    <sys:String x:Key="WarehouseStatusHeader">狀態</sys:String>
+    <sys:String x:Key="WarehouseStatusEnabled">啟用</sys:String>
+    <sys:String x:Key="WarehouseStatusDisabled">停用</sys:String>
+    <sys:String x:Key="LocationTypeReceiving">收料區</sys:String>
+    <sys:String x:Key="LocationTypeBuffer">緩存區</sys:String>
+    <sys:String x:Key="LocationTypeMachineSide">機邊</sys:String>
+    <sys:String x:Key="LocationTypeShipping">出貨區</sys:String>
+    <!--#endregion-->
+
 </ResourceDictionary>

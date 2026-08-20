@@ -567,6 +567,9 @@
   <data name="SettingValidationMaterialCodeNameRequired" xml:space="preserve">
     <value>MaterialCode and Name are required</value>
   </data>
+  <data name="WarehouseValidationCodeRequired" xml:space="preserve">
+    <value>Location code is required</value>
+  </data>
   <data name="SettingValidationErrorCodeRequired" xml:space="preserve">
     <value>ErrorCode is required</value>
   </data>

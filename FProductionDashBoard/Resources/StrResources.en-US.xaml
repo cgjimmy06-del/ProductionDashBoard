@@ -604,4 +604,20 @@
     <sys:String x:Key="ChartDesignerMoveDownTooltip">Move down</sys:String>
     <!--#endregion-->
 
+    <!--#region Warehouse Setting -->
+    <sys:String x:Key="SettingTabWarehouse">Storage Location</sys:String>
+    <sys:String x:Key="WarehouseZoneLabel">Zone</sys:String>
+    <sys:String x:Key="WarehouseCapacityLabel">Capacity</sys:String>
+    <sys:String x:Key="WarehouseEquipmentLabel">Machine-side Equipment</sys:String>
+    <sys:String x:Key="WarehouseEnabledLabel">Enabled</sys:String>
+    <sys:String x:Key="WarehouseOccupancyHeader">In Stock</sys:String>
+    <sys:String x:Key="WarehouseStatusHeader">Status</sys:String>
+    <sys:String x:Key="WarehouseStatusEnabled">Enabled</sys:String>
+    <sys:String x:Key="WarehouseStatusDisabled">Disabled</sys:String>
+    <sys:String x:Key="LocationTypeReceiving">Receiving</sys:String>
+    <sys:String x:Key="LocationTypeBuffer">Buffer</sys:String>
+    <sys:String x:Key="LocationTypeMachineSide">Machine Side</sys:String>
+    <sys:String x:Key="LocationTypeShipping">Shipping</sys:String>
+    <!--#endregion-->
+
 </ResourceDictionary>

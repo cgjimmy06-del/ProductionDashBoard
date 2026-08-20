@@ -63,6 +63,7 @@
             <local:AiAgentModeToLabelConverter x:Key="AiAgentModeToLabelConverter"/>
             <local:TuningTypeToLabelConverter x:Key="TuningTypeToLabelConverter"/>
             <local:SopTypeToLabelConverter x:Key="SopTypeToLabelConverter"/>
+            <local:LocationTypeToLabelConverter x:Key="LocationTypeToLabelConverter"/>
             <local:ScheduleCardColorToBrushConverter x:Key="ScheduleCardColorToBrushConverter"/>
             <local:BrushKeyToBrushConverter x:Key="BrushKeyToBrushConverter"/>
             <local:NotificationSeverityToBrushConverter x:Key="NotificationSeverityToBrushConverter"/>

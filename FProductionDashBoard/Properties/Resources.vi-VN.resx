@@ -522,6 +522,9 @@
   <data name="SettingValidationMaterialCodeNameRequired" xml:space="preserve">
     <value>MaterialCode và Tên là bắt buộc</value>
   </data>
+  <data name="WarehouseValidationCodeRequired" xml:space="preserve">
+    <value>Mã vị trí kho là bắt buộc</value>
+  </data>
   <data name="SettingValidationErrorCodeRequired" xml:space="preserve">
     <value>ErrorCode là bắt buộc</value>
   </data>

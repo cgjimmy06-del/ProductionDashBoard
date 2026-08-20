@@ -10,6 +10,7 @@ namespace FProductionDashBoard.ViewModels
         public EquipmentSettingViewModel Equipment { get; }
         public EmployeeSettingViewModel Employee { get; }
         public MaterialSettingViewModel Material { get; }
+        public LocationSettingViewModel Location { get; }
         public ErrorListSettingViewModel ErrorList { get; }
         public TimeSlotSettingViewModel TimeSlot { get; }
         public RolePermissionSettingViewModel RolePermission { get; }
@@ -25,6 +26,7 @@ namespace FProductionDashBoard.ViewModels
             Equipment = new EquipmentSettingViewModel(core, dialog);
             Employee = new EmployeeSettingViewModel(core, dialog);
             Material = new MaterialSettingViewModel(core, dialog);
+            Location = new LocationSettingViewModel(core, dialog);
             ErrorList = new ErrorListSettingViewModel(core, dialog);
             TimeSlot = new TimeSlotSettingViewModel(core, dialog);
             RolePermission = new RolePermissionSettingViewModel(core, dialog);
