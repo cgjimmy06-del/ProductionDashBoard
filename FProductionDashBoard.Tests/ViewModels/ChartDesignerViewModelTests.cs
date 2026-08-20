@@ -35,7 +35,8 @@ namespace FProductionDashBoard.Tests.ViewModels
         {
             var core = new DashboardCoreServices(
                 new LogService(), new Mock<IDataService>().Object,
-                new AuthorizationService(), new Mock<ICardReaderService>().Object);
+                new AuthorizationService(), new Mock<ICardReaderService>().Object,
+                new Mock<IWarehouseService>().Object);
             var dialog = dialogMock ?? new Mock<IDialogService>();
             return new ChartDesignerViewModel(source, isNew, store, core, dialog.Object, onClose ?? (_ => { }));
         }

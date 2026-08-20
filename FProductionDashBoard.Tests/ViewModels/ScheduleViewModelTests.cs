@@ -29,7 +29,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             var log = new LogService();
             var auth = new AuthorizationService();
             var cardReader = new Mock<ICardReaderService>().Object;
-            var core = new DashboardCoreServices(log, mock.Object, auth, cardReader);
+            var core = new DashboardCoreServices(log, mock.Object, auth, cardReader, new Mock<IWarehouseService>().Object);
             var dialog = new Mock<IDialogService>().Object;
             return new ScheduleViewModel(core, dialog, new ListsFromSql());
         }
@@ -108,7 +108,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             var log        = new LogService();
             var auth       = new AuthorizationService();
             var cardReader = new Mock<ICardReaderService>().Object;
-            var core       = new DashboardCoreServices(log, dataMock.Object, auth, cardReader);
+            var core       = new DashboardCoreServices(log, dataMock.Object, auth, cardReader, new Mock<IWarehouseService>().Object);
             var dialogMock = new Mock<IDialogService>();
             var vm         = new ScheduleViewModel(core, dialogMock.Object, new ListsFromSql());
             return (vm, dataMock, dialogMock);
