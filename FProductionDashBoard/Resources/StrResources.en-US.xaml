@@ -384,6 +384,15 @@
     <sys:String x:Key="PioColReleasedAt">Released</sys:String>
     <sys:String x:Key="PioColStatus">Status</sys:String>
     <sys:String x:Key="PioColActions">Actions</sys:String>
+    <!-- AMR warehouse: bind storage location on in/out -->
+    <sys:String x:Key="PioColLocation">Location</sys:String>
+    <sys:String x:Key="PioLocationAssignButton">＋Assign</sys:String>
+    <sys:String x:Key="PioFormLocation">Location (optional)</sys:String>
+    <sys:String x:Key="PioFormLocationNone">(None) Unassigned</sys:String>
+    <sys:String x:Key="PioDetailLocation">Storage</sys:String>
+    <sys:String x:Key="PioAssignCurrentLabel">Current location</sys:String>
+    <sys:String x:Key="PioAssignUnassigned">Unassigned</sys:String>
+    <sys:String x:Key="PioAssignLocationNone">(None) Unassign</sys:String>
     <sys:String x:Key="PioOpForceComplete">Force Complete</sys:String>
     <sys:String x:Key="PioOpVerify">Verify</sys:String>
     <sys:String x:Key="PioOpRelease">Release</sys:String>

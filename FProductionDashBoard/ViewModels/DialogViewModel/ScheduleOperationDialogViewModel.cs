@@ -47,6 +47,14 @@ namespace FProductionDashBoard.ViewModels
         public bool IsRemainingQtyVisible => OperationType == ScheduleOperationType.Split;
         public bool IsDescriptionRequired => OperationType == ScheduleOperationType.ForceComplete;
 
+        // 出料/取消時，若該箱現役佔用倉位則顯示釋放提示（#3/#4）
+        private readonly string? _locationCode;
+        public bool IsLocationReleaseVisible =>
+            (OperationType == ScheduleOperationType.Release || OperationType == ScheduleOperationType.Cancel)
+            && !string.IsNullOrEmpty(_locationCode);
+        public string LocationReleaseHint =>
+            string.Format(Properties.Resources.PioReleaseLocationHint, _locationCode);
+
         [ObservableProperty] private string description = string.Empty;
         [ObservableProperty] private int? actualQuantity;
         [ObservableProperty] private int? remainingQuantity;
@@ -64,6 +72,7 @@ namespace FProductionDashBoard.ViewModels
         {
             OperationType = operationType;
             Orders = orders ?? Array.Empty<OrderProductionInfo>();
+            _locationCode = schedule.LocationCode;
 
             if (operationType == ScheduleOperationType.ForceComplete)
                 Description = $"{Properties.Resources.ScheduleOpForcedByPrefix}{currentUserName}{Properties.Resources.ScheduleOpForcedBySuffix}";

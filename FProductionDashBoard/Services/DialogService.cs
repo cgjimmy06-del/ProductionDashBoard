@@ -18,6 +18,7 @@ namespace FProductionDashBoard.Services
             [typeof(OrderListDialogViewModel)]  = vm => new OrderListDialog { DataContext = vm },
             [typeof(ProgramStatusDialogViewModel)]          = vm => new ProgramStatusDialog { DataContext = vm },
             [typeof(ScheduleOperationDialogViewModel)]      = vm => new ScheduleOperationDialog { DataContext = vm },
+            [typeof(AssignLocationDialogViewModel)]         = vm => new AssignLocationDialog { DataContext = vm },
             [typeof(OrderAssignmentDialogViewModel)]              = vm => new OrderAssignmentDialog { DataContext = vm },
             [typeof(CancelOrderConfirmationDialogViewModel)]      = vm => new CancelOrderConfirmationDialog { DataContext = vm },
             [typeof(MesSyncDialogViewModel)]    = vm => new MesSyncDialog { DataContext = vm },

@@ -177,6 +177,50 @@ namespace FProductionDashBoard.Tests.ViewModels
                 string.Empty, new[] { MakeOrder("CNC-01", OrderProductionStatus.Completed) });
             Assert.Equal(100, vm.ActualQuantity);
         }
+
+        // ─── 倉位釋放提示（#3/#4：出料/取消且有現役倉位時顯示） ───
+
+        private static ScheduleUiModel MakeScheduleWithLocation(string? locationCode) => new()
+        {
+            ScheduleId   = 1,
+            Quantity     = 100,
+            Status       = ScheduleStatus.Scheduled,
+            LocationCode = locationCode,
+        };
+
+        [Fact]
+        public void IsLocationReleaseVisible_ReleaseWithLocation_TrueAndHintHasCode()
+        {
+            var vm = new ScheduleOperationDialogViewModel(
+                ScheduleOperationType.Release, MakeScheduleWithLocation("A-01"), string.Empty);
+            Assert.True(vm.IsLocationReleaseVisible);
+            Assert.Contains("A-01", vm.LocationReleaseHint);
+        }
+
+        [Fact]
+        public void IsLocationReleaseVisible_CancelWithLocation_True()
+        {
+            var vm = new ScheduleOperationDialogViewModel(
+                ScheduleOperationType.Cancel, MakeScheduleWithLocation("B-02"), string.Empty);
+            Assert.True(vm.IsLocationReleaseVisible);
+        }
+
+        [Fact]
+        public void IsLocationReleaseVisible_ReleaseWithoutLocation_False()
+        {
+            var vm = new ScheduleOperationDialogViewModel(
+                ScheduleOperationType.Release, MakeScheduleWithLocation(null), string.Empty);
+            Assert.False(vm.IsLocationReleaseVisible);
+        }
+
+        [Fact]
+        public void IsLocationReleaseVisible_VerifyWithLocation_False()
+        {
+            // 僅出料/取消顯示；其餘操作即使有倉位也不顯示
+            var vm = new ScheduleOperationDialogViewModel(
+                ScheduleOperationType.Verify, MakeScheduleWithLocation("A-01"), string.Empty);
+            Assert.False(vm.IsLocationReleaseVisible);
+        }
     }
 
     public class OrderProductionInfoTests

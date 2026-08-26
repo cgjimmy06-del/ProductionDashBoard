@@ -272,6 +272,67 @@
                                         Binding="{Binding ProcessName}"
                                         Width="70"/>
 
+                    <!-- 倉位（三態：架上有倉→code可點 / 架上無倉→＋指派 / 終態→— 不可點） -->
+                    <DataGridTemplateColumn Header="{DynamicResource PioColLocation}" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <!-- 架上：可點（有倉顯示 code、無倉顯示＋指派） -->
+                                    <Button Padding="4,2" Height="Auto"
+                                            HorizontalContentAlignment="Left"
+                                            Command="{Binding DataContext.AssignLocationCommand,
+                                                      RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Released}">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Cancelled}">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                        <TextBlock VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="{Binding LocationCode}"/>
+                                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding LocationCode}" Value="{x:Null}">
+                                                            <Setter Property="Text" Value="{DynamicResource PioLocationAssignButton}"/>
+                                                            <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Button>
+                                    <!-- 終態：純文字 — 不可點 -->
+                                    <TextBlock Text="—" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                               Foreground="{DynamicResource TextSecondaryBrush}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Released}">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ScheduleStatus.Cancelled}">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
                     <!-- 數量 -->
                     <DataGridTextColumn Header="{DynamicResource PioColQty}"
                                         Binding="{Binding Quantity}"
@@ -576,6 +637,30 @@
                                            Text="{Binding ActualQuantity, TargetNullValue='-'}" VerticalAlignment="Bottom" Margin="0,0,0,1"/>
                             </Grid>
 
+                            <!-- ── 倉儲區（唯讀，顯示目前倉位） ── -->
+                            <Grid Margin="0,8,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Style="{StaticResource DetailSectionHeaderStyle}"
+                                           Text="{DynamicResource PioDetailLocation}"/>
+                                <Rectangle Grid.Column="1" Height="1" VerticalAlignment="Center"
+                                           Margin="6,0,0,0" Fill="{DynamicResource BorderBrush}"/>
+                            </Grid>
+                            <TextBlock>
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource DetailValueStyle}">
+                                        <Setter Property="Text" Value="{Binding LocationCode}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding LocationCode}" Value="{x:Null}">
+                                                <Setter Property="Text" Value="{DynamicResource PioAssignUnassigned}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
                             <!-- ── 流程區 ── -->
                             <Grid Margin="0,8,0,4">
                                 <Grid.ColumnDefinitions>
@@ -768,6 +853,28 @@
                                       SelectedItem="{Binding SelectedProcess}"
                                       DisplayMemberPath="Name"
                                       Margin="0,6,0,10"/>
+
+                            <!-- 倉位 ComboBox（選填；首項「(無)」可選回不指派） -->
+                            <ComboBox materialDesign:HintAssist.Hint="{DynamicResource PioFormLocation}"
+                                      ItemsSource="{Binding LocationChoices}"
+                                      SelectedValue="{Binding FormLocationId}"
+                                      SelectedValuePath="LocationId"
+                                      Margin="0,0,0,10">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBlock Text="{DynamicResource PioFormLocationNone}"
+                                                       Visibility="{Binding IsNone, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                            <TextBlock Visibility="{Binding IsNone, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
+                                                <Run Text="{Binding Row.Code}"/>
+                                                <Run Text=" · "/>
+                                                <Run Text="{Binding Row.LocationType, Converter={StaticResource LocationTypeToLabelConverter}}"/>
+                                                <Run Text=" ("/><Run Text="{Binding Row.OccupancyCount}"/><Run Text="/"/><Run Text="{Binding Row.Capacity, TargetNullValue='-'}"/><Run Text=")"/>
+                                            </TextBlock>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
 
                             <!-- 數量標題 -->
                             <TextBlock Foreground="{DynamicResource TextPrimaryBrush}"

@@ -387,6 +387,12 @@
   <data name="PioVerifyIncompleteHint" xml:space="preserve">
     <value>Không thể xác nhận: {0} chưa hoàn thành</value>
   </data>
+  <data name="AssignLocationDialogTitle" xml:space="preserve">
+    <value>Gán vị trí</value>
+  </data>
+  <data name="PioReleaseLocationHint" xml:space="preserve">
+    <value>Thao tác này sẽ giải phóng vị trí {0}</value>
+  </data>
   <data name="WaitedDaysForSchedule" xml:space="preserve">
     <value>Đã chờ</value>
   </data>

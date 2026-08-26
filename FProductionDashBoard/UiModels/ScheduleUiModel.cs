@@ -47,6 +47,10 @@ namespace FProductionDashBoard.UiModels
         public int ActiveOrderCount { get; set; }
         public bool HasActiveOrders => ActiveOrderCount > 0;
 
+        // 倉位（現役佔用）：載入後由 ProductInOutViewModel.ApplyLocations 依佔用對照設定；null = 未指派
+        public int? LocationId { get; set; }
+        public string? LocationCode { get; set; }
+
         public static ScheduleUiModel FromEntity(Schedule s)
         {
             var part    = s.Product?.Part;
