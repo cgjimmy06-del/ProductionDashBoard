@@ -611,7 +611,9 @@ namespace FProductionDashBoard.ViewModels
             {
                 _core.Log.AddLog("[進出料管理] 倉位更新失敗", LogLevel.Error);
                 _core.Log.AddErrorLog($"[AssignLocation] {ex.Message}");
-                await ReloadAsync();   // 還原顯示至實際狀態
+                // 連線持續失敗時 ReloadAsync 會再 throw；此處吞掉避免自 catch 逸出崩潰（DB 未變更、主錯誤已記錄）
+                try { await ReloadAsync(); }
+                catch { /* 忽略還原刷新失敗 */ }
             }
         }
 
