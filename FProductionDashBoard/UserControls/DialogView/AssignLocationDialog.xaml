@@ -26,7 +26,7 @@
                        FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3"/>
             <TextBlock Grid.Row="0" Grid.Column="1"
                        FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,3">
-                <Run Text="#"/><Run Text="{Binding ScheduleId}"/>
+                <Run Text="#"/><Run Text="{Binding ScheduleId, Mode=OneWay}"/>
             </TextBlock>
 
             <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource PioColPartNo}"
@@ -72,10 +72,10 @@
                                    Visibility="{Binding IsNone, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         <TextBlock Foreground="{DynamicResource TextPrimaryBrush}"
                                    Visibility="{Binding IsNone, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
-                            <Run Text="{Binding Row.Code}"/>
+                            <Run Text="{Binding Row.Code, Mode=OneWay}"/>
                             <Run Text=" · "/>
-                            <Run Text="{Binding Row.LocationType, Converter={StaticResource LocationTypeToLabelConverter}}"/>
-                            <Run Text=" ("/><Run Text="{Binding Row.OccupancyCount}"/><Run Text="/"/><Run Text="{Binding Row.Capacity, TargetNullValue='-'}"/><Run Text=")"/>
+                            <Run Text="{Binding Row.LocationType, Converter={StaticResource LocationTypeToLabelConverter}, Mode=OneWay}"/>
+                            <Run Text=" ("/><Run Text="{Binding Row.OccupancyCount, Mode=OneWay}"/><Run Text="/"/><Run Text="{Binding Row.Capacity, TargetNullValue='-', Mode=OneWay}"/><Run Text=")"/>
                         </TextBlock>
                     </Grid>
                 </DataTemplate>

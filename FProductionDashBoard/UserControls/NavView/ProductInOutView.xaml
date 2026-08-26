@@ -866,10 +866,10 @@
                                             <TextBlock Text="{DynamicResource PioFormLocationNone}"
                                                        Visibility="{Binding IsNone, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                             <TextBlock Visibility="{Binding IsNone, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
-                                                <Run Text="{Binding Row.Code}"/>
+                                                <Run Text="{Binding Row.Code, Mode=OneWay}"/>
                                                 <Run Text=" · "/>
-                                                <Run Text="{Binding Row.LocationType, Converter={StaticResource LocationTypeToLabelConverter}}"/>
-                                                <Run Text=" ("/><Run Text="{Binding Row.OccupancyCount}"/><Run Text="/"/><Run Text="{Binding Row.Capacity, TargetNullValue='-'}"/><Run Text=")"/>
+                                                <Run Text="{Binding Row.LocationType, Converter={StaticResource LocationTypeToLabelConverter}, Mode=OneWay}"/>
+                                                <Run Text=" ("/><Run Text="{Binding Row.OccupancyCount, Mode=OneWay}"/><Run Text="/"/><Run Text="{Binding Row.Capacity, TargetNullValue='-', Mode=OneWay}"/><Run Text=")"/>
                                             </TextBlock>
                                         </Grid>
                                     </DataTemplate>
