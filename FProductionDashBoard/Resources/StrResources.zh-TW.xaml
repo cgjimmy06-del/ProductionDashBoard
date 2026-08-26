@@ -384,6 +384,15 @@
     <sys:String x:Key="PioColReleasedAt">出料時間</sys:String>
     <sys:String x:Key="PioColStatus">狀態</sys:String>
     <sys:String x:Key="PioColActions">操作</sys:String>
+    <!-- AMR 倉儲：出入料綁倉位 -->
+    <sys:String x:Key="PioColLocation">倉位</sys:String>
+    <sys:String x:Key="PioLocationAssignButton">＋指派</sys:String>
+    <sys:String x:Key="PioFormLocation">倉位（選填）</sys:String>
+    <sys:String x:Key="PioFormLocationNone">（無）不指派</sys:String>
+    <sys:String x:Key="PioDetailLocation">倉儲</sys:String>
+    <sys:String x:Key="PioAssignCurrentLabel">目前倉位</sys:String>
+    <sys:String x:Key="PioAssignUnassigned">未指派</sys:String>
+    <sys:String x:Key="PioAssignLocationNone">（無）取消指派</sys:String>
     <sys:String x:Key="PioOpForceComplete">強制完成</sys:String>
     <sys:String x:Key="PioOpVerify">確認完成</sys:String>
     <sys:String x:Key="PioOpRelease">出料</sys:String>

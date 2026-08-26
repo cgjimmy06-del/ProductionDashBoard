@@ -25,7 +25,10 @@ namespace FProductionDashBoard.Services
         Task DeleteLocationAsync(int locationId);
         Task<int> AssignAsync(int locationId, int scheduleId, int operatorId);
         Task ReleaseAsync(int scheduleId, int operatorId);
+        Task ReassignAsync(int scheduleId, int newLocationId, int operatorId);
         Task<List<LocationAssignment>> GetActiveAssignmentsAsync(int locationId);
+        /// <summary>現役佔用對照：ScheduleId → 所在 StorageLocation，供進出料頁一次建立箱→倉位 map。</summary>
+        Task<Dictionary<int, StorageLocation>> GetActiveAssignmentMapAsync();
         Task<Dictionary<int, int>> GetOccupancyCountsAsync();
     }
 }

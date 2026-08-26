@@ -11,7 +11,9 @@ namespace FProductionDashBoard.Repositories
         Task<bool> HasActiveAssignmentsAtLocationAsync(int locationId);
         Task<int> AssignAsync(int locationId, int scheduleId, int assignedBy);
         Task ReleaseAsync(int scheduleId, int releasedBy);
+        Task ReassignAsync(int scheduleId, int newLocationId, int operatorId);
         Task<List<LocationAssignment>> GetActiveAssignmentsAsync(int locationId);
+        Task<List<LocationAssignment>> GetAllActiveAssignmentsAsync();
         Task<Dictionary<int, int>> GetActiveCountByLocationAsync();
     }
 }

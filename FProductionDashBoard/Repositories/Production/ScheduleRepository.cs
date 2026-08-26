@@ -153,7 +153,7 @@ namespace FProductionDashBoard.Repositories
             await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public async Task SplitScheduleAsync(int originalId, int remainingQuantity, int releasedBy,
+        public async Task<int> SplitScheduleAsync(int originalId, int remainingQuantity, int releasedBy,
             DateTime releasedAt, string? description)
         {
             await using var ctx = _factory.CreateDbContext();
@@ -175,7 +175,7 @@ namespace FProductionDashBoard.Repositories
             original.Description = splitNote;
             original.UpdateAt    = releasedAt;
 
-            ctx.Schedules.Add(new Schedule
+            var child = new Schedule
             {
                 ProductId   = original.ProductId,
                 ProcessId   = original.ProcessId,
@@ -188,8 +188,10 @@ namespace FProductionDashBoard.Repositories
                 Description = splitNote,
                 CreateAt    = releasedAt,
                 UpdateAt    = releasedAt
-            });
+            };
+            ctx.Schedules.Add(child);
             await ctx.SaveChangesAsync().ConfigureAwait(false);
+            return child.ScheduleId;   // 供出入料綁倉位：子單沿用原倉位需要 child id
         }
 
         public async Task RecalcActualQuantityAsync(int scheduleId)

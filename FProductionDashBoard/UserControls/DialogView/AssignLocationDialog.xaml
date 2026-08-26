@@ -1,0 +1,86 @@
+<UserControl x:Class="FProductionDashBoard.UserControls.DialogView.AssignLocationDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             Width="360" d:DesignHeight="300" d:DesignWidth="360" d:Background="White">
+
+    <StackPanel Margin="16,5">
+
+        <!-- 排單資訊（唯讀） -->
+        <Grid Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource PioColScheduleId}"
+                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3"/>
+            <TextBlock Grid.Row="0" Grid.Column="1"
+                       FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,3">
+                <Run Text="#"/><Run Text="{Binding ScheduleId, Mode=OneWay}"/>
+            </TextBlock>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource PioColPartNo}"
+                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding PartNo}"
+                       FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,3"
+                       TextTrimming="CharacterEllipsis"/>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource PioColProcess}"
+                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ProcessName}"
+                       FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,3"
+                       TextTrimming="CharacterEllipsis"/>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource PioAssignCurrentLabel}"
+                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3"/>
+            <TextBlock Grid.Row="3" Grid.Column="1"
+                       FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,3">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Text" Value="{Binding CurrentLocationCode}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CurrentLocationCode}" Value="{x:Null}">
+                                <Setter Property="Text" Value="{DynamicResource PioAssignUnassigned}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
+
+        <!-- 倉位選擇（含首項「(無)」） -->
+        <ComboBox ItemsSource="{Binding Choices}"
+                  SelectedValue="{Binding SelectedLocationId}"
+                  SelectedValuePath="LocationId"
+                  materialDesign:HintAssist.Hint="{DynamicResource PioFormLocation}"
+                  Margin="0,0,0,4">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <TextBlock Text="{DynamicResource PioAssignLocationNone}"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Visibility="{Binding IsNone, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBlock Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Visibility="{Binding IsNone, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
+                            <Run Text="{Binding Row.Code, Mode=OneWay}"/>
+                            <Run Text=" · "/>
+                            <Run Text="{Binding Row.LocationType, Converter={StaticResource LocationTypeToLabelConverter}, Mode=OneWay}"/>
+                            <Run Text=" ("/><Run Text="{Binding Row.OccupancyCount, Mode=OneWay}"/><Run Text="/"/><Run Text="{Binding Row.Capacity, TargetNullValue='-', Mode=OneWay}"/><Run Text=")"/>
+                        </TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+    </StackPanel>
+</UserControl>

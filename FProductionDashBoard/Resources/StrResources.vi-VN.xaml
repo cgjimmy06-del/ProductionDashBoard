@@ -384,6 +384,15 @@
     <sys:String x:Key="PioColReleasedAt">Ngày xuất</sys:String>
     <sys:String x:Key="PioColStatus">Trạng thái</sys:String>
     <sys:String x:Key="PioColActions">Thao tác</sys:String>
+    <!-- AMR kho: gắn vị trí lưu trữ khi nhập/xuất -->
+    <sys:String x:Key="PioColLocation">Vị trí</sys:String>
+    <sys:String x:Key="PioLocationAssignButton">＋Gán</sys:String>
+    <sys:String x:Key="PioFormLocation">Vị trí (tùy chọn)</sys:String>
+    <sys:String x:Key="PioFormLocationNone">(Không) Chưa gán</sys:String>
+    <sys:String x:Key="PioDetailLocation">Kho</sys:String>
+    <sys:String x:Key="PioAssignCurrentLabel">Vị trí hiện tại</sys:String>
+    <sys:String x:Key="PioAssignUnassigned">Chưa gán</sys:String>
+    <sys:String x:Key="PioAssignLocationNone">(Không) Bỏ gán</sys:String>
     <sys:String x:Key="PioOpForceComplete">Cưỡng chế</sys:String>
     <sys:String x:Key="PioOpVerify">Xác nhận</sys:String>
     <sys:String x:Key="PioOpRelease">Xuất kho</sys:String>

@@ -153,6 +153,77 @@ namespace FProductionDashBoard.Tests.Repositories
             Assert.True(await repository.HasActiveAssignmentAsync(100));
         }
 
+        // ─── 換倉 / 全域現役佔用查詢 ─────────────────────────────────────────────
+
+        [Fact]
+        public async Task GetAllActiveAssignmentsAsync_ReturnsActiveAcrossLocations_WithLocation()
+        {
+            var locA = await InsertLocationAsync("A-01");
+            var locB = await InsertLocationAsync("B-01");
+            var repository = CreateRepository();
+            await repository.AssignAsync(locA, scheduleId: 100, assignedBy: 1);
+            await repository.AssignAsync(locB, scheduleId: 200, assignedBy: 1);
+            await repository.AssignAsync(locA, scheduleId: 300, assignedBy: 1);
+            await repository.ReleaseAsync(scheduleId: 300, releasedBy: 2);
+
+            var actives = await repository.GetAllActiveAssignmentsAsync();
+
+            Assert.Equal(2, actives.Count);
+            Assert.All(actives, a => Assert.NotNull(a.Location));   // Include 生效
+            Assert.Contains(actives, a => a.ScheduleId == 100 && a.LocationId == locA);
+            Assert.Contains(actives, a => a.ScheduleId == 200 && a.LocationId == locB);
+            Assert.DoesNotContain(actives, a => a.ScheduleId == 300);
+        }
+
+        [Fact]
+        public async Task ReassignAsync_MovesActiveToNewLocation_ReleasingOld()
+        {
+            var locA = await InsertLocationAsync("A-01");
+            var locB = await InsertLocationAsync("B-01");
+            var repository = CreateRepository();
+            await repository.AssignAsync(locA, scheduleId: 100, assignedBy: 1);
+
+            await repository.ReassignAsync(scheduleId: 100, newLocationId: locB, operatorId: 9);
+
+            Assert.True(await repository.HasActiveAssignmentAsync(100));
+            Assert.False(await repository.HasActiveAssignmentsAtLocationAsync(locA));  // 舊倉已釋放
+            Assert.True(await repository.HasActiveAssignmentsAtLocationAsync(locB));   // 新倉現役
+            var counts = await repository.GetActiveCountByLocationAsync();
+            Assert.False(counts.ContainsKey(locA));
+            Assert.Equal(1, counts[locB]);
+        }
+
+        [Fact]
+        public async Task ReassignAsync_WhenNoActive_DegradesToAssign()
+        {
+            var locB = await InsertLocationAsync("B-01");
+            var repository = CreateRepository();
+
+            // 未指派的箱走換倉：退化為單純上架
+            await repository.ReassignAsync(scheduleId: 500, newLocationId: locB, operatorId: 9);
+
+            Assert.True(await repository.HasActiveAssignmentAsync(500));
+            var counts = await repository.GetActiveCountByLocationAsync();
+            Assert.Equal(1, counts[locB]);
+        }
+
+        [Fact]
+        public async Task ReassignAsync_LeavesExactlyOneActive_PerSchedule()
+        {
+            var locA = await InsertLocationAsync("A-01");
+            var locB = await InsertLocationAsync("B-01");
+            var repository = CreateRepository();
+            await repository.AssignAsync(locA, scheduleId: 100, assignedBy: 1);
+
+            await repository.ReassignAsync(scheduleId: 100, newLocationId: locB, operatorId: 9);
+
+            // 換倉後同 schedule 僅一筆現役（release 先於 insert，符 filtered unique index）
+            using var ctx = new MesDbContext(_options);
+            var actives = ctx.LocationAssignments.Where(a => a.ScheduleId == 100 && a.ReleasedAt == null).ToList();
+            Assert.Single(actives);
+            Assert.Equal(locB, actives[0].LocationId);
+        }
+
         // ─── Helpers ──────────────────────────────────────────────────────────
 
         private WarehouseRepository CreateRepository() => new(CreateFactory());

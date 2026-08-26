@@ -125,6 +125,18 @@ namespace FProductionDashBoard.Services
             catch (TimeoutException tex) { throw new DatabaseConnectionException("[ReleaseAsync] 下架失敗：連線逾時", tex); }
         }
 
+        public async Task ReassignAsync(int scheduleId, int newLocationId, int operatorId)
+        {
+            if (!await _warehouseRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[ReassignAsync] 連線失敗，請確認網路狀態");
+            try
+            {
+                await _warehouseRep.ReassignAsync(scheduleId, newLocationId, operatorId).ConfigureAwait(false);
+            }
+            catch (SqlException ex) { throw new DatabaseConnectionException("[ReassignAsync] 換倉失敗：資料庫錯誤", ex); }
+            catch (TimeoutException tex) { throw new DatabaseConnectionException("[ReassignAsync] 換倉失敗：連線逾時", tex); }
+        }
+
         public async Task<List<LocationAssignment>> GetActiveAssignmentsAsync(int locationId)
         {
             if (!await _warehouseRep.CheckConnectionAsync().ConfigureAwait(false))
@@ -135,6 +147,23 @@ namespace FProductionDashBoard.Services
             }
             catch (SqlException ex) { throw new DatabaseConnectionException("[GetActiveAssignmentsAsync] 取得佔用清單失敗：資料庫錯誤", ex); }
             catch (TimeoutException tex) { throw new DatabaseConnectionException("[GetActiveAssignmentsAsync] 取得佔用清單失敗：連線逾時", tex); }
+        }
+
+        public async Task<Dictionary<int, StorageLocation>> GetActiveAssignmentMapAsync()
+        {
+            if (!await _warehouseRep.CheckConnectionAsync().ConfigureAwait(false))
+                throw new InvalidOperationException("[GetActiveAssignmentMapAsync] 連線失敗，請確認網路狀態");
+            try
+            {
+                var actives = await _warehouseRep.GetAllActiveAssignmentsAsync().ConfigureAwait(false);
+                var map = new Dictionary<int, StorageLocation>();
+                foreach (var a in actives)
+                    if (a.Location != null)
+                        map[a.ScheduleId] = a.Location;   // filtered unique index 保證每 schedule 至多一筆現役，無鍵衝突
+                return map;
+            }
+            catch (SqlException ex) { throw new DatabaseConnectionException("[GetActiveAssignmentMapAsync] 取得佔用對照失敗：資料庫錯誤", ex); }
+            catch (TimeoutException tex) { throw new DatabaseConnectionException("[GetActiveAssignmentMapAsync] 取得佔用對照失敗：連線逾時", tex); }
         }
 
         public async Task<Dictionary<int, int>> GetOccupancyCountsAsync()

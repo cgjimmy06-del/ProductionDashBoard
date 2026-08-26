@@ -189,5 +189,20 @@ namespace FProductionDashBoard.Tests.DataServiceTests
 
             _scheduleRep.Verify(r => r.SplitScheduleAsync(5, 40, 3, It.IsAny<DateTime>(), "note"), Times.Once);
         }
+
+        [Fact]
+        public async Task SplitScheduleAsync_WhenConnected_ReturnsRepoChildId()
+        {
+            _scheduleRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
+            _scheduleRep.Setup(r => r.SplitScheduleAsync(5, 40, 3, It.IsAny<DateTime>(), "note")).ReturnsAsync(77);
+            var service = CreateService();
+
+            var childId = await service.SplitScheduleAsync(new ScheduleSplitDto
+            {
+                OriginalScheduleId = 5, RemainingQuantity = 40, ReleasedBy = 3, Description = "note"
+            });
+
+            Assert.Equal(77, childId);
+        }
     }
 }

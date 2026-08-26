@@ -164,6 +164,6 @@ namespace FProductionDashBoard.Services
         public Task MarkReleasedAsync(int scheduleId, int employeeId, string? description);
         public Task CancelScheduleAsync(int scheduleId, string? description);
         public Task ForceCompleteAsync(int scheduleId, int employeeId, int? actualQty, string description);
-        public Task SplitScheduleAsync(ScheduleSplitDto dto);
+        public Task<int> SplitScheduleAsync(ScheduleSplitDto dto);
     }
 }

@@ -17,7 +17,7 @@ namespace FProductionDashBoard.Repositories
         Task MarkReleasedAsync(int scheduleId, int releasedBy, DateTime releasedAt, string? description);
         Task MarkCancelledAsync(int scheduleId, string? description);
         Task ForceCompleteAsync(int scheduleId, int verifiedBy, DateTime verifiedAt, int? actualQuantity, string description);
-        Task SplitScheduleAsync(int originalId, int remainingQuantity, int releasedBy, DateTime releasedAt, string? description);
+        Task<int> SplitScheduleAsync(int originalId, int remainingQuantity, int releasedBy, DateTime releasedAt, string? description);
         Task RecalcActualQuantityAsync(int scheduleId);
         Task MarkScheduledAndRecalcAsync(int scheduleId, int userId, DateTime now);
     }

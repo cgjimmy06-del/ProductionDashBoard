@@ -62,6 +62,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private int formQuantity;
         [ObservableProperty] private string formDescription = string.Empty;
         [ObservableProperty] private string? formError;
+        [ObservableProperty] private int? formLocationId;   // 入料選填倉位；null = (無) 不指派
 
         private List<Product> _allProducts = new();
         public ObservableCollection<Product> FilteredProducts { get; } = new();
@@ -70,6 +71,9 @@ namespace FProductionDashBoard.ViewModels
         private List<WorkProcess> _allProcesses = new();
         public ObservableCollection<WorkProcess> FilteredProcesses { get; } = new();
         [ObservableProperty] private WorkProcess? selectedProcess;
+
+        // 倉位下拉來源（首項「(無)」+ 各啟用倉位），入料表單與改倉 Dialog 共用；載入時整批重建
+        [ObservableProperty] private IReadOnlyList<PioLocationChoice> locationChoices = System.Array.Empty<PioLocationChoice>();
 
         public IReadOnlyList<ScheduleStatusFilterOption> StatusFilterOptions { get; }
         public IReadOnlyList<PioSopFilterOption> SopFilterOptions { get; }
@@ -119,6 +123,8 @@ namespace FProductionDashBoard.ViewModels
             {
                 var schedules = await _core.Data.GetAllSchedulesAsync();
                 ReplaceAll(schedules);
+                await LoadLocationChoicesAsync();   // 倉位下拉來源（含「(無)」）
+                await ApplyLocationsAsync();         // 設定各列 LocationId/LocationCode（須在 Refresh 前）
                 ComputeStats();
                 SchedulesView.Refresh();
 
@@ -141,6 +147,58 @@ namespace FProductionDashBoard.ViewModels
         {
             _all.Clear();
             _all.AddRange(schedules.Select(ScheduleUiModel.FromEntity));
+        }
+
+        // 載入倉位下拉來源（首項「(無)」+ 各倉位，帶現況箱數供顯示）。不擋停用/滿位，沿用 PR2「不啟用擋位」。
+        private async Task LoadLocationChoicesAsync()
+        {
+            try
+            {
+                var locations = await _core.Warehouse.GetLocationsAsync();
+                var occupancy = await _core.Warehouse.GetOccupancyCountsAsync();
+                var choices = new List<PioLocationChoice> { new(null, null) };   // 首項＝(無) 不指派
+                foreach (var loc in locations)
+                {
+                    occupancy.TryGetValue(loc.LocationId, out var count);
+                    choices.Add(new PioLocationChoice(loc.LocationId, new StorageLocationRow(loc, count, null)));
+                }
+                var keepFormLocationId = FormLocationId;   // 防 SelectedValue 重建回寫 null（見 feedback_wpf_combobox_recompute_selection）
+                LocationChoices = choices;
+                FormLocationId = keepFormLocationId;        // 還原入料表單倉位選取
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[進出料管理] 載入倉位清單失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[LoadLocationChoices] {ex.Message}");
+            }
+        }
+
+        // 依現役佔用對照設定各列 LocationId/LocationCode（供倉位欄三態顯示）；須在 SchedulesView.Refresh 前呼叫
+        private async Task ApplyLocationsAsync()
+        {
+            try
+            {
+                var map = await _core.Warehouse.GetActiveAssignmentMapAsync();
+                foreach (var s in _all)
+                {
+                    if (map.TryGetValue(s.ScheduleId, out var loc))
+                    {
+                        s.LocationId   = loc.LocationId;
+                        s.LocationCode = loc.Code;
+                    }
+                    else
+                    {
+                        s.LocationId   = null;
+                        s.LocationCode = null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // 倉位資訊缺失不阻斷排程清單顯示（箱體實體為真相來源）
+                _core.Log.AddLog("[進出料管理] 載入倉位佔用失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ApplyLocations] {ex.Message}");
+            }
         }
 
         private bool IsWithinDateRange(ScheduleUiModel s)
@@ -332,6 +390,7 @@ namespace FProductionDashBoard.ViewModels
             FormQuantity       = 0;
             FormDescription    = string.Empty;
             FormError          = null;
+            FormLocationId     = null;   // 預設 (無) 不指派
             RebuildFilteredProducts();
             RebuildFilteredProcesses();
         }
@@ -358,8 +417,21 @@ namespace FProductionDashBoard.ViewModels
             };
             try
             {
-                await _core.Data.AddScheduleAsync(dto);
+                var newId = await _core.Data.AddScheduleAsync(dto);
                 _core.Log.AddLog("[進出料管理] 入料成功");
+                if (FormLocationId is int locId)
+                {
+                    // 選填倉位：入料後上架；上架失敗不阻斷入料（箱單已建立，倉位可事後補指派）
+                    try
+                    {
+                        await _core.Warehouse.AssignAsync(locId, newId, userId);
+                    }
+                    catch (Exception wex)
+                    {
+                        _core.Log.AddLog("[進出料管理] 入料上架失敗，箱單已建立但未指派倉位", LogLevel.Error);
+                        _core.Log.AddErrorLog($"[SubmitForm.Assign] {wex.Message}");
+                    }
+                }
                 await ReloadAsync();
                 ClosePanel();
             }
@@ -438,6 +510,7 @@ namespace FProductionDashBoard.ViewModels
             {
                 await _core.Data.MarkReleasedAsync(schedule.ScheduleId, employeeId, vm.Result.Description);
                 _core.Log.AddLog("[進出料管理] 出料成功");
+                await ReleaseLocationIfOccupiedAsync(schedule, employeeId);   // 出料連動釋放倉位
                 await ReloadAsync();
             }
             catch (Exception ex)
@@ -463,8 +536,22 @@ namespace FProductionDashBoard.ViewModels
                     ReleasedBy         = employeeId,
                     Description        = vm.Result.Description
                 };
-                await _core.Data.SplitScheduleAsync(splitDto);
+                var childId = await _core.Data.SplitScheduleAsync(splitDto);
                 _core.Log.AddLog("[進出料管理] 拆單成功");
+                if (schedule.LocationId is int origLocId)
+                {
+                    // 原單釋放原倉位、子單沿用原倉位（跨域非原子，失敗記 log 不回滾）
+                    try
+                    {
+                        await _core.Warehouse.ReleaseAsync(schedule.ScheduleId, employeeId);
+                        await _core.Warehouse.AssignAsync(origLocId, childId, employeeId);
+                    }
+                    catch (Exception wex)
+                    {
+                        _core.Log.AddLog("[進出料管理] 拆單倉位轉移失敗，請手動確認倉位", LogLevel.Error);
+                        _core.Log.AddErrorLog($"[Split.Location] {wex.Message}");
+                    }
+                }
                 await ReloadAsync();
             }
             catch (Exception ex)
@@ -480,10 +567,12 @@ namespace FProductionDashBoard.ViewModels
             var vm = new ScheduleOperationDialogViewModel(ScheduleOperationType.Cancel, schedule, string.Empty);
             _dialog.ShowDialog(vm);
             if (!vm.IsConfirmed || vm.Result == null) return;
+            var employeeId = _core.Authorization.CurrentUser?.Id ?? 0;
             try
             {
                 await _core.Data.CancelScheduleAsync(schedule.ScheduleId, vm.Result.Description);
                 _core.Log.AddLog("[進出料管理] 取消成功");
+                await ReleaseLocationIfOccupiedAsync(schedule, employeeId);   // 取消連動釋放倉位
                 await ReloadAsync();
             }
             catch (Exception ex)
@@ -493,10 +582,60 @@ namespace FProductionDashBoard.ViewModels
             }
         }
 
+        // ─── 倉位指派 / 改倉 / 取消指派 ───────────────────────────────────────────
+
+        [RelayCommand]
+        private async Task AssignLocation(ScheduleUiModel schedule)
+        {
+            var vm = new AssignLocationDialogViewModel(schedule, LocationChoices);
+            _dialog.ShowDialog(vm);
+            if (!vm.IsConfirmed || vm.Result is null) return;
+
+            var operatorId = _core.Authorization.CurrentUser?.Id ?? 0;
+            var newLocId = vm.Result.LocationId;   // null = 選了「(無)」= 取消指派
+            var curLocId = schedule.LocationId;
+            if (newLocId == curLocId) return;      // no-op（含 both null）
+
+            try
+            {
+                if (curLocId == null)
+                    await _core.Warehouse.AssignAsync(newLocId!.Value, schedule.ScheduleId, operatorId);   // 未指派 → 指派
+                else if (newLocId == null)
+                    await _core.Warehouse.ReleaseAsync(schedule.ScheduleId, operatorId);                   // 有倉 → (無) 取消指派
+                else
+                    await _core.Warehouse.ReassignAsync(schedule.ScheduleId, newLocId.Value, operatorId);  // 有倉 → 改倉（原子）
+                _core.Log.AddLog("[進出料管理] 倉位更新成功");
+                await ReloadAsync();
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[進出料管理] 倉位更新失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[AssignLocation] {ex.Message}");
+                await ReloadAsync();   // 還原顯示至實際狀態
+            }
+        }
+
+        // 主業務（出料/取消）成功後釋放現役倉位；未指派箱（LocationCode==null）跳過以避開 repo throw
+        private async Task ReleaseLocationIfOccupiedAsync(ScheduleUiModel schedule, int operatorId)
+        {
+            if (schedule.LocationCode == null) return;
+            try
+            {
+                await _core.Warehouse.ReleaseAsync(schedule.ScheduleId, operatorId);
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddLog("[進出料管理] 倉位釋放失敗，請手動確認倉位", LogLevel.Error);
+                _core.Log.AddErrorLog($"[ReleaseLocation] {ex.Message}");
+            }
+        }
+
         private async Task ReloadAsync()
         {
             var schedules = await _core.Data.GetAllSchedulesAsync();
             ReplaceAll(schedules);
+            await LoadLocationChoicesAsync();   // 重查佔用、重建下拉，刷新 (箱數/容量)
+            await ApplyLocationsAsync();        // 重新套用各列倉位（須在 Refresh 前）
             ComputeStats();
             SchedulesView.Refresh();
             if (SelectedSchedule != null)
@@ -510,4 +649,10 @@ namespace FProductionDashBoard.ViewModels
 
     public sealed record ScheduleStatusFilterOption(ScheduleStatus? Value);
     public sealed record PioSopFilterOption(string Value);
+
+    /// <summary>倉位下拉/改倉 Dialog 的選項：LocationId 為 null 代表「(無)」不指派；Row 為 null 即 (無) 哨兵項。</summary>
+    public sealed record PioLocationChoice(int? LocationId, StorageLocationRow? Row)
+    {
+        public bool IsNone => Row == null;
+    }
 }

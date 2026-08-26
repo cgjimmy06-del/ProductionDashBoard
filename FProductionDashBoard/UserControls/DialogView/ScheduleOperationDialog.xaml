@@ -95,6 +95,12 @@
                                     Converter={StaticResource StringHasValueToVisibilityConverter}}"/>
         </StackPanel>
 
+        <!-- 倉位釋放提示（出料/取消且有現役倉位時顯示） -->
+        <TextBlock Text="{Binding LocationReleaseHint}" TextWrapping="Wrap"
+                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,10"
+                   Visibility="{Binding IsLocationReleaseVisible,
+                                Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
         <!-- 備註 -->
         <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
                  materialDesign:HintAssist.Hint="{DynamicResource PioDialogDescription}"

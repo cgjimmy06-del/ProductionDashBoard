@@ -432,6 +432,12 @@
   <data name="PioVerifyIncompleteHint" xml:space="preserve">
     <value>Cannot verify: {0} not yet completed</value>
   </data>
+  <data name="AssignLocationDialogTitle" xml:space="preserve">
+    <value>Assign Location</value>
+  </data>
+  <data name="PioReleaseLocationHint" xml:space="preserve">
+    <value>Location {0} will be released after this action</value>
+  </data>
   <data name="WaitedDaysForSchedule" xml:space="preserve">
     <value>Waited</value>
   </data>

@@ -387,6 +387,12 @@
   <data name="PioVerifyIncompleteHint" xml:space="preserve">
     <value>因 {0} 尚未完成，故此單無法確認完成</value>
   </data>
+  <data name="AssignLocationDialogTitle" xml:space="preserve">
+    <value>指派倉位</value>
+  </data>
+  <data name="PioReleaseLocationHint" xml:space="preserve">
+    <value>此操作將釋放倉位 {0}</value>
+  </data>
   <data name="WaitedDaysForSchedule" xml:space="preserve">
     <value>已等待</value>
   </data>

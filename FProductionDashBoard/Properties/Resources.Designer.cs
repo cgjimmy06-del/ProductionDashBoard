@@ -732,6 +732,24 @@ namespace FProductionDashBoard.Properties {
         }
 
         /// <summary>
+        ///   查詢類似 指派倉位 的當地語系化字串。
+        /// </summary>
+        internal static string AssignLocationDialogTitle {
+            get {
+                return ResourceManager.GetString("AssignLocationDialogTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查詢類似 此操作將釋放倉位 {0} 的當地語系化字串。
+        /// </summary>
+        internal static string PioReleaseLocationHint {
+            get {
+                return ResourceManager.GetString("PioReleaseLocationHint", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   查詢類似 Edit Program Status 的當地語系化字串。
         /// </summary>
         internal static string ProgramStatusDialogTitle {
