@@ -258,6 +258,20 @@ namespace FProductionDashBoard.Tests.Repositories
         }
 
         [Fact]
+        public async Task SplitScheduleAsync_ReturnsNewChildScheduleId()
+        {
+            var id = await InsertScheduleAsync(ScheduleStatus.Completed, quantity: 100, actualQuantity: 60);
+            var repository = CreateRepository();
+
+            var childId = await repository.SplitScheduleAsync(id, 40, 3, DateTime.Today, null);
+
+            using var ctx = new MesDbContext(_options);
+            var child = ctx.Schedules.Single(s => s.ParentId == id);
+            Assert.True(childId > 0);
+            Assert.Equal(child.ScheduleId, childId);   // 子單沿用原倉位需要 child id
+        }
+
+        [Fact]
         public async Task SplitScheduleAsync_WhenQtySumMismatch_ThrowsBusinessRule()
         {
             var id = await InsertScheduleAsync(ScheduleStatus.Completed, quantity: 100, actualQuantity: 60);

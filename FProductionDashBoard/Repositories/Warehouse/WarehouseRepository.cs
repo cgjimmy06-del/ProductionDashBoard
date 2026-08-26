@@ -64,6 +64,35 @@ namespace FProductionDashBoard.Repositories
             await ctx.SaveChangesAsync().ConfigureAwait(false);
         }
 
+        public async Task ReassignAsync(int scheduleId, int newLocationId, int operatorId)
+        {
+            await using var ctx = _factory.CreateDbContext();
+            await using var tx = await ctx.Database.BeginTransactionAsync().ConfigureAwait(false);
+
+            var now = DateTime.Now;
+            // 先釋放現役佔用（若有），SaveChanges 後才 insert 新佔用；符合 filtered unique index（released_at IS NULL 唯一）的排序要求
+            var active = await ctx.LocationAssignments
+                .FirstOrDefaultAsync(a => a.ScheduleId == scheduleId && a.ReleasedAt == null)
+                .ConfigureAwait(false);
+            if (active != null)
+            {
+                active.ReleasedBy = operatorId;
+                active.ReleasedAt = now;
+                await ctx.SaveChangesAsync().ConfigureAwait(false);
+            }
+
+            // 無現役佔用時退化為單純上架
+            ctx.LocationAssignments.Add(new LocationAssignment
+            {
+                LocationId = newLocationId,
+                ScheduleId = scheduleId,
+                AssignedBy = operatorId,
+                AssignedAt = now
+            });
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
+            await tx.CommitAsync().ConfigureAwait(false);
+        }
+
         public async Task<List<LocationAssignment>> GetActiveAssignmentsAsync(int locationId)
         {
             await using var ctx = _factory.CreateDbContext();
@@ -76,6 +105,16 @@ namespace FProductionDashBoard.Repositories
                     .ThenInclude(s => s!.Product)
                     .ThenInclude(p => p!.Model)
                 .OrderBy(a => a.AssignedAt)
+                .ToListAsync()
+                .ConfigureAwait(false);
+        }
+
+        public async Task<List<LocationAssignment>> GetAllActiveAssignmentsAsync()
+        {
+            await using var ctx = _factory.CreateDbContext();
+            return await ctx.LocationAssignments
+                .Where(a => a.ReleasedAt == null)
+                .Include(a => a.Location)
                 .ToListAsync()
                 .ConfigureAwait(false);
         }

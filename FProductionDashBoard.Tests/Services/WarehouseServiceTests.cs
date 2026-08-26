@@ -143,5 +143,59 @@ namespace FProductionDashBoard.Tests.Services
 
             await Assert.ThrowsAsync<InvalidOperationException>(() => service.ReleaseAsync(100, 1));
         }
+
+        // ─── 換倉 / 佔用對照 ─────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task ReassignAsync_WhenConnectionFails_Throws()
+        {
+            _warehouseRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+            var service = CreateService();
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => service.ReassignAsync(100, 2, 7));
+            _warehouseRep.Verify(r => r.ReassignAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ReassignAsync_WhenConnected_DelegatesToRepo()
+        {
+            _warehouseRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
+            var service = CreateService();
+
+            await service.ReassignAsync(100, 2, 7);
+
+            _warehouseRep.Verify(r => r.ReassignAsync(100, 2, 7), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetActiveAssignmentMapAsync_WhenConnectionFails_Throws()
+        {
+            _warehouseRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(false);
+            var service = CreateService();
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => service.GetActiveAssignmentMapAsync());
+        }
+
+        [Fact]
+        public async Task GetActiveAssignmentMapAsync_MapsScheduleIdToLocation_SkippingNullLocation()
+        {
+            var locA = new StorageLocation { LocationId = 10, Code = "A-01" };
+            var locB = new StorageLocation { LocationId = 20, Code = "B-01" };
+            _warehouseRep.Setup(r => r.CheckConnectionAsync()).ReturnsAsync(true);
+            _warehouseRep.Setup(r => r.GetAllActiveAssignmentsAsync()).ReturnsAsync(new List<LocationAssignment>
+            {
+                new() { ScheduleId = 100, LocationId = 10, Location = locA },
+                new() { ScheduleId = 200, LocationId = 20, Location = locB },
+                new() { ScheduleId = 300, LocationId = 30, Location = null }   // Include 缺漏防護：跳過
+            });
+            var service = CreateService();
+
+            var map = await service.GetActiveAssignmentMapAsync();
+
+            Assert.Equal(2, map.Count);
+            Assert.Equal("A-01", map[100].Code);
+            Assert.Equal("B-01", map[200].Code);
+            Assert.False(map.ContainsKey(300));
+        }
     }
 }

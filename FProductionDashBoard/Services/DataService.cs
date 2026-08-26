@@ -1138,13 +1138,13 @@ namespace FProductionDashBoard.Services
                 .ConfigureAwait(false);
         }
 
-        public async Task SplitScheduleAsync(ScheduleSplitDto dto)
+        public async Task<int> SplitScheduleAsync(ScheduleSplitDto dto)
         {
             if (dto.RemainingQuantity <= 0)
                 throw new BusinessRuleException("[SplitScheduleAsync] remainingQuantity 必須大於 0");
             if (!await _scheduleRep.CheckConnectionAsync().ConfigureAwait(false))
                 throw new InvalidOperationException("[SplitScheduleAsync] 排程 Repository 連線失敗");
-            await _scheduleRep.SplitScheduleAsync(
+            return await _scheduleRep.SplitScheduleAsync(
                 dto.OriginalScheduleId, dto.RemainingQuantity, dto.ReleasedBy, DateTime.Now, dto.Description)
                 .ConfigureAwait(false);
         }
