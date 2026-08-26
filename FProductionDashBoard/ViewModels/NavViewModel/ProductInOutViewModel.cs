@@ -162,7 +162,9 @@ namespace FProductionDashBoard.ViewModels
                     occupancy.TryGetValue(loc.LocationId, out var count);
                     choices.Add(new PioLocationChoice(loc.LocationId, new StorageLocationRow(loc, count, null)));
                 }
+                var keepFormLocationId = FormLocationId;   // 防 SelectedValue 重建回寫 null（見 feedback_wpf_combobox_recompute_selection）
                 LocationChoices = choices;
+                FormLocationId = keepFormLocationId;        // 還原入料表單倉位選取
             }
             catch (Exception ex)
             {
@@ -632,7 +634,8 @@ namespace FProductionDashBoard.ViewModels
         {
             var schedules = await _core.Data.GetAllSchedulesAsync();
             ReplaceAll(schedules);
-            await ApplyLocationsAsync();   // 重新套用各列倉位（須在 Refresh 前）
+            await LoadLocationChoicesAsync();   // 重查佔用、重建下拉，刷新 (箱數/容量)
+            await ApplyLocationsAsync();        // 重新套用各列倉位（須在 Refresh 前）
             ComputeStats();
             SchedulesView.Refresh();
             if (SelectedSchedule != null)
