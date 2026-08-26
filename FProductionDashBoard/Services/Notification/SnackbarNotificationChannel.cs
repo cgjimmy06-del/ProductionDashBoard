@@ -21,7 +21,8 @@ namespace FProductionDashBoard.Services
 
         public SnackbarNotificationChannel()
         {
-            _autoDismissTimer = new DispatcherTimer();
+            // 顯式綁定 UI Dispatcher，移除對「建構於 UI 執行緒」的隱含依賴
+            _autoDismissTimer = new DispatcherTimer(DispatcherPriority.Normal, Application.Current.Dispatcher);
             _autoDismissTimer.Tick += OnAutoDismissTick;
         }
 

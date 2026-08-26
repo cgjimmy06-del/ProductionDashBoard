@@ -415,11 +415,12 @@ namespace FProductionDashBoard.ViewModels
                 Description = string.IsNullOrWhiteSpace(FormDescription) ? null : FormDescription,
                 ReceivedBy  = userId
             };
+            var formLocId = FormLocationId;   // await 前快照，避免 DB 往返期間改動下拉導致指派到改動後的倉位
             try
             {
                 var newId = await _core.Data.AddScheduleAsync(dto);
                 _core.Log.AddLog("[進出料管理] 入料成功");
-                if (FormLocationId is int locId)
+                if (formLocId is int locId)
                 {
                     // 選填倉位：入料後上架；上架失敗不阻斷入料（箱單已建立，倉位可事後補指派）
                     try

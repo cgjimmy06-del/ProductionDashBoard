@@ -26,21 +26,21 @@ namespace FProductionDashBoard.Tests.ViewModels
         private static ScheduleOperationDialogViewModel MakeVerifyVm(IReadOnlyList<OrderProductionInfo> orders)
             => new(ScheduleOperationType.Verify, MakeSchedule(actualQty: 80), string.Empty, orders);
 
-        // ─── AllOrdersCompleted（D1：排除 Cancelled 後不得有 Pending/InProduction） ───
+        // ─── HasNoUnfinishedOrders（D1：排除 Cancelled 後不得有 Pending/InProduction） ───
 
         [Fact]
-        public void AllOrdersCompleted_AllCompleted_ReturnsTrue()
+        public void HasNoUnfinishedOrders_AllCompleted_ReturnsTrue()
         {
             var vm = MakeVerifyVm(new[]
             {
                 MakeOrder("CNC-01", OrderProductionStatus.Completed),
                 MakeOrder("CNC-02", OrderProductionStatus.Completed),
             });
-            Assert.True(vm.AllOrdersCompleted);
+            Assert.True(vm.HasNoUnfinishedOrders);
         }
 
         [Fact]
-        public void AllOrdersCompleted_CompletedPlusCancelled_ReturnsTrue()
+        public void HasNoUnfinishedOrders_CompletedPlusCancelled_ReturnsTrue()
         {
             // D2 邊界：Cancelled 不阻擋
             var vm = MakeVerifyVm(new[]
@@ -48,35 +48,35 @@ namespace FProductionDashBoard.Tests.ViewModels
                 MakeOrder("CNC-01", OrderProductionStatus.Completed),
                 MakeOrder("CNC-02", OrderProductionStatus.Cancelled),
             });
-            Assert.True(vm.AllOrdersCompleted);
+            Assert.True(vm.HasNoUnfinishedOrders);
         }
 
         [Fact]
-        public void AllOrdersCompleted_HasPending_ReturnsFalse()
+        public void HasNoUnfinishedOrders_HasPending_ReturnsFalse()
         {
             var vm = MakeVerifyVm(new[]
             {
                 MakeOrder("CNC-01", OrderProductionStatus.Completed),
                 MakeOrder("CNC-02", OrderProductionStatus.Pending),
             });
-            Assert.False(vm.AllOrdersCompleted);
+            Assert.False(vm.HasNoUnfinishedOrders);
         }
 
         [Fact]
-        public void AllOrdersCompleted_HasInProduction_ReturnsFalse()
+        public void HasNoUnfinishedOrders_HasInProduction_ReturnsFalse()
         {
             var vm = MakeVerifyVm(new[]
             {
                 MakeOrder("CNC-01", OrderProductionStatus.InProduction),
             });
-            Assert.False(vm.AllOrdersCompleted);
+            Assert.False(vm.HasNoUnfinishedOrders);
         }
 
         [Fact]
-        public void AllOrdersCompleted_EmptyList_ReturnsTrue()
+        public void HasNoUnfinishedOrders_EmptyList_ReturnsTrue()
         {
             var vm = MakeVerifyVm(new List<OrderProductionInfo>());
-            Assert.True(vm.AllOrdersCompleted);
+            Assert.True(vm.HasNoUnfinishedOrders);
         }
 
         // ─── HasOrderList ───
@@ -141,7 +141,8 @@ namespace FProductionDashBoard.Tests.ViewModels
 
             Assert.False(vm.IsConfirmed);
             Assert.Null(vm.Result);
-            Assert.False(string.IsNullOrEmpty(vm.DialogErrorString));
+            Assert.True(string.IsNullOrEmpty(vm.DialogErrorString));   // Low-8：不再於底部錯誤列重複顯示
+            Assert.False(string.IsNullOrEmpty(vm.IncompleteHint));     // 提示改由內容區 IncompleteHint 常駐顯示
         }
 
         [Fact]
