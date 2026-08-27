@@ -114,6 +114,39 @@ namespace FProductionDashBoard.Tests.ViewModels
             return (vm, dataMock, dialogMock);
         }
 
+        // 調試命令需登入使用者（StartTuningAsync 讀 CurrentUser!）＋ UsersList 含執行人（employees 來源）
+        private static (ScheduleViewModel vm, Mock<IDataService> dataMock, Mock<IDialogService> dialogMock) CreateVmForTuning(UserInfo currentUser)
+        {
+            var dataMock = new Mock<IDataService>();
+            dataMock.Setup(d => d.GetAllSchedulesAsync()).ReturnsAsync(new List<Schedule>());
+            dataMock.Setup(d => d.GetAllOrderProductionsAsync()).ReturnsAsync(new List<OrderProduction>());
+            dataMock.Setup(d => d.GetAllEquipmentProductsAsync()).ReturnsAsync(new List<EquipmentProduct>());
+            dataMock.Setup(d => d.GetAllInProgressProgramTuningAsync()).ReturnsAsync(new List<ProgramTuningRecord>());
+            var log  = new LogService();
+            var auth = new AuthorizationService();
+            auth.SetCachedRoles(new List<Role>
+            {
+                new()
+                {
+                    RoleId = 1,
+                    RolePermissions = new List<RolePermission>
+                    {
+                        new() { RoleId = 1, PermissionId = PermissionId.OperateTuning },
+                        new() { RoleId = 1, PermissionId = PermissionId.Setting },
+                    },
+                },
+            });
+            auth.InitializeAsync(currentUser).GetAwaiter().GetResult();
+            var cardReader = new Mock<ICardReaderService>().Object;
+            var core       = new DashboardCoreServices(log, dataMock.Object, auth, cardReader, new Mock<IWarehouseService>().Object);
+            var dialogMock = new Mock<IDialogService>();
+            var lists      = new ListsFromSql { UsersList = new List<UserInfo> { currentUser } };
+            var vm         = new ScheduleViewModel(core, dialogMock.Object, lists);
+            return (vm, dataMock, dialogMock);
+        }
+
+        private static UserInfo MakeTuningUser() => new() { Id = 5, UserId = "u5", Name = "Tester", RoleId = 1 };
+
         // ─── Filter：AllActive ────────────────────────────────────────────────
 
         [Fact]
@@ -680,6 +713,143 @@ namespace FProductionDashBoard.Tests.ViewModels
             await vm.CancelOrderProductionCommand.ExecuteAsync(order);
 
             dataMock.Verify(d => d.CancelOrderAsync(It.IsAny<int>(), It.IsAny<string?>()), Times.Never);
+        }
+
+        // ─── 安排調試命令（Arrange 分派 / Start / End）──────────────────────────
+        // ArrangeTuning 依 card.ActiveTuning 分派：非 null → End、null → Start。
+        // 對話框讀 vm.IsConfirmed/Result（非回傳值），故確認一律用 Callback 就地觸發 ConfirmCommand。
+
+        [Fact]
+        public async Task ArrangeTuning_EndBranch_Confirmed_CallsEndAndReloads()
+        {
+            var (vm, dataMock, dialogMock) = CreateVmForTuning(MakeTuningUser());
+            dataMock.Setup(d => d.EndProgramTuningAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string?>()))
+                    .Returns(Task.CompletedTask);
+
+            var card = MakeFocusCard(1, "Machine-01");
+            card.ActiveTuning = new ProgramTuningRecord
+            {
+                ProgramTuningId = 42, EquipmentId = 1,
+                TuningType = TuningType.Teaching, StartedAt = new DateTime(2026, 3, 10, 8, 0, 0)
+            };
+            vm.SelectEquipmentCardCommand.Execute(card);
+
+            // End 確認為無守衛 DialogBaseViewModel<bool>，Callback 就地觸發確認
+            dialogMock.Setup(d => d.ShowDialog(It.IsAny<DialogBaseViewModel<bool>>()))
+                      .Callback<DialogBaseViewModel<bool>>(raw => raw.ConfirmCommand.Execute(null))
+                      .Returns<DialogBaseViewModel<bool>>(raw => raw.IsConfirmed);
+
+            await vm.ArrangeTuningCommand.ExecuteAsync(null);
+
+            dataMock.Verify(d => d.EndProgramTuningAsync(42, It.IsAny<DateTime>(), It.IsAny<string?>()), Times.Once);
+            dataMock.Verify(d => d.GetAllSchedulesAsync(), Times.AtLeast(1));
+        }
+
+        [Fact]
+        public async Task ArrangeTuning_EndBranch_Dismissed_DoesNotCallEnd()
+        {
+            var (vm, dataMock, _) = CreateVmForTuning(MakeTuningUser());
+
+            var card = MakeFocusCard(1, "Machine-01");
+            card.ActiveTuning = new ProgramTuningRecord
+            {
+                ProgramTuningId = 42, EquipmentId = 1,
+                TuningType = TuningType.Teaching, StartedAt = new DateTime(2026, 3, 10, 8, 0, 0)
+            };
+            vm.SelectEquipmentCardCommand.Execute(card);
+
+            // 未觸發 ConfirmCommand → confirmVm.IsConfirmed 保持 false → 生產碼 return
+            await vm.ArrangeTuningCommand.ExecuteAsync(null);
+
+            dataMock.Verify(d => d.EndProgramTuningAsync(
+                It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string?>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ArrangeTuning_EndBranch_ServiceThrows_DoesNotCrash()
+        {
+            var (vm, dataMock, dialogMock) = CreateVmForTuning(MakeTuningUser());
+            dataMock.Setup(d => d.EndProgramTuningAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string?>()))
+                    .ThrowsAsync(new Exception("db down"));
+
+            var card = MakeFocusCard(1, "Machine-01");
+            card.ActiveTuning = new ProgramTuningRecord
+            {
+                ProgramTuningId = 42, EquipmentId = 1,
+                TuningType = TuningType.Teaching, StartedAt = new DateTime(2026, 3, 10, 8, 0, 0)
+            };
+            vm.SelectEquipmentCardCommand.Execute(card);
+            dialogMock.Setup(d => d.ShowDialog(It.IsAny<DialogBaseViewModel<bool>>()))
+                      .Callback<DialogBaseViewModel<bool>>(raw => raw.ConfirmCommand.Execute(null))
+                      .Returns<DialogBaseViewModel<bool>>(raw => raw.IsConfirmed);
+
+            // 失敗保留可重試：catch 內只記 log，例外被吞、不逸出崩潰（本專案無全域例外處理器）
+            await vm.ArrangeTuningCommand.ExecuteAsync(null);
+
+            dataMock.Verify(d => d.EndProgramTuningAsync(42, It.IsAny<DateTime>(), It.IsAny<string?>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task ArrangeTuning_StartBranch_Confirmed_CallsStartAndReloads()
+        {
+            var user = MakeTuningUser();
+            var (vm, dataMock, dialogMock) = CreateVmForTuning(user);
+            var teachingEp = new EquipmentProduct
+            {
+                EquipmentProductId = 100, SeqNo = 1, SopId = 1, ProductionStatus = TuningType.Teaching
+            };
+            dataMock.Setup(d => d.GetEquipmentProductsByEquipmentAsync(1))
+                    .ReturnsAsync(new List<EquipmentProduct> { teachingEp });
+            dataMock.Setup(d => d.GetLastCompletedTeachingNamesByEquipmentAsync(1))
+                    .ReturnsAsync(new Dictionary<int, string>());
+            dataMock.Setup(d => d.StartProgramTuningAsync(
+                        It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TuningType>(),
+                        It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<bool>()))
+                    .ReturnsAsync(1);
+
+            var card = MakeFocusCard(1, "Machine-01"); // ActiveTuning=null → Start 分支
+            vm.SelectEquipmentCardCommand.Execute(card);
+
+            // TuningDialogViewModel.ConfirmCommand 有守衛，需先選品項（執行人已預設當前使用者）
+            dialogMock.Setup(d => d.ShowDialog(It.IsAny<TuningDialogViewModel>()))
+                      .Callback<DialogBaseViewModel<TuningResult>>(raw =>
+                      {
+                          var dvm = (TuningDialogViewModel)raw;
+                          dvm.SelectedEquipmentProduct = dvm.FilteredEquipmentProducts.First();
+                          dvm.ConfirmCommand.Execute(null);
+                      })
+                      .Returns<DialogBaseViewModel<TuningResult>>(raw => ((TuningDialogViewModel)raw).Result);
+
+            await vm.ArrangeTuningCommand.ExecuteAsync(null);
+
+            // startedBy=Executor.Id、managedBy=currentUser.Id，兩者皆為當前使用者(5)；forceArrange=false
+            dataMock.Verify(d => d.StartProgramTuningAsync(
+                1, 100, TuningType.Teaching, 5, 5, It.IsAny<DateTime>(), false), Times.Once);
+            dataMock.Verify(d => d.GetAllSchedulesAsync(), Times.AtLeast(1));
+        }
+
+        [Fact]
+        public async Task ArrangeTuning_StartBranch_Dismissed_DoesNotCallStart()
+        {
+            var (vm, dataMock, _) = CreateVmForTuning(MakeTuningUser());
+            // 讓對話框能正常建構（非走載入失敗路徑），再驗證「取消」不寫入
+            dataMock.Setup(d => d.GetEquipmentProductsByEquipmentAsync(1))
+                    .ReturnsAsync(new List<EquipmentProduct>
+                    {
+                        new() { EquipmentProductId = 100, SeqNo = 1, SopId = 1, ProductionStatus = TuningType.Teaching }
+                    });
+            dataMock.Setup(d => d.GetLastCompletedTeachingNamesByEquipmentAsync(1))
+                    .ReturnsAsync(new Dictionary<int, string>());
+
+            var card = MakeFocusCard(1, "Machine-01");
+            vm.SelectEquipmentCardCommand.Execute(card);
+
+            // dialog 未確認 → vm.IsConfirmed=false / Result=null → 生產碼 return
+            await vm.ArrangeTuningCommand.ExecuteAsync(null);
+
+            dataMock.Verify(d => d.StartProgramTuningAsync(
+                It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TuningType>(),
+                It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<bool>()), Times.Never);
         }
 
         [Fact]
