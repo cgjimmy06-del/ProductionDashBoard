@@ -415,11 +415,12 @@ namespace FProductionDashBoard.ViewModels
                 Description = string.IsNullOrWhiteSpace(FormDescription) ? null : FormDescription,
                 ReceivedBy  = userId
             };
+            var formLocId = FormLocationId;   // await 前快照，避免 DB 往返期間改動下拉導致指派到改動後的倉位
             try
             {
                 var newId = await _core.Data.AddScheduleAsync(dto);
                 _core.Log.AddLog("[進出料管理] 入料成功");
-                if (FormLocationId is int locId)
+                if (formLocId is int locId)
                 {
                     // 選填倉位：入料後上架；上架失敗不阻斷入料（箱單已建立，倉位可事後補指派）
                     try
@@ -611,7 +612,9 @@ namespace FProductionDashBoard.ViewModels
             {
                 _core.Log.AddLog("[進出料管理] 倉位更新失敗", LogLevel.Error);
                 _core.Log.AddErrorLog($"[AssignLocation] {ex.Message}");
-                await ReloadAsync();   // 還原顯示至實際狀態
+                // 連線持續失敗時 ReloadAsync 會再 throw；此處吞掉避免自 catch 逸出崩潰（DB 未變更、主錯誤已記錄）
+                try { await ReloadAsync(); }
+                catch { /* 忽略還原刷新失敗 */ }
             }
         }
 

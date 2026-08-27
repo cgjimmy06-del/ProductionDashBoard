@@ -23,14 +23,14 @@ namespace FProductionDashBoard.ViewModels
         // 對應接單清單（僅 Verify 使用）；D1：排除 Cancelled 後不得有 Pending/InProduction
         public IReadOnlyList<OrderProductionInfo> Orders { get; }
         public bool HasOrderList => OperationType == ScheduleOperationType.Verify && Orders.Count > 0;
-        public bool AllOrdersCompleted => !Orders.Any(o =>
+        public bool HasNoUnfinishedOrders => !Orders.Any(o =>
             o.Status == OrderProductionStatus.Pending ||
             o.Status == OrderProductionStatus.InProduction);
         public string? IncompleteHint
         {
             get
             {
-                if (OperationType != ScheduleOperationType.Verify || AllOrdersCompleted)
+                if (OperationType != ScheduleOperationType.Verify || HasNoUnfinishedOrders)
                     return null;
                 var names = Orders
                     .Where(o => o.Status == OrderProductionStatus.Pending
@@ -89,9 +89,9 @@ namespace FProductionDashBoard.ViewModels
 
         protected override void OnConfirm()
         {
-            if (OperationType == ScheduleOperationType.Verify && !AllOrdersCompleted)
+            if (OperationType == ScheduleOperationType.Verify && !HasNoUnfinishedOrders)
             {
-                DialogErrorString = IncompleteHint;
+                // 未完成提示已由內容區 IncompleteHint 常駐顯示，不重複塞 DialogErrorString
                 return;
             }
             if (IsDescriptionRequired && string.IsNullOrWhiteSpace(Description))

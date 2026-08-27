@@ -34,9 +34,9 @@ namespace FProductionDashBoard.Services
 
         private void OnConnectionStatusChanged()
         {
-            Notification? notification = null;
             lock (_gate)
             {
+                Notification? notification = null;
                 var snapshot = _connectionStatus.GetSnapshot();
                 var since = snapshot.LastChangedAt?.ToString("yyyy/MM/dd HH:mm") ?? "-";
 
@@ -59,11 +59,13 @@ namespace FProductionDashBoard.Services
                         IsPersistent: false,
                         AutoDismissSeconds: 4);
                 }
-            }
 
-            // Publish 移至鎖外：避免持鎖期間呼叫通道（未來同步通道不被鎖阻塞）
-            if (notification != null)
-                Dispatch(notification);
+                // Dispatch 於鎖內：確保「決策順序＝送達順序」，避免斷線/恢復快速翻轉時
+                // 兩背景執行緒的 BeginInvoke 入列倒置導致 UI 殘留假斷線狀態。
+                // 通道 Publish 僅非阻塞 BeginInvoke，持鎖成本可忽略、無 reentrancy。
+                if (notification != null)
+                    Dispatch(notification);
+            }
         }
 
         private void Dispatch(Notification notification)

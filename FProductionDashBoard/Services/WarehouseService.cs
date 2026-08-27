@@ -2,6 +2,7 @@ using FProductionDashBoard.Models;
 using FProductionDashBoard.Repositories;
 using FProductionDashBoard.Services.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -22,6 +23,12 @@ namespace FProductionDashBoard.Services
         {
             _warehouseRep = warehouseRep;
         }
+
+        // EF SaveChanges 遇 DB 錯誤會包成 DbUpdateException（非 SqlException 子類）；以內層 SqlException.Number 判定約束違反類型
+        private static bool IsUniqueViolation(DbUpdateException ex) =>
+            ex.InnerException is SqlException s && (s.Number == 2601 || s.Number == 2627);
+        private static bool IsForeignKeyViolation(DbUpdateException ex) =>
+            ex.InnerException is SqlException s && s.Number == 547;
 
         public async Task<IEnumerable<StorageLocation>> GetLocationsAsync()
         {
@@ -59,6 +66,8 @@ namespace FProductionDashBoard.Services
             {
                 await _warehouseRep.AddAsync(location).ConfigureAwait(false);
             }
+            catch (DbUpdateException ex) when (IsUniqueViolation(ex)) { throw new BusinessRuleException($"[AddLocationAsync] 倉位編號已存在：{location.Code}"); }
+            catch (DbUpdateException ex) { throw new DatabaseConnectionException("[AddLocationAsync] 新增倉位失敗：資料庫錯誤", ex); }
             catch (SqlException ex) { throw new DatabaseConnectionException("[AddLocationAsync] 新增倉位失敗：資料庫錯誤", ex); }
             catch (TimeoutException tex) { throw new DatabaseConnectionException("[AddLocationAsync] 新增倉位失敗：連線逾時", tex); }
         }
@@ -76,6 +85,8 @@ namespace FProductionDashBoard.Services
             {
                 await _warehouseRep.UpdateAsync(location).ConfigureAwait(false);
             }
+            catch (DbUpdateException ex) when (IsUniqueViolation(ex)) { throw new BusinessRuleException($"[UpdateLocationAsync] 倉位編號已存在：{location.Code}"); }
+            catch (DbUpdateException ex) { throw new DatabaseConnectionException("[UpdateLocationAsync] 更新倉位失敗：資料庫錯誤", ex); }
             catch (SqlException ex) { throw new DatabaseConnectionException("[UpdateLocationAsync] 更新倉位失敗：資料庫錯誤", ex); }
             catch (TimeoutException tex) { throw new DatabaseConnectionException("[UpdateLocationAsync] 更新倉位失敗：連線逾時", tex); }
         }
@@ -92,6 +103,8 @@ namespace FProductionDashBoard.Services
             {
                 await _warehouseRep.DeleteAsync(locationId).ConfigureAwait(false);
             }
+            catch (DbUpdateException ex) when (IsForeignKeyViolation(ex)) { throw new BusinessRuleException("[DeleteLocationAsync] 此倉位有歷史佔用紀錄，無法刪除，請改為停用"); }
+            catch (DbUpdateException ex) { throw new DatabaseConnectionException("[DeleteLocationAsync] 刪除倉位失敗：資料庫錯誤", ex); }
             catch (SqlException ex) { throw new DatabaseConnectionException("[DeleteLocationAsync] 刪除倉位失敗：資料庫錯誤", ex); }
             catch (TimeoutException tex) { throw new DatabaseConnectionException("[DeleteLocationAsync] 刪除倉位失敗：連線逾時", tex); }
         }
@@ -109,6 +122,8 @@ namespace FProductionDashBoard.Services
                 // DB filtered unique index 為併發後盾：若通過上方檢查後仍被搶先，第二筆 insert 會在 DB 端失敗
                 return await _warehouseRep.AssignAsync(locationId, scheduleId, operatorId).ConfigureAwait(false);
             }
+            catch (DbUpdateException ex) when (IsUniqueViolation(ex)) { throw new BusinessRuleException($"[AssignAsync] 此箱已在倉位上架中 ScheduleId={scheduleId}"); }
+            catch (DbUpdateException ex) { throw new DatabaseConnectionException("[AssignAsync] 上架失敗：資料庫錯誤", ex); }
             catch (SqlException ex) { throw new DatabaseConnectionException("[AssignAsync] 上架失敗：資料庫錯誤", ex); }
             catch (TimeoutException tex) { throw new DatabaseConnectionException("[AssignAsync] 上架失敗：連線逾時", tex); }
         }
@@ -121,6 +136,7 @@ namespace FProductionDashBoard.Services
             {
                 await _warehouseRep.ReleaseAsync(scheduleId, operatorId).ConfigureAwait(false);
             }
+            catch (DbUpdateException ex) { throw new DatabaseConnectionException("[ReleaseAsync] 下架失敗：資料庫錯誤", ex); }
             catch (SqlException ex) { throw new DatabaseConnectionException("[ReleaseAsync] 下架失敗：資料庫錯誤", ex); }
             catch (TimeoutException tex) { throw new DatabaseConnectionException("[ReleaseAsync] 下架失敗：連線逾時", tex); }
         }
@@ -133,6 +149,7 @@ namespace FProductionDashBoard.Services
             {
                 await _warehouseRep.ReassignAsync(scheduleId, newLocationId, operatorId).ConfigureAwait(false);
             }
+            catch (DbUpdateException ex) { throw new DatabaseConnectionException("[ReassignAsync] 換倉失敗：資料庫錯誤", ex); }
             catch (SqlException ex) { throw new DatabaseConnectionException("[ReassignAsync] 換倉失敗：資料庫錯誤", ex); }
             catch (TimeoutException tex) { throw new DatabaseConnectionException("[ReassignAsync] 換倉失敗：連線逾時", tex); }
         }

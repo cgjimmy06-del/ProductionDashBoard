@@ -69,7 +69,8 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _core.Log.AddLog($"載入倉位清單失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog("[倉位] 載入倉位清單失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[LoadAsync] {ex.Message}");
             }
         }
 
@@ -113,7 +114,8 @@ namespace FProductionDashBoard.ViewModels
             catch (Exception ex)
             {
                 FormErrorString = ex.Message;
-                _core.Log.AddLog($"刪除倉位失敗 (檢查是否有現役佔用): {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog("[倉位] 刪除倉位失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[Delete] {ex.Message}");
             }
         }
 
@@ -145,7 +147,8 @@ namespace FProductionDashBoard.ViewModels
             {
                 FormErrorString = ex.Message;
                 FormSuccessString = null;
-                _core.Log.AddLog($"儲存倉位失敗: {ex.Message}", LogLevel.Error);
+                _core.Log.AddLog("[倉位] 儲存倉位失敗", LogLevel.Error);
+                _core.Log.AddErrorLog($"[SaveAsync] {ex.Message}");
             }
         }
 
