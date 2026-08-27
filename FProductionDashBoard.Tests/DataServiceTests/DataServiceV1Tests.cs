@@ -561,6 +561,53 @@ namespace FProductionDashBoard.Tests.DataServiceTests
                 It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Once);
         }
 
+        [Fact]
+        public async Task CheckAndInsertMissedInspectionAsync_CrossDayEndedSlot_InsertsOnce()
+        {
+            // 跨日 slot（23:00→01:00, IsCrossDay=true）以夠早的 businessDay(Today-2) 構造，
+            // 使 GetBounds 位移後的 slotEnd（Today-1 01:00）穩定落在過去 → 判為已結束、補插一筆。
+            // 涵蓋 IsCrossDay=true 的補漏檢路徑（既有 7 個補漏檢測試 IsCrossDay 全為 false）。
+            var slot = new TimeSlotLookup
+            {
+                TimeSlotId = 7,
+                StartAt    = new TimeSpan(23, 0, 0),
+                EndAt      = new TimeSpan(1, 0, 0),
+                IsCrossDay = true
+            };
+
+            _inspectionRecordRep
+                .Setup(r => r.ExistsInspectionInSlotAsync(1, 7, It.IsAny<DateTime>()))
+                .ReturnsAsync(false);
+            _inspectionRecordRep
+                .Setup(r => r.AddInspectionRecordAsync(
+                    InspectionType.Routine, 1, 1, false, 7, null, "RTIN0001", null, It.IsAny<DateTime?>()))
+                .ReturnsAsync(1);
+
+            await CreateService(DateTime.Today.AddDays(-2)).CheckAndInsertMissedInspectionAsync([slot], 1);
+
+            _inspectionRecordRep.Verify(r => r.AddInspectionRecordAsync(
+                InspectionType.Routine, 1, 1, false, 7, null, "RTIN0001", null, It.IsAny<DateTime?>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task CheckAndInsertMissedInspectionAsync_CrossDayFutureSlot_DoesNotInsert()
+        {
+            // 跨日 slot 以未來 businessDay(Today+1) 構造，GetBounds 位移後 slotEnd（Today+2 01:00）
+            // 穩定落在未來 → 判為尚未結束、不補插（連 ExistsInspectionInSlotAsync 都不呼叫）。
+            var slot = new TimeSlotLookup
+            {
+                TimeSlotId = 8,
+                StartAt    = new TimeSpan(23, 0, 0),
+                EndAt      = new TimeSpan(1, 0, 0),
+                IsCrossDay = true
+            };
+
+            await CreateService(DateTime.Today.AddDays(1)).CheckAndInsertMissedInspectionAsync([slot], 1);
+
+            _inspectionRecordRep.Verify(r => r.ExistsInspectionInSlotAsync(
+                It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>()), Times.Never);
+        }
+
         // ─── GetCurrentTimeSlotIdAsync ─────────────────────────────────────────
 
         [Fact]
