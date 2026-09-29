@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.Services.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -85,9 +86,12 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private string? itemFormContent;
         [ObservableProperty] private string? itemFormRemark;
 
-        public SopChecklistSettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
+        private readonly IErpApiService _erp;
+
+        public SopChecklistSettingViewModel(DashboardCoreServices core, Services.IDialogService dialog, IErpApiService erp)
             : base(core, dialog)
         {
+            _erp = erp;
             SopTypeFilterOptions = new SopTypeFilterOption[] { new(null) }
                 .Concat(Enum.GetValues<SopType>().Select(t => new SopTypeFilterOption(t)))
                 .ToArray();
@@ -250,6 +254,17 @@ namespace FProductionDashBoard.ViewModels
             {
                 var customer = await _core.Data.GetCustomerByCodeAsync(PartFilter);
                 if (customer != null) NewPartBrand = customer;
+            }
+            catch (Exception ex)
+            {
+                _core.Log.AddErrorLog($"[BeginCreatePartAsync] {ex.Message}");
+            }
+
+            // 以件號查 ERP 帶入品名；查無或失敗留空供手填（獨立 try 不影響上方品牌帶入）
+            try
+            {
+                var partInfo = await _erp.GetPartInfoByNoAsync(PartFilter);
+                if (partInfo != null) NewPartName = partInfo.ProductName;
             }
             catch (Exception ex)
             {

@@ -1,6 +1,7 @@
 using FProductionDashBoard.Dtos;
 using FProductionDashBoard.Models;
 using FProductionDashBoard.Services;
+using FProductionDashBoard.Services.WebApi;
 using FProductionDashBoard.ViewModels;
 using Moq;
 using Xunit;
@@ -16,6 +17,7 @@ namespace FProductionDashBoard.Tests.ViewModels
 
         private readonly Mock<IDataService> _data = new();
         private readonly Mock<IDialogService> _dialog = new();
+        private readonly Mock<IErpApiService> _erp = new();
 
         private SopChecklistSettingViewModel CreateVm()
         {
@@ -23,7 +25,7 @@ namespace FProductionDashBoard.Tests.ViewModels
             var auth = new AuthorizationService();
             var cardReader = new Mock<ICardReaderService>().Object;
             var core = new DashboardCoreServices(log, _data.Object, auth, cardReader, new Mock<IWarehouseService>().Object);
-            return new SopChecklistSettingViewModel(core, _dialog.Object);
+            return new SopChecklistSettingViewModel(core, _dialog.Object, _erp.Object);
         }
 
         private static SopChecklist BuildSop(int sopId, string partNo, string modelName, string processName, SopType sopType, string? remark = null)
@@ -211,6 +213,37 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal(99, vm.FormPartId);
             Assert.False(vm.IsCreatingPart);
             Assert.Equal("", vm.PartFilter);
+        }
+
+        [Fact]
+        public async Task BeginCreatePart_FillsProductNameFromErp()
+        {
+            _erp.Setup(e => e.GetPartInfoByNoAsync("74165027"))
+                .ReturnsAsync(new PartInfoDto { BmsType = "74165027", ProductName = "Zuma Max Fast DR Ti MRH", Brand = "CLW" });
+
+            var vm = CreateVm();
+            vm.PartFilter = "74165027";
+
+            await vm.BeginCreatePartCommand.ExecuteAsync(null)!;
+
+            Assert.True(vm.IsCreatingPart);
+            Assert.Equal("Zuma Max Fast DR Ti MRH", vm.NewPartName);
+        }
+
+        [Fact]
+        public async Task BeginCreatePart_ErpReturnsNull_LeavesNameEmpty_BrandStillFromDb()
+        {
+            // 品牌來自 DB（方案①保留），品名來自 ERP；ERP 查無 → 品名留空、不影響品牌
+            _data.Setup(d => d.GetCustomerByCodeAsync(It.IsAny<string>())).ReturnsAsync("BrandFromDb");
+            _erp.Setup(e => e.GetPartInfoByNoAsync(It.IsAny<string>())).ReturnsAsync((PartInfoDto?)null);
+
+            var vm = CreateVm();
+            vm.PartFilter = "00000000";
+
+            await vm.BeginCreatePartCommand.ExecuteAsync(null)!;
+
+            Assert.Null(vm.NewPartName);
+            Assert.Equal("BrandFromDb", vm.NewPartBrand);
         }
 
         [Fact]
