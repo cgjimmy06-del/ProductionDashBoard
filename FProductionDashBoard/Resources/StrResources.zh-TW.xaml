@@ -474,6 +474,7 @@
     <sys:String x:Key="SchFilterDateEnd">結束日期</sys:String>
     <sys:String x:Key="SchFilterSearch">品號 / 型號 / 批號</sys:String>
     <sys:String x:Key="SchFilterProcess">製程</sys:String>
+    <sys:String x:Key="SchCancelOrderFilter">取消訂單篩選</sys:String>
 
     <sys:String x:Key="SchShortcutToday">今日</sys:String>
     <sys:String x:Key="SchShortcutLast3Days">3天</sys:String>

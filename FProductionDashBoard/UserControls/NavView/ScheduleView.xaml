@@ -163,6 +163,7 @@
                 <ColumnDefinition Width="160"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <!-- 狀態篩選 -->
@@ -194,9 +195,15 @@
                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=200}"/>
 
             <!-- 製程 搜尋 -->
-            <TextBox Grid.Column="2" Margin="0"
+            <TextBox Grid.Column="2" Margin="0,0,6,0"
                      materialDesign:HintAssist.Hint="{DynamicResource SchFilterProcess}"
                      Text="{Binding ProcessFilter, UpdateSourceTrigger=PropertyChanged, Delay=200}"/>
+
+            <!-- 取消訂單篩選：解除卡片牆與排單的關聯，顯示所有可生產設備 -->
+            <ToggleButton Grid.Column="3" Margin="0"
+                          Style="{StaticResource ChartQuickFilterButtonStyle}"
+                          IsChecked="{Binding IsOrderFilterOff}"
+                          Content="{DynamicResource SchCancelOrderFilter}"/>
         </Grid>
 
         <!-- ========== Row 3：篩選面板切換 ========== -->

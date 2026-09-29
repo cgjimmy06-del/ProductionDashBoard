@@ -65,6 +65,7 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private DateTime? dateRangeStart;
         [ObservableProperty] private DateTime? dateRangeEnd;
         [ObservableProperty] private bool isFilterPanelVisible = true;
+        [ObservableProperty] private bool isOrderFilterOff;   // 勾選＝取消訂單篩選，卡片牆顯示所有可生產設備
 
         // Layer 2：選取排單
         [ObservableProperty] private ScheduleUiModel? selectedSchedule;
@@ -96,6 +97,7 @@ namespace FProductionDashBoard.ViewModels
         partial void OnStatusFilterChanged(ScheduleViewFilter value) => ApplyFilter();
         partial void OnSearchTextChanged(string value) => ApplyFilter();
         partial void OnProcessFilterChanged(string value) => ApplyFilter();
+        partial void OnIsOrderFilterOffChanged(bool value) => ApplyFilter();
 
         partial void OnSelectedScheduleChanged(ScheduleUiModel? value)
         {
@@ -774,6 +776,9 @@ namespace FProductionDashBoard.ViewModels
         private bool FilterCard(object obj)
         {
             if (obj is not ScheduleEquipmentCardViewModel card) return false;
+
+            // 取消訂單篩選：解除與排單的關聯，顯示所有可生產設備（含不相容者，呈灰卡）
+            if (IsOrderFilterOff) return true;
 
             if (SelectedSchedule != null)
                 return card.HasMatchingProgram;
