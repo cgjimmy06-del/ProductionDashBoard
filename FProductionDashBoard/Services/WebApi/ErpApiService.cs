@@ -28,4 +28,18 @@ public class ErpApiService : IErpApiService
             return null;
         }
     }
+
+    public async Task<PartInfoDto?> GetPartInfoByNoAsync(string partNo)
+    {
+        try
+        {
+            // 查無件號時 ERP 回傳 body "null"，GetFromJsonAsync 直接得 C# null
+            return await _http.GetFromJsonAsync<PartInfoDto>(
+                $"api/So/GetSompnodfn3V?bmstype={Uri.EscapeDataString(partNo)}");
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }
