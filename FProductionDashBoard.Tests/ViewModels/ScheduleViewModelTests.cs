@@ -926,5 +926,73 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Null(vm.SelectedEquipmentCard);
             Assert.Null(vm.SelectedSchedule);
         }
+
+        // ─── PR A：取消訂單篩選（IsOrderFilterOff）────────────────────────────
+
+        private static (ScheduleViewModel vm, ScheduleUiModel schedule) SetupCardWallWithCompatibility()
+        {
+            var vm = CreateVm();
+            var schedules = new List<ScheduleUiModel>
+            {
+                MakeSchedWithProduct(1, ScheduleStatus.Pending, productId: 1, processId: 1),
+            };
+            vm.InjectDataForTest(schedules, new List<OrderProductionInfo>());
+            vm.DateRangeStart = null;
+            vm.DateRangeEnd   = null;
+
+            var compatibleEp = new EquipmentProduct
+            {
+                EquipmentId      = 10,
+                Equipment        = new Equipment { Id = 10, Code = "M10", Name = "M10" },
+                ProductionStatus = TuningType.Feasible,
+                Sop              = new SopChecklist { ProductId = 1, ProcessId = 1 },
+            };
+            var otherEp = new EquipmentProduct
+            {
+                EquipmentId      = 20,
+                Equipment        = new Equipment { Id = 20, Code = "M20", Name = "M20" },
+                ProductionStatus = TuningType.Feasible,
+                Sop              = new SopChecklist { ProductId = 2, ProcessId = 2 },
+            };
+            vm.InjectCardsForTest(new List<EquipmentProduct> { compatibleEp, otherEp });
+            return (vm, schedules[0]);
+        }
+
+        private static List<ScheduleEquipmentCardViewModel> VisibleCards(ScheduleViewModel vm)
+            => vm.EquipmentCardsView.Cast<ScheduleEquipmentCardViewModel>().ToList();
+
+        [Fact]
+        public void IsOrderFilterOff_True_ShowsAllCards_False_RestoresLayer1()
+        {
+            var (vm, _) = SetupCardWallWithCompatibility();
+
+            // 預設 Layer 1：只顯示與可見排單相容的設備
+            var layer1 = VisibleCards(vm);
+            Assert.Single(layer1);
+            Assert.Equal(10, layer1[0].EquipmentId);
+
+            // 取消訂單篩選：顯示所有（有 EP 的）設備，含不相容者
+            vm.IsOrderFilterOff = true;
+            var all = VisibleCards(vm);
+            Assert.Equal(2, all.Count);
+
+            // 回復：回到 Layer 1 兩層篩選行為
+            vm.IsOrderFilterOff = false;
+            var back = VisibleCards(vm);
+            Assert.Single(back);
+            Assert.Equal(10, back[0].EquipmentId);
+        }
+
+        [Fact]
+        public void IsOrderFilterOff_True_IgnoresSelectedSchedule()
+        {
+            var (vm, schedule) = SetupCardWallWithCompatibility();
+
+            vm.IsOrderFilterOff = true;
+            vm.SelectedSchedule = schedule; // 選取相容排單（Layer 2）不應縮減卡片牆
+
+            var all = VisibleCards(vm);
+            Assert.Equal(2, all.Count);
+        }
     }
 }

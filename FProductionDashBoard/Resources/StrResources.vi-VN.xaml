@@ -474,6 +474,7 @@
     <sys:String x:Key="SchFilterDateEnd">Ngày kết thúc</sys:String>
     <sys:String x:Key="SchFilterSearch">Mã SP / Model / Lô</sys:String>
     <sys:String x:Key="SchFilterProcess">Công đoạn</sys:String>
+    <sys:String x:Key="SchCancelOrderFilter">Bỏ lọc đơn hàng</sys:String>
 
     <sys:String x:Key="SchShortcutToday">Hôm nay</sys:String>
     <sys:String x:Key="SchShortcutLast3Days">3 ngày</sys:String>
