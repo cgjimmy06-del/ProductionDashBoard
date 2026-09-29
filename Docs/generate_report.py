@@ -10,7 +10,7 @@ from datetime import date
 from pathlib import Path
 
 OUTPUT_DIR = Path(__file__).parent
-VERSION_TAG = "v3.4.2"
+VERSION_TAG = "v3.5"
 XLSX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.xlsx"
 DOCX_PATH = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.docx"
 PDF_PATH  = OUTPUT_DIR / f"CodeReview_FProductionDashBoard_{VERSION_TAG}.pdf"
@@ -668,7 +668,8 @@ def generate_word():
         ["v3.3.2", "2026-07-03", "AI-assisted Review", "V3.3.2 維護版本發佈；移除離線寫入功能（PR#112）+ DeviceCard 跨用戶端狀態即時刷新（PR#113）+ SOP Checklist 套用範本與存檔唯一鍵檢查（PR#114）+ LogUploadApi 可下載副檔名可設定化（PR#115）", "已歸檔"],
         ["v3.4.0", "2026-07-14", "AI-assisted Review", "V3.4.0 正式版發佈；圖表設計全計畫上線（PR#118,#122~125：戰情室看板、設計器、CRUD/匯出入、定期刷新）+ 調試 ManagedBy（PR#120~121）+ 程式庫批次狀態按鈕（PR#127~128）+ SOP 物料篩選（PR#126）+ Code Review 2026-07-03 修復（PR#117）", "已歸檔"],
         ["v3.4.1", "2026-07-20", "AI-assisted Review", "V3.4.1 維護版發佈；AI 助理 Markdown 渲染（PR#131）+ Tokens 用量顯示（PR#132）+ 權限閘門修正與 AI 面板雙層控管（PR#133 + AiAgent 授權）+ 連線狀態訊號源（PR#130）+ Code Review 2026-07-20 修復（PR#134）", "已歸檔"],
-        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V3.4.2 維護版發佈；出料「確認完成」前檢查對應接單狀態——列出各機台接單（機台/數量/狀態），需所有接單完成才可確認（PR#136）", "更新版"],
+        ["v3.4.2", "2026-08-04", "AI-assisted Review", "V3.4.2 維護版發佈；出料「確認完成」前檢查對應接單狀態——列出各機台接單（機台/數量/狀態），需所有接單完成才可確認（PR#136）", "已歸檔"],
+        [VERSION_TAG, REVIEW_DATE, "AI-assisted Review", "V3.5.0 正式版發佈；倉位管理（PR#139~141：倉位設定Tab＋出入料綁倉位）＋排單取消訂單篩選（PR#145）＋SOP新增Part由ERP帶品名（PR#146）＋通知斷線提示浮層（PR#138）＋Code Review 2026-08-26修復（PR#142）", "更新版"],
     ]
     rev_tbl = doc.add_table(rows=len(rev_history)+1, cols=5)
     rev_tbl.style = "Table Grid"
