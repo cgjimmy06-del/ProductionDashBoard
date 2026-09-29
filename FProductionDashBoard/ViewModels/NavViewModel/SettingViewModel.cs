@@ -20,7 +20,8 @@ namespace FProductionDashBoard.ViewModels
         [ObservableProperty] private bool isGeneralTabVisible;
         [ObservableProperty] private bool isAdminTabVisible;
 
-        public SettingViewModel(DashboardCoreServices core, Services.IDialogService dialog)
+        public SettingViewModel(DashboardCoreServices core, Services.IDialogService dialog,
+            Services.WebApi.IErpApiService erp)
         {
             _core = core;
             Equipment = new EquipmentSettingViewModel(core, dialog);
@@ -30,7 +31,7 @@ namespace FProductionDashBoard.ViewModels
             ErrorList = new ErrorListSettingViewModel(core, dialog);
             TimeSlot = new TimeSlotSettingViewModel(core, dialog);
             RolePermission = new RolePermissionSettingViewModel(core, dialog);
-            SopChecklist = new SopChecklistSettingViewModel(core, dialog);
+            SopChecklist = new SopChecklistSettingViewModel(core, dialog, erp);
             EquipmentProduct = new EquipmentProductSettingViewModel(core, dialog);
 
             // 依賴單例生命週期（scoped + 單一 root scope，訂閱僅一次）；
