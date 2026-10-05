@@ -86,18 +86,19 @@ namespace FProductionDashBoard.Tests.Services
         public async Task ConcurrentCardRead_SecondIsRejectedByReentrancyLock()
         {
             var (handler, mockCardReader, mockErp, _) = CreateHandler();
+            var entered = new TaskCompletionSource();
             var gate = new TaskCompletionSource<EmpInfoDto?>();
-            // 第一次刷卡：ERP 查詢回未完成 Task，使第一次持鎖停在 await 不放
-            mockErp.Setup(e => e.GetEmpInfoByCardAsync("UNKNOWN")).Returns(gate.Task);
+            // 第一次刷卡：進入 ERP 查詢時發出訊號，並回未完成 Task 使其持鎖停在 await 不放
+            mockErp.Setup(e => e.GetEmpInfoByCardAsync("UNKNOWN"))
+                .Returns(() => { entered.TrySetResult(); return gate.Task; });
             handler.Attach();
 
-            // 第一次觸發：取得鎖、走到 GetEmpInfoByCardAsync 後卡住
+            // 第一次觸發：等到確實走進 GetEmpInfoByCardAsync（已持鎖），不靠固定時間猜測
             RaiseCardRead(mockCardReader, "UNKNOWN");
-            await Task.Delay(100);
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
-            // 第二次觸發（持鎖期間）：WaitAsync(0) 立即回 false → 直接 return，不查 ERP
+            // 第二次觸發（持鎖期間）：WaitAsync(0) 同步回 false → 直接 return，可立即驗證
             RaiseCardRead(mockCardReader, "UNKNOWN");
-            await Task.Delay(100);
 
             // ERP 只應被呼叫一次（第二次被重入鎖擋下）
             mockErp.Verify(e => e.GetEmpInfoByCardAsync("UNKNOWN"), Times.Once);

@@ -729,7 +729,7 @@
     </Style>
 
     <!-- 圖表快捷篩選按鈕：outline，按下反色（主色填滿）；再按取消 -->
-    <Style x:Key="ChartQuickFilterButtonStyle" TargetType="ToggleButton">
+    <Style x:Key="QuickFilterToggleButtonStyle" TargetType="ToggleButton">
         <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="FontSize" Value="13"/>

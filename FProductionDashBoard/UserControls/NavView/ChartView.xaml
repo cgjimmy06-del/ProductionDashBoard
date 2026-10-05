@@ -192,7 +192,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <ToggleButton Style="{StaticResource ChartQuickFilterButtonStyle}"
+                                <ToggleButton Style="{StaticResource QuickFilterToggleButtonStyle}"
                                               Content="{Binding Label}"
                                               IsChecked="{Binding IsActive}"
                                               Margin="0,0,6,2"/>

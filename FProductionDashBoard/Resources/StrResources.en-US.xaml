@@ -474,7 +474,7 @@
     <sys:String x:Key="SchFilterDateEnd">End Date</sys:String>
     <sys:String x:Key="SchFilterSearch">Part No. / Model / Lot No.</sys:String>
     <sys:String x:Key="SchFilterProcess">Process</sys:String>
-    <sys:String x:Key="SchCancelOrderFilter">Ignore Order Filter</sys:String>
+    <sys:String x:Key="SchIgnoreOrderFilter">Ignore Order Filter</sys:String>
 
     <sys:String x:Key="SchShortcutToday">Today</sys:String>
     <sys:String x:Key="SchShortcutLast3Days">3 Days</sys:String>

@@ -246,6 +246,64 @@ namespace FProductionDashBoard.Tests.ViewModels
             Assert.Equal("BrandFromDb", vm.NewPartBrand);
         }
 
+        // ── BeginCreatePart 等待期間狀態改變：TCS 控制 ERP/DB 回應時機 ──
+
+        [Fact]
+        public async Task BeginCreatePart_UserTypedNameBeforeErpReturns_KeepsUserInput()
+        {
+            var erpGate = new TaskCompletionSource<PartInfoDto?>();
+            _erp.Setup(e => e.GetPartInfoByNoAsync("74165027")).Returns(erpGate.Task);
+
+            var vm = CreateVm();
+            vm.PartFilter = "74165027";
+
+            var task = vm.BeginCreatePartCommand.ExecuteAsync(null)!;
+            vm.NewPartName = "Manual";
+            erpGate.SetResult(new PartInfoDto { BmsType = "74165027", ProductName = "FromErp" });
+            await task;
+
+            Assert.Equal("Manual", vm.NewPartName);
+        }
+
+        [Fact]
+        public async Task BeginCreatePart_CancelledBeforeErpReturns_DoesNotFillName()
+        {
+            var erpGate = new TaskCompletionSource<PartInfoDto?>();
+            _erp.Setup(e => e.GetPartInfoByNoAsync("74165027")).Returns(erpGate.Task);
+
+            var vm = CreateVm();
+            vm.PartFilter = "74165027";
+
+            var task = vm.BeginCreatePartCommand.ExecuteAsync(null)!;
+            vm.CancelCreatePartCommand.Execute(null);
+            erpGate.SetResult(new PartInfoDto { BmsType = "74165027", ProductName = "FromErp" });
+            await task;
+
+            Assert.False(vm.IsCreatingPart);
+            Assert.Null(vm.NewPartName);
+        }
+
+        [Fact]
+        public async Task BeginCreatePart_PartFilterChangedDuringDbQuery_ErpQueriesOriginalPartNo()
+        {
+            var dbGate = new TaskCompletionSource<string?>();
+            _data.Setup(d => d.GetCustomerByCodeAsync("74165027")).Returns(dbGate.Task);
+            _erp.Setup(e => e.GetPartInfoByNoAsync(It.IsAny<string>()))
+                .ReturnsAsync(new PartInfoDto { BmsType = "74165027", ProductName = "FromErp" });
+
+            var vm = CreateVm();
+            vm.PartFilter = "74165027";
+
+            var task = vm.BeginCreatePartCommand.ExecuteAsync(null)!;
+            vm.PartFilter = "741650279";
+            dbGate.SetResult("BrandFromDb");
+            await task;
+
+            _erp.Verify(e => e.GetPartInfoByNoAsync("74165027"), Times.Once);
+            Assert.Null(vm.NewPartBrand);   // 件號已變，不回填
+            Assert.Null(vm.NewPartName);
+        }
+
         [Fact]
         public async Task PartFilter_PreservesSelectionWhenStillMatched_ElseFallsBackToFirst()
         {
