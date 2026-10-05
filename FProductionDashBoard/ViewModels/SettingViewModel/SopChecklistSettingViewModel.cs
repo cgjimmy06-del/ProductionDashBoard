@@ -247,29 +247,30 @@ namespace FProductionDashBoard.ViewModels
         [RelayCommand(CanExecute = nameof(CanCreatePart))]
         private async Task BeginCreatePartAsync()
         {
+            // 先存下件號：等待期間 PartFilter 可能被改或被確認/取消清空
+            var partNo = PartFilter;
             NewPartBrand = null;
             NewPartName = null;
             IsCreatingPart = true;
+
+            // 回填前檢查輸入區仍開著且件號未變，避免覆寫手填值或回填到別筆
+            bool IsStillCreating() => IsCreatingPart && PartFilter == partNo;
+
             try
             {
-                var customer = await _core.Data.GetCustomerByCodeAsync(PartFilter);
-                if (customer != null) NewPartBrand = customer;
+                var customer = await _core.Data.GetCustomerByCodeAsync(partNo);
+                if (customer != null && IsStillCreating() && string.IsNullOrEmpty(NewPartBrand))
+                    NewPartBrand = customer;
             }
             catch (Exception ex)
             {
                 _core.Log.AddErrorLog($"[BeginCreatePartAsync] {ex.Message}");
             }
 
-            // 以件號查 ERP 帶入品名；查無或失敗留空供手填（獨立 try 不影響上方品牌帶入）
-            try
-            {
-                var partInfo = await _erp.GetPartInfoByNoAsync(PartFilter);
-                if (partInfo != null) NewPartName = partInfo.ProductName;
-            }
-            catch (Exception ex)
-            {
-                _core.Log.AddErrorLog($"[BeginCreatePartAsync] {ex.Message}");
-            }
+            // 以件號查 ERP 帶入品名；Service 失敗或查無皆回 null、不拋例外，留空供手填
+            var partInfo = await _erp.GetPartInfoByNoAsync(partNo);
+            if (partInfo != null && IsStillCreating() && string.IsNullOrEmpty(NewPartName))
+                NewPartName = partInfo.ProductName;
         }
 
         [RelayCommand]
